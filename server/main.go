@@ -1,46 +1,21 @@
 package main
 
 import (
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"net/http"
-	"time"
+	"log"
+
+	"github.com/gofiber/fiber/v3"
 )
 
-type LoginRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-}
-
 func main() {
-	r := gin.Default()
+	// Initialize a new Fiber app
+	app := fiber.New()
 
-	// CORS middleware
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:64673"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
-
-	r.POST("/login", func(c *gin.Context) {
-		var req LoginRequest
-		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
-			return
-		}
-
-		// Check credentials
-
-		if req.Username == "test" && req.Password == "password123" {
-			// Generate JWT token
-			c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
-		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-		}
+	// Define a route for the GET method on the root path '/'
+	app.Get("/", func(c fiber.Ctx) error {
+		// Send a string response to the client
+		return c.SendString("Hello, World !")
 	})
 
-	r.Run(":8080")
+	// Start the server on port 3000
+	log.Fatal(app.Listen(":3000"))
 }

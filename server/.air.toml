@@ -1,0 +1,13 @@
+# .air.toml
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -o tmp/main ."
+bin = "tmp/main"
+include_ext = ["go", "tmpl", "html", "css", "js"]
+exclude_dir = ["assets", "tmp"]
+
+[watch]
+include = ["."]
+exclude = ["tmp"]
