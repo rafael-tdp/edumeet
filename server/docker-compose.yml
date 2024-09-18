@@ -41,6 +41,14 @@ services:
       - dragonflydata:/data
     networks:
       - mynetwork
+  
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - 127.0.0.1:8080:8080
+    networks:
+      - mynetwork
 
 volumes:
   dragonflydata:
