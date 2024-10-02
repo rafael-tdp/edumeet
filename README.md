@@ -11,11 +11,11 @@ go run .
 - Executer les migrations BDD : 
 
 ```sh
-go run . mode=migrate
+go run . -mode=migrate
 ```
 
 - Executer les fixtures 
 
 ```sh
-go run . mode=fixture
+go run . -mode=fixture
 ```
