@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"edumeet/utils"
+
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
@@ -11,7 +13,9 @@ type PhysicalEvent struct {
 }
 
 func (PhysicalEvent) Fields() []ent.Field {
+	ulid := utils.ULID{}
 	return []ent.Field{
+		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
 		field.Float("lng"),
 		field.Float("lat"),
 		field.String("location"),

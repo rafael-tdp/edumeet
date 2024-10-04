@@ -16,7 +16,7 @@ func main() {
 	if *mode == "migrate" {
 		migrate()
 	} else if *mode == "fixture" {
-		//fixture()
+		migrateFixture()
 	} else {
 		// Initialize a new Fiber app
 		app := fiber.New()

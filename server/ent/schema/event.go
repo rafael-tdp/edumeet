@@ -1,10 +1,11 @@
 package schema
 
 import (
+	"edumeet/utils"
+
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"github.com/oklog/ulid/v2"
 )
 
 type Event struct {
@@ -12,8 +13,9 @@ type Event struct {
 }
 
 func (Event) Fields() []ent.Field {
+	ulid := utils.ULID{}
 	return []ent.Field{
-		field.String("id").Default(ulid.Make().String()),
+		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
 		field.Int("nbMaxUser"),
 		field.Time("start_date"),
 		field.Time("end_date").Optional(),

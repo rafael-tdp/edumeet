@@ -1,12 +1,12 @@
 package schema
 
 import (
+	"edumeet/utils"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"github.com/oklog/ulid/v2"
 )
 
 type Message struct {
@@ -14,8 +14,9 @@ type Message struct {
 }
 
 func (Message) Fields() []ent.Field {
+	ulid := utils.ULID{}
 	return []ent.Field{
-		field.String("id").Default(ulid.Make().String()),
+		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
 		field.String("content"),
 		field.Time("sent_at").Default(time.Now),
 	}
