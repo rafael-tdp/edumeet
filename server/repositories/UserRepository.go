@@ -2,9 +2,9 @@ package repositories
 
 import (
 	"context"
+	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/ent/user"
-	"edumeet/models"
 	"errors"
 )
 
@@ -20,14 +20,14 @@ func NewUserRepository(client *ent.Client) *UserRepository {
 }
 
 // FindByID recherche un utilisateur dans la base de données par ID
-func (ur *UserRepository) FindByID(userID string) (*models.User, error) {
+func (ur *UserRepository) FindByID(userID string) (*dtos.UserDTO, error) {
 
 	user, err := ur.client.User.Query().Where(user.IDEQ(userID)).Only(context.Background())
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
 
-	return &models.User{
+	return &dtos.UserDTO{
 		ID:        user.ID,
 		Email:     user.Email,
 		Username:  user.Username,

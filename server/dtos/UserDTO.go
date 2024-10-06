@@ -1,8 +1,8 @@
-package models
+package dtos
 
 import "time"
 
-type User struct {
+type UserDTO struct {
 	ID        string    `json:"id"`
 	Email     string    `json:"email"`
 	Username  string    `json:"username"`

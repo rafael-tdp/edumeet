@@ -1,7 +1,7 @@
 package services
 
 import (
-	"edumeet/models"
+	"edumeet/dtos"
 	"edumeet/repositories"
 	"errors"
 )
@@ -19,7 +19,7 @@ func NewUserService(userRepo *repositories.UserRepository) *UserService {
 }
 
 // GetUser récupère les informations d'un utilisateur par son ID
-func (us *UserService) GetUser(userID string) (*models.User, error) {
+func (us *UserService) GetUser(userID string) (*dtos.UserDTO, error) {
 	user, err := us.userRepo.FindByID(userID)
 	if err != nil {
 		return nil, errors.New("user not found in service")
