@@ -33,6 +33,10 @@ func LoginHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid username or password"})
 	}
 
+	if !user.Activated {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Account not activated"})
+	}
+
 	var jwtToken, jwtErr = utils.GenerateJWT(user.Username)
 
 	if jwtErr != nil {
