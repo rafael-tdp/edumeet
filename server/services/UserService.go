@@ -5,6 +5,7 @@ import (
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/repositories"
+	"edumeet/structures"
 	"edumeet/utils"
 	"errors"
 	"log"
@@ -50,4 +51,27 @@ func (us *UserService) ValidateUser(ctx context.Context, code string) (*ent.User
 	}
 
 	return user, nil
+}
+
+func (us *UserService) Login(ctx context.Context, requestBody structures.Login) (string, error) {
+	user, err := us.userRepo.FindUserByEmail(ctx, requestBody.Username)
+	if err != nil {
+		return "", err
+	}
+
+	bcryptUtil := &utils.Bcrypt{}
+	if !bcryptUtil.CheckPasswordHash(requestBody.Password, user.Password) {
+		return "", utils.ErrInvalidCredentials
+	}
+
+	if !user.Activated {
+		return "", utils.ErrAccountNotActivated
+	}
+
+	jwtToken, err := utils.GenerateJWT(user.Username)
+	if err != nil {
+		return "", err
+	}
+
+	return jwtToken, nil
 }

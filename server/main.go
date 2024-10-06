@@ -39,6 +39,17 @@ func main() {
 
 		userController := initUserController()
 
+		client, err := db.OpenDBConnection()
+		if err != nil {
+			log.Fatalf("Could not open database connection: %v", err)
+		}
+
+		userRepository := repositories.NewUserRepository(client)
+		userService := services.NewUserService(userRepository)
+		loginController := controllers.NewLoginController(userService)
+
+		app.Post("/login", loginController.LoginHandler)
+
 		// Configurer les routes
 		setupRoutes(app, userController)
 
@@ -51,7 +62,7 @@ func setupRoutes(app *fiber.App, userController *controllers.UserController) {
 
 	app.Get("/user/:id", userController.GetUser)
 	app.Post("/register", userController.Register)
-	app.Get("user/validate/:code", userController.ValidateUser)
+	app.Get("/validate/:code", userController.ValidateUser)
 }
 
 func initUserController() *controllers.UserController {
