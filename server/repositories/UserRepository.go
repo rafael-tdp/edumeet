@@ -6,20 +6,20 @@ import (
 	"edumeet/ent"
 	"edumeet/ent/user"
 	"errors"
+
+	"github.com/oklog/ulid/v2"
 )
 
 type UserRepository struct {
 	client *ent.Client
 }
 
-// NewUserRepository crée une nouvelle instance de UserRepository
 func NewUserRepository(client *ent.Client) *UserRepository {
 	return &UserRepository{
 		client: client,
 	}
 }
 
-// FindByID recherche un utilisateur dans la base de données par ID
 func (ur *UserRepository) FindByID(userID string) (*dtos.UserDTO, error) {
 
 	user, err := ur.client.User.Query().Where(user.IDEQ(userID)).Only(context.Background())
@@ -41,4 +41,46 @@ func (ur *UserRepository) FindByID(userID string) (*dtos.UserDTO, error) {
 		Lng:       user.Lng,
 		Lat:       user.Lat,
 	}, nil
+}
+
+func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPassword string) (*ent.User, error) {
+	user, err := ur.client.User.
+		Create().
+		SetEmail(registerDTO.Email).
+		SetUsername(registerDTO.Username).
+		SetLastname(registerDTO.Lastname).
+		SetFirstname(registerDTO.Firstname).
+		SetPassword(hashedPassword).
+		SetBirthDate(registerDTO.BirthDate).
+		SetNillableBio(registerDTO.Bio).
+		SetNillablePicture(registerDTO.Picture).
+		SetActivated(false).
+		SetCode(ulid.Make().String()).
+		Save(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (ur *UserRepository) ValidateUserByCode(ctx context.Context, code string) (*ent.User, error) {
+
+	u, err := ur.client.User.
+		Query().
+		Where(user.CodeEQ(code)).
+		Only(ctx)
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	updatedUser, err := u.Update().
+		SetActivated(true).
+		Save(ctx)
+	if err != nil {
+		return nil, errors.New("failed to update user")
+	}
+
+	return updatedUser, nil
 }

@@ -50,6 +50,8 @@ func main() {
 func setupRoutes(app *fiber.App, userController *controllers.UserController) {
 
 	app.Get("/user/:id", userController.GetUser)
+	app.Post("/register", userController.Register)
+	app.Get("user/validate/:code", userController.ValidateUser)
 }
 
 func initUserController() *controllers.UserController {
@@ -61,5 +63,6 @@ func initUserController() *controllers.UserController {
 
 	userRepo := repositories.NewUserRepository(client)
 	userService := services.NewUserService(userRepo)
-	return controllers.NewUserController(userService)
+	emailService := services.NewEmailServiceSMTP()
+	return controllers.NewUserController(userService, emailService)
 }
