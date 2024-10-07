@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"edumeet/db"
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/ent/user"
@@ -87,16 +86,9 @@ func (ur *UserRepository) ValidateUserByCode(ctx context.Context, code string) (
 }
 
 func (r *UserRepository) FindUserByEmail(ctx context.Context, email string) (*ent.User, error) {
-	client, err := db.OpenDBConnection()
+	u, err := r.client.User.Query().Where(user.Email(email)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
-	defer client.Close()
-
-	u, err := client.User.Query().Where(user.Email(email)).Only(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	return u, nil
 }

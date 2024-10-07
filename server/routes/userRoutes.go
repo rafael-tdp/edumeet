@@ -25,7 +25,6 @@ func initUserController() *controllers.UserController {
 	if err != nil {
 		log.Fatalf("Could not open database connection: %v", err)
 	}
-
 	userRepo := repositories.NewUserRepository(client)
 	userService := services.NewUserService(userRepo)
 	emailService := services.NewEmailService()

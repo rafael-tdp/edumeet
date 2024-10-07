@@ -5,7 +5,7 @@ import (
 )
 
 func InitRoutes(app *fiber.App) {
+	//Initialiser les routes user
 	userController := initUserController()
-
 	setupRoutesUser(app, userController)
 }
