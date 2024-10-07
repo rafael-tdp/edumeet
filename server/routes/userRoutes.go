@@ -2,10 +2,9 @@ package routes
 
 import (
 	"edumeet/controllers"
-	"edumeet/db"
+	"edumeet/ent"
 	"edumeet/repositories"
 	"edumeet/services"
-	"log"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,12 +18,8 @@ func setupRoutesUser(app *fiber.App, userController *controllers.UserController)
 	app.Post("login", userController.Login)
 }
 
-func initUserController() *controllers.UserController {
+func initUserController(client *ent.Client) *controllers.UserController {
 
-	client, err := db.OpenDBConnection()
-	if err != nil {
-		log.Fatalf("Could not open database connection: %v", err)
-	}
 	userRepo := repositories.NewUserRepository(client)
 	userService := services.NewUserService(userRepo)
 	emailService := services.NewEmailService()

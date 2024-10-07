@@ -85,8 +85,8 @@ func (ur *UserRepository) ValidateUserByCode(ctx context.Context, code string) (
 	return updatedUser, nil
 }
 
-func (r *UserRepository) FindUserByEmail(ctx context.Context, email string) (*ent.User, error) {
-	u, err := r.client.User.Query().Where(user.Email(email)).Only(ctx)
+func (ur *UserRepository) FindUserByEmail(ctx context.Context, email string) (*ent.User, error) {
+	u, err := ur.client.User.Query().Where(user.Email(email)).Only(ctx)
 	if err != nil {
 		return nil, err
 	}
