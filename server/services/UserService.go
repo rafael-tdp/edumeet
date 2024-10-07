@@ -29,6 +29,14 @@ func (us *UserService) GetUser(userID string) (*dtos.UserDTO, error) {
 	return user, nil
 }
 
+func (us *UserService) GetUserByEmail(ctx context.Context, email string) (*ent.User, error) {
+	user, err := us.userRepo.FindUserByEmail(ctx, email)
+	if err != nil {
+		return nil, errors.New("user not found in service")
+	}
+	return user, nil
+}
+
 func (us *UserService) RegisterUser(registerDTO dtos.RegisterDTO) (*ent.User, error) {
 
 	bcryptUtils := utils.Bcrypt{}

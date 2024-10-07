@@ -1,10 +1,7 @@
 package main
 
 import (
-	"edumeet/controllers"
-	"edumeet/db"
-	"edumeet/repositories"
-	"edumeet/services"
+	"edumeet/routes"
 	"flag"
 	"fmt"
 	"log"
@@ -35,45 +32,9 @@ func main() {
 			return c.SendString("Hello, World! " + gofakeit.Email())
 		})
 
-		app.Post("/login", repositories.LoginHandler)
-
-		userController := initUserController()
-
-		client, err := db.OpenDBConnection()
-		if err != nil {
-			log.Fatalf("Could not open database connection: %v", err)
-		}
-
-		userRepository := repositories.NewUserRepository(client)
-		userService := services.NewUserService(userRepository)
-		loginController := controllers.NewLoginController(userService)
-
-		app.Post("/login", loginController.LoginHandler)
-
-		// Configurer les routes
-		setupRoutes(app, userController)
+		routes.InitRoutes(app)
 
 		// Démarrer le serveur sur le port 3000
 		log.Fatal(app.Listen(":3000"))
 	}
-}
-
-func setupRoutes(app *fiber.App, userController *controllers.UserController) {
-
-	app.Get("/user/:id", userController.GetUser)
-	app.Post("/register", userController.Register)
-	app.Get("/validate/:code", userController.ValidateUser)
-}
-
-func initUserController() *controllers.UserController {
-
-	client, err := db.OpenDBConnection()
-	if err != nil {
-		log.Fatalf("Could not open database connection: %v", err)
-	}
-
-	userRepo := repositories.NewUserRepository(client)
-	userService := services.NewUserService(userRepo)
-	emailService := services.NewEmailServiceSMTP()
-	return controllers.NewUserController(userService, emailService)
 }
