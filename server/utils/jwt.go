@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"edumeet/ent/user"
 	"edumeet/structures"
 	"log"
 	"os"
@@ -10,7 +11,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func GenerateJWT(email string, id string) (string, error) {
+func GenerateJWT(email string, id string, role user.Role) (string, error) {
 	jwtKey, err := GetJWTKey()
 	if err != nil {
 		return "", err
@@ -21,6 +22,7 @@ func GenerateJWT(email string, id string) (string, error) {
 	claims := &structures.Claims{
 		Email:  email,
 		UserID: id,
+		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},

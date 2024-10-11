@@ -28,10 +28,8 @@ func JWTAuthMiddleware(c *fiber.Ctx) error {
 		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid Authorization header format"})
 	}
 
-	// Utilisez la struct Claims sans pointeur pour RegisteredClaims
 	claims := &structures.Claims{}
 
-	// Parse et valider le token
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, utils.ErrInvalidSigningMethod
@@ -48,8 +46,8 @@ func JWTAuthMiddleware(c *fiber.Ctx) error {
 		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid token", "details": "Token is not valid"})
 	}
 
+	// On pousse dans un context local l'ID de l'utilisateur pour qu'il soit accessible dans les contrôleurs
 	c.Locals("user_id", claims.UserID)
-	c.Locals("email", claims.Email)
 
 	return c.Next()
 }
