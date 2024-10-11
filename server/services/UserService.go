@@ -1,11 +1,9 @@
 package services
 
 import (
-	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/repositories"
-	"edumeet/structures"
 	"edumeet/utils"
 	"errors"
 	"log"
@@ -22,15 +20,31 @@ func NewUserService(userRepo *repositories.UserRepository) *UserService {
 }
 
 func (us *UserService) GetUser(userID string) (*dtos.UserDTO, error) {
-	user, err := us.userRepo.FindByID(userID)
+	user, err := us.userRepo.GetById(userID)
 	if err != nil {
 		return nil, errors.New("user not found in service")
 	}
-	return user, nil
+
+	userDTO := dtos.UserDTO{
+		ID:        user.ID,
+		Email:     user.Email,
+		Username:  user.Username,
+		Lastname:  user.Lastname,
+		Firstname: user.Firstname,
+		BirthDate: user.BirthDate,
+		Bio:       user.Bio,
+		Picture:   user.Picture,
+		Activated: user.Activated,
+		ReportNum: user.ReportNumber,
+		Lng:       user.Lng,
+		Lat:       user.Lat,
+		Role:      user.Role,
+	}
+	return &userDTO, nil
 }
 
-func (us *UserService) GetUserByEmail(ctx context.Context, email string) (*ent.User, error) {
-	user, err := us.userRepo.FindUserByEmail(ctx, email)
+func (us *UserService) GetUserByEmail(email string) (*ent.User, error) {
+	user, err := us.userRepo.GetByEmail(email)
 	if err != nil {
 		return nil, errors.New("user not found in service")
 	}
@@ -51,9 +65,9 @@ func (us *UserService) RegisterUser(registerDTO dtos.RegisterDTO) (*ent.User, er
 	return user, nil
 }
 
-func (us *UserService) ValidateUser(ctx context.Context, code string) (*ent.User, error) {
+func (us *UserService) ValidateUser(code string) (*ent.User, error) {
 
-	user, err := us.userRepo.ValidateUserByCode(ctx, code)
+	user, err := us.userRepo.ValidateUserByCode(code)
 	if err != nil {
 		return nil, err
 	}
@@ -61,8 +75,8 @@ func (us *UserService) ValidateUser(ctx context.Context, code string) (*ent.User
 	return user, nil
 }
 
-func (us *UserService) Login(ctx context.Context, requestBody structures.Login) (string, error) {
-	user, err := us.userRepo.FindUserByEmail(ctx, requestBody.Username)
+func (us *UserService) Login(requestBody dtos.LoginDTO) (string, error) {
+	user, err := us.userRepo.GetByEmail(requestBody.Email)
 	if err != nil {
 		return "", err
 	}
@@ -76,7 +90,7 @@ func (us *UserService) Login(ctx context.Context, requestBody structures.Login) 
 		return "", utils.ErrAccountNotActivated
 	}
 
-	jwtToken, err := utils.GenerateJWT(user.Email, user.ID)
+	jwtToken, err := utils.GenerateJWT(user.Email, user.ID, user.Role)
 	if err != nil {
 		return "", err
 	}

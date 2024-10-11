@@ -2,10 +2,8 @@ package controllers
 
 import (
 	"bytes"
-	"context"
 	"edumeet/dtos"
 	"edumeet/services"
-	"edumeet/structures"
 	"edumeet/utils"
 	"html/template"
 	"log"
@@ -76,7 +74,7 @@ func (uc *UserController) ValidateUser(c *fiber.Ctx) error {
 
 	code := c.Params("code")
 
-	user, err := uc.userService.ValidateUser(context.Background(), code)
+	user, err := uc.userService.ValidateUser(code)
 	if err != nil {
 
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
@@ -92,7 +90,7 @@ func (uc *UserController) ResendEmailValidateUser(c *fiber.Ctx) error {
 
 	email := c.Params("email")
 
-	user, err := uc.userService.GetUserByEmail(context.Background(), email)
+	user, err := uc.userService.GetUserByEmail(email)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -127,13 +125,13 @@ func (uc *UserController) ResendEmailValidateUser(c *fiber.Ctx) error {
 }
 
 func (uc *UserController) Login(c *fiber.Ctx) error {
-	var requestBody structures.Login
+	var requestBody dtos.LoginDTO
 
 	if err := c.BodyParser(&requestBody); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
-	token, err := uc.userService.Login(context.Background(), requestBody)
+	token, err := uc.userService.Login(requestBody)
 	if err != nil {
 		switch err {
 		case utils.ErrInvalidCredentials:
@@ -152,24 +150,9 @@ func (uc *UserController) Me(c *fiber.Ctx) error {
 
 	userID := c.Locals("user_id").(string)
 
-	user, err := uc.userService.GetUser(userID)
+	userDTO, err := uc.userService.GetUser(userID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	userDTO := dtos.UserDTO{
-		ID:        user.ID,
-		Email:     user.Email,
-		Username:  user.Username,
-		Lastname:  user.Lastname,
-		Firstname: user.Firstname,
-		BirthDate: user.BirthDate,
-		Bio:       user.Bio,
-		Picture:   user.Picture,
-		Activated: user.Activated,
-		ReportNum: user.ReportNum,
-		Lng:       user.Lng,
-		Lat:       user.Lat,
 	}
 
 	return c.JSON(userDTO)

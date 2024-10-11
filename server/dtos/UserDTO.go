@@ -1,6 +1,9 @@
 package dtos
 
-import "time"
+import (
+	"edumeet/ent/user"
+	"time"
+)
 
 type UserDTO struct {
 	ID        string    `json:"id"`
@@ -15,4 +18,5 @@ type UserDTO struct {
 	ReportNum int       `json:"reportNumber"`
 	Lng       *float64  `json:"lng,omitempty"`
 	Lat       *float64  `json:"lat,omitempty"`
+	Role      user.Role `json:"role"`
 }

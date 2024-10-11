@@ -20,27 +20,14 @@ func NewUserRepository(client *ent.Client) *UserRepository {
 	}
 }
 
-func (ur *UserRepository) FindByID(userID string) (*dtos.UserDTO, error) {
+func (ur *UserRepository) GetById(userID string) (*ent.User, error) {
 
 	user, err := ur.client.User.Query().Where(user.IDEQ(userID)).Only(context.Background())
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
 
-	return &dtos.UserDTO{
-		ID:        user.ID,
-		Email:     user.Email,
-		Username:  user.Username,
-		Lastname:  user.Lastname,
-		Firstname: user.Firstname,
-		BirthDate: user.BirthDate,
-		Bio:       user.Bio,
-		Picture:   user.Picture,
-		Activated: user.Activated,
-		ReportNum: user.ReportNumber,
-		Lng:       user.Lng,
-		Lat:       user.Lat,
-	}, nil
+	return user, nil
 }
 
 func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPassword string) (*ent.User, error) {
@@ -65,19 +52,19 @@ func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPasswor
 	return user, nil
 }
 
-func (ur *UserRepository) ValidateUserByCode(ctx context.Context, code string) (*ent.User, error) {
+func (ur *UserRepository) ValidateUserByCode(code string) (*ent.User, error) {
 
 	u, err := ur.client.User.
 		Query().
 		Where(user.CodeEQ(code)).
-		Only(ctx)
+		Only(context.Background())
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
 
 	updatedUser, err := u.Update().
 		SetActivated(true).
-		Save(ctx)
+		Save(context.Background())
 	if err != nil {
 		return nil, errors.New("failed to update user")
 	}
@@ -85,8 +72,8 @@ func (ur *UserRepository) ValidateUserByCode(ctx context.Context, code string) (
 	return updatedUser, nil
 }
 
-func (ur *UserRepository) FindUserByEmail(ctx context.Context, email string) (*ent.User, error) {
-	u, err := ur.client.User.Query().Where(user.Email(email)).Only(ctx)
+func (ur *UserRepository) GetByEmail(email string) (*ent.User, error) {
+	u, err := ur.client.User.Query().Where(user.Email(email)).Only(context.Background())
 	if err != nil {
 		return nil, err
 	}
