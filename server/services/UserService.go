@@ -6,7 +6,6 @@ import (
 	"edumeet/repositories"
 	"edumeet/utils"
 	"errors"
-	"fmt"
 	"log"
 )
 
@@ -79,7 +78,6 @@ func (us *UserService) ValidateUser(code string) (*ent.User, error) {
 func (us *UserService) Login(requestBody dtos.LoginDTO) (string, error) {
 	user, err := us.userRepo.GetByEmail(requestBody.Email)
 
-	fmt.Print(err)
 	if err != nil {
 		return "", utils.ErrInvalidCredentials
 	}
