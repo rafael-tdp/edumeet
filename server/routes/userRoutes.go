@@ -3,6 +3,7 @@ package routes
 import (
 	"edumeet/controllers"
 	"edumeet/ent"
+	"edumeet/middlewares"
 	"edumeet/repositories"
 	"edumeet/services"
 
@@ -16,6 +17,7 @@ func setupRoutesUser(app *fiber.App, userController *controllers.UserController)
 	app.Get("user/verify-email/:code", userController.ValidateUser)
 	app.Get("user/resend-verify-email/:email", userController.ResendEmailValidateUser)
 	app.Post("login", userController.Login)
+	app.Get("/me", middlewares.JWTAuthMiddleware, userController.Me)
 }
 
 func initUserController(client *ent.Client) *controllers.UserController {

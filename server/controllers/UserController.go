@@ -147,3 +147,30 @@ func (uc *UserController) Login(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"token": token})
 }
+
+func (uc *UserController) Me(c *fiber.Ctx) error {
+
+	userID := c.Locals("user_id").(string)
+
+	user, err := uc.userService.GetUser(userID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	userDTO := dtos.UserDTO{
+		ID:        user.ID,
+		Email:     user.Email,
+		Username:  user.Username,
+		Lastname:  user.Lastname,
+		Firstname: user.Firstname,
+		BirthDate: user.BirthDate,
+		Bio:       user.Bio,
+		Picture:   user.Picture,
+		Activated: user.Activated,
+		ReportNum: user.ReportNum,
+		Lng:       user.Lng,
+		Lat:       user.Lat,
+	}
+
+	return c.JSON(userDTO)
+}

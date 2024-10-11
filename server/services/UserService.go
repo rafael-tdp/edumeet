@@ -76,7 +76,7 @@ func (us *UserService) Login(ctx context.Context, requestBody structures.Login) 
 		return "", utils.ErrAccountNotActivated
 	}
 
-	jwtToken, err := utils.GenerateJWT(user.Username)
+	jwtToken, err := utils.GenerateJWT(user.Email, user.ID)
 	if err != nil {
 		return "", err
 	}
