@@ -1,34 +1,40 @@
 package main
 
 import (
+	"edumeet/routes"
 	"flag"
 	"fmt"
 	"log"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/oklog/ulid/v2"
 )
 
 func main() {
+	// Utilisation de flag pour choisir le mode (normal, fixture ou migrate)
 	mode := flag.String("mode", "normal", "Choose the mode: normal, fixture or migrate")
 	flag.Parse()
+
+	// Vérifier le mode sélectionné et appeler les fonctions appropriées
 	if *mode == "migrate" {
 		migrate()
 	} else if *mode == "fixture" {
 		migrateFixture()
 	} else {
-		// Initialize a new Fiber app
+		// Initialiser une nouvelle application Fiber
 		app := fiber.New()
-		//name := lo.Uniq([]string{"Samuel", "John", "Samuel"})
-		// Define a route for the GET method on the root path '/'
-		app.Get("/", func(c fiber.Ctx) error {
-			// Send a string response to the client
+
+		// Définir une route GET pour l'URL racine '/'
+		app.Get("/", func(c *fiber.Ctx) error {
+			// Générer un ULID et un email aléatoire, et les retourner dans la réponse
 			fmt.Println(ulid.Make())
-			return c.SendString("Hello, World !" + gofakeit.Email())
+			return c.SendString("Hello, World! " + gofakeit.Email())
 		})
 
-		// Start the server on port 3000
+		routes.InitRoutes(app)
+
+		// Démarrer le serveur sur le port 3000
 		log.Fatal(app.Listen(":3000"))
 	}
 }

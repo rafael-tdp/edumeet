@@ -30,6 +30,8 @@ func (User) Fields() []ent.Field {
 		field.Float("lng").Optional().Nillable(),
 		field.Float("lat").Optional().Nillable(),
 		field.Time("created_at").Default(time.Now),
+		field.String("code").Optional().Nillable(),
+		field.Enum("role").Values("SUPER ADMIN", "ADMIN", "USER").Default("USER"),
 	}
 }
 
