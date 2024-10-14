@@ -65,14 +65,14 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(vertical: 20),
         child: SwipeCards(
           matchEngine: _matchEngine,
           itemBuilder: (context, index) {
             final data = _swipeItems[index].content as Map<String, String>;
             return Center(
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.9,
+                width: MediaQuery.of(context).size.width * 0.99,
                 child: Card(
                   color: Colors.black,
                   elevation: 4,
@@ -157,7 +157,7 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
                                   child: const Icon(
                                     Icons.clear,
                                     color: Colors.red,
-                                    size: 30,
+                                    size: 25,
                                   ),
                                 ),
                                 OutlinedButton(
@@ -173,7 +173,7 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
                                   },
                                   style: OutlinedButton.styleFrom(
                                     side: const BorderSide(
-                                      color: Colors.green,
+                                      color: Color.fromARGB(255, 68, 255, 75),
                                       width: 2.0,
                                     ),
                                     shape: const CircleBorder(),
@@ -182,8 +182,8 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
                                   ),
                                   child: const Icon(
                                     Icons.favorite,
-                                    color: Colors.green,
-                                    size: 30,
+                                    color: Color.fromARGB(255, 68, 255, 75),
+                                    size: 25,
                                   ),
                                 ),
                               ],

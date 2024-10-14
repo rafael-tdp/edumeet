@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Screens/login_screen.dart';
 import 'Screens/swipe_cards_screen.dart';
+import 'Utils/colors.dart';
 
 void main() => runApp(const MyApp());
 
@@ -9,7 +10,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: HomePage());
+    return const MaterialApp(
+      home: HomePage(),
+      debugShowCheckedModeBanner: false,
+    );
   }
 }
 
@@ -40,15 +44,22 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("EduMeet"),
+        // toolbarHeight: 60,
         backgroundColor: Colors.transparent,
-        centerTitle: false,
-        titleTextStyle: const TextStyle(
-          color: Colors.black,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
+        leadingWidth: 150,
+        leading: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Container(
+            alignment: Alignment.bottomLeft,
+            // color: Color.fromRGBO(0, 96, 91, 1),
+            child: Image.asset(
+              'images/logo-bold.png',
+              fit: BoxFit.cover,
+              // height: 100,
+              width: 100,
+            ),
+          ),
         ),
-        elevation: 0,
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -59,6 +70,7 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
         iconSize: 30,
+        selectedItemColor: AppColors.purple,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -68,10 +80,6 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.person),
             label: '',
           ),
-          // BottomNavigationBarItem(
-          //   icon: Icon(Icons.settings),
-          //   label: '',
-          // ),
         ],
       ),
       backgroundColor: Colors.white,
