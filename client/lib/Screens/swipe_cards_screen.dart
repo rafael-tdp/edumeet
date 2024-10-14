@@ -82,7 +82,6 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
                   clipBehavior: Clip.antiAlias,
                   child: Stack(
                     children: [
-                      // Image de fond
                       Positioned.fill(
                         child: Image.network(
                           data['image']!,
@@ -97,7 +96,6 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
                           },
                         ),
                       ),
-                      // Couche de dégradé noir
                       Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -110,7 +108,6 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
                           ),
                         ),
                       ),
-                      // Texte et boutons superposés
                       Positioned(
                         bottom: 16,
                         left: 16,
@@ -118,7 +115,6 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Titre
                             Text(
                               data['name']!,
                               style: const TextStyle(
@@ -128,7 +124,6 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            // Description
                             Text(
                               data['description']!,
                               style: const TextStyle(
@@ -138,11 +133,9 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            // Boutons Like et Nope
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                // Bouton Nope
                                 OutlinedButton(
                                   onPressed: () {
                                     _matchEngine.currentItem?.nope();
@@ -154,13 +147,12 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
                                   },
                                   style: OutlinedButton.styleFrom(
                                     side: const BorderSide(
-                                      color: Colors.red, // Bordure rouge
+                                      color: Colors.red,
                                       width: 2.0,
                                     ),
                                     shape: const CircleBorder(),
                                     padding: const EdgeInsets.all(16.0),
-                                    backgroundColor:
-                                        Colors.transparent, // Fond transparent
+                                    backgroundColor: Colors.transparent,
                                   ),
                                   child: const Icon(
                                     Icons.clear,
@@ -168,25 +160,25 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
                                     size: 30,
                                   ),
                                 ),
-                                // Bouton Like
                                 OutlinedButton(
                                   onPressed: () {
                                     _matchEngine.currentItem?.like();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                          content:
-                                              Text("Liked ${data['name']}")),
+                                        content: Text(
+                                          "Liked ${data['name']}",
+                                        ),
+                                      ),
                                     );
                                   },
                                   style: OutlinedButton.styleFrom(
                                     side: const BorderSide(
-                                      color: Colors.green, // Bordure verte
+                                      color: Colors.green,
                                       width: 2.0,
                                     ),
                                     shape: const CircleBorder(),
                                     padding: const EdgeInsets.all(16.0),
-                                    backgroundColor:
-                                        Colors.transparent, // Fond transparent
+                                    backgroundColor: Colors.transparent,
                                   ),
                                   child: const Icon(
                                     Icons.favorite,
