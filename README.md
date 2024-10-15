@@ -25,3 +25,9 @@ go run . -mode=migrate
 ```sh
 go run . -mode=fixture
 ```
+
+- Executer avec air pour le live reload
+
+```sh
+cd server && air
+```
