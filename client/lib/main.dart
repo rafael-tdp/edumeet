@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'Screens/login_screen.dart';
 import 'Screens/swipe_cards_screen.dart';
+import 'Screens/courses_screen.dart';
 import 'Utils/colors.dart';
+import 'Screens/conversations_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -30,8 +32,10 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     const SwipeCardsPage(),
+    const CoursesPage(),
+    const ConversationsPage(),
     LoginPage(),
-    const SettingsPage(),
+    // const SettingsPage(),
   ];
 
   void _onTabTapped(int index) {
@@ -44,18 +48,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // toolbarHeight: 60,
+        surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.transparent,
         leadingWidth: 150,
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Container(
             alignment: Alignment.bottomLeft,
-            // color: Color.fromRGBO(0, 96, 91, 1),
             child: Image.asset(
               'images/logo-bold.png',
               fit: BoxFit.cover,
-              // height: 100,
               width: 100,
             ),
           ),
@@ -74,6 +76,14 @@ class _HomePageState extends State<HomePage> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.messenger),
             label: '',
           ),
           BottomNavigationBarItem(
