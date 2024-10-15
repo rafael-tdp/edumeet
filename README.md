@@ -2,7 +2,7 @@
 
 ## Lancer le backend
 
-- Générer la base de données
+- Générer la base de données ou après modification de schema faire
 
 ```sh
 go generate ./ent
