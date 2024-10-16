@@ -1,38 +1,14 @@
 import 'package:flutter/material.dart';
-import '../Utils/colors.dart';
+import 'package:client/utils/colors.dart';
+import 'package:client/utils/date_utils.dart' as custom_date_utils;
+import 'package:client/fake_data.dart';
 
 class ConversationsPage extends StatelessWidget {
   const ConversationsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> conversations = [
-      {
-        "name": "Alice Dupont",
-        "lastMessage": "Salut, comment ça va ?",
-        "time": "14:30",
-      },
-      {
-        "name": "Bob Martin",
-        "lastMessage": "À demain pour la réunion.",
-        "time": "13:20",
-      },
-      {
-        "name": "Chloé Durant",
-        "lastMessage": "Merci pour ton aide !",
-        "time": "11:00",
-      },
-      {
-        "name": "David Leroy",
-        "lastMessage": "On se voit ce soir ?",
-        "time": "Hier",
-      },
-      {
-        "name": "Emma Laroche",
-        "lastMessage": "J'ai envoyé le fichier.",
-        "time": "Samedi",
-      },
-    ];
+    final List<Map<String, String>> conversations = FakeData.conversations;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -47,12 +23,16 @@ class ConversationsPage extends StatelessWidget {
                 backgroundColor: AppColors.purple,
                 child: Text(
                   conversation['name']![0],
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
               title: Text(conversation['name']!),
               subtitle: Text(conversation['lastMessage']!),
-              trailing: Text(conversation['time']!),
+              trailing: Text(custom_date_utils.DateUtils.isoToFormattedTime(
+                conversation['date']!,
+              )),
               onTap: () {
                 Navigator.push(
                   context,

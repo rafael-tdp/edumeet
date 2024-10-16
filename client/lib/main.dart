@@ -1,9 +1,9 @@
+import 'package:client/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'Screens/login_screen.dart';
-import 'Screens/swipe_cards_screen.dart';
-import 'Screens/courses_screen.dart';
-import 'Utils/colors.dart';
-import 'Screens/conversations_screen.dart';
+import 'screens/swipe_cards_screen.dart';
+import 'screens/courses_screen.dart';
+import 'utils/colors.dart';
+import 'screens/conversations_screen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -34,7 +34,8 @@ class _HomePageState extends State<HomePage> {
     const SwipeCardsPage(),
     const CoursesPage(),
     const ConversationsPage(),
-    LoginPage(),
+    const ProfilePage(),
+    // LoginPage(),
     // const SettingsPage(),
   ];
 
