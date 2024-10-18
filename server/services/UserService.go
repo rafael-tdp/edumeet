@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/repositories"
@@ -97,4 +98,64 @@ func (us *UserService) Login(requestBody dtos.LoginDTO) (string, error) {
 	}
 
 	return jwtToken, nil
+}
+
+func (us *UserService) ForgotPassword(requestBody dtos.ForgotPasswordDTO) (*ent.User, error) {
+	user, err := us.userRepo.GetByEmail(requestBody.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	ulidUtil := utils.ULID{}
+	code := ulidUtil.GenerateUlid()()
+
+	updatedUser, err := user.Update().SetCode(code).Save(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedUser, nil
+}
+
+func (us *UserService) Verify(code string) (dtos.UserDTO, error) {
+	user, err := us.userRepo.VerifyUserByCode(code)
+	if err != nil {
+		return dtos.UserDTO{}, err
+	}
+
+	userDTO := dtos.UserDTO{
+		ID:        user.ID,
+		Email:     user.Email,
+		Username:  user.Username,
+		Lastname:  user.Lastname,
+		Firstname: user.Firstname,
+		BirthDate: user.BirthDate,
+		Bio:       user.Bio,
+		Picture:   user.Picture,
+		Activated: user.Activated,
+		ReportNum: user.ReportNumber,
+		Lng:       user.Lng,
+		Lat:       user.Lat,
+		Role:      user.Role,
+	}
+
+	return userDTO, nil
+}
+
+func (us *UserService) ResetPassword(code string, requestBody dtos.ResetPasswordDTO) error {
+	user, err := us.userRepo.VerifyUserByCode(code)
+	if err != nil {
+		return err
+	}
+	bcryptUtil := utils.Bcrypt{}
+	passwordHashed := bcryptUtil.HashPassword(requestBody.PlainPassword)
+
+	_, err = user.Update().SetPassword(passwordHashed).SetCode("").Save(context.Background())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

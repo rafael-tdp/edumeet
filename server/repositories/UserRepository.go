@@ -54,12 +54,10 @@ func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPasswor
 
 func (ur *UserRepository) ValidateUserByCode(code string) (*ent.User, error) {
 
-	u, err := ur.client.User.
-		Query().
-		Where(user.CodeEQ(code)).
-		Only(context.Background())
+	u, err := ur.VerifyUserByCode(code)
+
 	if err != nil {
-		return nil, errors.New("user not found")
+		return nil, err
 	}
 
 	updatedUser, err := u.Update().
@@ -77,5 +75,18 @@ func (ur *UserRepository) GetByEmail(email string) (*ent.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	return u, nil
+}
+
+func (ur *UserRepository) VerifyUserByCode(code string) (*ent.User, error) {
+	u, err := ur.client.User.
+		Query().
+		Where(user.CodeEQ(code)).
+		Only(context.Background())
+
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
+
 	return u, nil
 }

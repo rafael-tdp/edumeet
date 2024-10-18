@@ -5,9 +5,14 @@ import (
 	"edumeet/dtos"
 	"edumeet/services"
 	"edumeet/utils"
+	"fmt"
 	"html/template"
 	"log"
+	"os"
 
+	customValidator "edumeet/validator"
+
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -55,7 +60,11 @@ func (uc *UserController) Register(c *fiber.Ctx) error {
 	}
 
 	var body bytes.Buffer
-	if err := tmpl.Execute(&body, user); err != nil {
+	var data = map[string]interface{}{
+		"URL": fmt.Sprintf("%s/user/verify-email/%s", os.Getenv("FRONTEND_URL"), *user.Code),
+	}
+
+	if err := tmpl.Execute(&body, data); err != nil {
 		log.Fatalf("Error executing template: %v", err)
 		return err
 	}
@@ -106,7 +115,11 @@ func (uc *UserController) ResendEmailValidateUser(c *fiber.Ctx) error {
 	}
 
 	var body bytes.Buffer
-	if err := tmpl.Execute(&body, user); err != nil {
+	var data = map[string]interface{}{
+		"URL": fmt.Sprintf("%s/user/verify-email/%s", os.Getenv("FRONTEND_URL"), *user.Code),
+	}
+
+	if err := tmpl.Execute(&body, data); err != nil {
 		log.Fatalf("Error executing template: %v", err)
 		return err
 	}
@@ -156,4 +169,85 @@ func (uc *UserController) Me(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(userDTO)
+}
+
+func (uc *UserController) ForgotPassword(c *fiber.Ctx) error {
+	var requestBody dtos.ForgotPasswordDTO
+
+	if err := c.BodyParser(&requestBody); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	user, err := uc.userService.ForgotPassword(requestBody)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "An error occurred"})
+	}
+
+	tmpl, err := template.ParseFiles("./email/forgotPwd.html")
+	if err != nil {
+		log.Fatalf("Error loading email template: %v", err)
+		return err
+	}
+
+	var body bytes.Buffer
+	var data = map[string]interface{}{
+		"URL": fmt.Sprintf("%s/user/verify/%s", os.Getenv("FRONTEND_URL"), *user.Code),
+	}
+
+	if err := tmpl.Execute(&body, data); err != nil {
+		log.Fatalf("Error executing template: %v", err)
+		return err
+	}
+
+	err = uc.emailService.SendEmail(user.Email, "Reset your password", body.String())
+
+	if err != nil {
+		log.Printf("Error sending email: %v", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not send confirmation email"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Email sent successfully"})
+}
+
+func (uc *UserController) Verify(c *fiber.Ctx) error {
+	code := c.Params("code")
+
+	user, err := uc.userService.Verify(code)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "An error occurred"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Email verified successfully", "user": user})
+}
+
+func (uc *UserController) ResetPassword(c *fiber.Ctx) error {
+	code := c.Params("code")
+	if code == "" || len(code) == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid code"})
+	}
+
+	var requestBody dtos.ResetPasswordDTO
+
+	if err := c.BodyParser(&requestBody); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	validations := validator.New()
+	validations.RegisterValidation("strongPassword", customValidator.StrongPassword)
+	err := validations.Struct(requestBody)
+	if err != nil {
+		errors := make([]string, 0)
+		for _, err := range err.(validator.ValidationErrors) {
+			errors = append(errors, err.Error())
+		}
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
+	}
+
+	err = uc.userService.ResetPassword(code, requestBody)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "An error occurred"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Password reset successfully"})
 }
