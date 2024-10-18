@@ -29,4 +29,10 @@ class DateUtils {
       return 'Invalid date';
     }
   }
+
+  static bool isEventPassed(String isoDate) {
+    final dateTime = DateTime.parse(isoDate);
+    final now = DateTime.now();
+    return dateTime.isBefore(now);
+  }
 }

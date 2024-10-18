@@ -75,4 +75,68 @@ class FakeData {
       "date": "2021-09-11T14:30:00Z",
     },
   ];
+
+  // event details data
+  static Map<String, dynamic> eventDetails = {
+    "title": "Entrainement Tailwind",
+    "image":
+        "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y291cnN8ZW58MHx8MHx8fDI%3D",
+    "description": "Entraînement sur Tailwind CSS",
+    "date": "2024-10-19T10:00:00Z",
+    // "physical_event": {
+    //   "address": "Paris, France",
+    // },
+    "remote_event": {
+      "link": "https://meet.google.com/abc-defg-hij",
+    },
+    "participants": [
+      {
+        'name': 'Alice',
+        'image':
+            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D',
+      },
+      {
+        'name': 'Bob',
+        'image':
+            'https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D',
+      }
+    ],
+    "event_documents": [
+      {
+        'title': 'Cours sur Flutter',
+        'description':
+            'Introduction au développement d\'applications avec Flutter.',
+      },
+      {
+        'title': 'Exercice de JavaScript',
+        'description': 'Pratique des concepts de base en JavaScript.',
+      },
+    ],
+    "last_messages": [
+      {
+        'sender': {
+          'name': 'Alice',
+          'image':
+              'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D',
+        },
+        'message': 'Hâte de voir tout le monde à cet événement !',
+      },
+      {
+        'sender': {
+          'name': 'Bob',
+          'image':
+              'https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D',
+        },
+        'message': 'Ça va être génial !',
+      },
+      {
+        'sender': {
+          'name': 'Alice',
+          'image':
+              'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D',
+        },
+        'message': 'Je viendrai avec des amis.',
+      },
+    ]
+  };
 }

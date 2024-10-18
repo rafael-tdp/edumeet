@@ -162,7 +162,7 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                         Text(
                           data['description']!,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 13,
                             fontWeight: FontWeight.normal,
                             color: Colors.grey,
                           ),

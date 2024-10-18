@@ -1,7 +1,7 @@
 import 'package:client/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/swipe_cards_screen.dart';
-import 'screens/courses_screen.dart';
+import 'screens/events_screen.dart';
 import 'utils/colors.dart';
 import 'screens/conversations_screen.dart';
 
@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     const SwipeCardsPage(),
-    const CoursesPage(),
+    const EventsPage(),
     const ConversationsPage(),
     const ProfilePage(),
     // LoginPage(),
