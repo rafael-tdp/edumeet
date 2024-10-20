@@ -3,6 +3,7 @@ package controllers
 import (
 	"bytes"
 	"edumeet/dtos"
+	"edumeet/ent"
 	"edumeet/services"
 	"edumeet/utils"
 	"fmt"
@@ -14,6 +15,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/oklog/ulid/v2"
 )
 
 type UserController struct {
@@ -30,14 +32,30 @@ func NewUserController(userService *services.UserService, emailService *services
 
 func (uc *UserController) GetUser(c *fiber.Ctx) error {
 
-	userID := c.Params("id")
+	currentUser := c.Locals("user").(*ent.User)
 
-	user, err := uc.userService.GetUser(userID)
+	userID, err := ulid.Parse(c.Params("id"))
+
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
 
-	return c.JSON(user)
+	if currentUser.ID == userID.String() || currentUser.Role == "ADMIN" {
+
+		user, err := uc.userService.GetUser(userID.String())
+		if err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+		}
+
+		return c.JSON(user)
+	} else {
+		user, err := uc.userService.GetUserProfile(userID.String())
+
+		if err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+		}
+		return c.JSON(user)
+	}
 }
 
 func (uc *UserController) Register(c *fiber.Ctx) error {

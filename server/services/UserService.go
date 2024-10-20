@@ -44,6 +44,22 @@ func (us *UserService) GetUser(userID string) (*dtos.UserDTO, error) {
 	return &userDTO, nil
 }
 
+func (us *UserService) GetUserProfile(userID string) (*dtos.UserProfileDTO, error) {
+	user, err := us.userRepo.GetById(userID)
+	if err != nil {
+		return nil, errors.New("user not found in service")
+	}
+
+	userProfileDTO := dtos.UserProfileDTO{
+		Username: user.Username,
+		Bio:      user.Bio,
+		Picture:  user.Picture,
+		Lng:      user.Lng,
+		Lat:      user.Lat,
+	}
+	return &userProfileDTO, nil
+}
+
 func (us *UserService) GetUserByEmail(email string) (*ent.User, error) {
 	user, err := us.userRepo.GetByEmail(email)
 	if err != nil {

@@ -12,7 +12,7 @@ import (
 
 func setupRoutesUser(app *fiber.App, userController *controllers.UserController) {
 
-	app.Get("/user/:id", userController.GetUser)
+	app.Get("/user/:id", middlewares.JWTAuthMiddleware, userController.GetUser)
 	app.Post("/user/register", userController.Register)
 	app.Get("/user/verify-email/:code", userController.ValidateUser)
 	app.Get("/user/resend-verify-email/:email", userController.ResendEmailValidateUser)

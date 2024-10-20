@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"edumeet/db"
+	"edumeet/repositories"
 	"edumeet/structures"
 	"edumeet/utils"
 	"fmt"
@@ -46,8 +48,23 @@ func JWTAuthMiddleware(c *fiber.Ctx) error {
 		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid token", "details": "Token is not valid"})
 	}
 
-	// On pousse dans un context local l'ID de l'utilisateur pour qu'il soit accessible dans les contrôleurs
-	c.Locals("user_id", claims.UserID)
+	client, err := db.OpenDBConnection()
+
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Could not connect to database"})
+	}
+
+	userRepo := repositories.NewUserRepository(client)
+
+	user, err := userRepo.GetById(claims.UserID)
+
+	fmt.Println("Claims: ", claims)
+
+	if err != nil {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
+	}
+
+	c.Locals("user", user)
 
 	return c.Next()
 }
