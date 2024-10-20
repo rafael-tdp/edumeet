@@ -58,12 +58,11 @@ func JWTAuthMiddleware(c *fiber.Ctx) error {
 
 	user, err := userRepo.GetById(claims.UserID)
 
-	fmt.Println("Claims: ", claims)
-
 	if err != nil {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
 
+	//On pousse le user courant dans le contexte de la requête
 	c.Locals("user", user)
 
 	return c.Next()

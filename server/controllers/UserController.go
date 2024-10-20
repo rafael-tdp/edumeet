@@ -179,9 +179,11 @@ func (uc *UserController) Login(c *fiber.Ctx) error {
 
 func (uc *UserController) Me(c *fiber.Ctx) error {
 
-	userID := c.Locals("user_id").(string)
+	currentUser := c.Locals("user").(*ent.User)
 
-	userDTO, err := uc.userService.GetUser(userID)
+	fmt.Println(currentUser)
+
+	userDTO, err := uc.userService.GetUser(currentUser.ID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
 	}
