@@ -7,6 +7,7 @@ import (
 	"edumeet/repositories"
 	"edumeet/utils"
 	"errors"
+	"fmt"
 	"log"
 )
 
@@ -26,22 +27,27 @@ func (us *UserService) GetUser(userID string) (*dtos.UserDTO, error) {
 		return nil, errors.New("user not found in service")
 	}
 
-	userDTO := dtos.UserDTO{
-		ID:        user.ID,
-		Email:     user.Email,
-		Username:  user.Username,
-		Lastname:  user.Lastname,
-		Firstname: user.Firstname,
-		BirthDate: user.BirthDate,
-		Bio:       user.Bio,
-		Picture:   user.Picture,
-		Activated: user.Activated,
-		ReportNum: user.ReportNumber,
-		Lng:       user.Lng,
-		Lat:       user.Lat,
-		Role:      user.Role,
+	userDTO, err := dtos.ParseUserDTO(user)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing user DTO: %w", err)
 	}
-	return &userDTO, nil
+
+	return userDTO, nil
+}
+
+func (us *UserService) GetUserProfile(userID string) (*dtos.UserProfileDTO, error) {
+	user, err := us.userRepo.GetById(userID)
+	if err != nil {
+		return nil, errors.New("user not found in service")
+	}
+
+	userProfileDTO, err := dtos.ParseUserProfileDTO(user)
+
+	if err != nil {
+		return nil, fmt.Errorf("error parsing user profile DTO: %w", err)
+	}
+
+	return userProfileDTO, nil
 }
 
 func (us *UserService) GetUserByEmail(email string) (*ent.User, error) {
