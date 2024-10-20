@@ -181,8 +181,6 @@ func (uc *UserController) Me(c *fiber.Ctx) error {
 
 	currentUser := c.Locals("user").(*ent.User)
 
-	fmt.Println(currentUser)
-
 	userDTO, err := uc.userService.GetUser(currentUser.ID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
