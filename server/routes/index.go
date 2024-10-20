@@ -18,6 +18,7 @@ func InitRoutes(app *fiber.App) {
 	userController := initUserController(client)
 	setupRoutesUser(app, userController)
 
+<<<<<<< HEAD
 	//Initialiser les routes reporting
 	reportingController := initReportingController(client)
 	setupRoutesReporting(app, reportingController)
@@ -28,4 +29,9 @@ func InitRoutes(app *fiber.App) {
 	//Initialiser les routes subject
 	subjectController := initSubjectController(client)
 	setupRoutesSubject(app, subjectController)
+=======
+	//Initialiser les routes event
+	eventController := initEventController(client)
+	setupEventRoutes(app, eventController)
+>>>>>>> b7aae72 (Create event files)
 }
