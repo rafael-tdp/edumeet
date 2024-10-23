@@ -103,6 +103,7 @@ func (us *UserService) Login(requestBody dtos.LoginDTO) (string, error) {
 		return "", err
 	}
 
+	fmt.Printf("jwtToken %v\n", jwtToken)
 	return jwtToken, nil
 }
 
