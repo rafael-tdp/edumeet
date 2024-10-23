@@ -1,3 +1,4 @@
+import 'package:client/Screens/login_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/profile_button.dart';
@@ -91,7 +92,10 @@ class ProfilePage extends StatelessWidget {
                     text: 'Se déconnecter',
                     backgroundColor: Colors.redAccent,
                     onPressed: () {
-                      // todo: Action to logout
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginPage()),
+                      );
                     },
                   ),
                 ],
