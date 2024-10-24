@@ -10,14 +10,14 @@ class AuthServices {
   static Future<ResponseRequest> login(LoginRequest loginRequest) async {
     final response = await http.post(
       Uri.parse(Env.BACKEND_URL + '/login'),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
       body: jsonEncode(loginRequest.toJson()),
     );
 
     if (response.statusCode == 200) {
-      return ResponseRequest.fromJson(jsonDecode(response.body));
+      final token = jsonDecode(response.body)['token'];
+      print('Login ok: ${token}');
+      return ResponseRequest(success: true, message: 'Login successful', data: token);
     } else {
       throw Exception('Failed to login: ${response.statusCode} ${response.reasonPhrase}');
     }
