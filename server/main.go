@@ -4,6 +4,7 @@ import (
 	"edumeet/routes"
 	"flag"
 	"fmt"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"log"
 
 	"github.com/brianvoe/gofakeit/v7"
@@ -24,6 +25,8 @@ func main() {
 	} else {
 		// Initialiser une nouvelle application Fiber
 		app := fiber.New()
+
+		app.Use(cors.New())
 
 		// Définir une route GET pour l'URL racine '/'
 		app.Get("/", func(c *fiber.Ctx) error {
