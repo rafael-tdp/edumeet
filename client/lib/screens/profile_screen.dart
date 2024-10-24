@@ -1,4 +1,4 @@
-import 'package:client/Screens/login_screen.dart';
+import 'package:client/screens/login_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/profile_button.dart';
@@ -94,7 +94,7 @@ class ProfilePage extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(builder: (context) => const LoginPage()),
                       );
                     },
                   ),
