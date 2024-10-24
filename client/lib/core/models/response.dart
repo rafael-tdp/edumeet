@@ -5,22 +5,29 @@ ResponseRequest responseRequestFromJson(String str) => ResponseRequest.fromJson(
 String responseRequestToJson(ResponseRequest data) => json.encode(data.toJson());
 
 class ResponseRequest {
-  final String message;
-  final String status;
+  final bool success;
+  final String? message;
+  final String? errors;
+  final dynamic data;
 
   ResponseRequest({
-    required this.message,
-    required this.status,
+    required this.success,
+    this.message,
+    this.errors,
+    this.data,
   });
 
   factory ResponseRequest.fromJson(Map<String, dynamic> json) =>
       ResponseRequest(
+        success: json["success"],
         message: json["message"],
-        status: json["status"],
+        errors: json["errors"],
+        data: json["data"],
       );
 
   Map<String, dynamic> toJson() => {
     "message": message,
-    "status": status,
+    "errors": errors,
+    "data": data,
   };
 }
