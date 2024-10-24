@@ -17,4 +17,8 @@ func InitRoutes(app *fiber.App) {
 	//Initialiser les routes user
 	userController := initUserController(client)
 	setupRoutesUser(app, userController)
+
+	//Initialiser les routes reporting
+	reportingController := initReportingController(client)
+	setupRoutesReporting(app, reportingController)
 }
