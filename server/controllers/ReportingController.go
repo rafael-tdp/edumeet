@@ -21,7 +21,15 @@ func NewReportingController(reportingService *services.ReportingService) *Report
 }
 
 func (uc *ReportingController) GetReporting(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusNotImplemented).JSON(fiber.Map{"error": "Not implemented"})
+	reportingId, err := ulid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+	reporting, err := uc.reportingService.GetReportingById(reportingId.String())
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Reporting not found"})
+	}
+	return c.Status(fiber.StatusNotImplemented).JSON(reporting)
 }
 
 func (uc *ReportingController) DeleteReporting(c *fiber.Ctx) error {

@@ -12,7 +12,7 @@ import (
 
 func setupRoutesReporting(app *fiber.App, reportingController *controllers.ReportingController) {
 
-	//app.Get("/reporting/:id", middlewares.JWTAuthMiddleware, reportingController.GetReporting)
+	app.Get("/reporting/:id", middlewares.JWTAuthMiddleware, reportingController.GetReporting)
 	app.Post("/reporting", middlewares.JWTAuthMiddleware, reportingController.CreateReporting)
 	app.Delete("/reporting/:id", middlewares.JWTAuthMiddleware, reportingController.DeleteReporting)
 }

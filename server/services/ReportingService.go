@@ -21,12 +21,16 @@ func (r *ReportingService) GetReportingById(reportingID string) (dtos.ReportingD
 		return dtos.ReportingDTO{}, err
 	}
 
+	entity, err := r.reportingRepo.GetEntity(reporting.Type, reporting.EntityID)
+	if err != nil {
+		return dtos.ReportingDTO{}, err
+	}
 	reportingDTO := dtos.ReportingDTO{
-		ID:       reporting.ID,
-		Reason:   reporting.Reason,
-		Type:     reporting.Type,
-		EntityID: reporting.EntityID,
-		UserID:   reporting.Edges.User.ID,
+		ID:     reporting.ID,
+		Reason: reporting.Reason,
+		Type:   reporting.Type,
+		Entity: entity,
+		User:   reporting.Edges.User,
 	}
 
 	return reportingDTO, nil

@@ -78,3 +78,28 @@ func (r *ReportingRepository) CreateReporting(reportingDTO dtos.ReportingDTO) er
 
 	return nil
 }
+
+func (r *ReportingRepository) GetEntity(entityType string, entityID string) (interface{}, error) {
+	switch entityType {
+	case "USER":
+		user, err := r.client.User.Query().Where(user.IDEQ(entityID)).Only(context.Background())
+		if err != nil {
+			return nil, errors.New("user not found")
+		}
+		return user, nil
+	case "MESSAGE":
+		message, err := r.client.Message.Query().Where(message.IDEQ(entityID)).Only(context.Background())
+		if err != nil {
+			return nil, errors.New("message not found")
+		}
+		return message, nil
+	case "EVENT":
+		event, err := r.client.Event.Query().Where(event.IDEQ(entityID)).Only(context.Background())
+		if err != nil {
+			return nil, errors.New("event not found")
+		}
+		return event, nil
+	default:
+		return nil, errors.New("invalid entity type")
+	}
+}
