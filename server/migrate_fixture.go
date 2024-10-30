@@ -27,7 +27,11 @@ func migrateFixture() {
 	// delete all data
 	client.User.Delete().ExecX(ctx)
 	userFixture := fixture.User{}
-	userFixture.GenerateFixture(ctx, client)
+	userFixture.GenerateUser(ctx, client)
+
+	client.Badge.Delete().ExecX(ctx)
+	badgeFixture := fixture.Badge{}
+	badgeFixture.GenerateBadge(ctx, client)
 
 	log.Println("Fixtures applied successfully.")
 }

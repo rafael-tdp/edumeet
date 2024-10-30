@@ -11,7 +11,7 @@ import (
 
 type User struct{}
 
-func (u *User) GenerateFixture(ctx context.Context, client *ent.Client) {
+func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 	physicalUser := []string{"Zaid", "Jugurtha", "Rapahel", "Makan"}
 	dateUtils := utils.Date{}
 	bcryptUtils := utils.Bcrypt{}
