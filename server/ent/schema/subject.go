@@ -16,7 +16,7 @@ func (Subject) Fields() []ent.Field {
 	ulid := utils.ULID{}
 	return []ent.Field{
 		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
-		field.String("name"),
+		field.String("name").NotEmpty().Unique(),
 	}
 }
 
