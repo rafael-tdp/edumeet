@@ -3,6 +3,7 @@ package routes
 import (
 	"edumeet/controllers"
 	"edumeet/ent"
+	"edumeet/middlewares"
 	"edumeet/repositories"
 	"edumeet/services"
 
@@ -11,9 +12,9 @@ import (
 
 func setupRoutesSubject(app *fiber.App, subjectController *controllers.SubjectController) {
 
-	app.Post("/subjects", subjectController.Create)
-	app.Delete("/subjects/:id", subjectController.Delete)
-	app.Put("/subjects/:id", subjectController.Update)
+	app.Post("/subjects", middlewares.AdminMiddleware, subjectController.Create)
+	app.Delete("/subjects/:id", middlewares.AdminMiddleware, subjectController.Delete)
+	app.Put("/subjects/:id", middlewares.AdminMiddleware, subjectController.Update)
 	app.Get("/subjects", subjectController.GetSubjects)
 }
 
