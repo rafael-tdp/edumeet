@@ -59,3 +59,22 @@ func (sr *SubjectService) Delete(subjectID string) error {
 	}
 	return nil
 }
+
+func (sr *SubjectService) GetSubjects() ([]*dtos.SubjectDTO, error) {
+	subjects, err := sr.subjectRepository.GetSubjects()
+	if err != nil {
+		return nil, errors.New("error getting subjects")
+	}
+
+	subjectsDTO := make([]*dtos.SubjectDTO, 0)
+
+	for _, subject := range subjects {
+		subjectDTO, err := dtos.ParseSubjectDTO(subject)
+		if err != nil {
+			return nil, errors.New("error parsing subject DTO")
+		}
+		subjectsDTO = append(subjectsDTO, subjectDTO)
+	}
+
+	return subjectsDTO, nil
+}

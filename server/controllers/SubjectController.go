@@ -51,3 +51,13 @@ func (sc *SubjectController) Delete(c *fiber.Ctx) error {
 
 	return c.SendStatus(fiber.StatusNoContent)
 }
+
+func (sc *SubjectController) GetSubjects(c *fiber.Ctx) error {
+	subjects, err := sc.subjectService.GetSubjects()
+
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(subjects)
+}
