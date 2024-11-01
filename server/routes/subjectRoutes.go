@@ -12,6 +12,7 @@ import (
 func setupRoutesSubject(app *fiber.App, subjectController *controllers.SubjectController) {
 
 	app.Post("/subjects", subjectController.Create)
+	app.Delete("/subjects/:id", subjectController.Delete)
 }
 
 func initSubjectController(client *ent.Client) *controllers.SubjectController {

@@ -34,3 +34,11 @@ func (sr *SubjectRepository) Create(subject *ent.Subject) (*ent.Subject, error) 
 	}
 	return subject, nil
 }
+
+func (sr *SubjectRepository) Delete(subjectID string) error {
+	err := sr.client.Subject.DeleteOneID(subjectID).Exec(context.Background())
+	if err != nil {
+		return errors.New("error deleting subject")
+	}
+	return nil
+}

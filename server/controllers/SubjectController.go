@@ -5,6 +5,7 @@ import (
 	"edumeet/services"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/oklog/ulid/v2"
 )
 
 type SubjectController struct {
@@ -34,4 +35,19 @@ func (sc *SubjectController) Create(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(subject)
+}
+
+func (sc *SubjectController) Delete(c *fiber.Ctx) error {
+	id, err := ulid.Parse(c.Params("id"))
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+	errDelete := sc.subjectService.Delete(id.String())
+
+	if errDelete != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }

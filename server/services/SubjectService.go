@@ -51,3 +51,11 @@ func (sr *SubjectService) Create(subjectDTO dtos.SubjectDTO) (*dtos.SubjectDTO, 
 
 	return createdSubject, nil
 }
+
+func (sr *SubjectService) Delete(subjectID string) error {
+	err := sr.subjectRepository.Delete(subjectID)
+	if err != nil {
+		return errors.New("error deleting subject")
+	}
+	return nil
+}
