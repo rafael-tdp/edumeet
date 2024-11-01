@@ -37,6 +37,28 @@ func (sc *SubjectController) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(subject)
 }
 
+func (sc *SubjectController) Update(c *fiber.Ctx) error {
+	id, err := ulid.Parse(c.Params("id"))
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	var subjectDTO dtos.SubjectDTO
+
+	if err := c.BodyParser(&subjectDTO); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	subject, err := sc.subjectService.Update(id.String(), subjectDTO)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(subject)
+}
+
 func (sc *SubjectController) Delete(c *fiber.Ctx) error {
 	id, err := ulid.Parse(c.Params("id"))
 

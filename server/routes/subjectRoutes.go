@@ -13,6 +13,7 @@ func setupRoutesSubject(app *fiber.App, subjectController *controllers.SubjectCo
 
 	app.Post("/subjects", subjectController.Create)
 	app.Delete("/subjects/:id", subjectController.Delete)
+	app.Put("/subjects/:id", subjectController.Update)
 	app.Get("/subjects", subjectController.GetSubjects)
 }
 

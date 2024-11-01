@@ -50,3 +50,13 @@ func (sr *SubjectRepository) GetSubjects() ([]*ent.Subject, error) {
 	}
 	return subjects, nil
 }
+
+func (sr *SubjectRepository) Update(subjectID string, subject *ent.Subject) (*ent.Subject, error) {
+	subject, err := sr.client.Subject.UpdateOneID(subjectID).
+		SetName(subject.Name).
+		Save(context.Background())
+	if err != nil {
+		return nil, errors.New("error updating subject")
+	}
+	return subject, nil
+}

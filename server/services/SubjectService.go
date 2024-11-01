@@ -78,3 +78,23 @@ func (sr *SubjectService) GetSubjects() ([]*dtos.SubjectDTO, error) {
 
 	return subjectsDTO, nil
 }
+
+func (sr *SubjectService) Update(subjectID string, subjectDTO dtos.SubjectDTO) (*dtos.SubjectDTO, error) {
+	subjectEnt, err := dtos.ConvertDTOToEnt(&subjectDTO)
+	if err != nil {
+		return nil, errors.New("error converting DTO to ent")
+	}
+
+	subject, err := sr.subjectRepository.Update(subjectID, subjectEnt)
+	if err != nil {
+		return nil, errors.New("error updating subject")
+	}
+
+	updatedSubject, err := dtos.ParseSubjectDTO(subject)
+
+	if err != nil {
+		return nil, errors.New("error parsing subject DTO")
+	}
+
+	return updatedSubject, nil
+}
