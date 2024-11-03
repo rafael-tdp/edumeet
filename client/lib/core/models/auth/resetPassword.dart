@@ -1,9 +1,14 @@
-class PasswordResetRequest {
-  final String email;
+class ResetPasswordRequest {
+  final String plainPassword;
+  final String confirmPassword;
 
-  PasswordResetRequest({required this.email});
+  ResetPasswordRequest({
+    required this.plainPassword,
+    required this.confirmPassword,
+  });
 
   Map<String, dynamic> toJson() => {
-    'email': email,
+    'plainPassword': plainPassword,
+    'confirmPassword': confirmPassword,
   };
 }
