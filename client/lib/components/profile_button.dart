@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class ProfileButton extends StatelessWidget {
   final String text;
   final Color backgroundColor;
+  final bool rounded;
   final VoidCallback onPressed;
 
   const ProfileButton({
@@ -10,6 +11,7 @@ class ProfileButton extends StatelessWidget {
     required this.text,
     required this.backgroundColor,
     required this.onPressed,
+    this.rounded = false,
   });
 
   @override
@@ -19,7 +21,7 @@ class ProfileButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(2),
+          borderRadius: BorderRadius.circular(rounded ? 20 : 2),
         ),
       ),
       child: Padding(

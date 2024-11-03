@@ -7,4 +7,6 @@ class AppColors {
 
   static const Color lightPurple = Color.fromARGB(255, 243, 243, 252);
   static const Color purple = Color(0xFF6459f0);
+
+  static const Color gray = Color.fromARGB(255, 117, 117, 117);
 }

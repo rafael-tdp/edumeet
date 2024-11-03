@@ -1,5 +1,6 @@
-import 'package:client/screens/login_screen.dart';
+import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/screens/profile_screen.dart';
+import 'package:client/screens/welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: LoginPage(),
+      home: WelcomeScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
