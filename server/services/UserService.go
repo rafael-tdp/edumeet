@@ -130,6 +130,8 @@ func (us *UserService) Verify(code string) (dtos.UserDTO, error) {
 		return dtos.UserDTO{}, err
 	}
 
+	address, err := utils.GetAddress(*user.Lat, *user.Lng)
+
 	userDTO := dtos.UserDTO{
 		ID:        user.ID,
 		Email:     user.Email,
@@ -141,8 +143,7 @@ func (us *UserService) Verify(code string) (dtos.UserDTO, error) {
 		Picture:   user.Picture,
 		Activated: user.Activated,
 		ReportNum: user.ReportNumber,
-		Lng:       user.Lng,
-		Lat:       user.Lat,
+		Address:   address,
 		Role:      user.Role,
 	}
 

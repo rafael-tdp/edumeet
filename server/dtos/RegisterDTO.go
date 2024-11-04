@@ -11,4 +11,5 @@ type RegisterDTO struct {
 	BirthDate time.Time `json:"birthDate" validate:"required"`
 	Bio       *string   `json:"bio,omitempty"`
 	Picture   *string   `json:"picture,omitempty"`
+	Address   string    `json:"address,omitempty"`
 }

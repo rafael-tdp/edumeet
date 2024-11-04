@@ -2,15 +2,15 @@ package dtos
 
 import (
 	"edumeet/ent"
+	"edumeet/utils"
 	"errors"
 )
 
 type UserProfileDTO struct {
-	Username string   `json:"username"`
-	Bio      *string  `json:"bio,omitempty"`
-	Picture  *string  `json:"picture,omitempty"`
-	Lng      *float64 `json:"lng,omitempty"`
-	Lat      *float64 `json:"lat,omitempty"`
+	Username string  `json:"username"`
+	Bio      *string `json:"bio,omitempty"`
+	Picture  *string `json:"picture,omitempty"`
+	Address  string  `json:"address,omitempty"`
 }
 
 func ParseUserProfileDTO(user *ent.User) (*UserProfileDTO, error) {
@@ -22,12 +22,17 @@ func ParseUserProfileDTO(user *ent.User) (*UserProfileDTO, error) {
 		return nil, errors.New("username is required")
 	}
 
+	address, err := utils.GetAddress(*user.Lat, *user.Lng)
+
+	if err != nil {
+		return nil, err
+	}
+
 	userProfileDTO := &UserProfileDTO{
 		Username: user.Username,
 		Bio:      user.Bio,
 		Picture:  user.Picture,
-		Lng:      user.Lng,
-		Lat:      user.Lat,
+		Address:  address,
 	}
 	return userProfileDTO, nil
 }

@@ -5,6 +5,7 @@ import (
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/ent/user"
+	"edumeet/utils"
 	"errors"
 
 	"github.com/oklog/ulid/v2"
@@ -31,6 +32,10 @@ func (ur *UserRepository) GetById(userID string) (*ent.User, error) {
 }
 
 func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPassword string) (*ent.User, error) {
+	lat, lng, err := utils.GetLatLng(registerDTO.Address)
+	if err != nil {
+		return nil, err
+	}
 	user, err := ur.client.User.
 		Create().
 		SetEmail(registerDTO.Email).
@@ -43,6 +48,8 @@ func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPasswor
 		SetNillablePicture(registerDTO.Picture).
 		SetActivated(false).
 		SetCode(ulid.Make().String()).
+		SetLat(lat).
+		SetLng(lng).
 		Save(context.Background())
 
 	if err != nil {
