@@ -32,10 +32,17 @@ func (ur *UserRepository) GetById(userID string) (*ent.User, error) {
 }
 
 func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPassword string) (*ent.User, error) {
-	lat, lng, err := utils.GetLatLng(registerDTO.Address)
+	var lat, lng float64
+	var err error
+
+	if registerDTO.Address != "" {
+		lat, lng, err = utils.GetLatLng(registerDTO.Address)
+	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	user, err := ur.client.User.
 		Create().
 		SetEmail(registerDTO.Email).
