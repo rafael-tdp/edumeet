@@ -11,16 +11,26 @@ import (
 )
 
 func GetAddress(lat float64, lng float64) (string, error) {
-	response, err := http.Get(fmt.Sprintf("https://nominatim.openstreetmap.org/reverse?lat=%g&lon=%g&format=json", lat, lng))
+	if lat == 0 || lng == 0 {
+		return "", nil
+
+	}
+	url := fmt.Sprintf("https://nominatim.openstreetmap.org/reverse?lat=%g&lon=%g&format=json", lat, lng)
+	req, err := http.NewRequest("GET", url, nil)
+
 	if err != nil {
 		return "", err
 	}
 
-	defer response.Body.Close()
+	req.Header.Set("User-Agent", "Edumeet/1.0")
+	client := &http.Client{}
+	response, err := client.Do(req)
 
 	if response.StatusCode != http.StatusOK {
 		return "", errors.New("error nomatim response")
 	}
+
+	defer response.Body.Close()
 
 	var addressObject struct {
 		Address struct {
@@ -43,12 +53,21 @@ func GetAddress(lat float64, lng float64) (string, error) {
 }
 
 func GetLatLng(address string) (float64, float64, error) {
-	response, err := http.Get(fmt.Sprintf("https://nominatim.openstreetmap.org/search?q=%s&format=json", url.QueryEscape(address)))
+	if address == "" {
+		return 0, 0, nil
+
+	}
+	encodedAddress := url.QueryEscape(address)
+	url := fmt.Sprintf("https://nominatim.openstreetmap.org/search?q=%s&format=json", encodedAddress)
+	req, err := http.NewRequest("GET", url, nil)
+
 	if err != nil {
 		return 0, 0, err
 	}
 
-	defer response.Body.Close()
+	req.Header.Set("User-Agent", "Edumeet/1.0")
+	client := &http.Client{}
+	response, err := client.Do(req)
 
 	if response.StatusCode != http.StatusOK {
 		return 0, 0, errors.New("error nomatim response")
