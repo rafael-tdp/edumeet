@@ -90,6 +90,10 @@ func init() {
 	reporting.DefaultID = reportingDescID.Default.(func() string)
 	subjectFields := schema.Subject{}.Fields()
 	_ = subjectFields
+	// subjectDescName is the schema descriptor for name field.
+	subjectDescName := subjectFields[1].Descriptor()
+	// subject.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	subject.NameValidator = subjectDescName.Validators[0].(func(string) error)
 	// subjectDescID is the schema descriptor for id field.
 	subjectDescID := subjectFields[0].Descriptor()
 	// subject.DefaultID holds the default value on creation for the id field.

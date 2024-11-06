@@ -8,6 +8,7 @@ import (
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/oklog/ulid/v2"
 )
 
@@ -24,6 +25,11 @@ func main() {
 	} else {
 		// Initialiser une nouvelle application Fiber
 		app := fiber.New()
+
+		// cors
+		app.Use(cors.New(cors.Config{
+			AllowOrigins: "*",
+		}))
 
 		// Définir une route GET pour l'URL racine '/'
 		app.Get("/", func(c *fiber.Ctx) error {

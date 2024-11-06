@@ -147,7 +147,20 @@ func (su *SubjectUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (su *SubjectUpdate) check() error {
+	if v, ok := su.mutation.Name(); ok {
+		if err := subject.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Subject.name": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (su *SubjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := su.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(subject.Table, subject.Columns, sqlgraph.NewFieldSpec(subject.FieldID, field.TypeString))
 	if ps := su.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -400,7 +413,20 @@ func (suo *SubjectUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (suo *SubjectUpdateOne) check() error {
+	if v, ok := suo.mutation.Name(); ok {
+		if err := subject.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Subject.name": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (suo *SubjectUpdateOne) sqlSave(ctx context.Context) (_node *Subject, err error) {
+	if err := suo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(subject.Table, subject.Columns, sqlgraph.NewFieldSpec(subject.FieldID, field.TypeString))
 	id, ok := suo.mutation.ID()
 	if !ok {

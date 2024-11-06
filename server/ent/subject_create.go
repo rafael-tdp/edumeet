@@ -117,6 +117,11 @@ func (sc *SubjectCreate) check() error {
 	if _, ok := sc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Subject.name"`)}
 	}
+	if v, ok := sc.mutation.Name(); ok {
+		if err := subject.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Subject.name": %w`, err)}
+		}
+	}
 	return nil
 }
 
