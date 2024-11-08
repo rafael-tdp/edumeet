@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:client/components/messages/message_input_field.dart';
+import 'package:client/components/messages/chat_message.dart';
 
 class EventChatPage extends StatefulWidget {
   final Map<String, dynamic> event;
@@ -6,6 +8,7 @@ class EventChatPage extends StatefulWidget {
   const EventChatPage({super.key, required this.event});
 
   @override
+  // ignore: library_private_types_in_public_api
   _EventChatPageState createState() => _EventChatPageState();
 }
 
@@ -38,64 +41,54 @@ class _EventChatPageState extends State<EventChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Chat - ${widget.event['title']}"),
-        backgroundColor: Colors.blueAccent,
+        title: Text(
+          widget.event['title']!,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(
+            color: Colors.grey[300],
+            height: 1,
+          ),
+        ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final message = messages[index];
-                bool isMe = message['sender'] == 'Moi';
-                return Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  alignment:
-                      isMe ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: isMe ? Colors.blueAccent : Colors.grey[300],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      "${message['sender']}: ${message['message']}",
-                      style: TextStyle(
-                        color: isMe ? Colors.white : Colors.black,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                );
-              },
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: messages.length,
+                itemBuilder: (context, index) {
+                  final message = messages[index];
+                  bool isMe = message['sender'] == 'Moi';
+                  return ChatMessage(
+                    sender: message['sender']!,
+                    message: message['message']!,
+                    isMe: isMe,
+                  );
+                },
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: const InputDecoration(
-                      hintText: "Écrire un message...",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: _sendMessage,
-                  child: const Icon(Icons.send),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: MessageInputField(
+                controller: _messageController,
+                onSendMessage: _sendMessage,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

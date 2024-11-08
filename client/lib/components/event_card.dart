@@ -8,12 +8,12 @@ class EventCard extends StatelessWidget {
   final String participants;
 
   const EventCard({
-    Key? key,
+    super.key,
     required this.title,
     required this.date,
     required this.imageUrl,
-    required this.participants, // Ajouter participants
-  }) : super(key: key);
+    required this.participants,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +21,15 @@ class EventCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       elevation: 3,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15), // Arrondir les bords du Card
+        borderRadius: BorderRadius.circular(15),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(15), // Arrondir le contenu
+        borderRadius: BorderRadius.circular(15),
         child: Stack(
           children: [
             // Background image
             Container(
-              height: 150, // Define height for the card
+              height: 150,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 image: DecorationImage(
@@ -70,7 +70,6 @@ class EventCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  // Row to display date and participants
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -100,7 +99,7 @@ class EventCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              participants, // Affiche le nombre de participants
+                              participants,
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
