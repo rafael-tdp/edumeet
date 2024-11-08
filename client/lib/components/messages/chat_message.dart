@@ -4,9 +4,11 @@ class ChatMessage extends StatelessWidget {
   final String sender;
   final String message;
   final bool isMe;
+  final bool showName;
 
   const ChatMessage({
     super.key,
+    this.showName = false,
     required this.sender,
     required this.message,
     required this.isMe,
@@ -33,7 +35,7 @@ class ChatMessage extends StatelessWidget {
           crossAxisAlignment:
               isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            if (!isMe) // Afficher l'expéditeur seulement si ce n'est pas moi
+            if (!isMe && showName)
               Text(
                 sender,
                 style: const TextStyle(

@@ -48,29 +48,49 @@ class FakeData {
   };
 
   // conversations data
-  static List<Map<String, String>> conversations = [
+  static List<Map<String, dynamic>> conversations = [
     {
-      "name": "Alice Dupont",
+      "user": {
+        "name": "Alice Martin",
+        "image":
+            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D",
+      },
       "lastMessage": "Salut, comment ça va ?",
       "date": "2024-10-15T10:30:00Z",
     },
     {
-      "name": "Bob Martin",
+      "user": {
+        "name": "Bob Dupont",
+        "image":
+            "https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D",
+      },
       "lastMessage": "À demain pour la réunion.",
       "date": "2024-10-14T10:30:00Z",
     },
     {
-      "name": "Chloé Durant",
+      "user": {
+        "name": "Charlie Durand",
+        "image":
+            "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?q=80&w=2830&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      },
       "lastMessage": "Merci pour ton aide !",
       "date": "2021-09-13T08:45:00Z",
     },
     {
-      "name": "David Leroy",
+      "user": {
+        "name": "David Lefevre",
+        "image":
+            "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?q=80&w=2830&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      },
       "lastMessage": "On se voit ce soir ?",
       "date": "2021-09-12T20:00:00Z",
     },
     {
-      "name": "Emma Laroche",
+      "user": {
+        "name": "Eva Bernard",
+        "image":
+            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D",
+      },
       "lastMessage": "J'ai envoyé le fichier.",
       "date": "2021-09-11T14:30:00Z",
     },
