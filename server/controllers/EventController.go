@@ -5,6 +5,7 @@ import (
 	"edumeet/services"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/oklog/ulid/v2"
 )
 
 type EventController struct {
@@ -37,9 +38,14 @@ func (ec *EventController) CreateRemoteEvent(c *fiber.Ctx) error {
 }
 
 func (ec *EventController) DeleteEvent(c *fiber.Ctx) error {
-	eventID := c.Params("id")
 
-	err := ec.eventservice.DeleteEvent(eventID)
+	eventID, errParse := ulid.Parse(c.Params("id"))
+
+	if errParse != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	err := ec.eventservice.DeleteEvent(eventID.String())
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -50,9 +56,13 @@ func (ec *EventController) DeleteEvent(c *fiber.Ctx) error {
 
 func (ec *EventController) GetRemoteEvent(c *fiber.Ctx) error {
 
-	eventID := c.Params("id")
+	eventID, err := ulid.Parse(c.Params("id"))
 
-	remoteEvent, err := ec.eventservice.GetRemoteEvent(eventID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	remoteEvent, err := ec.eventservice.GetRemoteEvent(eventID.String())
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -62,7 +72,11 @@ func (ec *EventController) GetRemoteEvent(c *fiber.Ctx) error {
 }
 
 func (ec *EventController) UpdateRemoteEvent(c *fiber.Ctx) error {
-	eventID := c.Params("id")
+	eventID, errParse := ulid.Parse(c.Params("id"))
+
+	if errParse != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
 
 	var remoteEventDTO dtos.RemoteEventDTO
 
@@ -70,7 +84,7 @@ func (ec *EventController) UpdateRemoteEvent(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
-	remoteEvent, err := ec.eventservice.UpdateRemoteEvent(eventID, remoteEventDTO)
+	remoteEvent, err := ec.eventservice.UpdateRemoteEvent(eventID.String(), remoteEventDTO)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
