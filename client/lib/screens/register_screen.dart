@@ -1,8 +1,10 @@
 import 'package:client/core/models/response.dart';
+import 'package:client/screens/verify_code_screen.dart';
 import 'package:flutter/material.dart';
 import '../core/models/auth/register.dart';
 import '../core/services/auth_services.dart';
 import '../utils/colors.dart';
+import '../widgets/password_condition_widget.dart';
 import 'login_screen.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -69,7 +71,7 @@ class _RegisterPageState extends State<RegisterPage> {
       if (response.success) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const LoginPage()),
+          MaterialPageRoute(builder: (context) => VerifyCodePage(isResetPassword: false, email: _emailController.text)),
         );
       } else {
         setState(() {
@@ -90,7 +92,6 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -109,11 +110,11 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  const Text(
                     'Entrez votre email et mot de passe pour créer un compte',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: AppColors.gray,
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -221,10 +222,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildPasswordCondition("Au moins 8 caractères", _hasMinLength),
-                      _buildPasswordCondition("Au moins une lettre majuscule", _hasUpperCase),
-                      _buildPasswordCondition("Au moins un chiffre", _hasDigit),
-                      _buildPasswordCondition("Au moins un caractère spécial", _hasSpecialChar),
+                      PasswordConditionWidget(text: "Au moins 8 caractères", isValid: _hasMinLength),
+                      PasswordConditionWidget(text: "Au moins une lettre majuscule", isValid: _hasUpperCase),
+                      PasswordConditionWidget(text: "Au moins un chiffre", isValid: _hasDigit),
+                      PasswordConditionWidget(text: "Au moins un caractère spécial", isValid: _hasSpecialChar),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -238,12 +239,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           });
                         },
                       ),
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           'En créant un compte, vous acceptez nos Conditions d\'utilisation et Politique de confidentialité',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: AppColors.gray,
                           ),
                         ),
                       ),
@@ -293,9 +294,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Vous avez déjà un compte ? ',
-                        style: TextStyle(color: Colors.grey[600]),
+                        style: TextStyle(color: AppColors.gray),
                       ),
                       TextButton(
                         onPressed: () {
@@ -307,7 +308,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: const Text(
                           'Se connecter',
                           style: TextStyle(
-                            color: AppColors.darkBlue,
+                            color: AppColors.purple,
                             decoration: TextDecoration.underline,
                             fontWeight: FontWeight.bold,
                           ),
@@ -320,29 +321,6 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildPasswordCondition(String text, bool isValid) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        children: [
-          Icon(
-            isValid ? Icons.check_circle : Icons.radio_button_unchecked,
-            color: isValid ? Colors.green : Colors.grey,
-            size: 18,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            text,
-            style: TextStyle(
-              color: isValid ? Colors.green : Colors.grey,
-              fontSize: 14,
-            ),
-          ),
-        ],
       ),
     );
   }

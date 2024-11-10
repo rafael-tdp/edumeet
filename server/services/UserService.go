@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 )
 
 type UserService struct {
@@ -60,6 +61,11 @@ func (us *UserService) GetUserByEmail(email string) (*ent.User, error) {
 
 func (us *UserService) RegisterUser(registerDTO dtos.RegisterDTO) (*ent.User, error) {
 
+	existingUser, err := us.userRepo.GetByEmail(registerDTO.Email)
+	if err == nil && existingUser != nil {
+		return nil, errors.New("Cet email est déjà utilisé")
+	}
+
 	bcryptUtils := utils.Bcrypt{}
 
 	hashedPassword := bcryptUtils.HashPassword(registerDTO.Password)
@@ -72,13 +78,8 @@ func (us *UserService) RegisterUser(registerDTO dtos.RegisterDTO) (*ent.User, er
 	return user, nil
 }
 
-func (us *UserService) ValidateUser(code string) (*ent.User, error) {
-
-	user, err := us.userRepo.ValidateUserByCode(code)
-	if err != nil {
-		return nil, err
-	}
-
+func (us *UserService) ValidateUser(requestBody dtos.VerifyCodeDTO) (*ent.User, error) {
+	user, _ := us.userRepo.ValidateUserByCode(requestBody.Email, requestBody.Code)
 	return user, nil
 }
 
@@ -116,7 +117,12 @@ func (us *UserService) ForgotPassword(requestBody dtos.ForgotPasswordDTO) (*ent.
 	ulidUtil := utils.ULID{}
 	code := ulidUtil.GenerateUlid()()
 
-	updatedUser, err := user.Update().SetCode(code).Save(context.Background())
+	expirationTime := time.Now().Add(time.Minute * 30)
+
+	updatedUser, err := user.Update().
+		SetCode(code).
+		SetCodeExpiration(expirationTime).
+		Save(context.Background())
 
 	if err != nil {
 		return nil, err
@@ -156,10 +162,19 @@ func (us *UserService) ResetPassword(code string, requestBody dtos.ResetPassword
 	if err != nil {
 		return err
 	}
+
+	if user.CodeExpiration == nil || user.CodeExpiration.Before(time.Now()) {
+		return errors.New("code expired")
+	}
+
 	bcryptUtil := utils.Bcrypt{}
 	passwordHashed := bcryptUtil.HashPassword(requestBody.PlainPassword)
 
-	_, err = user.Update().SetPassword(passwordHashed).SetCode("").Save(context.Background())
+	_, err = user.Update().
+		SetPassword(passwordHashed).
+		SetCode("").
+		SetCodeExpiration(time.Time{}).
+		Save(context.Background())
 
 	if err != nil {
 		return err

@@ -61,22 +61,25 @@ func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPasswor
 	return user, nil
 }
 
-func (ur *UserRepository) ValidateUserByCode(code string) (*ent.User, error) {
+func (ur *UserRepository) ValidateUserByCode(email string, code string) (*ent.User, error) {
 
-	u, err := ur.VerifyUserByCode(code)
-
+	u, err := ur.client.User.
+		Query().
+		Where(user.CodeEQ(code)).
+		Where(user.EmailEQ(email)).
+		Only(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	updatedUser, err := u.Update().
+	_, err = u.Update().
 		SetActivated(true).
 		Save(context.Background())
 	if err != nil {
 		return nil, errors.New("failed to update user")
 	}
 
-	return updatedUser, nil
+	return u, nil
 }
 
 func (ur *UserRepository) GetByEmail(email string) (*ent.User, error) {

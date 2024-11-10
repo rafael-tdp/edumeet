@@ -43,6 +43,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldCode holds the string denoting the code field in the database.
 	FieldCode = "code"
+	// FieldCodeExpiration holds the string denoting the code_expiration field in the database.
+	FieldCodeExpiration = "code_expiration"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
 	// EdgeBadges holds the string denoting the badges edge name in mutations.
@@ -116,6 +118,7 @@ var Columns = []string{
 	FieldLat,
 	FieldCreatedAt,
 	FieldCode,
+	FieldCodeExpiration,
 	FieldRole,
 }
 
@@ -252,6 +255,11 @@ func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 // ByCode orders the results by the code field.
 func ByCode(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCode, opts...).ToFunc()
+}
+
+// ByCodeExpiration orders the results by the code_expiration field.
+func ByCodeExpiration(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCodeExpiration, opts...).ToFunc()
 }
 
 // ByRole orders the results by the role field.

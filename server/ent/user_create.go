@@ -174,6 +174,20 @@ func (uc *UserCreate) SetNillableCode(s *string) *UserCreate {
 	return uc
 }
 
+// SetCodeExpiration sets the "code_expiration" field.
+func (uc *UserCreate) SetCodeExpiration(t time.Time) *UserCreate {
+	uc.mutation.SetCodeExpiration(t)
+	return uc
+}
+
+// SetNillableCodeExpiration sets the "code_expiration" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCodeExpiration(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetCodeExpiration(*t)
+	}
+	return uc
+}
+
 // SetRole sets the "role" field.
 func (uc *UserCreate) SetRole(u user.Role) *UserCreate {
 	uc.mutation.SetRole(u)
@@ -476,6 +490,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Code(); ok {
 		_spec.SetField(user.FieldCode, field.TypeString, value)
 		_node.Code = &value
+	}
+	if value, ok := uc.mutation.CodeExpiration(); ok {
+		_spec.SetField(user.FieldCodeExpiration, field.TypeTime, value)
+		_node.CodeExpiration = &value
 	}
 	if value, ok := uc.mutation.Role(); ok {
 		_spec.SetField(user.FieldRole, field.TypeEnum, value)

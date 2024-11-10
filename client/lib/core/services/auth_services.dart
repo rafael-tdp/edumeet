@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:client/core/models/auth/resetPassword.dart';
+import 'package:client/core/models/auth/verifyCode.dart';
 import 'package:client/secureStorage.dart';
 import 'package:http/http.dart' as http;
 import '../../env/env.dart';
@@ -23,7 +24,7 @@ class AuthServices {
       SecureStorage().readSecureData('auth_token').then((value) => print('Read token: $value'));
       return ResponseRequest(success: true, message: 'Login successful', data: token);
     } else {
-      throw Exception('Failed to login: ${response.statusCode} ${response.reasonPhrase}');
+      return ResponseRequest(success: false, message: jsonDecode(response.body)['error']);
     }
   }
 
@@ -39,7 +40,7 @@ class AuthServices {
     if (response.statusCode == 201) {
       return ResponseRequest(success: true, message: 'Signup successful');
     } else {
-      throw Exception('Failed to signup: ${response.statusCode} ${response.reasonPhrase}');
+      return ResponseRequest(success: false, message: jsonDecode(response.body)['error']);
     }
   }
 
@@ -61,8 +62,7 @@ class AuthServices {
 
   static Future<ResponseRequest> resetPassword(ResetPasswordRequest resetPasswordRequest) async {
     final response = await http.post(
-      //TODO: Change the URL to the correct one
-      Uri.parse('${Env.BACKEND_URL}/user/reset-password/'),
+      Uri.parse('${Env.BACKEND_URL}/user/reset-password/${resetPasswordRequest.code}'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -76,6 +76,40 @@ class AuthServices {
       return ResponseRequest(success: true, message: jsonDecode(response.body)['message']);
     } else {
       throw Exception('Failed to reset password: ${response.statusCode} ${response.reasonPhrase}');
+    }
+  }
+
+  static Future<ResponseRequest> logout() async {
+    final response = await http.post(
+      Uri.parse('${Env.BACKEND_URL}/logout'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return ResponseRequest(success: true, message: jsonDecode(response.body)['message']);
+    } else {
+      throw Exception('Failed to logout: ${response.statusCode} ${response.reasonPhrase}');
+    }
+  }
+
+  static Future<ResponseRequest> valideCode(VerifyCodeRequest verifyCodeRequest) async {
+    final response = await http.post(
+      Uri.parse('${Env.BACKEND_URL}/user/validate-user'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'code': verifyCodeRequest.code,
+        'email': verifyCodeRequest.email,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return ResponseRequest(success: true, message: jsonDecode(response.body)['message']);
+    } else {
+      throw Exception('Failed to verify code: ${response.statusCode} ${response.reasonPhrase}');
     }
   }
 }

@@ -135,6 +135,11 @@ func Code(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCode, v))
 }
 
+// CodeExpiration applies equality check predicate on the "code_expiration" field. It's identical to CodeExpirationEQ.
+func CodeExpiration(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCodeExpiration, v))
+}
+
 // EmailEQ applies the EQ predicate on the "email" field.
 func EmailEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldEmail, v))
@@ -913,6 +918,56 @@ func CodeEqualFold(v string) predicate.User {
 // CodeContainsFold applies the ContainsFold predicate on the "code" field.
 func CodeContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldCode, v))
+}
+
+// CodeExpirationEQ applies the EQ predicate on the "code_expiration" field.
+func CodeExpirationEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCodeExpiration, v))
+}
+
+// CodeExpirationNEQ applies the NEQ predicate on the "code_expiration" field.
+func CodeExpirationNEQ(v time.Time) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldCodeExpiration, v))
+}
+
+// CodeExpirationIn applies the In predicate on the "code_expiration" field.
+func CodeExpirationIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldIn(FieldCodeExpiration, vs...))
+}
+
+// CodeExpirationNotIn applies the NotIn predicate on the "code_expiration" field.
+func CodeExpirationNotIn(vs ...time.Time) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldCodeExpiration, vs...))
+}
+
+// CodeExpirationGT applies the GT predicate on the "code_expiration" field.
+func CodeExpirationGT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGT(FieldCodeExpiration, v))
+}
+
+// CodeExpirationGTE applies the GTE predicate on the "code_expiration" field.
+func CodeExpirationGTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldCodeExpiration, v))
+}
+
+// CodeExpirationLT applies the LT predicate on the "code_expiration" field.
+func CodeExpirationLT(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLT(FieldCodeExpiration, v))
+}
+
+// CodeExpirationLTE applies the LTE predicate on the "code_expiration" field.
+func CodeExpirationLTE(v time.Time) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldCodeExpiration, v))
+}
+
+// CodeExpirationIsNil applies the IsNil predicate on the "code_expiration" field.
+func CodeExpirationIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldCodeExpiration))
+}
+
+// CodeExpirationNotNil applies the NotNil predicate on the "code_expiration" field.
+func CodeExpirationNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldCodeExpiration))
 }
 
 // RoleEQ applies the EQ predicate on the "role" field.

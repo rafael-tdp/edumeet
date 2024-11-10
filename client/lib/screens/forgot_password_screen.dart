@@ -1,9 +1,10 @@
 import 'package:client/core/models/response.dart';
+import 'package:client/screens/verify_code_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import '../core/models/auth/forgotPassword.dart';
 import '../core/services/auth_services.dart';
 import '../utils/colors.dart';
+import 'login_screen.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -43,6 +44,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Instructions de réinitialisation envoyées à votre e-mail')),
         );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => VerifyCodePage(isResetPassword: true, email: _emailController.text)),
+        );
       } else {
         setState(() {
           _errorMessage = response.message;
@@ -62,7 +67,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -81,11 +85,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  const Text(
                     'Entrez votre adresse e-mail pour recevoir les instructions de réinitialisation',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: AppColors.gray,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -155,18 +159,21 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Retourner à ',
-                        style: TextStyle(color: Colors.grey[600]),
+                        style: TextStyle(color: AppColors.gray),
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const LoginPage()),
+                          );
                         },
                         child: const Text(
                           'Connexion',
                           style: TextStyle(
-                            color: AppColors.darkBlue,
+                            color: AppColors.purple,
                             decoration: TextDecoration.underline,
                             fontWeight: FontWeight.bold,
                           ),

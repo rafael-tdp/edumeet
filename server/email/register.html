@@ -1,7 +1,20 @@
-<html>
-  <body>
-    <h1>Welcome to Our Service</h1>
-    <p>Thank you for registering!</p>
-    <p>Click <a href="{{.URL}}">here</a> to activate your account</p>
-  </body>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmation d'inscription</title>
+</head>
+<body style="font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0;">
+<div style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+  <h2 style="color: #007bff; font-size: 28px; margin-bottom: 20px; text-align: center;">Confirmation d'inscription</h2>
+  <p style="margin-bottom: 15px;">Bonjour {{.USER_FIRSTNAME}},</p>
+  <p style="margin-bottom: 15px;">Merci de vous être inscrit sur notre site. Veuillez copier le code ci-dessous et le saisir dans l'application pour activer votre compte :</p>
+  <p style="text-align: center; margin-top: 20px; margin-bottom: 20px; font-size: 24px; font-weight: bold; background-color: #eee; padding: 15px; border-radius: 5px;">
+    {{.VERIFICATION_CODE}}
+  </p>
+  <p style="margin-bottom: 15px;">Ce code expirera dans 30 minutes. Si vous n'avez pas demandé cette inscription, vous pouvez ignorer cet e-mail en toute sécurité.</p>
+  <p style="text-align: center;">Cordialement,<br>L'équipe de notre site</p>
+</div>
+</body>
 </html>

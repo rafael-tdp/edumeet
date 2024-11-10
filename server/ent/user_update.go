@@ -281,6 +281,26 @@ func (uu *UserUpdate) ClearCode() *UserUpdate {
 	return uu
 }
 
+// SetCodeExpiration sets the "code_expiration" field.
+func (uu *UserUpdate) SetCodeExpiration(t time.Time) *UserUpdate {
+	uu.mutation.SetCodeExpiration(t)
+	return uu
+}
+
+// SetNillableCodeExpiration sets the "code_expiration" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableCodeExpiration(t *time.Time) *UserUpdate {
+	if t != nil {
+		uu.SetCodeExpiration(*t)
+	}
+	return uu
+}
+
+// ClearCodeExpiration clears the value of the "code_expiration" field.
+func (uu *UserUpdate) ClearCodeExpiration() *UserUpdate {
+	uu.mutation.ClearCodeExpiration()
+	return uu
+}
+
 // SetRole sets the "role" field.
 func (uu *UserUpdate) SetRole(u user.Role) *UserUpdate {
 	uu.mutation.SetRole(u)
@@ -630,6 +650,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.CodeCleared() {
 		_spec.ClearField(user.FieldCode, field.TypeString)
+	}
+	if value, ok := uu.mutation.CodeExpiration(); ok {
+		_spec.SetField(user.FieldCodeExpiration, field.TypeTime, value)
+	}
+	if uu.mutation.CodeExpirationCleared() {
+		_spec.ClearField(user.FieldCodeExpiration, field.TypeTime)
 	}
 	if value, ok := uu.mutation.Role(); ok {
 		_spec.SetField(user.FieldRole, field.TypeEnum, value)
@@ -1171,6 +1197,26 @@ func (uuo *UserUpdateOne) ClearCode() *UserUpdateOne {
 	return uuo
 }
 
+// SetCodeExpiration sets the "code_expiration" field.
+func (uuo *UserUpdateOne) SetCodeExpiration(t time.Time) *UserUpdateOne {
+	uuo.mutation.SetCodeExpiration(t)
+	return uuo
+}
+
+// SetNillableCodeExpiration sets the "code_expiration" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableCodeExpiration(t *time.Time) *UserUpdateOne {
+	if t != nil {
+		uuo.SetCodeExpiration(*t)
+	}
+	return uuo
+}
+
+// ClearCodeExpiration clears the value of the "code_expiration" field.
+func (uuo *UserUpdateOne) ClearCodeExpiration() *UserUpdateOne {
+	uuo.mutation.ClearCodeExpiration()
+	return uuo
+}
+
 // SetRole sets the "role" field.
 func (uuo *UserUpdateOne) SetRole(u user.Role) *UserUpdateOne {
 	uuo.mutation.SetRole(u)
@@ -1550,6 +1596,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.CodeCleared() {
 		_spec.ClearField(user.FieldCode, field.TypeString)
+	}
+	if value, ok := uuo.mutation.CodeExpiration(); ok {
+		_spec.SetField(user.FieldCodeExpiration, field.TypeTime, value)
+	}
+	if uuo.mutation.CodeExpirationCleared() {
+		_spec.ClearField(user.FieldCodeExpiration, field.TypeTime)
 	}
 	if value, ok := uuo.mutation.Role(); ok {
 		_spec.SetField(user.FieldRole, field.TypeEnum, value)

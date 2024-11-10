@@ -2,6 +2,8 @@ import 'package:client/core/models/auth/resetPassword.dart';
 import 'package:flutter/material.dart';
 import '../core/services/auth_services.dart';
 import '../utils/colors.dart';
+import '../widgets/password_condition_widget.dart';
+import 'login_screen.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   final String token;
@@ -18,12 +20,19 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _errorMessage;
-  bool _isPasswordVisible = false;
 
   bool get _hasMinLength => _passwordController.text.length >= 8;
   bool get _hasUpperCase => _passwordController.text.contains(RegExp(r'[A-Z]'));
   bool get _hasDigit => _passwordController.text.contains(RegExp(r'\d'));
   bool get _hasSpecialChar => _passwordController.text.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordController.addListener(() {
+      setState(() {});
+    });
+  }
 
   @override
   void dispose() {
@@ -42,13 +51,17 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       ResetPasswordRequest resetPasswordRequest = ResetPasswordRequest(
         plainPassword: _passwordController.text,
         confirmPassword: _confirmPasswordController.text,
+        code: widget.token,
       );
       final response = await AuthServices.resetPassword(resetPasswordRequest);
       if (response.success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Mot de passe réinitialisé avec succès')),
         );
-        Navigator.pop(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage())
+        );
       } else {
         setState(() {
           _errorMessage = 'La réinitialisation a échoué';
@@ -68,7 +81,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -87,34 +99,23 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  const Text(
                     'Entrez votre nouveau mot de passe',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: AppColors.gray,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
                   TextFormField(
                     controller: _passwordController,
-                    obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                       labelText: 'Nouveau mot de passe',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordVisible = !_isPasswordVisible;
-                          });
-                        },
-                      ),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -138,7 +139,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _confirmPasswordController,
-                    obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                       labelText: 'Confirmer le nouveau mot de passe',
                       border: OutlineInputBorder(
@@ -155,6 +155,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                       }
                       return null;
                     },
+                  ),
+                  const SizedBox(height: 16),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      PasswordConditionWidget(text: "Au moins 8 caractères", isValid: _hasMinLength),
+                      PasswordConditionWidget(text: "Au moins une lettre majuscule", isValid: _hasUpperCase),
+                      PasswordConditionWidget(text: "Au moins un chiffre", isValid: _hasDigit),
+                      PasswordConditionWidget(text: "Au moins un caractère spécial", isValid: _hasSpecialChar),
+                    ],
                   ),
                   const SizedBox(height: 24),
                   SizedBox(

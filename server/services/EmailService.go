@@ -25,7 +25,7 @@ func NewEmailService() *EmailService {
 func (es *EmailService) SendEmail(toEmail, subject, htmlContent string) error {
 	m := gomail.NewMessage()
 
-	m.SetHeader("From", es.username)
+	m.SetHeader("From", "Edumeet <"+es.username+">")
 
 	m.SetHeader("To", toEmail)
 

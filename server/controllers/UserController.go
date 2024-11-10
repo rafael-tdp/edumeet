@@ -68,7 +68,7 @@ func (uc *UserController) Register(c *fiber.Ctx) error {
 	user, err := uc.userService.RegisterUser(registerDTO)
 	if err != nil {
 		log.Printf("Error creating user: %v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not create user"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	tmpl, err := template.ParseFiles("./email/register.html")
@@ -79,7 +79,8 @@ func (uc *UserController) Register(c *fiber.Ctx) error {
 
 	var body bytes.Buffer
 	var data = map[string]interface{}{
-		"URL": fmt.Sprintf("%s/user/verify-email/%s", os.Getenv("FRONTEND_URL"), *user.Code),
+		"VERIFICATION_CODE": *user.Code,
+		"USER_FIRSTNAME":    user.Firstname,
 	}
 
 	if err := tmpl.Execute(&body, data); err != nil {
@@ -98,13 +99,20 @@ func (uc *UserController) Register(c *fiber.Ctx) error {
 }
 
 func (uc *UserController) ValidateUser(c *fiber.Ctx) error {
+	var requestBody dtos.VerifyCodeDTO
 
-	code := c.Params("code")
+	if err := c.BodyParser(&requestBody); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
 
-	user, err := uc.userService.ValidateUser(code)
+	user, err := uc.userService.ValidateUser(requestBody)
 	if err != nil {
 
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	if user == nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
@@ -209,7 +217,8 @@ func (uc *UserController) ForgotPassword(c *fiber.Ctx) error {
 
 	var body bytes.Buffer
 	var data = map[string]interface{}{
-		"URL": fmt.Sprintf("%s/user/verify/%s", os.Getenv("FRONTEND_URL"), *user.Code),
+		"VERIFICATION_CODE": *user.Code,
+		"USER_FIRSTNAME":    user.Firstname,
 	}
 
 	if err := tmpl.Execute(&body, data); err != nil {
@@ -243,6 +252,8 @@ func (uc *UserController) ResetPassword(c *fiber.Ctx) error {
 	if code == "" || len(code) == 0 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid code"})
 	}
+
+	fmt.Printf("Code %v \n", code)
 
 	var requestBody dtos.ResetPasswordDTO
 
