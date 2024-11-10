@@ -88,3 +88,35 @@ func (er *EventRepository) GetEvent(eventID string) (*ent.Event, error) {
 
 	return event, nil
 }
+
+func (er *EventRepository) UpdateRemoteEvent(eventID string, remoteEvent *ent.RemoteEvent) (*ent.RemoteEvent, error) {
+	updatedRemoteEvent, err := er.client.RemoteEvent.
+		UpdateOneID(eventID).
+		SetURL(remoteEvent.URL).
+		Save(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedRemoteEvent, nil
+}
+
+func (er *EventRepository) UpdateEvent(eventID string, event *ent.Event) (*ent.Event, error) {
+	updatedEvent, err := er.client.Event.
+		UpdateOneID(eventID).
+		SetTitle(event.Title).
+		SetNbMaxUser(event.NbMaxUser).
+		SetStartDate(event.StartDate).
+		SetEndDate(event.EndDate).
+		SetIsPrivate(event.IsPrivate).
+		SetDescription(event.Description).
+		SetInvitationLink(event.InvitationLink).
+		Save(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedEvent, nil
+}

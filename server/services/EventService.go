@@ -65,3 +65,36 @@ func (es *EventService) GetRemoteEvent(eventID string) (*dtos.RemoteEventDTO, er
 
 	return remote, nil
 }
+
+func (es *EventService) UpdateRemoteEvent(eventID string, remoteEventDTO dtos.RemoteEventDTO) (*dtos.RemoteEventDTO, error) {
+
+	currentEvent, err := es.eventRepository.GetRemoteEvent(eventID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	event, err := remoteEventDTO.ToEntEvent()
+	if err != nil {
+		return nil, err
+	}
+
+	remoteEvent, err := remoteEventDTO.ToEntRemoteEvent()
+	if err != nil {
+		return nil, err
+	}
+
+	updatedRemoteEvent, err := es.eventRepository.UpdateRemoteEvent(eventID, remoteEvent)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedEvent, err := es.eventRepository.UpdateEvent(currentEvent.Edges.Event.ID, event)
+	if err != nil {
+		return nil, err
+	}
+
+	remote := dtos.EntToRemoteEventDTO(updatedRemoteEvent, updatedEvent)
+
+	return remote, nil
+}

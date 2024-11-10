@@ -60,3 +60,21 @@ func (ec *EventController) GetRemoteEvent(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(remoteEvent)
 }
+
+func (ec *EventController) UpdateRemoteEvent(c *fiber.Ctx) error {
+	eventID := c.Params("id")
+
+	var remoteEventDTO dtos.RemoteEventDTO
+
+	if err := c.BodyParser(&remoteEventDTO); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	remoteEvent, err := ec.eventservice.UpdateRemoteEvent(eventID, remoteEventDTO)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(remoteEvent)
+}
