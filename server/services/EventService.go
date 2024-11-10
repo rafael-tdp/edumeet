@@ -16,12 +16,27 @@ func NewEventService(eventRepository *repositories.EventRepository) *EventServic
 }
 
 func (es *EventService) CreateRemoteEvent(remoteEventDTO dtos.RemoteEventDTO) (*dtos.RemoteEventDTO, error) {
-
-	remoteEvent, err := es.eventRepository.CreateRemoteEvent(remoteEvent)
-
+	event, err := remoteEventDTO.ToEntEvent()
 	if err != nil {
 		return nil, err
 	}
 
-	return remoteEvent, nil
+	remoteEvent, err := remoteEventDTO.ToEntRemoteEvent()
+	if err != nil {
+		return nil, err
+	}
+
+	createdEvent, err := es.eventRepository.CreateEvent(event)
+	if err != nil {
+		return nil, err
+	}
+
+	createdRemoteEvent, err := es.eventRepository.CreateRemoteEvent(createdEvent, remoteEvent)
+	if err != nil {
+		return nil, err
+	}
+
+	remote := dtos.EntToRemoteEventDTO(createdRemoteEvent, createdEvent)
+
+	return remote, nil
 }

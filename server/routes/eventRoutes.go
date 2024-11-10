@@ -10,12 +10,12 @@ import (
 )
 
 func setupEventRoutes(app *fiber.App, eventController *controllers.EventController) {
-
+	app.Post("/api/event/remote", eventController.CreateRemoteEvent)
 }
 
 func initEventController(client *ent.Client) *controllers.EventController {
 	eventRepository := repositories.NewEventRepository(client)
-	eventService := services.NeweEventService(eventRepository)
+	eventService := services.NewEventService(eventRepository)
 	emailService := services.NewEmailService()
 	return controllers.NewEventController(eventService, emailService)
 
