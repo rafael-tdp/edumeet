@@ -49,3 +49,19 @@ func (es *EventService) DeleteEvent(eventID string) error {
 
 	return nil
 }
+
+func (es *EventService) GetRemoteEvent(eventID string) (*dtos.RemoteEventDTO, error) {
+	remoteEvent, err := es.eventRepository.GetRemoteEvent(eventID)
+	if err != nil {
+		return nil, err
+	}
+
+	event, err := es.eventRepository.GetEvent(remoteEvent.Edges.Event.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	remote := dtos.EntToRemoteEventDTO(remoteEvent, event)
+
+	return remote, nil
+}

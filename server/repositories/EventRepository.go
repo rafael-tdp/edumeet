@@ -3,6 +3,8 @@ package repositories
 import (
 	"context"
 	"edumeet/ent"
+	"edumeet/ent/event"
+	"edumeet/ent/remoteevent"
 )
 
 type EventRepository struct {
@@ -58,4 +60,31 @@ func (er *EventRepository) DeleteEvent(eventID string) error {
 	}
 
 	return nil
+}
+
+func (er *EventRepository) GetRemoteEvent(eventID string) (*ent.RemoteEvent, error) {
+	remoteEvent, err := er.client.RemoteEvent.
+		Query().
+		Where(remoteevent.ID(eventID)).
+		WithEvent().
+		First(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return remoteEvent, nil
+}
+
+func (er *EventRepository) GetEvent(eventID string) (*ent.Event, error) {
+	event, err := er.client.Event.
+		Query().
+		Where(event.ID(eventID)).
+		First(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
 }

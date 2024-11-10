@@ -47,3 +47,16 @@ func (ec *EventController) DeleteEvent(c *fiber.Ctx) error {
 
 	return c.SendStatus(fiber.StatusNoContent)
 }
+
+func (ec *EventController) GetRemoteEvent(c *fiber.Ctx) error {
+
+	eventID := c.Params("id")
+
+	remoteEvent, err := ec.eventservice.GetRemoteEvent(eventID)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(remoteEvent)
+}
