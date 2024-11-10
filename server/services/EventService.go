@@ -40,3 +40,12 @@ func (es *EventService) CreateRemoteEvent(remoteEventDTO dtos.RemoteEventDTO) (*
 
 	return remote, nil
 }
+
+func (es *EventService) DeleteEvent(eventID string) error {
+	err := es.eventRepository.DeleteEvent(eventID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

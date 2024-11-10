@@ -4,6 +4,7 @@ import (
 	"edumeet/utils"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -33,7 +34,7 @@ func (Event) Edges() []ent.Edge {
 		edge.To("event_documents", EventDocument.Type),
 		edge.To("subjects", Subject.Type),
 		edge.To("participants", Participant.Type),
-		edge.To("remote_event", RemoteEvent.Type).Unique(),
-		edge.To("physical_event", PhysicalEvent.Type).Unique(),
+		edge.To("remote_event", RemoteEvent.Type).Unique().Annotations(entsql.OnDelete(entsql.Cascade)),
+		edge.To("physical_event", PhysicalEvent.Type).Unique().Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
 }

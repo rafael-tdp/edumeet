@@ -35,3 +35,15 @@ func (ec *EventController) CreateRemoteEvent(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(remoteEvent)
 }
+
+func (ec *EventController) DeleteEvent(c *fiber.Ctx) error {
+	eventID := c.Params("id")
+
+	err := ec.eventservice.DeleteEvent(eventID)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
+}

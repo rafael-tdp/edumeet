@@ -47,3 +47,15 @@ func (er *EventRepository) CreateRemoteEvent(event *ent.Event, remoteEvent *ent.
 
 	return createdRemoteEvent, nil
 }
+
+func (er *EventRepository) DeleteEvent(eventID string) error {
+	err := er.client.Event.
+		DeleteOneID(eventID).
+		Exec(context.Background())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
