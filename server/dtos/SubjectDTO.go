@@ -20,7 +20,7 @@ func ParseSubjectDTO(subject *ent.Subject) (*SubjectDTO, error) {
 	}, nil
 }
 
-func ConvertDTOToEnt(subjectDTO *SubjectDTO) (*ent.Subject, error) {
+func ConvertSubjectDTOToEnt(subjectDTO *SubjectDTO) (*ent.Subject, error) {
 	if subjectDTO == nil {
 		return nil, errors.New("subjectDTO is nil")
 	}

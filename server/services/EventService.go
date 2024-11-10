@@ -1,13 +1,27 @@
 package services
 
-import "edumeet/repositories"
+import (
+	"edumeet/dtos"
+	"edumeet/repositories"
+)
 
 type EventService struct {
 	eventRepository *repositories.EventRepository
 }
 
-func NeweEventService(eventRepository *repositories.EventRepository) *EventService {
+func NewEventService(eventRepository *repositories.EventRepository) *EventService {
 	return &EventService{
 		eventRepository: eventRepository,
 	}
+}
+
+func (es *EventService) CreateRemoteEvent(remoteEventDTO dtos.RemoteEventDTO) (*dtos.RemoteEventDTO, error) {
+
+	remoteEvent, err := es.eventRepository.CreateRemoteEvent(remoteEvent)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return remoteEvent, nil
 }
