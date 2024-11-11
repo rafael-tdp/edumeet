@@ -25,14 +25,7 @@ func (Participant) Fields() []ent.Field {
 
 func (Participant) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).
-			Ref("participants").
-			Unique().
-			Field("user_id"),
-
-		edge.From("event", Event.Type).
-			Ref("participants").
-			Unique().
-			Field("event_id"),
+		edge.From("user", User.Type).Ref("participants").Unique(),
+		edge.From("event", Event.Type).Ref("participants").Unique(),
 	}
 }
