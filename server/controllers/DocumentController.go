@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/oklog/ulid/v2"
 )
 
 type DocumentController struct {
@@ -18,33 +19,34 @@ func NewDocumentController(documentService *services.DocumentService) *DocumentC
 	}
 }
 
-// func (uc *DocumentController) GetDocument(c *fiber.Ctx) error {
-// 	documentId, err := ulid.Parse(c.Params("id"))
-// 	if err != nil {
-// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
-// 	}
-// 	document, err := uc.documentService.GetDocumentById(documentId.String())
-// 	if err != nil {
-// 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Document not found"})
-// 	}
-// 	return c.Status(fiber.StatusNotImplemented).JSON(document)
-// }
+func (uc *DocumentController) GetDocument(c *fiber.Ctx) error {
+	documentId, err := ulid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+	document, err := uc.documentService.GetDocumentById(documentId.String())
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Document not found"})
+	}
 
-// func (uc *DocumentController) DeleteDocument(c *fiber.Ctx) error {
-// 	documentId, err := ulid.Parse(c.Params("id"))
-// 	if err != nil {
-// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
-// 	}
+	return c.SendFile(document.Path)
+}
 
-// 	document, err := uc.documentService.GetDocumentById(documentId.String())
-// 	if err != nil {
-// 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Document not found"})
-// 	}
+func (uc *DocumentController) DeleteDocument(c *fiber.Ctx) error {
+	documentId, err := ulid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
 
-// 	err = uc.documentService.DeleteDocument(document.ID)
+	document, err := uc.documentService.GetDocumentById(documentId.String())
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Document not found"})
+	}
 
-// 	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{})
-// }
+	err = uc.documentService.DeleteDocument(document.ID)
+
+	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{})
+}
 
 func (uc *DocumentController) CreateDocument(c *fiber.Ctx) error {
 	var documentDTO dtos.DocumentDTO
