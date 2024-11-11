@@ -26,6 +26,13 @@ func (ps *ParticipantService) RequestParticipant(eventID string, userID string) 
 		return errEvent
 	}
 
+	//check if participant is already in the event
+	_, errParticipant := ps.participantRepository.GetParticipantByEventAndUser(eventID, userID)
+
+	if errParticipant == nil {
+		return errors.New("Participant already requested event")
+	}
+
 	if event.StartDate.Before(time.Now()) {
 		return errors.New("Event is already started")
 	}

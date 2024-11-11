@@ -3,6 +3,9 @@ package repositories
 import (
 	"context"
 	"edumeet/ent"
+	"edumeet/ent/event"
+	"edumeet/ent/participant"
+	"edumeet/ent/user"
 )
 
 type ParticipantRepository struct {
@@ -50,8 +53,8 @@ func (pr *ParticipantRepository) UpdateParticipant(participantId string, status 
 
 func (pr *ParticipantRepository) GetParticipantByEventAndUser(eventId string, userId string) (*ent.Participant, error) {
 	participant, err := pr.client.Participant.Query().
-		Where(ent.Participant.UserIDEQ(userId)).
-		Where(ent.Participant.EventIDEQ(eventId)).
+		Where(participant.HasEventWith(event.IDEQ(eventId))).
+		Where(participant.HasUserWith(user.IDEQ(userId))).
 		First(context.Background())
 	if err != nil {
 		return nil, err
