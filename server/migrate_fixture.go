@@ -33,5 +33,9 @@ func migrateFixture() {
 	badgeFixture := fixture.Badge{}
 	badgeFixture.GenerateBadge(ctx, client)
 
+	client.Subject.Delete().ExecX(ctx)
+	subjectFixture := fixture.Subject{}
+	subjectFixture.GenerateSubject(ctx, client)
+
 	log.Println("Fixtures applied successfully.")
 }
