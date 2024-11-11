@@ -3,6 +3,7 @@ package routes
 import (
 	"edumeet/controllers"
 	"edumeet/ent"
+	"edumeet/middlewares"
 	"edumeet/repositories"
 	"edumeet/services"
 
@@ -10,7 +11,7 @@ import (
 )
 
 func setupEventRoutes(app *fiber.App, eventController *controllers.EventController) {
-	app.Post("/api/event/remote", eventController.CreateRemoteEvent)
+	app.Post("/api/event/remote", middlewares.JWTAuthMiddleware, eventController.CreateRemoteEvent)
 	app.Delete("/api/event/:id", eventController.DeleteEvent)
 	app.Get("/api/event/remote/:id", eventController.GetRemoteEvent)
 	app.Put("/api/event/remote/:id", eventController.UpdateRemoteEvent)
@@ -18,7 +19,8 @@ func setupEventRoutes(app *fiber.App, eventController *controllers.EventControll
 
 func initEventController(client *ent.Client) *controllers.EventController {
 	eventRepository := repositories.NewEventRepository(client)
-	eventService := services.NewEventService(eventRepository)
+	participantRepository := repositories.NewParticipantRepository(client)
+	eventService := services.NewEventService(eventRepository, participantRepository)
 	emailService := services.NewEmailService()
 	return controllers.NewEventController(eventService, emailService)
 
