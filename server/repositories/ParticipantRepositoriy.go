@@ -27,3 +27,23 @@ func (pr *ParticipantRepository) CreateParticipant(userId string, eventId string
 
 	return createdParticipant, nil
 }
+
+func (pr *ParticipantRepository) GetParticipant(participantId string) (*ent.Participant, error) {
+	participant, err := pr.client.Participant.Get(context.Background(), participantId)
+	if err != nil {
+		return nil, err
+	}
+
+	return participant, nil
+}
+
+func (pr *ParticipantRepository) UpdateParticipant(participantId string, status string) (*ent.Participant, error) {
+	participant, err := pr.client.Participant.UpdateOneID(participantId).
+		SetStatus(status).
+		Save(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return participant, nil
+}
