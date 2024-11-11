@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"edumeet/dtos"
+	"edumeet/ent"
 	"edumeet/services"
 
 	"github.com/gofiber/fiber/v2"
@@ -28,7 +29,9 @@ func (ec *EventController) CreateRemoteEvent(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
-	remoteEvent, err := ec.eventservice.CreateRemoteEvent(remoteEventDTO)
+	currentUser := c.Locals("user").(*ent.User)
+
+	remoteEvent, err := ec.eventservice.CreateRemoteEvent(remoteEventDTO, currentUser.ID)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})

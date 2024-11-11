@@ -6,16 +6,18 @@ import (
 )
 
 type EventService struct {
-	eventRepository *repositories.EventRepository
+	eventRepository       *repositories.EventRepository
+	participantRepository *repositories.ParticipantRepository
 }
 
-func NewEventService(eventRepository *repositories.EventRepository) *EventService {
+func NewEventService(eventRepository *repositories.EventRepository, participantRepository *repositories.ParticipantRepository) *EventService {
 	return &EventService{
-		eventRepository: eventRepository,
+		eventRepository:       eventRepository,
+		participantRepository: participantRepository,
 	}
 }
 
-func (es *EventService) CreateRemoteEvent(remoteEventDTO dtos.RemoteEventDTO) (*dtos.RemoteEventDTO, error) {
+func (es *EventService) CreateRemoteEvent(remoteEventDTO dtos.RemoteEventDTO, userId string) (*dtos.RemoteEventDTO, error) {
 	event, err := remoteEventDTO.ToEntEvent()
 	if err != nil {
 		return nil, err
@@ -32,6 +34,12 @@ func (es *EventService) CreateRemoteEvent(remoteEventDTO dtos.RemoteEventDTO) (*
 	}
 
 	createdRemoteEvent, err := es.eventRepository.CreateRemoteEvent(createdEvent, remoteEvent)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = es.participantRepository.CreateParticipant(userId, createdEvent.ID, "host")
+
 	if err != nil {
 		return nil, err
 	}

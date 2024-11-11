@@ -31,4 +31,8 @@ func InitRoutes(app *fiber.App) {
 	//Initialiser les routes event
 	eventController := initEventController(client)
 	setupEventRoutes(app, eventController)
+
+	//Initialiser les routes participant
+	participantController := initParticipantController(client)
+	setupRoutesParticipant(app, participantController)
 }
