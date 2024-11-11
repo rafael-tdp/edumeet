@@ -33,7 +33,7 @@ func (sr *SubjectService) GetSubject(subjectID string) (*dtos.SubjectDTO, error)
 
 func (sr *SubjectService) Create(subjectDTO dtos.SubjectDTO) (*dtos.SubjectDTO, error) {
 
-	subjectEnt, err := dtos.ConvertDTOToEnt(&subjectDTO)
+	subjectEnt, err := dtos.ConvertSubjectDTOToEnt(&subjectDTO)
 	if err != nil {
 		return nil, errors.New("error converting DTO to ent")
 	}
@@ -80,7 +80,7 @@ func (sr *SubjectService) GetSubjects() ([]*dtos.SubjectDTO, error) {
 }
 
 func (sr *SubjectService) Update(subjectID string, subjectDTO dtos.SubjectDTO) (*dtos.SubjectDTO, error) {
-	subjectEnt, err := dtos.ConvertDTOToEnt(&subjectDTO)
+	subjectEnt, err := dtos.ConvertSubjectDTOToEnt(&subjectDTO)
 	if err != nil {
 		return nil, errors.New("error converting DTO to ent")
 	}
