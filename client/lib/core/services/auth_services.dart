@@ -1,7 +1,7 @@
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:client/core/models/auth/resetPassword.dart';
 import 'package:client/core/models/auth/verifyCode.dart';
-import 'package:client/secureStorage.dart';
 import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import '../models/auth/login.dart';
@@ -10,6 +10,33 @@ import '../models/auth/forgotPassword.dart';
 import '../models/response.dart';
 
 class AuthServices {
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token');
+  }
+
+  static Future<Map<String, dynamic>?> getUserInfo() async {
+    final token = await getToken();
+
+    if (token == null) {
+      return null;
+    }
+
+    final response = await http.get(
+      Uri.parse('${Env.BACKEND_URL}/me'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      return null;
+    }
+  }
+
   static Future<ResponseRequest> login(LoginRequest loginRequest) async {
     final response = await http.post(
       Uri.parse('${Env.BACKEND_URL}/login'),
@@ -19,13 +46,18 @@ class AuthServices {
 
     if (response.statusCode == 200) {
       final token = jsonDecode(response.body)['token'];
-      SecureStorage().writeSecureData('auth_token', token);
-      print('Login ok: $token');
-      SecureStorage().readSecureData('auth_token').then((value) => print('Read token: $value'));
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', token);
       return ResponseRequest(success: true, message: 'Login successful', data: token);
     } else {
       return ResponseRequest(success: false, message: jsonDecode(response.body)['error']);
     }
+  }
+
+  static Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');
+    print('Logged out');
   }
 
   static Future<ResponseRequest> register(RegisterRequest signupRequest) async {
@@ -76,21 +108,6 @@ class AuthServices {
       return ResponseRequest(success: true, message: jsonDecode(response.body)['message']);
     } else {
       throw Exception('Failed to reset password: ${response.statusCode} ${response.reasonPhrase}');
-    }
-  }
-
-  static Future<ResponseRequest> logout() async {
-    final response = await http.post(
-      Uri.parse('${Env.BACKEND_URL}/logout'),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      return ResponseRequest(success: true, message: jsonDecode(response.body)['message']);
-    } else {
-      throw Exception('Failed to logout: ${response.statusCode} ${response.reasonPhrase}');
     }
   }
 
