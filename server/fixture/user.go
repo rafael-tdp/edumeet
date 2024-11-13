@@ -16,12 +16,15 @@ func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 	physicalAddress := []string{"242 Rue du Faubourg Saint-Antoine, 75012 Paris", "105 Stoke Newington Church St, London N16 0UD, Royaume-Uni", "44 Rue des Clottins, 95560 Montsoult", "14 Rue Édouard-Grimaux, 86000 Poitiers"}
 	dateUtils := utils.Date{}
 	bcryptUtils := utils.Bcrypt{}
+	ulid := utils.ULID{}
 	for i := 0; i < len(physicalUser); i++ {
 		lat, lng, err := utils.GetLatLng(physicalAddress[i])
 		if err != nil {
 			panic(err)
 		}
+		id := ulid.GenerateUlid()()
 		client.User.Create().
+			SetID(id).
 			SetEmail(strings.ToLower(physicalUser[i]) + "@user.com").
 			SetUsername(strings.ToLower(physicalUser[i])).
 			SetLastname(strings.ToLower(gofakeit.LastName())).
@@ -32,7 +35,8 @@ func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 			SetActivated(true).
 			SetLng(lng).
 			SetLat(lat).
-			SetZipCode(gofakeit.Zip()).
+			SetCreatedBy(id).
+			SetUpdatedBy(id).
 			SaveX(ctx)
 	}
 }
