@@ -41,5 +41,9 @@ func migrateFixture() {
 	eventFixture := fixture.Event{}
 	eventFixture.GenerateEvent(ctx, client)
 
+	client.Participant.Delete().ExecX(ctx)
+	participantFixture := fixture.Participant{}
+	participantFixture.GenerateParticipant(ctx, client)
+
 	log.Println("Fixtures applied successfully.")
 }
