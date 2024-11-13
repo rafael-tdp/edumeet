@@ -15,6 +15,7 @@ func setupEventRoutes(app *fiber.App, eventController *controllers.EventControll
 	app.Delete("/api/event/:id", eventController.DeleteEvent)
 	app.Get("/api/event/remote/:id", eventController.GetRemoteEvent)
 	app.Put("/api/event/remote/:id", eventController.UpdateRemoteEvent)
+	app.Get("/api/events", eventController.GetAllEvents)
 }
 
 func initEventController(client *ent.Client) *controllers.EventController {

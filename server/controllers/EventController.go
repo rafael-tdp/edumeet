@@ -95,3 +95,11 @@ func (ec *EventController) UpdateRemoteEvent(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(remoteEvent)
 }
+
+func (ec *EventController) GetAllEvents(c *fiber.Ctx) error {
+	events, err := ec.eventservice.GetAllEvents()
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(events)
+}

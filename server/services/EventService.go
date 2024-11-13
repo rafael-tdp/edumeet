@@ -3,6 +3,7 @@ package services
 import (
 	"edumeet/dtos"
 	"edumeet/repositories"
+	"time"
 )
 
 type EventService struct {
@@ -105,4 +106,58 @@ func (es *EventService) UpdateRemoteEvent(eventID string, remoteEventDTO dtos.Re
 	remote := dtos.EntToRemoteEventDTO(updatedRemoteEvent, updatedEvent)
 
 	return remote, nil
+}
+
+type Event struct {
+	ID             string    `json:"id"`
+	NbMaxUser      int       `json:"nb_max_user"`
+	StartDate      time.Time `json:"start_date"`
+	EndDate        time.Time `json:"end_date,omitempty"`
+	IsPrivate      bool      `json:"is_private"`
+	Title          string    `json:"title"`
+	Description    string    `json:"description,omitempty"`
+	InvitationLink string    `json:"invitation_link,omitempty"`
+	Location       *string   `json:"location,omitempty"`
+	Lng            *float64  `json:"lng,omitempty"`
+	Lat            *float64  `json:"lat,omitempty"`
+	URL            *string   `json:"url,omitempty"`
+}
+
+func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
+	events, err := es.eventRepository.GetEvents()
+	if err != nil {
+		return nil, err
+	}
+
+	var eventsWithType []dtos.EventWithTypeDTO
+
+	for _, event := range events {
+		if event.Edges.RemoteEvent != nil {
+			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
+				ID:             event.ID,
+				NbMaxUser:      event.NbMaxUser,
+				StartDate:      event.StartDate,
+				EndDate:        event.EndDate,
+				IsPrivate:      event.IsPrivate,
+				Title:          event.Title,
+				Description:    event.Description,
+				InvitationLink: event.InvitationLink,
+				RemoteEventDTO: dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent, event),
+			})
+		} else {
+			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
+				ID:               event.ID,
+				NbMaxUser:        event.NbMaxUser,
+				StartDate:        event.StartDate,
+				EndDate:          event.EndDate,
+				IsPrivate:        event.IsPrivate,
+				Title:            event.Title,
+				Description:      event.Description,
+				InvitationLink:   event.InvitationLink,
+				PhysicalEventDTO: dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent, event),
+			})
+		}
+	}
+
+	return eventsWithType, nil
 }
