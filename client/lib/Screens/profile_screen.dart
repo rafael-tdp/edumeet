@@ -1,17 +1,22 @@
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/profile_button.dart';
-import 'package:client/fake_data.dart';
+import 'package:client/utils/date_utils.dart' as custom_date_utils;
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  final Map<String, String> user;
+  final bool isCurrentUser;
+
+  const ProfilePage({
+    super.key,
+    required this.user,
+    this.isCurrentUser = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> user = FakeData.user;
-
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -20,9 +25,7 @@ class ProfilePage extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundImage: NetworkImage(
-                  user['image']!,
-                ),
+                backgroundImage: NetworkImage(user['image']!),
               ),
               const SizedBox(height: 20),
               Text(
@@ -51,51 +54,63 @@ class ProfilePage extends StatelessWidget {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.email, color: AppColors.purple),
-                      title: const Text('Email'),
-                      subtitle: Text(
-                        user['email']!,
-                      ),
-                    ),
-                    const Divider(),
-                    ListTile(
-                      leading: const Icon(Icons.phone, color: AppColors.purple),
-                      title: const Text('Téléphone'),
-                      subtitle: Text(user['phone']!),
-                    ),
-                    const Divider(),
-                    ListTile(
-                      leading: const Icon(Icons.location_on,
-                          color: AppColors.purple),
-                      title: const Text('Localisation'),
-                      subtitle: Text(user['location']!),
-                    ),
-                  ],
+                  children: isCurrentUser
+                      ? [
+                          ListTile(
+                            leading: const Icon(Icons.email,
+                                color: AppColors.purple),
+                            title: const Text('Email'),
+                            subtitle: Text(user['email']!),
+                          ),
+                          const Divider(),
+                          ListTile(
+                            leading: const Icon(Icons.phone,
+                                color: AppColors.purple),
+                            title: const Text('Téléphone'),
+                            subtitle: Text(user['phone']!),
+                          ),
+                          const Divider(),
+                          ListTile(
+                            leading: const Icon(Icons.location_on,
+                                color: AppColors.purple),
+                            title: const Text('Localisation'),
+                            subtitle: Text(user['location']!),
+                          ),
+                        ]
+                      : [
+                          ListTile(
+                            leading: const Icon(Icons.group,
+                                color: AppColors.purple),
+                            title: const Text('Membre depuis'),
+                            subtitle: Text(
+                                custom_date_utils.DateUtils.isoToFormattedTime(
+                                    user['createdAt']!)),
+                          ),
+                        ],
                 ),
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ProfileButton(
-                    text: 'Modifier le profil',
-                    backgroundColor: AppColors.purple,
-                    onPressed: () {
-                      // todo: Action to edit profile
-                    },
-                  ),
-                  const SizedBox(width: 10),
-                  ProfileButton(
-                    text: 'Se déconnecter',
-                    backgroundColor: Colors.redAccent,
-                    onPressed: () {
-                      // todo: Action to logout
-                    },
-                  ),
-                ],
-              ),
+              if (isCurrentUser)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ProfileButton(
+                      text: 'Modifier le profil',
+                      backgroundColor: AppColors.purple,
+                      onPressed: () {
+                        // todo: Action to edit profile
+                      },
+                    ),
+                    const SizedBox(width: 10),
+                    ProfileButton(
+                      text: 'Se déconnecter',
+                      backgroundColor: Colors.redAccent,
+                      onPressed: () {
+                        // todo: Action to logout
+                      },
+                    ),
+                  ],
+                ),
             ],
           ),
         ),

@@ -2,12 +2,22 @@ class FakeData {
   // events data
   static List<Map<String, String>> events = [
     {
+      "title": "Entraide FYC",
+      "image":
+          "https://images.unsplash.com/photo-1653203187698-530a34a80ba5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGNvdXJzfGVufDB8fDB8fHwy",
+      "description": "Entraide sur le projet FYC",
+      "date": "2022-03-16T14:00:00Z",
+      "participants": "4",
+      "remote": "true",
+    },
+    {
       "title": "Entrainement Tailwind",
       "image":
           "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y291cnN8ZW58MHx8MHx8fDI%3D",
       "description": "Entraînement sur Tailwind CSS",
       "date": "2022-03-15T10:00:00Z",
       "participants": "5",
+      "remote": "false",
     },
     {
       "title": "Entraide projet Flutter",
@@ -16,6 +26,7 @@ class FakeData {
       "description": "Entraide sur un projet Flutter",
       "date": "2022-03-15T14:00:00Z",
       "participants": "3",
+      "remote": "true",
     },
     {
       "title": "Révisions de Sécurité Web",
@@ -24,14 +35,7 @@ class FakeData {
       "description": "Révisions de sécurité web",
       "date": "2022-03-16T09:00:00Z",
       "participants": "2",
-    },
-    {
-      "title": "Entraide FYC",
-      "image":
-          "https://images.unsplash.com/photo-1653203187698-530a34a80ba5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGNvdXJzfGVufDB8fDB8fHwy",
-      "description": "Entraide sur le projet FYC",
-      "date": "2022-03-16T14:00:00Z",
-      "participants": "4",
+      "remote": "false",
     },
   ];
 
@@ -114,11 +118,23 @@ class FakeData {
         'name': 'Alice',
         'image':
             'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D',
+        'id': 'alice',
+        'bio': 'Développeuse web',
+        'email': 'alice@gmail.com',
+        'phone': '06 12 34 56 78',
+        'location': 'Paris, France',
+        'createdAt': '2024-10-15T10:30:00Z',
       },
       {
         'name': 'Bob',
         'image':
             'https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D',
+        'id': 'bob',
+        'bio': 'Développeur mobile',
+        'email': 'bob@gmail.com',
+        'phone': '06 12 34 56 78',
+        'location': 'Paris, France',
+        'createdAt': '2024-10-15T10:30:00Z',
       }
     ],
     "event_documents": [

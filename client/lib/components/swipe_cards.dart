@@ -156,6 +156,38 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                                 ],
                               ),
                             ),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    data['remote'] == 'true'
+                                        ? Icons.wifi
+                                        : Icons.location_on,
+                                    size: 14,
+                                    color: Colors.black,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    data['remote'] == 'true'
+                                        ? 'En ligne'
+                                        : 'Physique',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
                         const SizedBox(height: 4),
