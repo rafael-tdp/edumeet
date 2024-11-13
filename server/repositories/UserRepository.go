@@ -45,13 +45,14 @@ func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPasswor
 		SetLastname(registerDTO.Lastname).
 		SetFirstname(registerDTO.Firstname).
 		SetPassword(hashedPassword).
-		SetBirthDate(registerDTO.BirthDate).
-		SetNillableBio(registerDTO.Bio).
-		SetNillablePicture(registerDTO.Picture).
+		//SetBirthDate(registerDTO.BirthDate).
+		//SetNillableBio(registerDTO.Bio).
+		//SetNillablePicture(registerDTO.Picture).
 		SetActivated(false).
 		SetCode(ulid.Make().String()).
 		SetLat(lat).
 		SetLng(lng).
+		SetZipCode(registerDTO.Address).
 		Save(context.Background())
 
 	if err != nil {
@@ -62,6 +63,10 @@ func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPasswor
 }
 
 func (ur *UserRepository) ValidateUserByCode(email string, code string) (*ent.User, error) {
+
+	if code == "" {
+		return nil, errors.New("user not found")
+	}
 
 	u, err := ur.client.User.
 		Query().
@@ -74,6 +79,7 @@ func (ur *UserRepository) ValidateUserByCode(email string, code string) (*ent.Us
 
 	_, err = u.Update().
 		SetActivated(true).
+		SetCode("").
 		Save(context.Background())
 	if err != nil {
 		return nil, errors.New("failed to update user")

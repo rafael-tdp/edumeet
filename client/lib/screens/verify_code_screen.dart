@@ -1,0 +1,188 @@
+import 'package:client/core/models/auth/verifyCode.dart';
+import 'package:client/core/models/response.dart';
+import 'package:client/core/services/auth_services.dart';
+import 'package:client/screens/reset_password_screen.dart';
+import 'package:flutter/material.dart';
+import '../utils/colors.dart';
+import 'login_screen.dart';
+
+class VerifyCodePage extends StatefulWidget {
+  final bool isResetPassword;
+  final String email;
+
+  const VerifyCodePage({super.key, required this.isResetPassword, required this.email});
+
+  @override
+  _VerifyCodePageState createState() => _VerifyCodePageState();
+}
+
+class _VerifyCodePageState extends State<VerifyCodePage> {
+  final _codeController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final PageController _pageController = PageController();
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  @override
+  void dispose() {
+    _codeController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _validateCode() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+
+      VerifyCodeRequest verifyCodeRequest = VerifyCodeRequest(
+        code: _codeController.text,
+        email: widget.email,
+      );
+      ResponseRequest response = await AuthServices.valideCode(verifyCodeRequest);
+
+      if(!response.success) {
+        setState(() {
+          _errorMessage = response.message;
+        });
+        return;
+      }
+
+      if (widget.isResetPassword) {
+        _pageController.nextPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Inscription confirmée avec succès')),
+        );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+          (route) => false,
+        );
+      }
+    } catch (error) {
+      setState(() {
+        _errorMessage = error.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              _buildVerifyCodeForm(),
+              if (widget.isResetPassword) ResetPasswordPage(token: _codeController.text)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVerifyCodeForm() {
+    return Form(
+      key: _formKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Vérification du code',
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Entrez le code de vérification envoyé à votre e-mail',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
+          TextFormField(
+            controller: _codeController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelText: 'Code de vérification',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              prefixIcon: const Icon(Icons.lock),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Veuillez entrer le code de vérification';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState?.validate() == true) {
+                  await _validateCode();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.purple,
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              child: _isLoading
+                  ? const CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    )
+                  : const Text(
+                      'Vérifier',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+            ),
+          ),
+          if (_errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Text(
+                _errorMessage!,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}

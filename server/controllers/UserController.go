@@ -194,6 +194,8 @@ func (uc *UserController) Me(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
 	}
 
+	fmt.Printf("user connectes %v \n", userDTO)
+
 	return c.JSON(userDTO)
 }
 

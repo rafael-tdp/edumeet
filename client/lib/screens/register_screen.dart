@@ -17,6 +17,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _zipCodeController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -30,6 +31,8 @@ class _RegisterPageState extends State<RegisterPage> {
   bool get _hasUpperCase => _passwordController.text.contains(RegExp(r'[A-Z]'));
   bool get _hasDigit => _passwordController.text.contains(RegExp(r'\d'));
   bool get _hasSpecialChar => _passwordController.text.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+  bool get _isPasswordMatch => _passwordController.text == _confirmPasswordController.text;
+  bool get _isZipCodeValid => _zipCodeController.text.length == 5 && int.tryParse(_zipCodeController.text) != null;
 
   @override
   void initState() {
@@ -66,6 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
         email: _emailController.text,
         password: _passwordController.text,
         username: _usernameController.text,
+        zipCode: _zipCodeController.text,
       );
       ResponseRequest response = await AuthServices.register(registerRequest);
       if (response.success) {
@@ -159,6 +163,28 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    controller: _zipCodeController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Code postal',
+                      hintText: '75000',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      prefixIcon: const Icon(Icons.location_on),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer votre code postal';
+                      }
+                      if (!_isZipCodeValid) {
+                        return 'Veuillez entrer un code postal valide';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
                     controller: _passwordController,
                     obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
@@ -212,7 +238,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       if (value == null || value.isEmpty) {
                         return 'Veuillez confirmer votre mot de passe';
                       }
-                      if (value != _passwordController.text) {
+                      if (!_isPasswordMatch) {
                         return 'Les mots de passe ne correspondent pas';
                       }
                       return null;

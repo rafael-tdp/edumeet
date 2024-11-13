@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:client/Utils/colors.dart';
+import 'package:client/utils/colors.dart';
 
 class MessageInputField extends StatelessWidget {
   final TextEditingController controller;

@@ -145,7 +145,7 @@ func (us *UserService) Verify(code string) (dtos.UserDTO, error) {
 		Username:  user.Username,
 		Lastname:  user.Lastname,
 		Firstname: user.Firstname,
-		BirthDate: user.BirthDate,
+		BirthDate: *user.BirthDate,
 		Bio:       user.Bio,
 		Picture:   user.Picture,
 		Activated: user.Activated,

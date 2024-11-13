@@ -3,13 +3,35 @@ import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/profile_button.dart';
 import 'package:client/fake_data.dart';
+import 'package:intl/intl.dart';
 
-class ProfilePage extends StatelessWidget {
+import '../core/services/auth_services.dart';
+import 'edit_profil_page.dart';
+
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  Map<String, dynamic>? user;
+
+  @override
+  void initState() {
+    super.initState();
+    AuthServices.getUserInfo().then((value) {
+      setState(() {
+        user = value;
+        debugPrint(user.toString());
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final Map<String, String> user = FakeData.user;
+    final Map<String, String> fakeUser = FakeData.user;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -22,12 +44,12 @@ class ProfilePage extends StatelessWidget {
               CircleAvatar(
                 radius: 60,
                 backgroundImage: NetworkImage(
-                  user['image']!,
+                  fakeUser['image']!,
                 ),
               ),
               const SizedBox(height: 20),
               Text(
-                user['name']!,
+                "${user?['firstname']?.substring(0, 1).toUpperCase() ?? ''}${user?['firstname']?.substring(1) ?? ''} ${user?['lastname']?.substring(0, 1).toUpperCase() ?? ''}${user?['lastname']?.substring(1) ?? ''} !",
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -36,7 +58,7 @@ class ProfilePage extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                user['bio']!,
+                user?['bio'] != null && user!['bio'].isNotEmpty ? user!['bio'] : "Aucune description",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 16,
@@ -57,21 +79,26 @@ class ProfilePage extends StatelessWidget {
                       leading: const Icon(Icons.email, color: AppColors.purple),
                       title: const Text('Email'),
                       subtitle: Text(
-                        user['email']!,
+                        user?['email'] ?? 'Email non disponible',
                       ),
                     ),
                     const Divider(),
                     ListTile(
                       leading: const Icon(Icons.phone, color: AppColors.purple),
-                      title: const Text('Téléphone'),
-                      subtitle: Text(user['phone']!),
+                      title: const Text('Date de naissance'),
+                      subtitle: Text(
+                        user?['birthDate'] != null
+                            ? DateFormat('dd MMMM yyyy').format(DateTime.parse(user!['birthDate']))
+                            : 'Date de naissance non disponible',
+                      ),
                     ),
                     const Divider(),
                     ListTile(
-                      leading: const Icon(Icons.location_on,
-                          color: AppColors.purple),
+                      leading: const Icon(Icons.location_on, color: AppColors.purple),
                       title: const Text('Localisation'),
-                      subtitle: Text(user['location']!),
+                      subtitle: Text(
+                        user?['address'] ?? 'Adresse non disponible',
+                      ),
                     ),
                   ],
                 ),
@@ -83,8 +110,18 @@ class ProfilePage extends StatelessWidget {
                   ProfileButton(
                     text: 'Modifier le profil',
                     backgroundColor: AppColors.purple,
-                    onPressed: () {
-                      // todo: Action to edit profile
+                    onPressed: () async {
+                      final updatedUser = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditProfilePage(user: user!),
+                        ),
+                      );
+                      if (updatedUser != null) {
+                        setState(() {
+                          user = updatedUser;
+                        });
+                      }
                     },
                   ),
                   const SizedBox(width: 10),
