@@ -65,6 +65,26 @@ func IDContainsFold(id string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldID, id))
 }
 
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
+func CreatedBy(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCreatedBy, v))
+}
+
+// UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
+func UpdatedBy(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldUpdatedBy, v))
+}
+
 // Email applies equality check predicate on the "email" field. It's identical to EmailEQ.
 func Email(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldEmail, v))

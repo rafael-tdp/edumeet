@@ -6,6 +6,7 @@ import (
 	"edumeet/ent/badge"
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -16,6 +17,14 @@ type Badge struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy string `json:"created_by,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy string `json:"updated_by,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Svg holds the value of the "svg" field.
@@ -55,8 +64,10 @@ func (*Badge) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case badge.FieldNbRequirementEvent:
 			values[i] = new(sql.NullInt64)
-		case badge.FieldID, badge.FieldName, badge.FieldSvg, badge.FieldType:
+		case badge.FieldID, badge.FieldCreatedBy, badge.FieldUpdatedBy, badge.FieldName, badge.FieldSvg, badge.FieldType:
 			values[i] = new(sql.NullString)
+		case badge.FieldCreatedAt, badge.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -77,6 +88,30 @@ func (b *Badge) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				b.ID = value.String
+			}
+		case badge.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				b.CreatedAt = value.Time
+			}
+		case badge.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				b.UpdatedAt = value.Time
+			}
+		case badge.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				b.CreatedBy = value.String
+			}
+		case badge.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				b.UpdatedBy = value.String
 			}
 		case badge.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -143,6 +178,18 @@ func (b *Badge) String() string {
 	var builder strings.Builder
 	builder.WriteString("Badge(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", b.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(b.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(b.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("created_by=")
+	builder.WriteString(b.CreatedBy)
+	builder.WriteString(", ")
+	builder.WriteString("updated_by=")
+	builder.WriteString(b.UpdatedBy)
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(b.Name)
 	builder.WriteString(", ")

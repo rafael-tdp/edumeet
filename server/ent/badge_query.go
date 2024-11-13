@@ -299,12 +299,12 @@ func (bq *BadgeQuery) WithUsers(opts ...func(*UserQuery)) *BadgeQuery {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Badge.Query().
-//		GroupBy(badge.FieldName).
+//		GroupBy(badge.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (bq *BadgeQuery) GroupBy(field string, fields ...string) *BadgeGroupBy {
@@ -322,11 +322,11 @@ func (bq *BadgeQuery) GroupBy(field string, fields ...string) *BadgeGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Badge.Query().
-//		Select(badge.FieldName).
+//		Select(badge.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (bq *BadgeQuery) Select(fields ...string) *BadgeSelect {
 	bq.ctx.Fields = append(bq.ctx.Fields, fields...)

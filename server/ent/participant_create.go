@@ -22,6 +22,46 @@ type ParticipantCreate struct {
 	hooks    []Hook
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (pc *ParticipantCreate) SetCreatedAt(t time.Time) *ParticipantCreate {
+	pc.mutation.SetCreatedAt(t)
+	return pc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (pc *ParticipantCreate) SetNillableCreatedAt(t *time.Time) *ParticipantCreate {
+	if t != nil {
+		pc.SetCreatedAt(*t)
+	}
+	return pc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (pc *ParticipantCreate) SetUpdatedAt(t time.Time) *ParticipantCreate {
+	pc.mutation.SetUpdatedAt(t)
+	return pc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (pc *ParticipantCreate) SetNillableUpdatedAt(t *time.Time) *ParticipantCreate {
+	if t != nil {
+		pc.SetUpdatedAt(*t)
+	}
+	return pc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (pc *ParticipantCreate) SetCreatedBy(s string) *ParticipantCreate {
+	pc.mutation.SetCreatedBy(s)
+	return pc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (pc *ParticipantCreate) SetUpdatedBy(s string) *ParticipantCreate {
+	pc.mutation.SetUpdatedBy(s)
+	return pc
+}
+
 // SetStatus sets the "status" field.
 func (pc *ParticipantCreate) SetStatus(s string) *ParticipantCreate {
 	pc.mutation.SetStatus(s)
@@ -143,6 +183,14 @@ func (pc *ParticipantCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (pc *ParticipantCreate) defaults() {
+	if _, ok := pc.mutation.CreatedAt(); !ok {
+		v := participant.DefaultCreatedAt()
+		pc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := pc.mutation.UpdatedAt(); !ok {
+		v := participant.DefaultUpdatedAt()
+		pc.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := pc.mutation.RequestedAt(); !ok {
 		v := participant.DefaultRequestedAt()
 		pc.mutation.SetRequestedAt(v)
@@ -155,6 +203,18 @@ func (pc *ParticipantCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (pc *ParticipantCreate) check() error {
+	if _, ok := pc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Participant.created_at"`)}
+	}
+	if _, ok := pc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Participant.updated_at"`)}
+	}
+	if _, ok := pc.mutation.CreatedBy(); !ok {
+		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Participant.created_by"`)}
+	}
+	if _, ok := pc.mutation.UpdatedBy(); !ok {
+		return &ValidationError{Name: "updated_by", err: errors.New(`ent: missing required field "Participant.updated_by"`)}
+	}
 	if _, ok := pc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Participant.status"`)}
 	}
@@ -195,6 +255,22 @@ func (pc *ParticipantCreate) createSpec() (*Participant, *sqlgraph.CreateSpec) {
 	if id, ok := pc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := pc.mutation.CreatedAt(); ok {
+		_spec.SetField(participant.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := pc.mutation.UpdatedAt(); ok {
+		_spec.SetField(participant.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := pc.mutation.CreatedBy(); ok {
+		_spec.SetField(participant.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = value
+	}
+	if value, ok := pc.mutation.UpdatedBy(); ok {
+		_spec.SetField(participant.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = value
 	}
 	if value, ok := pc.mutation.Status(); ok {
 		_spec.SetField(participant.FieldStatus, field.TypeString, value)

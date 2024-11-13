@@ -372,12 +372,12 @@ func (mq *MessageQuery) WithDocuments(opts ...func(*DocumentQuery)) *MessageQuer
 // Example:
 //
 //	var v []struct {
-//		Content string `json:"content,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Message.Query().
-//		GroupBy(message.FieldContent).
+//		GroupBy(message.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (mq *MessageQuery) GroupBy(field string, fields ...string) *MessageGroupBy {
@@ -395,11 +395,11 @@ func (mq *MessageQuery) GroupBy(field string, fields ...string) *MessageGroupBy 
 // Example:
 //
 //	var v []struct {
-//		Content string `json:"content,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Message.Query().
-//		Select(message.FieldContent).
+//		Select(message.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (mq *MessageQuery) Select(fields ...string) *MessageSelect {
 	mq.ctx.Fields = append(mq.ctx.Fields, fields...)

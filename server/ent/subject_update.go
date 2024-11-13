@@ -10,6 +10,7 @@ import (
 	"edumeet/ent/user"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -26,6 +27,54 @@ type SubjectUpdate struct {
 // Where appends a list predicates to the SubjectUpdate builder.
 func (su *SubjectUpdate) Where(ps ...predicate.Subject) *SubjectUpdate {
 	su.mutation.Where(ps...)
+	return su
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (su *SubjectUpdate) SetCreatedAt(t time.Time) *SubjectUpdate {
+	su.mutation.SetCreatedAt(t)
+	return su
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (su *SubjectUpdate) SetNillableCreatedAt(t *time.Time) *SubjectUpdate {
+	if t != nil {
+		su.SetCreatedAt(*t)
+	}
+	return su
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (su *SubjectUpdate) SetUpdatedAt(t time.Time) *SubjectUpdate {
+	su.mutation.SetUpdatedAt(t)
+	return su
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (su *SubjectUpdate) SetCreatedBy(s string) *SubjectUpdate {
+	su.mutation.SetCreatedBy(s)
+	return su
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (su *SubjectUpdate) SetNillableCreatedBy(s *string) *SubjectUpdate {
+	if s != nil {
+		su.SetCreatedBy(*s)
+	}
+	return su
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (su *SubjectUpdate) SetUpdatedBy(s string) *SubjectUpdate {
+	su.mutation.SetUpdatedBy(s)
+	return su
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (su *SubjectUpdate) SetNillableUpdatedBy(s *string) *SubjectUpdate {
+	if s != nil {
+		su.SetUpdatedBy(*s)
+	}
 	return su
 }
 
@@ -122,6 +171,7 @@ func (su *SubjectUpdate) RemoveEvents(e ...*Event) *SubjectUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (su *SubjectUpdate) Save(ctx context.Context) (int, error) {
+	su.defaults()
 	return withHooks(ctx, su.sqlSave, su.mutation, su.hooks)
 }
 
@@ -147,6 +197,14 @@ func (su *SubjectUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (su *SubjectUpdate) defaults() {
+	if _, ok := su.mutation.UpdatedAt(); !ok {
+		v := subject.UpdateDefaultUpdatedAt()
+		su.mutation.SetUpdatedAt(v)
+	}
+}
+
 // check runs all checks and user-defined validators on the builder.
 func (su *SubjectUpdate) check() error {
 	if v, ok := su.mutation.Name(); ok {
@@ -168,6 +226,18 @@ func (su *SubjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := su.mutation.CreatedAt(); ok {
+		_spec.SetField(subject.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := su.mutation.UpdatedAt(); ok {
+		_spec.SetField(subject.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := su.mutation.CreatedBy(); ok {
+		_spec.SetField(subject.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := su.mutation.UpdatedBy(); ok {
+		_spec.SetField(subject.FieldUpdatedBy, field.TypeString, value)
 	}
 	if value, ok := su.mutation.Name(); ok {
 		_spec.SetField(subject.FieldName, field.TypeString, value)
@@ -282,6 +352,54 @@ type SubjectUpdateOne struct {
 	mutation *SubjectMutation
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (suo *SubjectUpdateOne) SetCreatedAt(t time.Time) *SubjectUpdateOne {
+	suo.mutation.SetCreatedAt(t)
+	return suo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (suo *SubjectUpdateOne) SetNillableCreatedAt(t *time.Time) *SubjectUpdateOne {
+	if t != nil {
+		suo.SetCreatedAt(*t)
+	}
+	return suo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (suo *SubjectUpdateOne) SetUpdatedAt(t time.Time) *SubjectUpdateOne {
+	suo.mutation.SetUpdatedAt(t)
+	return suo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (suo *SubjectUpdateOne) SetCreatedBy(s string) *SubjectUpdateOne {
+	suo.mutation.SetCreatedBy(s)
+	return suo
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (suo *SubjectUpdateOne) SetNillableCreatedBy(s *string) *SubjectUpdateOne {
+	if s != nil {
+		suo.SetCreatedBy(*s)
+	}
+	return suo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (suo *SubjectUpdateOne) SetUpdatedBy(s string) *SubjectUpdateOne {
+	suo.mutation.SetUpdatedBy(s)
+	return suo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (suo *SubjectUpdateOne) SetNillableUpdatedBy(s *string) *SubjectUpdateOne {
+	if s != nil {
+		suo.SetUpdatedBy(*s)
+	}
+	return suo
+}
+
 // SetName sets the "name" field.
 func (suo *SubjectUpdateOne) SetName(s string) *SubjectUpdateOne {
 	suo.mutation.SetName(s)
@@ -388,6 +506,7 @@ func (suo *SubjectUpdateOne) Select(field string, fields ...string) *SubjectUpda
 
 // Save executes the query and returns the updated Subject entity.
 func (suo *SubjectUpdateOne) Save(ctx context.Context) (*Subject, error) {
+	suo.defaults()
 	return withHooks(ctx, suo.sqlSave, suo.mutation, suo.hooks)
 }
 
@@ -410,6 +529,14 @@ func (suo *SubjectUpdateOne) Exec(ctx context.Context) error {
 func (suo *SubjectUpdateOne) ExecX(ctx context.Context) {
 	if err := suo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (suo *SubjectUpdateOne) defaults() {
+	if _, ok := suo.mutation.UpdatedAt(); !ok {
+		v := subject.UpdateDefaultUpdatedAt()
+		suo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -451,6 +578,18 @@ func (suo *SubjectUpdateOne) sqlSave(ctx context.Context) (_node *Subject, err e
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := suo.mutation.CreatedAt(); ok {
+		_spec.SetField(subject.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := suo.mutation.UpdatedAt(); ok {
+		_spec.SetField(subject.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := suo.mutation.CreatedBy(); ok {
+		_spec.SetField(subject.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := suo.mutation.UpdatedBy(); ok {
+		_spec.SetField(subject.FieldUpdatedBy, field.TypeString, value)
 	}
 	if value, ok := suo.mutation.Name(); ok {
 		_spec.SetField(subject.FieldName, field.TypeString, value)

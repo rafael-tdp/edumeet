@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"edumeet/ent/schema/trait"
 	"edumeet/utils"
 	"time"
 
@@ -15,12 +16,15 @@ type Participant struct {
 
 func (Participant) Fields() []ent.Field {
 	ulid := utils.ULID{}
-	return []ent.Field{
-		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
-		field.String("status"),
-		field.Time("requested_at").Default(time.Now),
-		field.Time("joined_at").Optional(),
-	}
+	return append(
+		trait.Blamable{}.Fields(),
+		[]ent.Field{
+			field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
+			field.String("status"),
+			field.Time("requested_at").Default(time.Now),
+			field.Time("joined_at").Optional(),
+		}...,
+	)
 }
 
 func (Participant) Edges() []ent.Edge {

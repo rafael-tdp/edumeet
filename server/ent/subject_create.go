@@ -9,6 +9,7 @@ import (
 	"edumeet/ent/user"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -19,6 +20,46 @@ type SubjectCreate struct {
 	config
 	mutation *SubjectMutation
 	hooks    []Hook
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (sc *SubjectCreate) SetCreatedAt(t time.Time) *SubjectCreate {
+	sc.mutation.SetCreatedAt(t)
+	return sc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (sc *SubjectCreate) SetNillableCreatedAt(t *time.Time) *SubjectCreate {
+	if t != nil {
+		sc.SetCreatedAt(*t)
+	}
+	return sc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (sc *SubjectCreate) SetUpdatedAt(t time.Time) *SubjectCreate {
+	sc.mutation.SetUpdatedAt(t)
+	return sc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (sc *SubjectCreate) SetNillableUpdatedAt(t *time.Time) *SubjectCreate {
+	if t != nil {
+		sc.SetUpdatedAt(*t)
+	}
+	return sc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (sc *SubjectCreate) SetCreatedBy(s string) *SubjectCreate {
+	sc.mutation.SetCreatedBy(s)
+	return sc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (sc *SubjectCreate) SetUpdatedBy(s string) *SubjectCreate {
+	sc.mutation.SetUpdatedBy(s)
+	return sc
 }
 
 // SetName sets the "name" field.
@@ -106,6 +147,14 @@ func (sc *SubjectCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (sc *SubjectCreate) defaults() {
+	if _, ok := sc.mutation.CreatedAt(); !ok {
+		v := subject.DefaultCreatedAt()
+		sc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := sc.mutation.UpdatedAt(); !ok {
+		v := subject.DefaultUpdatedAt()
+		sc.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := sc.mutation.ID(); !ok {
 		v := subject.DefaultID()
 		sc.mutation.SetID(v)
@@ -114,6 +163,18 @@ func (sc *SubjectCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (sc *SubjectCreate) check() error {
+	if _, ok := sc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Subject.created_at"`)}
+	}
+	if _, ok := sc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Subject.updated_at"`)}
+	}
+	if _, ok := sc.mutation.CreatedBy(); !ok {
+		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Subject.created_by"`)}
+	}
+	if _, ok := sc.mutation.UpdatedBy(); !ok {
+		return &ValidationError{Name: "updated_by", err: errors.New(`ent: missing required field "Subject.updated_by"`)}
+	}
 	if _, ok := sc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Subject.name"`)}
 	}
@@ -156,6 +217,22 @@ func (sc *SubjectCreate) createSpec() (*Subject, *sqlgraph.CreateSpec) {
 	if id, ok := sc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := sc.mutation.CreatedAt(); ok {
+		_spec.SetField(subject.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := sc.mutation.UpdatedAt(); ok {
+		_spec.SetField(subject.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := sc.mutation.CreatedBy(); ok {
+		_spec.SetField(subject.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = value
+	}
+	if value, ok := sc.mutation.UpdatedBy(); ok {
+		_spec.SetField(subject.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = value
 	}
 	if value, ok := sc.mutation.Name(); ok {
 		_spec.SetField(subject.FieldName, field.TypeString, value)

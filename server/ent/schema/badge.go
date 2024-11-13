@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"edumeet/ent/schema/trait"
 	"edumeet/utils"
 
 	"entgo.io/ent"
@@ -14,13 +15,16 @@ type Badge struct {
 
 func (Badge) Fields() []ent.Field {
 	ulid := utils.ULID{}
-	return []ent.Field{
-		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
-		field.String("name"),
-		field.String("svg"),
-		field.Int("nbRequirementEvent"),
-		field.String("type"),
-	}
+	return append(
+		trait.Blamable{}.Fields(),
+		[]ent.Field{
+			field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
+			field.String("name"),
+			field.String("svg"),
+			field.Int("nbRequirementEvent"),
+			field.String("type"),
+		}...,
+	)
 }
 
 func (Badge) Edges() []ent.Edge {

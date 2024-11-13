@@ -8,6 +8,7 @@ import (
 	"edumeet/ent/user"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -18,6 +19,46 @@ type BadgeCreate struct {
 	config
 	mutation *BadgeMutation
 	hooks    []Hook
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (bc *BadgeCreate) SetCreatedAt(t time.Time) *BadgeCreate {
+	bc.mutation.SetCreatedAt(t)
+	return bc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (bc *BadgeCreate) SetNillableCreatedAt(t *time.Time) *BadgeCreate {
+	if t != nil {
+		bc.SetCreatedAt(*t)
+	}
+	return bc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (bc *BadgeCreate) SetUpdatedAt(t time.Time) *BadgeCreate {
+	bc.mutation.SetUpdatedAt(t)
+	return bc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (bc *BadgeCreate) SetNillableUpdatedAt(t *time.Time) *BadgeCreate {
+	if t != nil {
+		bc.SetUpdatedAt(*t)
+	}
+	return bc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (bc *BadgeCreate) SetCreatedBy(s string) *BadgeCreate {
+	bc.mutation.SetCreatedBy(s)
+	return bc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (bc *BadgeCreate) SetUpdatedBy(s string) *BadgeCreate {
+	bc.mutation.SetUpdatedBy(s)
+	return bc
 }
 
 // SetName sets the "name" field.
@@ -108,6 +149,14 @@ func (bc *BadgeCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (bc *BadgeCreate) defaults() {
+	if _, ok := bc.mutation.CreatedAt(); !ok {
+		v := badge.DefaultCreatedAt()
+		bc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := bc.mutation.UpdatedAt(); !ok {
+		v := badge.DefaultUpdatedAt()
+		bc.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := bc.mutation.ID(); !ok {
 		v := badge.DefaultID()
 		bc.mutation.SetID(v)
@@ -116,6 +165,18 @@ func (bc *BadgeCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (bc *BadgeCreate) check() error {
+	if _, ok := bc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Badge.created_at"`)}
+	}
+	if _, ok := bc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Badge.updated_at"`)}
+	}
+	if _, ok := bc.mutation.CreatedBy(); !ok {
+		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Badge.created_by"`)}
+	}
+	if _, ok := bc.mutation.UpdatedBy(); !ok {
+		return &ValidationError{Name: "updated_by", err: errors.New(`ent: missing required field "Badge.updated_by"`)}
+	}
 	if _, ok := bc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Badge.name"`)}
 	}
@@ -162,6 +223,22 @@ func (bc *BadgeCreate) createSpec() (*Badge, *sqlgraph.CreateSpec) {
 	if id, ok := bc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := bc.mutation.CreatedAt(); ok {
+		_spec.SetField(badge.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := bc.mutation.UpdatedAt(); ok {
+		_spec.SetField(badge.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := bc.mutation.CreatedBy(); ok {
+		_spec.SetField(badge.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = value
+	}
+	if value, ok := bc.mutation.UpdatedBy(); ok {
+		_spec.SetField(badge.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = value
 	}
 	if value, ok := bc.mutation.Name(); ok {
 		_spec.SetField(badge.FieldName, field.TypeString, value)

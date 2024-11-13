@@ -9,6 +9,7 @@ import (
 	"edumeet/ent/message"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -19,6 +20,46 @@ type DocumentCreate struct {
 	config
 	mutation *DocumentMutation
 	hooks    []Hook
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (dc *DocumentCreate) SetCreatedAt(t time.Time) *DocumentCreate {
+	dc.mutation.SetCreatedAt(t)
+	return dc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (dc *DocumentCreate) SetNillableCreatedAt(t *time.Time) *DocumentCreate {
+	if t != nil {
+		dc.SetCreatedAt(*t)
+	}
+	return dc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (dc *DocumentCreate) SetUpdatedAt(t time.Time) *DocumentCreate {
+	dc.mutation.SetUpdatedAt(t)
+	return dc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (dc *DocumentCreate) SetNillableUpdatedAt(t *time.Time) *DocumentCreate {
+	if t != nil {
+		dc.SetUpdatedAt(*t)
+	}
+	return dc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (dc *DocumentCreate) SetCreatedBy(s string) *DocumentCreate {
+	dc.mutation.SetCreatedBy(s)
+	return dc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (dc *DocumentCreate) SetUpdatedBy(s string) *DocumentCreate {
+	dc.mutation.SetUpdatedBy(s)
+	return dc
 }
 
 // SetPath sets the "path" field.
@@ -106,6 +147,14 @@ func (dc *DocumentCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (dc *DocumentCreate) defaults() {
+	if _, ok := dc.mutation.CreatedAt(); !ok {
+		v := document.DefaultCreatedAt()
+		dc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := dc.mutation.UpdatedAt(); !ok {
+		v := document.DefaultUpdatedAt()
+		dc.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := dc.mutation.ID(); !ok {
 		v := document.DefaultID()
 		dc.mutation.SetID(v)
@@ -114,6 +163,18 @@ func (dc *DocumentCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (dc *DocumentCreate) check() error {
+	if _, ok := dc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Document.created_at"`)}
+	}
+	if _, ok := dc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Document.updated_at"`)}
+	}
+	if _, ok := dc.mutation.CreatedBy(); !ok {
+		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Document.created_by"`)}
+	}
+	if _, ok := dc.mutation.UpdatedBy(); !ok {
+		return &ValidationError{Name: "updated_by", err: errors.New(`ent: missing required field "Document.updated_by"`)}
+	}
 	if _, ok := dc.mutation.Path(); !ok {
 		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "Document.path"`)}
 	}
@@ -151,6 +212,22 @@ func (dc *DocumentCreate) createSpec() (*Document, *sqlgraph.CreateSpec) {
 	if id, ok := dc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := dc.mutation.CreatedAt(); ok {
+		_spec.SetField(document.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := dc.mutation.UpdatedAt(); ok {
+		_spec.SetField(document.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := dc.mutation.CreatedBy(); ok {
+		_spec.SetField(document.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = value
+	}
+	if value, ok := dc.mutation.UpdatedBy(); ok {
+		_spec.SetField(document.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = value
 	}
 	if value, ok := dc.mutation.Path(); ok {
 		_spec.SetField(document.FieldPath, field.TypeString, value)

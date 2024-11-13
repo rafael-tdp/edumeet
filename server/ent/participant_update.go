@@ -30,6 +30,54 @@ func (pu *ParticipantUpdate) Where(ps ...predicate.Participant) *ParticipantUpda
 	return pu
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (pu *ParticipantUpdate) SetCreatedAt(t time.Time) *ParticipantUpdate {
+	pu.mutation.SetCreatedAt(t)
+	return pu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (pu *ParticipantUpdate) SetNillableCreatedAt(t *time.Time) *ParticipantUpdate {
+	if t != nil {
+		pu.SetCreatedAt(*t)
+	}
+	return pu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (pu *ParticipantUpdate) SetUpdatedAt(t time.Time) *ParticipantUpdate {
+	pu.mutation.SetUpdatedAt(t)
+	return pu
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (pu *ParticipantUpdate) SetCreatedBy(s string) *ParticipantUpdate {
+	pu.mutation.SetCreatedBy(s)
+	return pu
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (pu *ParticipantUpdate) SetNillableCreatedBy(s *string) *ParticipantUpdate {
+	if s != nil {
+		pu.SetCreatedBy(*s)
+	}
+	return pu
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (pu *ParticipantUpdate) SetUpdatedBy(s string) *ParticipantUpdate {
+	pu.mutation.SetUpdatedBy(s)
+	return pu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (pu *ParticipantUpdate) SetNillableUpdatedBy(s *string) *ParticipantUpdate {
+	if s != nil {
+		pu.SetUpdatedBy(*s)
+	}
+	return pu
+}
+
 // SetStatus sets the "status" field.
 func (pu *ParticipantUpdate) SetStatus(s string) *ParticipantUpdate {
 	pu.mutation.SetStatus(s)
@@ -135,6 +183,7 @@ func (pu *ParticipantUpdate) ClearEvent() *ParticipantUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (pu *ParticipantUpdate) Save(ctx context.Context) (int, error) {
+	pu.defaults()
 	return withHooks(ctx, pu.sqlSave, pu.mutation, pu.hooks)
 }
 
@@ -160,6 +209,14 @@ func (pu *ParticipantUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (pu *ParticipantUpdate) defaults() {
+	if _, ok := pu.mutation.UpdatedAt(); !ok {
+		v := participant.UpdateDefaultUpdatedAt()
+		pu.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (pu *ParticipantUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(participant.Table, participant.Columns, sqlgraph.NewFieldSpec(participant.FieldID, field.TypeString))
 	if ps := pu.mutation.predicates; len(ps) > 0 {
@@ -168,6 +225,18 @@ func (pu *ParticipantUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := pu.mutation.CreatedAt(); ok {
+		_spec.SetField(participant.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := pu.mutation.UpdatedAt(); ok {
+		_spec.SetField(participant.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := pu.mutation.CreatedBy(); ok {
+		_spec.SetField(participant.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := pu.mutation.UpdatedBy(); ok {
+		_spec.SetField(participant.FieldUpdatedBy, field.TypeString, value)
 	}
 	if value, ok := pu.mutation.Status(); ok {
 		_spec.SetField(participant.FieldStatus, field.TypeString, value)
@@ -257,6 +326,54 @@ type ParticipantUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *ParticipantMutation
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (puo *ParticipantUpdateOne) SetCreatedAt(t time.Time) *ParticipantUpdateOne {
+	puo.mutation.SetCreatedAt(t)
+	return puo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (puo *ParticipantUpdateOne) SetNillableCreatedAt(t *time.Time) *ParticipantUpdateOne {
+	if t != nil {
+		puo.SetCreatedAt(*t)
+	}
+	return puo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (puo *ParticipantUpdateOne) SetUpdatedAt(t time.Time) *ParticipantUpdateOne {
+	puo.mutation.SetUpdatedAt(t)
+	return puo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (puo *ParticipantUpdateOne) SetCreatedBy(s string) *ParticipantUpdateOne {
+	puo.mutation.SetCreatedBy(s)
+	return puo
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (puo *ParticipantUpdateOne) SetNillableCreatedBy(s *string) *ParticipantUpdateOne {
+	if s != nil {
+		puo.SetCreatedBy(*s)
+	}
+	return puo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (puo *ParticipantUpdateOne) SetUpdatedBy(s string) *ParticipantUpdateOne {
+	puo.mutation.SetUpdatedBy(s)
+	return puo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (puo *ParticipantUpdateOne) SetNillableUpdatedBy(s *string) *ParticipantUpdateOne {
+	if s != nil {
+		puo.SetUpdatedBy(*s)
+	}
+	return puo
 }
 
 // SetStatus sets the "status" field.
@@ -377,6 +494,7 @@ func (puo *ParticipantUpdateOne) Select(field string, fields ...string) *Partici
 
 // Save executes the query and returns the updated Participant entity.
 func (puo *ParticipantUpdateOne) Save(ctx context.Context) (*Participant, error) {
+	puo.defaults()
 	return withHooks(ctx, puo.sqlSave, puo.mutation, puo.hooks)
 }
 
@@ -399,6 +517,14 @@ func (puo *ParticipantUpdateOne) Exec(ctx context.Context) error {
 func (puo *ParticipantUpdateOne) ExecX(ctx context.Context) {
 	if err := puo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (puo *ParticipantUpdateOne) defaults() {
+	if _, ok := puo.mutation.UpdatedAt(); !ok {
+		v := participant.UpdateDefaultUpdatedAt()
+		puo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -427,6 +553,18 @@ func (puo *ParticipantUpdateOne) sqlSave(ctx context.Context) (_node *Participan
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := puo.mutation.CreatedAt(); ok {
+		_spec.SetField(participant.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := puo.mutation.UpdatedAt(); ok {
+		_spec.SetField(participant.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := puo.mutation.CreatedBy(); ok {
+		_spec.SetField(participant.FieldCreatedBy, field.TypeString, value)
+	}
+	if value, ok := puo.mutation.UpdatedBy(); ok {
+		_spec.SetField(participant.FieldUpdatedBy, field.TypeString, value)
 	}
 	if value, ok := puo.mutation.Status(); ok {
 		_spec.SetField(participant.FieldStatus, field.TypeString, value)

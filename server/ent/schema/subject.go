@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"edumeet/ent/schema/trait"
 	"edumeet/utils"
 
 	"entgo.io/ent"
@@ -14,10 +15,13 @@ type Subject struct {
 
 func (Subject) Fields() []ent.Field {
 	ulid := utils.ULID{}
-	return []ent.Field{
-		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
-		field.String("name").NotEmpty().Unique(),
-	}
+	return append(
+		trait.Blamable{}.Fields(),
+		[]ent.Field{
+			field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
+			field.String("name").NotEmpty().Unique(),
+		}...,
+	)
 }
 
 func (Subject) Edges() []ent.Edge {
