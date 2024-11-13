@@ -1,9 +1,7 @@
-// lib/components/swipe_cards_component.dart
-
 import 'package:flutter/material.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
-import 'package:client/fake_data.dart';
+import 'package:client/core/services/event_services.dart';
 
 class SwipeCardsComponent extends StatefulWidget {
   const SwipeCardsComponent({super.key});
@@ -16,26 +14,43 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
   late List<SwipeItem> _swipeItems;
   late MatchEngine _matchEngine;
 
-  final List<Map<String, String>> _mockData = FakeData.events;
+  Future<void> loadEvents() async {
+    try {
+      // Appel de la méthode asynchrone pour récupérer la liste d'événements
+      final List<Map<String, dynamic>> events = await EventServices.getEvents();
+
+      // Transformation des événements en `SwipeItem`
+      _swipeItems = events.map((event) {
+        return SwipeItem(
+          content: event,
+          likeAction: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Liked ${event['title']}")));
+          },
+          nopeAction: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Nope ${event['title']}")));
+          },
+        );
+      }).toList();
+
+      // Initialisation de `MatchEngine` avec la liste `_swipeItems`
+      setState(() {
+        _matchEngine = MatchEngine(swipeItems: _swipeItems);
+      });
+    } catch (e) {
+      print("Error loading events: $e");
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Error loading events")));
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _swipeItems = _mockData.map((data) {
-      return SwipeItem(
-        content: data,
-        likeAction: () {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text("Liked ${data['title']}")));
-        },
-        nopeAction: () {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text("Nope ${data['title']}")));
-        },
-      );
-    }).toList();
-
+    _swipeItems = [];
     _matchEngine = MatchEngine(swipeItems: _swipeItems);
+    loadEvents();
   }
 
   @override
@@ -43,7 +58,7 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
     return SwipeCards(
       matchEngine: _matchEngine,
       itemBuilder: (context, index) {
-        final data = _swipeItems[index].content as Map<String, String>;
+        final data = _swipeItems[index].content as Map<String, dynamic>;
         return Center(
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 0.99,
@@ -118,7 +133,8 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                                   const SizedBox(width: 4),
                                   Text(
                                     custom_date_utils.DateUtils
-                                        .isoToFormattedDate(data['date']!),
+                                        .isoToFormattedDate(
+                                            data['start_date']!),
                                     style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -146,7 +162,7 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    data['participants']!,
+                                    data['participants_count']!.toString(),
                                     style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -168,7 +184,8 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
-                                    data['remote'] == 'true'
+                                    data.containsKey('remote_event') &&
+                                            data['remote_event'] != null
                                         ? Icons.wifi
                                         : Icons.location_on,
                                     size: 14,
@@ -176,7 +193,8 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    data['remote'] == 'true'
+                                    data.containsKey('remote_event') &&
+                                            data['remote_event'] != null
                                         ? 'En ligne'
                                         : 'Physique',
                                     style: const TextStyle(
@@ -213,7 +231,6 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                               },
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(
-                                  // color: Colors.red,
                                   color: Colors.white,
                                   width: 2.0,
                                 ),
@@ -240,7 +257,6 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                               },
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(
-                                  // color: Color.fromARGB(255, 68, 255, 75),
                                   color: Colors.white,
                                   width: 2.0,
                                 ),
@@ -250,7 +266,6 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                               ),
                               child: const Icon(
                                 Icons.favorite,
-                                // color: Color.fromARGB(255, 68, 255, 75),
                                 color: Colors.green,
                                 size: 25,
                               ),

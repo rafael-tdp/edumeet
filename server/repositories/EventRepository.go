@@ -122,7 +122,7 @@ func (er *EventRepository) UpdateEvent(eventID string, event *ent.Event) (*ent.E
 }
 
 func (er *EventRepository) GetEvents() ([]*ent.Event, error) {
-	events, err := er.client.Event.Query().WithRemoteEvent().WithPhysicalEvent().All(context.Background())
+	events, err := er.client.Event.Query().WithRemoteEvent().WithPhysicalEvent().WithParticipants().All(context.Background())
 	if err != nil {
 		return nil, err
 	}
