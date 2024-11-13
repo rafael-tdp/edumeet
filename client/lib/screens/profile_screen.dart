@@ -49,8 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 20),
               Text(
-                "${user?['firstname']?.substring(0, 1).toUpperCase() ?? ''}${user?['firstname']?.substring(1) ?? ''} ${user?['lastname']?.substring(0, 1).toUpperCase() ?? ''}${user?['lastname']?.substring(1) ?? ''} !",
-                style: const TextStyle(
+                  "${(user?['firstname']?.isNotEmpty ?? false) && (user?['lastname']?.isNotEmpty ?? false) ? '${user?['firstname']?.substring(0, 1).toUpperCase()}${user?['firstname']?.substring(1)} ${user?['lastname']?.substring(0, 1).toUpperCase()}${user?['lastname']?.substring(1)} !' : 'Anonyme'}",                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,

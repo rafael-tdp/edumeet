@@ -45,9 +45,9 @@ func ParseUserDTO(user *ent.User) (*UserDTO, error) {
 		return nil, errors.New("role is required")
 	}
 
-	address, err := utils.GetAddress(*user.Lat, *user.Lng)
-	if err != nil {
-		return nil, err
+	var address string
+	if user.Lat != nil || user.Lng != nil {
+		address, _ = utils.GetAddress(*user.Lat, *user.Lng)
 	}
 
 	userDTO := &UserDTO{
@@ -56,7 +56,7 @@ func ParseUserDTO(user *ent.User) (*UserDTO, error) {
 		Username:  user.Username,
 		Lastname:  user.Lastname,
 		Firstname: user.Firstname,
-		BirthDate: *user.BirthDate, // Dereference the pointer
+		//BirthDate: *user.BirthDate,
 		Bio:       user.Bio,
 		Picture:   user.Picture,
 		Activated: user.Activated,
