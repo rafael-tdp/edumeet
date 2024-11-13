@@ -125,6 +125,11 @@ func Lat(v float64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldLat, v))
 }
 
+// ZipCode applies equality check predicate on the "zipCode" field. It's identical to ZipCodeEQ.
+func ZipCode(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldZipCode, v))
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -505,6 +510,16 @@ func BirthDateLTE(v time.Time) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldBirthDate, v))
 }
 
+// BirthDateIsNil applies the IsNil predicate on the "birthDate" field.
+func BirthDateIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldBirthDate))
+}
+
+// BirthDateNotNil applies the NotNil predicate on the "birthDate" field.
+func BirthDateNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldBirthDate))
+}
+
 // BioEQ applies the EQ predicate on the "bio" field.
 func BioEQ(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldBio, v))
@@ -803,6 +818,81 @@ func LatIsNil() predicate.User {
 // LatNotNil applies the NotNil predicate on the "lat" field.
 func LatNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldLat))
+}
+
+// ZipCodeEQ applies the EQ predicate on the "zipCode" field.
+func ZipCodeEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldZipCode, v))
+}
+
+// ZipCodeNEQ applies the NEQ predicate on the "zipCode" field.
+func ZipCodeNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldZipCode, v))
+}
+
+// ZipCodeIn applies the In predicate on the "zipCode" field.
+func ZipCodeIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldZipCode, vs...))
+}
+
+// ZipCodeNotIn applies the NotIn predicate on the "zipCode" field.
+func ZipCodeNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldZipCode, vs...))
+}
+
+// ZipCodeGT applies the GT predicate on the "zipCode" field.
+func ZipCodeGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldZipCode, v))
+}
+
+// ZipCodeGTE applies the GTE predicate on the "zipCode" field.
+func ZipCodeGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldZipCode, v))
+}
+
+// ZipCodeLT applies the LT predicate on the "zipCode" field.
+func ZipCodeLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldZipCode, v))
+}
+
+// ZipCodeLTE applies the LTE predicate on the "zipCode" field.
+func ZipCodeLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldZipCode, v))
+}
+
+// ZipCodeContains applies the Contains predicate on the "zipCode" field.
+func ZipCodeContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldZipCode, v))
+}
+
+// ZipCodeHasPrefix applies the HasPrefix predicate on the "zipCode" field.
+func ZipCodeHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldZipCode, v))
+}
+
+// ZipCodeHasSuffix applies the HasSuffix predicate on the "zipCode" field.
+func ZipCodeHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldZipCode, v))
+}
+
+// ZipCodeIsNil applies the IsNil predicate on the "zipCode" field.
+func ZipCodeIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldZipCode))
+}
+
+// ZipCodeNotNil applies the NotNil predicate on the "zipCode" field.
+func ZipCodeNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldZipCode))
+}
+
+// ZipCodeEqualFold applies the EqualFold predicate on the "zipCode" field.
+func ZipCodeEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldZipCode, v))
+}
+
+// ZipCodeContainsFold applies the ContainsFold predicate on the "zipCode" field.
+func ZipCodeContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldZipCode, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

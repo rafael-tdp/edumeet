@@ -118,6 +118,12 @@ func (uu *UserUpdate) SetNillableBirthDate(t *time.Time) *UserUpdate {
 	return uu
 }
 
+// ClearBirthDate clears the value of the "birthDate" field.
+func (uu *UserUpdate) ClearBirthDate() *UserUpdate {
+	uu.mutation.ClearBirthDate()
+	return uu
+}
+
 // SetBio sets the "bio" field.
 func (uu *UserUpdate) SetBio(s string) *UserUpdate {
 	uu.mutation.SetBio(s)
@@ -244,6 +250,26 @@ func (uu *UserUpdate) AddLat(f float64) *UserUpdate {
 // ClearLat clears the value of the "lat" field.
 func (uu *UserUpdate) ClearLat() *UserUpdate {
 	uu.mutation.ClearLat()
+	return uu
+}
+
+// SetZipCode sets the "zipCode" field.
+func (uu *UserUpdate) SetZipCode(s string) *UserUpdate {
+	uu.mutation.SetZipCode(s)
+	return uu
+}
+
+// SetNillableZipCode sets the "zipCode" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableZipCode(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetZipCode(*s)
+	}
+	return uu
+}
+
+// ClearZipCode clears the value of the "zipCode" field.
+func (uu *UserUpdate) ClearZipCode() *UserUpdate {
+	uu.mutation.ClearZipCode()
 	return uu
 }
 
@@ -603,6 +629,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.BirthDate(); ok {
 		_spec.SetField(user.FieldBirthDate, field.TypeTime, value)
 	}
+	if uu.mutation.BirthDateCleared() {
+		_spec.ClearField(user.FieldBirthDate, field.TypeTime)
+	}
 	if value, ok := uu.mutation.Bio(); ok {
 		_spec.SetField(user.FieldBio, field.TypeString, value)
 	}
@@ -641,6 +670,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.LatCleared() {
 		_spec.ClearField(user.FieldLat, field.TypeFloat64)
+	}
+	if value, ok := uu.mutation.ZipCode(); ok {
+		_spec.SetField(user.FieldZipCode, field.TypeString, value)
+	}
+	if uu.mutation.ZipCodeCleared() {
+		_spec.ClearField(user.FieldZipCode, field.TypeString)
 	}
 	if value, ok := uu.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
@@ -1034,6 +1069,12 @@ func (uuo *UserUpdateOne) SetNillableBirthDate(t *time.Time) *UserUpdateOne {
 	return uuo
 }
 
+// ClearBirthDate clears the value of the "birthDate" field.
+func (uuo *UserUpdateOne) ClearBirthDate() *UserUpdateOne {
+	uuo.mutation.ClearBirthDate()
+	return uuo
+}
+
 // SetBio sets the "bio" field.
 func (uuo *UserUpdateOne) SetBio(s string) *UserUpdateOne {
 	uuo.mutation.SetBio(s)
@@ -1160,6 +1201,26 @@ func (uuo *UserUpdateOne) AddLat(f float64) *UserUpdateOne {
 // ClearLat clears the value of the "lat" field.
 func (uuo *UserUpdateOne) ClearLat() *UserUpdateOne {
 	uuo.mutation.ClearLat()
+	return uuo
+}
+
+// SetZipCode sets the "zipCode" field.
+func (uuo *UserUpdateOne) SetZipCode(s string) *UserUpdateOne {
+	uuo.mutation.SetZipCode(s)
+	return uuo
+}
+
+// SetNillableZipCode sets the "zipCode" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableZipCode(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetZipCode(*s)
+	}
+	return uuo
+}
+
+// ClearZipCode clears the value of the "zipCode" field.
+func (uuo *UserUpdateOne) ClearZipCode() *UserUpdateOne {
+	uuo.mutation.ClearZipCode()
 	return uuo
 }
 
@@ -1549,6 +1610,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.BirthDate(); ok {
 		_spec.SetField(user.FieldBirthDate, field.TypeTime, value)
 	}
+	if uuo.mutation.BirthDateCleared() {
+		_spec.ClearField(user.FieldBirthDate, field.TypeTime)
+	}
 	if value, ok := uuo.mutation.Bio(); ok {
 		_spec.SetField(user.FieldBio, field.TypeString, value)
 	}
@@ -1587,6 +1651,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.LatCleared() {
 		_spec.ClearField(user.FieldLat, field.TypeFloat64)
+	}
+	if value, ok := uuo.mutation.ZipCode(); ok {
+		_spec.SetField(user.FieldZipCode, field.TypeString, value)
+	}
+	if uuo.mutation.ZipCodeCleared() {
+		_spec.ClearField(user.FieldZipCode, field.TypeString)
 	}
 	if value, ok := uuo.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)

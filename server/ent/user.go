@@ -28,7 +28,7 @@ type User struct {
 	// Password holds the value of the "password" field.
 	Password string `json:"-"`
 	// BirthDate holds the value of the "birthDate" field.
-	BirthDate time.Time `json:"birthDate,omitempty"`
+	BirthDate *time.Time `json:"birthDate,omitempty"`
 	// Bio holds the value of the "bio" field.
 	Bio *string `json:"bio,omitempty"`
 	// Picture holds the value of the "picture" field.
@@ -41,6 +41,8 @@ type User struct {
 	Lng *float64 `json:"lng,omitempty"`
 	// Lat holds the value of the "lat" field.
 	Lat *float64 `json:"lat,omitempty"`
+	// ZipCode holds the value of the "zipCode" field.
+	ZipCode *string `json:"zipCode,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Code holds the value of the "code" field.
@@ -139,7 +141,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case user.FieldReportNumber:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldEmail, user.FieldUsername, user.FieldLastname, user.FieldFirstname, user.FieldPassword, user.FieldBio, user.FieldPicture, user.FieldCode, user.FieldRole:
+		case user.FieldID, user.FieldEmail, user.FieldUsername, user.FieldLastname, user.FieldFirstname, user.FieldPassword, user.FieldBio, user.FieldPicture, user.FieldZipCode, user.FieldCode, user.FieldRole:
 			values[i] = new(sql.NullString)
 		case user.FieldBirthDate, user.FieldCreatedAt, user.FieldCodeExpiration:
 			values[i] = new(sql.NullTime)
@@ -198,7 +200,8 @@ func (u *User) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field birthDate", values[i])
 			} else if value.Valid {
-				u.BirthDate = value.Time
+				u.BirthDate = new(time.Time)
+				*u.BirthDate = value.Time
 			}
 		case user.FieldBio:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -239,6 +242,13 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Lat = new(float64)
 				*u.Lat = value.Float64
+			}
+		case user.FieldZipCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field zipCode", values[i])
+			} else if value.Valid {
+				u.ZipCode = new(string)
+				*u.ZipCode = value.String
 			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -346,8 +356,10 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("password=<sensitive>")
 	builder.WriteString(", ")
-	builder.WriteString("birthDate=")
-	builder.WriteString(u.BirthDate.Format(time.ANSIC))
+	if v := u.BirthDate; v != nil {
+		builder.WriteString("birthDate=")
+		builder.WriteString(v.Format(time.ANSIC))
+	}
 	builder.WriteString(", ")
 	if v := u.Bio; v != nil {
 		builder.WriteString("bio=")
@@ -373,6 +385,11 @@ func (u *User) String() string {
 	if v := u.Lat; v != nil {
 		builder.WriteString("lat=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := u.ZipCode; v != nil {
+		builder.WriteString("zipCode=")
+		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")

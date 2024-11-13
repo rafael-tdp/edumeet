@@ -109,7 +109,7 @@ func init() {
 	// user.DefaultReportNumber holds the default value on creation for the reportNumber field.
 	user.DefaultReportNumber = userDescReportNumber.Default.(int)
 	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userFields[13].Descriptor()
+	userDescCreatedAt := userFields[14].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 	// userDescID is the schema descriptor for id field.

@@ -14,7 +14,7 @@ type UserDTO struct {
 	Username  string    `json:"username"`
 	Lastname  string    `json:"lastname"`
 	Firstname string    `json:"firstname"`
-	BirthDate time.Time `json:"birthDate"`
+	BirthDate time.Time `json:"birthDate,omitempty"`
 	Bio       *string   `json:"bio,omitempty"`
 	Picture   *string   `json:"picture,omitempty"`
 	Activated bool      `json:"activated"`
@@ -46,7 +46,6 @@ func ParseUserDTO(user *ent.User) (*UserDTO, error) {
 	}
 
 	address, err := utils.GetAddress(*user.Lat, *user.Lng)
-
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +56,7 @@ func ParseUserDTO(user *ent.User) (*UserDTO, error) {
 		Username:  user.Username,
 		Lastname:  user.Lastname,
 		Firstname: user.Firstname,
-		BirthDate: user.BirthDate,
+		BirthDate: *user.BirthDate, // Dereference the pointer
 		Bio:       user.Bio,
 		Picture:   user.Picture,
 		Activated: user.Activated,

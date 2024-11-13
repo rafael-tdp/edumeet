@@ -62,6 +62,14 @@ func (uc *UserCreate) SetBirthDate(t time.Time) *UserCreate {
 	return uc
 }
 
+// SetNillableBirthDate sets the "birthDate" field if the given value is not nil.
+func (uc *UserCreate) SetNillableBirthDate(t *time.Time) *UserCreate {
+	if t != nil {
+		uc.SetBirthDate(*t)
+	}
+	return uc
+}
+
 // SetBio sets the "bio" field.
 func (uc *UserCreate) SetBio(s string) *UserCreate {
 	uc.mutation.SetBio(s)
@@ -142,6 +150,20 @@ func (uc *UserCreate) SetLat(f float64) *UserCreate {
 func (uc *UserCreate) SetNillableLat(f *float64) *UserCreate {
 	if f != nil {
 		uc.SetLat(*f)
+	}
+	return uc
+}
+
+// SetZipCode sets the "zipCode" field.
+func (uc *UserCreate) SetZipCode(s string) *UserCreate {
+	uc.mutation.SetZipCode(s)
+	return uc
+}
+
+// SetNillableZipCode sets the "zipCode" field if the given value is not nil.
+func (uc *UserCreate) SetNillableZipCode(s *string) *UserCreate {
+	if s != nil {
+		uc.SetZipCode(*s)
 	}
 	return uc
 }
@@ -380,9 +402,6 @@ func (uc *UserCreate) check() error {
 	if _, ok := uc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`ent: missing required field "User.password"`)}
 	}
-	if _, ok := uc.mutation.BirthDate(); !ok {
-		return &ValidationError{Name: "birthDate", err: errors.New(`ent: missing required field "User.birthDate"`)}
-	}
 	if _, ok := uc.mutation.Activated(); !ok {
 		return &ValidationError{Name: "activated", err: errors.New(`ent: missing required field "User.activated"`)}
 	}
@@ -457,7 +476,7 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := uc.mutation.BirthDate(); ok {
 		_spec.SetField(user.FieldBirthDate, field.TypeTime, value)
-		_node.BirthDate = value
+		_node.BirthDate = &value
 	}
 	if value, ok := uc.mutation.Bio(); ok {
 		_spec.SetField(user.FieldBio, field.TypeString, value)
@@ -482,6 +501,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Lat(); ok {
 		_spec.SetField(user.FieldLat, field.TypeFloat64, value)
 		_node.Lat = &value
+	}
+	if value, ok := uc.mutation.ZipCode(); ok {
+		_spec.SetField(user.FieldZipCode, field.TypeString, value)
+		_node.ZipCode = &value
 	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)

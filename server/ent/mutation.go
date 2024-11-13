@@ -6079,6 +6079,7 @@ type UserMutation struct {
 	addlng              *float64
 	lat                 *float64
 	addlat              *float64
+	zipCode             *string
 	created_at          *time.Time
 	code                *string
 	code_expiration     *time.Time
@@ -6408,7 +6409,7 @@ func (m *UserMutation) BirthDate() (r time.Time, exists bool) {
 // OldBirthDate returns the old "birthDate" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldBirthDate(ctx context.Context) (v time.Time, err error) {
+func (m *UserMutation) OldBirthDate(ctx context.Context) (v *time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldBirthDate is only allowed on UpdateOne operations")
 	}
@@ -6422,9 +6423,22 @@ func (m *UserMutation) OldBirthDate(ctx context.Context) (v time.Time, err error
 	return oldValue.BirthDate, nil
 }
 
+// ClearBirthDate clears the value of the "birthDate" field.
+func (m *UserMutation) ClearBirthDate() {
+	m.birthDate = nil
+	m.clearedFields[user.FieldBirthDate] = struct{}{}
+}
+
+// BirthDateCleared returns if the "birthDate" field was cleared in this mutation.
+func (m *UserMutation) BirthDateCleared() bool {
+	_, ok := m.clearedFields[user.FieldBirthDate]
+	return ok
+}
+
 // ResetBirthDate resets all changes to the "birthDate" field.
 func (m *UserMutation) ResetBirthDate() {
 	m.birthDate = nil
+	delete(m.clearedFields, user.FieldBirthDate)
 }
 
 // SetBio sets the "bio" field.
@@ -6755,6 +6769,55 @@ func (m *UserMutation) ResetLat() {
 	m.lat = nil
 	m.addlat = nil
 	delete(m.clearedFields, user.FieldLat)
+}
+
+// SetZipCode sets the "zipCode" field.
+func (m *UserMutation) SetZipCode(s string) {
+	m.zipCode = &s
+}
+
+// ZipCode returns the value of the "zipCode" field in the mutation.
+func (m *UserMutation) ZipCode() (r string, exists bool) {
+	v := m.zipCode
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldZipCode returns the old "zipCode" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldZipCode(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldZipCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldZipCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldZipCode: %w", err)
+	}
+	return oldValue.ZipCode, nil
+}
+
+// ClearZipCode clears the value of the "zipCode" field.
+func (m *UserMutation) ClearZipCode() {
+	m.zipCode = nil
+	m.clearedFields[user.FieldZipCode] = struct{}{}
+}
+
+// ZipCodeCleared returns if the "zipCode" field was cleared in this mutation.
+func (m *UserMutation) ZipCodeCleared() bool {
+	_, ok := m.clearedFields[user.FieldZipCode]
+	return ok
+}
+
+// ResetZipCode resets all changes to the "zipCode" field.
+func (m *UserMutation) ResetZipCode() {
+	m.zipCode = nil
+	delete(m.clearedFields, user.FieldZipCode)
 }
 
 // SetCreatedAt sets the "created_at" field.
@@ -7285,7 +7348,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
 	}
@@ -7321,6 +7384,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.lat != nil {
 		fields = append(fields, user.FieldLat)
+	}
+	if m.zipCode != nil {
+		fields = append(fields, user.FieldZipCode)
 	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
@@ -7366,6 +7432,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Lng()
 	case user.FieldLat:
 		return m.Lat()
+	case user.FieldZipCode:
+		return m.ZipCode()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
 	case user.FieldCode:
@@ -7407,6 +7475,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldLng(ctx)
 	case user.FieldLat:
 		return m.OldLat(ctx)
+	case user.FieldZipCode:
+		return m.OldZipCode(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
 	case user.FieldCode:
@@ -7508,6 +7578,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLat(v)
 		return nil
+	case user.FieldZipCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetZipCode(v)
+		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
@@ -7605,6 +7682,9 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(user.FieldBirthDate) {
+		fields = append(fields, user.FieldBirthDate)
+	}
 	if m.FieldCleared(user.FieldBio) {
 		fields = append(fields, user.FieldBio)
 	}
@@ -7616,6 +7696,9 @@ func (m *UserMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(user.FieldLat) {
 		fields = append(fields, user.FieldLat)
+	}
+	if m.FieldCleared(user.FieldZipCode) {
+		fields = append(fields, user.FieldZipCode)
 	}
 	if m.FieldCleared(user.FieldCode) {
 		fields = append(fields, user.FieldCode)
@@ -7637,6 +7720,9 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
 	switch name {
+	case user.FieldBirthDate:
+		m.ClearBirthDate()
+		return nil
 	case user.FieldBio:
 		m.ClearBio()
 		return nil
@@ -7648,6 +7734,9 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldLat:
 		m.ClearLat()
+		return nil
+	case user.FieldZipCode:
+		m.ClearZipCode()
 		return nil
 	case user.FieldCode:
 		m.ClearCode()
@@ -7698,6 +7787,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldLat:
 		m.ResetLat()
+		return nil
+	case user.FieldZipCode:
+		m.ResetZipCode()
 		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()
