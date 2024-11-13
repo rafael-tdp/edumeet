@@ -1,8 +1,6 @@
-import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../../main.dart';
 import 'on_boarding_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -10,7 +8,7 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       home: Scaffold(
         body: OnboardingPager(),
       ),

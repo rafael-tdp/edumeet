@@ -7,14 +7,16 @@ import 'screens/events_screen.dart';
 import 'utils/colors.dart';
 import 'screens/conversations_screen.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
+      home: WelcomeScreen(),
     );
   }
 }
@@ -34,7 +36,9 @@ class _HomePageState extends State<HomePage> {
     const SwipeCardsPage(),
     const EventsPage(),
     const ConversationsPage(),
-    const ProfilePage(),
+    const ProfilePage(
+      isCurrentUser: true,
+    ),
     // LoginPage(),
     // const SettingsPage(),
   ];

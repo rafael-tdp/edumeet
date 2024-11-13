@@ -1,6 +1,5 @@
 import 'package:client/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/colors.dart';
 import 'package:intl/intl.dart';
 
@@ -12,6 +11,7 @@ class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key, required this.user});
 
   @override
+  // ignore: library_private_types_in_public_api
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
@@ -27,12 +27,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    _firstnameController = TextEditingController(text: widget.user['firstname'] ?? '');
-    _lastnameController = TextEditingController(text: widget.user['lastname'] ?? '');
+    _firstnameController =
+        TextEditingController(text: widget.user['firstname'] ?? '');
+    _lastnameController =
+        TextEditingController(text: widget.user['lastname'] ?? '');
     _bioController = TextEditingController(text: widget.user['bio'] ?? '');
     _emailController = TextEditingController(text: widget.user['email'] ?? '');
-    _birthDateController = TextEditingController(text: widget.user['birthDate'] ?? '');
-    _addressController = TextEditingController(text: widget.user['address'] ?? '');
+    _birthDateController =
+        TextEditingController(text: widget.user['birthDate'] ?? '');
+    _addressController =
+        TextEditingController(text: widget.user['address'] ?? '');
   }
 
   @override
@@ -62,14 +66,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _saveProfile() async {
     if (_formKey.currentState?.validate() == true) {
-      final updatedUser = {
-        'firstname': _firstnameController.text,
-        'lastname': _lastnameController.text,
-        'bio': _bioController.text,
-        'email': _emailController.text,
-        'birthDate': _birthDateController.text,
-        'address': _addressController.text,
-      };
+      // final updatedUser = {
+      //   'firstname': _firstnameController.text,
+      //   'lastname': _lastnameController.text,
+      //   'bio': _bioController.text,
+      //   'email': _emailController.text,
+      //   'birthDate': _birthDateController.text,
+      //   'address': _addressController.text,
+      // };
       // await AuthServices.updateUserInfo(updatedUser);
       // Navigator.pop(context, updatedUser);
     }
@@ -78,8 +82,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Modifier le profil'),
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Modifier mon profil',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -183,29 +196,30 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 ),
               ),
               const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ProfileButton(
-                  text: 'Enregistrer',
-                  backgroundColor: AppColors.purple,
-                  onPressed: () async {
-                    await _saveProfile();
-                  },
-                ),
-                const SizedBox(width: 10),
-                ProfileButton(
-                  text: 'Annuler',
-                  backgroundColor: Colors.redAccent,
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ProfilePage()),
-                    );
-                  },
-                ),
-              ],
-            ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ProfileButton(
+                    text: 'Enregistrer',
+                    backgroundColor: AppColors.purple,
+                    onPressed: () async {
+                      await _saveProfile();
+                    },
+                  ),
+                  const SizedBox(width: 10),
+                  ProfileButton(
+                    text: 'Annuler',
+                    backgroundColor: Colors.redAccent,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ProfilePage()),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ],
           ),
         ),

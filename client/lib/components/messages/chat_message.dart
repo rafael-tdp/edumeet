@@ -8,7 +8,7 @@ class ChatMessage extends StatelessWidget {
 
   const ChatMessage({
     super.key,
-    this.showName = false,
+    this.showName = true,
     required this.sender,
     required this.message,
     required this.isMe,

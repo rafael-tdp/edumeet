@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:client/screens/profile_screen.dart';
 
 class ParticipantsList extends StatelessWidget {
   final List<Map<String, String>> participants;
@@ -31,11 +32,14 @@ class ParticipantsList extends StatelessWidget {
               final participant = participants[index];
               return GestureDetector(
                 onTap: () {
+                  final bool isCurrentUser =
+                      participant['id'] == 'test'; // userId;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ParticipantProfile(
-                        participant: participant,
+                      builder: (context) => UserProfileWrapper(
+                        user: participant,
+                        isCurrentUser: isCurrentUser,
                       ),
                     ),
                   );
@@ -68,50 +72,31 @@ class ParticipantsList extends StatelessWidget {
   }
 }
 
-class ParticipantProfile extends StatelessWidget {
-  final Map<String, String> participant;
+class UserProfileWrapper extends StatelessWidget {
+  final Map<String, String> user;
+  final bool isCurrentUser;
 
-  const ParticipantProfile({super.key, required this.participant});
+  const UserProfileWrapper({
+    super.key,
+    required this.user,
+    required this.isCurrentUser,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(participant['image']!),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              participant['name']!,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+      appBar: isCurrentUser
+          ? null
+          : AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
               ),
             ),
-            const SizedBox(height: 10),
-            const Text(
-              'Additional info here',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-            ),
-          ],
-        ),
+      body: ProfilePage(
+        isCurrentUser: isCurrentUser,
       ),
     );
   }
