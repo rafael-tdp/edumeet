@@ -51,6 +51,7 @@ func JWTAuthMiddleware(c *fiber.Ctx) error {
 	client, err := db.OpenDBConnection()
 
 	if err != nil {
+
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "Could not connect to database"})
 	}
 
@@ -64,6 +65,5 @@ func JWTAuthMiddleware(c *fiber.Ctx) error {
 
 	//On pousse le user courant dans le contexte de la requête
 	c.Locals("user", user)
-
 	return c.Next()
 }

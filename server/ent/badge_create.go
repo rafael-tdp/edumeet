@@ -55,9 +55,25 @@ func (bc *BadgeCreate) SetCreatedBy(s string) *BadgeCreate {
 	return bc
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (bc *BadgeCreate) SetNillableCreatedBy(s *string) *BadgeCreate {
+	if s != nil {
+		bc.SetCreatedBy(*s)
+	}
+	return bc
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (bc *BadgeCreate) SetUpdatedBy(s string) *BadgeCreate {
 	bc.mutation.SetUpdatedBy(s)
+	return bc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (bc *BadgeCreate) SetNillableUpdatedBy(s *string) *BadgeCreate {
+	if s != nil {
+		bc.SetUpdatedBy(*s)
+	}
 	return bc
 }
 
@@ -121,7 +137,9 @@ func (bc *BadgeCreate) Mutation() *BadgeMutation {
 
 // Save creates the Badge in the database.
 func (bc *BadgeCreate) Save(ctx context.Context) (*Badge, error) {
-	bc.defaults()
+	if err := bc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, bc.sqlSave, bc.mutation, bc.hooks)
 }
 
@@ -148,19 +166,29 @@ func (bc *BadgeCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (bc *BadgeCreate) defaults() {
+func (bc *BadgeCreate) defaults() error {
 	if _, ok := bc.mutation.CreatedAt(); !ok {
+		if badge.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized badge.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := badge.DefaultCreatedAt()
 		bc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := bc.mutation.UpdatedAt(); !ok {
+		if badge.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized badge.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := badge.DefaultUpdatedAt()
 		bc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := bc.mutation.ID(); !ok {
+		if badge.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized badge.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := badge.DefaultID()
 		bc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -170,12 +198,6 @@ func (bc *BadgeCreate) check() error {
 	}
 	if _, ok := bc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Badge.updated_at"`)}
-	}
-	if _, ok := bc.mutation.CreatedBy(); !ok {
-		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Badge.created_by"`)}
-	}
-	if _, ok := bc.mutation.UpdatedBy(); !ok {
-		return &ValidationError{Name: "updated_by", err: errors.New(`ent: missing required field "Badge.updated_by"`)}
 	}
 	if _, ok := bc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Badge.name"`)}
@@ -234,11 +256,11 @@ func (bc *BadgeCreate) createSpec() (*Badge, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := bc.mutation.CreatedBy(); ok {
 		_spec.SetField(badge.FieldCreatedBy, field.TypeString, value)
-		_node.CreatedBy = value
+		_node.CreatedBy = &value
 	}
 	if value, ok := bc.mutation.UpdatedBy(); ok {
 		_spec.SetField(badge.FieldUpdatedBy, field.TypeString, value)
-		_node.UpdatedBy = value
+		_node.UpdatedBy = &value
 	}
 	if value, ok := bc.mutation.Name(); ok {
 		_spec.SetField(badge.FieldName, field.TypeString, value)

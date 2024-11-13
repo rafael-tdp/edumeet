@@ -56,9 +56,25 @@ func (pc *ParticipantCreate) SetCreatedBy(s string) *ParticipantCreate {
 	return pc
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (pc *ParticipantCreate) SetNillableCreatedBy(s *string) *ParticipantCreate {
+	if s != nil {
+		pc.SetCreatedBy(*s)
+	}
+	return pc
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (pc *ParticipantCreate) SetUpdatedBy(s string) *ParticipantCreate {
 	pc.mutation.SetUpdatedBy(s)
+	return pc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (pc *ParticipantCreate) SetNillableUpdatedBy(s *string) *ParticipantCreate {
+	if s != nil {
+		pc.SetUpdatedBy(*s)
+	}
 	return pc
 }
 
@@ -209,12 +225,6 @@ func (pc *ParticipantCreate) check() error {
 	if _, ok := pc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Participant.updated_at"`)}
 	}
-	if _, ok := pc.mutation.CreatedBy(); !ok {
-		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Participant.created_by"`)}
-	}
-	if _, ok := pc.mutation.UpdatedBy(); !ok {
-		return &ValidationError{Name: "updated_by", err: errors.New(`ent: missing required field "Participant.updated_by"`)}
-	}
 	if _, ok := pc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Participant.status"`)}
 	}
@@ -266,11 +276,11 @@ func (pc *ParticipantCreate) createSpec() (*Participant, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := pc.mutation.CreatedBy(); ok {
 		_spec.SetField(participant.FieldCreatedBy, field.TypeString, value)
-		_node.CreatedBy = value
+		_node.CreatedBy = &value
 	}
 	if value, ok := pc.mutation.UpdatedBy(); ok {
 		_spec.SetField(participant.FieldUpdatedBy, field.TypeString, value)
-		_node.UpdatedBy = value
+		_node.UpdatedBy = &value
 	}
 	if value, ok := pc.mutation.Status(); ok {
 		_spec.SetField(participant.FieldStatus, field.TypeString, value)

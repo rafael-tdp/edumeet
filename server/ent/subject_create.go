@@ -56,9 +56,25 @@ func (sc *SubjectCreate) SetCreatedBy(s string) *SubjectCreate {
 	return sc
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (sc *SubjectCreate) SetNillableCreatedBy(s *string) *SubjectCreate {
+	if s != nil {
+		sc.SetCreatedBy(*s)
+	}
+	return sc
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (sc *SubjectCreate) SetUpdatedBy(s string) *SubjectCreate {
 	sc.mutation.SetUpdatedBy(s)
+	return sc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (sc *SubjectCreate) SetNillableUpdatedBy(s *string) *SubjectCreate {
+	if s != nil {
+		sc.SetUpdatedBy(*s)
+	}
 	return sc
 }
 
@@ -119,7 +135,9 @@ func (sc *SubjectCreate) Mutation() *SubjectMutation {
 
 // Save creates the Subject in the database.
 func (sc *SubjectCreate) Save(ctx context.Context) (*Subject, error) {
-	sc.defaults()
+	if err := sc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, sc.sqlSave, sc.mutation, sc.hooks)
 }
 
@@ -146,19 +164,29 @@ func (sc *SubjectCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (sc *SubjectCreate) defaults() {
+func (sc *SubjectCreate) defaults() error {
 	if _, ok := sc.mutation.CreatedAt(); !ok {
+		if subject.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized subject.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := subject.DefaultCreatedAt()
 		sc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := sc.mutation.UpdatedAt(); !ok {
+		if subject.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized subject.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := subject.DefaultUpdatedAt()
 		sc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := sc.mutation.ID(); !ok {
+		if subject.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized subject.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := subject.DefaultID()
 		sc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -168,12 +196,6 @@ func (sc *SubjectCreate) check() error {
 	}
 	if _, ok := sc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Subject.updated_at"`)}
-	}
-	if _, ok := sc.mutation.CreatedBy(); !ok {
-		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Subject.created_by"`)}
-	}
-	if _, ok := sc.mutation.UpdatedBy(); !ok {
-		return &ValidationError{Name: "updated_by", err: errors.New(`ent: missing required field "Subject.updated_by"`)}
 	}
 	if _, ok := sc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Subject.name"`)}
@@ -228,11 +250,11 @@ func (sc *SubjectCreate) createSpec() (*Subject, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := sc.mutation.CreatedBy(); ok {
 		_spec.SetField(subject.FieldCreatedBy, field.TypeString, value)
-		_node.CreatedBy = value
+		_node.CreatedBy = &value
 	}
 	if value, ok := sc.mutation.UpdatedBy(); ok {
 		_spec.SetField(subject.FieldUpdatedBy, field.TypeString, value)
-		_node.UpdatedBy = value
+		_node.UpdatedBy = &value
 	}
 	if value, ok := sc.mutation.Name(); ok {
 		_spec.SetField(subject.FieldName, field.TypeString, value)

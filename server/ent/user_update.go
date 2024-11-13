@@ -68,6 +68,12 @@ func (uu *UserUpdate) SetNillableCreatedBy(s *string) *UserUpdate {
 	return uu
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (uu *UserUpdate) ClearCreatedBy() *UserUpdate {
+	uu.mutation.ClearCreatedBy()
+	return uu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (uu *UserUpdate) SetUpdatedBy(s string) *UserUpdate {
 	uu.mutation.SetUpdatedBy(s)
@@ -79,6 +85,12 @@ func (uu *UserUpdate) SetNillableUpdatedBy(s *string) *UserUpdate {
 	if s != nil {
 		uu.SetUpdatedBy(*s)
 	}
+	return uu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (uu *UserUpdate) ClearUpdatedBy() *UserUpdate {
+	uu.mutation.ClearUpdatedBy()
 	return uu
 }
 
@@ -612,7 +624,9 @@ func (uu *UserUpdate) RemoveParticipants(p ...*Participant) *UserUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (uu *UserUpdate) Save(ctx context.Context) (int, error) {
-	uu.defaults()
+	if err := uu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, uu.sqlSave, uu.mutation, uu.hooks)
 }
 
@@ -639,11 +653,15 @@ func (uu *UserUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (uu *UserUpdate) defaults() {
+func (uu *UserUpdate) defaults() error {
 	if _, ok := uu.mutation.UpdatedAt(); !ok {
+		if user.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized user.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := user.UpdateDefaultUpdatedAt()
 		uu.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -677,8 +695,14 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.CreatedBy(); ok {
 		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
 	}
+	if uu.mutation.CreatedByCleared() {
+		_spec.ClearField(user.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := uu.mutation.UpdatedBy(); ok {
 		_spec.SetField(user.FieldUpdatedBy, field.TypeString, value)
+	}
+	if uu.mutation.UpdatedByCleared() {
+		_spec.ClearField(user.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := uu.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
@@ -1088,6 +1112,12 @@ func (uuo *UserUpdateOne) SetNillableCreatedBy(s *string) *UserUpdateOne {
 	return uuo
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (uuo *UserUpdateOne) ClearCreatedBy() *UserUpdateOne {
+	uuo.mutation.ClearCreatedBy()
+	return uuo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (uuo *UserUpdateOne) SetUpdatedBy(s string) *UserUpdateOne {
 	uuo.mutation.SetUpdatedBy(s)
@@ -1099,6 +1129,12 @@ func (uuo *UserUpdateOne) SetNillableUpdatedBy(s *string) *UserUpdateOne {
 	if s != nil {
 		uuo.SetUpdatedBy(*s)
 	}
+	return uuo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (uuo *UserUpdateOne) ClearUpdatedBy() *UserUpdateOne {
+	uuo.mutation.ClearUpdatedBy()
 	return uuo
 }
 
@@ -1645,7 +1681,9 @@ func (uuo *UserUpdateOne) Select(field string, fields ...string) *UserUpdateOne 
 
 // Save executes the query and returns the updated User entity.
 func (uuo *UserUpdateOne) Save(ctx context.Context) (*User, error) {
-	uuo.defaults()
+	if err := uuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, uuo.sqlSave, uuo.mutation, uuo.hooks)
 }
 
@@ -1672,11 +1710,15 @@ func (uuo *UserUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (uuo *UserUpdateOne) defaults() {
+func (uuo *UserUpdateOne) defaults() error {
 	if _, ok := uuo.mutation.UpdatedAt(); !ok {
+		if user.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized user.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := user.UpdateDefaultUpdatedAt()
 		uuo.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -1727,8 +1769,14 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	if value, ok := uuo.mutation.CreatedBy(); ok {
 		_spec.SetField(user.FieldCreatedBy, field.TypeString, value)
 	}
+	if uuo.mutation.CreatedByCleared() {
+		_spec.ClearField(user.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := uuo.mutation.UpdatedBy(); ok {
 		_spec.SetField(user.FieldUpdatedBy, field.TypeString, value)
+	}
+	if uuo.mutation.UpdatedByCleared() {
+		_spec.ClearField(user.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)

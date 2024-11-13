@@ -414,7 +414,8 @@ func (c *BadgeClient) QueryUsers(b *Badge) *UserQuery {
 
 // Hooks returns the client hooks.
 func (c *BadgeClient) Hooks() []Hook {
-	return c.hooks.Badge
+	hooks := c.hooks.Badge
+	return append(hooks[:len(hooks):len(hooks)], badge.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -824,7 +825,8 @@ func (c *EventClient) QueryPhysicalEvent(e *Event) *PhysicalEventQuery {
 
 // Hooks returns the client hooks.
 func (c *EventClient) Hooks() []Hook {
-	return c.hooks.Event
+	hooks := c.hooks.Event
+	return append(hooks[:len(hooks):len(hooks)], event.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1947,7 +1949,8 @@ func (c *SubjectClient) QueryEvents(s *Subject) *EventQuery {
 
 // Hooks returns the client hooks.
 func (c *SubjectClient) Hooks() []Hook {
-	return c.hooks.Subject
+	hooks := c.hooks.Subject
+	return append(hooks[:len(hooks):len(hooks)], subject.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2176,7 +2179,8 @@ func (c *UserClient) QueryParticipants(u *User) *ParticipantQuery {
 
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
-	return c.hooks.User
+	hooks := c.hooks.User
+	return append(hooks[:len(hooks):len(hooks)], user.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

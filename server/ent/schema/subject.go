@@ -13,15 +13,18 @@ type Subject struct {
 	ent.Schema
 }
 
+func (Subject) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		trait.Blamable{},
+	}
+}
+
 func (Subject) Fields() []ent.Field {
 	ulid := utils.ULID{}
-	return append(
-		trait.Blamable{}.Fields(),
-		[]ent.Field{
-			field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
-			field.String("name").NotEmpty().Unique(),
-		}...,
-	)
+	return []ent.Field{
+		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
+		field.String("name").NotEmpty().Unique(),
+	}
 }
 
 func (Subject) Edges() []ent.Edge {

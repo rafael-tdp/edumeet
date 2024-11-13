@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
+	"edumeet/guards"
 	"edumeet/services"
 
 	"github.com/gofiber/fiber/v2"
@@ -31,7 +33,7 @@ func (ec *EventController) CreateEvent(c *fiber.Ctx) error {
 
 	currentUser := c.Locals("user").(*ent.User)
 
-	ctx := c.Context()
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
 
 	remoteEvent, err := ec.eventservice.CreateEvent(ctx, eventDTO, currentUser.ID)
 
@@ -45,6 +47,18 @@ func (ec *EventController) CreateEvent(c *fiber.Ctx) error {
 func (ec *EventController) DeleteEvent(c *fiber.Ctx) error {
 
 	eventID, errParse := ulid.Parse(c.Params("id"))
+
+	currentUser := c.Locals("user").(*ent.User)
+
+	event, errGetEvent := ec.eventservice.GetEvent(eventID.String())
+
+	if errGetEvent != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": errGetEvent.Error()})
+	}
+
+	if !guards.CanAuthorize(currentUser, event) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
 
 	if errParse != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
@@ -89,7 +103,7 @@ func (ec *EventController) UpdateEvent(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
-	ctx := c.Context()
+	ctx := context.WithValue(c.Context(), "user_id", c.Locals("user").(*ent.User).ID)
 
 	remoteEvent, err := ec.eventservice.UpdateEvent(ctx, eventDTO, eventID.String())
 

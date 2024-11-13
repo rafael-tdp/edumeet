@@ -65,6 +65,12 @@ func (mu *MessageUpdate) SetNillableCreatedBy(s *string) *MessageUpdate {
 	return mu
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (mu *MessageUpdate) ClearCreatedBy() *MessageUpdate {
+	mu.mutation.ClearCreatedBy()
+	return mu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (mu *MessageUpdate) SetUpdatedBy(s string) *MessageUpdate {
 	mu.mutation.SetUpdatedBy(s)
@@ -76,6 +82,12 @@ func (mu *MessageUpdate) SetNillableUpdatedBy(s *string) *MessageUpdate {
 	if s != nil {
 		mu.SetUpdatedBy(*s)
 	}
+	return mu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (mu *MessageUpdate) ClearUpdatedBy() *MessageUpdate {
+	mu.mutation.ClearUpdatedBy()
 	return mu
 }
 
@@ -238,8 +250,14 @@ func (mu *MessageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := mu.mutation.CreatedBy(); ok {
 		_spec.SetField(message.FieldCreatedBy, field.TypeString, value)
 	}
+	if mu.mutation.CreatedByCleared() {
+		_spec.ClearField(message.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := mu.mutation.UpdatedBy(); ok {
 		_spec.SetField(message.FieldUpdatedBy, field.TypeString, value)
+	}
+	if mu.mutation.UpdatedByCleared() {
+		_spec.ClearField(message.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := mu.mutation.Content(); ok {
 		_spec.SetField(message.FieldContent, field.TypeString, value)
@@ -401,6 +419,12 @@ func (muo *MessageUpdateOne) SetNillableCreatedBy(s *string) *MessageUpdateOne {
 	return muo
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (muo *MessageUpdateOne) ClearCreatedBy() *MessageUpdateOne {
+	muo.mutation.ClearCreatedBy()
+	return muo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (muo *MessageUpdateOne) SetUpdatedBy(s string) *MessageUpdateOne {
 	muo.mutation.SetUpdatedBy(s)
@@ -412,6 +436,12 @@ func (muo *MessageUpdateOne) SetNillableUpdatedBy(s *string) *MessageUpdateOne {
 	if s != nil {
 		muo.SetUpdatedBy(*s)
 	}
+	return muo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (muo *MessageUpdateOne) ClearUpdatedBy() *MessageUpdateOne {
+	muo.mutation.ClearUpdatedBy()
 	return muo
 }
 
@@ -604,8 +634,14 @@ func (muo *MessageUpdateOne) sqlSave(ctx context.Context) (_node *Message, err e
 	if value, ok := muo.mutation.CreatedBy(); ok {
 		_spec.SetField(message.FieldCreatedBy, field.TypeString, value)
 	}
+	if muo.mutation.CreatedByCleared() {
+		_spec.ClearField(message.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := muo.mutation.UpdatedBy(); ok {
 		_spec.SetField(message.FieldUpdatedBy, field.TypeString, value)
+	}
+	if muo.mutation.UpdatedByCleared() {
+		_spec.ClearField(message.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := muo.mutation.Content(); ok {
 		_spec.SetField(message.FieldContent, field.TypeString, value)

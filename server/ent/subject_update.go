@@ -64,6 +64,12 @@ func (su *SubjectUpdate) SetNillableCreatedBy(s *string) *SubjectUpdate {
 	return su
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (su *SubjectUpdate) ClearCreatedBy() *SubjectUpdate {
+	su.mutation.ClearCreatedBy()
+	return su
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (su *SubjectUpdate) SetUpdatedBy(s string) *SubjectUpdate {
 	su.mutation.SetUpdatedBy(s)
@@ -75,6 +81,12 @@ func (su *SubjectUpdate) SetNillableUpdatedBy(s *string) *SubjectUpdate {
 	if s != nil {
 		su.SetUpdatedBy(*s)
 	}
+	return su
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (su *SubjectUpdate) ClearUpdatedBy() *SubjectUpdate {
+	su.mutation.ClearUpdatedBy()
 	return su
 }
 
@@ -171,7 +183,9 @@ func (su *SubjectUpdate) RemoveEvents(e ...*Event) *SubjectUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (su *SubjectUpdate) Save(ctx context.Context) (int, error) {
-	su.defaults()
+	if err := su.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, su.sqlSave, su.mutation, su.hooks)
 }
 
@@ -198,11 +212,15 @@ func (su *SubjectUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (su *SubjectUpdate) defaults() {
+func (su *SubjectUpdate) defaults() error {
 	if _, ok := su.mutation.UpdatedAt(); !ok {
+		if subject.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized subject.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := subject.UpdateDefaultUpdatedAt()
 		su.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -236,8 +254,14 @@ func (su *SubjectUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := su.mutation.CreatedBy(); ok {
 		_spec.SetField(subject.FieldCreatedBy, field.TypeString, value)
 	}
+	if su.mutation.CreatedByCleared() {
+		_spec.ClearField(subject.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := su.mutation.UpdatedBy(); ok {
 		_spec.SetField(subject.FieldUpdatedBy, field.TypeString, value)
+	}
+	if su.mutation.UpdatedByCleared() {
+		_spec.ClearField(subject.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := su.mutation.Name(); ok {
 		_spec.SetField(subject.FieldName, field.TypeString, value)
@@ -386,6 +410,12 @@ func (suo *SubjectUpdateOne) SetNillableCreatedBy(s *string) *SubjectUpdateOne {
 	return suo
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (suo *SubjectUpdateOne) ClearCreatedBy() *SubjectUpdateOne {
+	suo.mutation.ClearCreatedBy()
+	return suo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (suo *SubjectUpdateOne) SetUpdatedBy(s string) *SubjectUpdateOne {
 	suo.mutation.SetUpdatedBy(s)
@@ -397,6 +427,12 @@ func (suo *SubjectUpdateOne) SetNillableUpdatedBy(s *string) *SubjectUpdateOne {
 	if s != nil {
 		suo.SetUpdatedBy(*s)
 	}
+	return suo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (suo *SubjectUpdateOne) ClearUpdatedBy() *SubjectUpdateOne {
+	suo.mutation.ClearUpdatedBy()
 	return suo
 }
 
@@ -506,7 +542,9 @@ func (suo *SubjectUpdateOne) Select(field string, fields ...string) *SubjectUpda
 
 // Save executes the query and returns the updated Subject entity.
 func (suo *SubjectUpdateOne) Save(ctx context.Context) (*Subject, error) {
-	suo.defaults()
+	if err := suo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, suo.sqlSave, suo.mutation, suo.hooks)
 }
 
@@ -533,11 +571,15 @@ func (suo *SubjectUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (suo *SubjectUpdateOne) defaults() {
+func (suo *SubjectUpdateOne) defaults() error {
 	if _, ok := suo.mutation.UpdatedAt(); !ok {
+		if subject.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized subject.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := subject.UpdateDefaultUpdatedAt()
 		suo.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -588,8 +630,14 @@ func (suo *SubjectUpdateOne) sqlSave(ctx context.Context) (_node *Subject, err e
 	if value, ok := suo.mutation.CreatedBy(); ok {
 		_spec.SetField(subject.FieldCreatedBy, field.TypeString, value)
 	}
+	if suo.mutation.CreatedByCleared() {
+		_spec.ClearField(subject.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := suo.mutation.UpdatedBy(); ok {
 		_spec.SetField(subject.FieldUpdatedBy, field.TypeString, value)
+	}
+	if suo.mutation.UpdatedByCleared() {
+		_spec.ClearField(subject.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := suo.mutation.Name(); ok {
 		_spec.SetField(subject.FieldName, field.TypeString, value)

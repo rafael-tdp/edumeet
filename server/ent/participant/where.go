@@ -235,6 +235,16 @@ func CreatedByHasSuffix(v string) predicate.Participant {
 	return predicate.Participant(sql.FieldHasSuffix(FieldCreatedBy, v))
 }
 
+// CreatedByIsNil applies the IsNil predicate on the "created_by" field.
+func CreatedByIsNil() predicate.Participant {
+	return predicate.Participant(sql.FieldIsNull(FieldCreatedBy))
+}
+
+// CreatedByNotNil applies the NotNil predicate on the "created_by" field.
+func CreatedByNotNil() predicate.Participant {
+	return predicate.Participant(sql.FieldNotNull(FieldCreatedBy))
+}
+
 // CreatedByEqualFold applies the EqualFold predicate on the "created_by" field.
 func CreatedByEqualFold(v string) predicate.Participant {
 	return predicate.Participant(sql.FieldEqualFold(FieldCreatedBy, v))
@@ -298,6 +308,16 @@ func UpdatedByHasPrefix(v string) predicate.Participant {
 // UpdatedByHasSuffix applies the HasSuffix predicate on the "updated_by" field.
 func UpdatedByHasSuffix(v string) predicate.Participant {
 	return predicate.Participant(sql.FieldHasSuffix(FieldUpdatedBy, v))
+}
+
+// UpdatedByIsNil applies the IsNil predicate on the "updated_by" field.
+func UpdatedByIsNil() predicate.Participant {
+	return predicate.Participant(sql.FieldIsNull(FieldUpdatedBy))
+}
+
+// UpdatedByNotNil applies the NotNil predicate on the "updated_by" field.
+func UpdatedByNotNil() predicate.Participant {
+	return predicate.Participant(sql.FieldNotNull(FieldUpdatedBy))
 }
 
 // UpdatedByEqualFold applies the EqualFold predicate on the "updated_by" field.

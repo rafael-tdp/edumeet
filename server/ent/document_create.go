@@ -56,9 +56,25 @@ func (dc *DocumentCreate) SetCreatedBy(s string) *DocumentCreate {
 	return dc
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (dc *DocumentCreate) SetNillableCreatedBy(s *string) *DocumentCreate {
+	if s != nil {
+		dc.SetCreatedBy(*s)
+	}
+	return dc
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (dc *DocumentCreate) SetUpdatedBy(s string) *DocumentCreate {
 	dc.mutation.SetUpdatedBy(s)
+	return dc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (dc *DocumentCreate) SetNillableUpdatedBy(s *string) *DocumentCreate {
+	if s != nil {
+		dc.SetUpdatedBy(*s)
+	}
 	return dc
 }
 
@@ -169,12 +185,6 @@ func (dc *DocumentCreate) check() error {
 	if _, ok := dc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Document.updated_at"`)}
 	}
-	if _, ok := dc.mutation.CreatedBy(); !ok {
-		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Document.created_by"`)}
-	}
-	if _, ok := dc.mutation.UpdatedBy(); !ok {
-		return &ValidationError{Name: "updated_by", err: errors.New(`ent: missing required field "Document.updated_by"`)}
-	}
 	if _, ok := dc.mutation.Path(); !ok {
 		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "Document.path"`)}
 	}
@@ -223,11 +233,11 @@ func (dc *DocumentCreate) createSpec() (*Document, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := dc.mutation.CreatedBy(); ok {
 		_spec.SetField(document.FieldCreatedBy, field.TypeString, value)
-		_node.CreatedBy = value
+		_node.CreatedBy = &value
 	}
 	if value, ok := dc.mutation.UpdatedBy(); ok {
 		_spec.SetField(document.FieldUpdatedBy, field.TypeString, value)
-		_node.UpdatedBy = value
+		_node.UpdatedBy = &value
 	}
 	if value, ok := dc.mutation.Path(); ok {
 		_spec.SetField(document.FieldPath, field.TypeString, value)

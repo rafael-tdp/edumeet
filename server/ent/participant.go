@@ -24,9 +24,9 @@ type Participant struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy string `json:"created_by,omitempty"`
+	CreatedBy *string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy string `json:"updated_by,omitempty"`
+	UpdatedBy *string `json:"updated_by,omitempty"`
 	// Status holds the value of the "status" field.
 	Status string `json:"status,omitempty"`
 	// RequestedAt holds the value of the "requested_at" field.
@@ -124,13 +124,15 @@ func (pa *Participant) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				pa.CreatedBy = value.String
+				pa.CreatedBy = new(string)
+				*pa.CreatedBy = value.String
 			}
 		case participant.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				pa.UpdatedBy = value.String
+				pa.UpdatedBy = new(string)
+				*pa.UpdatedBy = value.String
 			}
 		case participant.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -216,11 +218,15 @@ func (pa *Participant) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(pa.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("created_by=")
-	builder.WriteString(pa.CreatedBy)
+	if v := pa.CreatedBy; v != nil {
+		builder.WriteString("created_by=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
-	builder.WriteString("updated_by=")
-	builder.WriteString(pa.UpdatedBy)
+	if v := pa.UpdatedBy; v != nil {
+		builder.WriteString("updated_by=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(pa.Status)

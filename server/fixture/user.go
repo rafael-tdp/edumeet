@@ -35,8 +35,8 @@ func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 			SetActivated(true).
 			SetLng(lng).
 			SetLat(lat).
-			SetCreatedBy(id).
-			SetUpdatedBy(id).
+			// SetCreatedBy(id).
+			// SetUpdatedBy(id).
 			SaveX(ctx)
 	}
 }

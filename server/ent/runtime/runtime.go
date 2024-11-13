@@ -2,7 +2,203 @@
 
 package runtime
 
-// The schema-stitching logic is generated in edumeet/ent/runtime.go
+import (
+	"edumeet/ent/badge"
+	"edumeet/ent/document"
+	"edumeet/ent/event"
+	"edumeet/ent/eventdocument"
+	"edumeet/ent/message"
+	"edumeet/ent/participant"
+	"edumeet/ent/physicalevent"
+	"edumeet/ent/remoteevent"
+	"edumeet/ent/reporting"
+	"edumeet/ent/schema"
+	"edumeet/ent/subject"
+	"edumeet/ent/user"
+	"time"
+)
+
+// The init function reads all schema descriptors with runtime code
+// (default values, validators, hooks and policies) and stitches it
+// to their package variables.
+func init() {
+	badgeMixin := schema.Badge{}.Mixin()
+	badgeMixinHooks0 := badgeMixin[0].Hooks()
+	badge.Hooks[0] = badgeMixinHooks0[0]
+	badgeMixinFields0 := badgeMixin[0].Fields()
+	_ = badgeMixinFields0
+	badgeFields := schema.Badge{}.Fields()
+	_ = badgeFields
+	// badgeDescCreatedAt is the schema descriptor for created_at field.
+	badgeDescCreatedAt := badgeMixinFields0[0].Descriptor()
+	// badge.DefaultCreatedAt holds the default value on creation for the created_at field.
+	badge.DefaultCreatedAt = badgeDescCreatedAt.Default.(func() time.Time)
+	// badgeDescUpdatedAt is the schema descriptor for updated_at field.
+	badgeDescUpdatedAt := badgeMixinFields0[1].Descriptor()
+	// badge.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	badge.DefaultUpdatedAt = badgeDescUpdatedAt.Default.(func() time.Time)
+	// badge.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	badge.UpdateDefaultUpdatedAt = badgeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// badgeDescID is the schema descriptor for id field.
+	badgeDescID := badgeFields[0].Descriptor()
+	// badge.DefaultID holds the default value on creation for the id field.
+	badge.DefaultID = badgeDescID.Default.(func() string)
+	documentFields := schema.Document{}.Fields()
+	_ = documentFields
+	// documentDescCreatedAt is the schema descriptor for created_at field.
+	documentDescCreatedAt := documentFields[0].Descriptor()
+	// document.DefaultCreatedAt holds the default value on creation for the created_at field.
+	document.DefaultCreatedAt = documentDescCreatedAt.Default.(func() time.Time)
+	// documentDescUpdatedAt is the schema descriptor for updated_at field.
+	documentDescUpdatedAt := documentFields[1].Descriptor()
+	// document.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	document.DefaultUpdatedAt = documentDescUpdatedAt.Default.(func() time.Time)
+	// document.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	document.UpdateDefaultUpdatedAt = documentDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// documentDescID is the schema descriptor for id field.
+	documentDescID := documentFields[4].Descriptor()
+	// document.DefaultID holds the default value on creation for the id field.
+	document.DefaultID = documentDescID.Default.(func() string)
+	eventMixin := schema.Event{}.Mixin()
+	eventMixinHooks0 := eventMixin[0].Hooks()
+	event.Hooks[0] = eventMixinHooks0[0]
+	eventMixinFields0 := eventMixin[0].Fields()
+	_ = eventMixinFields0
+	eventFields := schema.Event{}.Fields()
+	_ = eventFields
+	// eventDescCreatedAt is the schema descriptor for created_at field.
+	eventDescCreatedAt := eventMixinFields0[0].Descriptor()
+	// event.DefaultCreatedAt holds the default value on creation for the created_at field.
+	event.DefaultCreatedAt = eventDescCreatedAt.Default.(func() time.Time)
+	// eventDescUpdatedAt is the schema descriptor for updated_at field.
+	eventDescUpdatedAt := eventMixinFields0[1].Descriptor()
+	// event.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	event.DefaultUpdatedAt = eventDescUpdatedAt.Default.(func() time.Time)
+	// event.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	event.UpdateDefaultUpdatedAt = eventDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// eventDescIsPrivate is the schema descriptor for isPrivate field.
+	eventDescIsPrivate := eventFields[4].Descriptor()
+	// event.DefaultIsPrivate holds the default value on creation for the isPrivate field.
+	event.DefaultIsPrivate = eventDescIsPrivate.Default.(bool)
+	// eventDescID is the schema descriptor for id field.
+	eventDescID := eventFields[0].Descriptor()
+	// event.DefaultID holds the default value on creation for the id field.
+	event.DefaultID = eventDescID.Default.(func() string)
+	eventdocumentFields := schema.EventDocument{}.Fields()
+	_ = eventdocumentFields
+	// eventdocumentDescID is the schema descriptor for id field.
+	eventdocumentDescID := eventdocumentFields[0].Descriptor()
+	// eventdocument.DefaultID holds the default value on creation for the id field.
+	eventdocument.DefaultID = eventdocumentDescID.Default.(func() string)
+	messageFields := schema.Message{}.Fields()
+	_ = messageFields
+	// messageDescCreatedAt is the schema descriptor for created_at field.
+	messageDescCreatedAt := messageFields[0].Descriptor()
+	// message.DefaultCreatedAt holds the default value on creation for the created_at field.
+	message.DefaultCreatedAt = messageDescCreatedAt.Default.(func() time.Time)
+	// messageDescUpdatedAt is the schema descriptor for updated_at field.
+	messageDescUpdatedAt := messageFields[1].Descriptor()
+	// message.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	message.DefaultUpdatedAt = messageDescUpdatedAt.Default.(func() time.Time)
+	// message.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	message.UpdateDefaultUpdatedAt = messageDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// messageDescID is the schema descriptor for id field.
+	messageDescID := messageFields[4].Descriptor()
+	// message.DefaultID holds the default value on creation for the id field.
+	message.DefaultID = messageDescID.Default.(func() string)
+	participantFields := schema.Participant{}.Fields()
+	_ = participantFields
+	// participantDescCreatedAt is the schema descriptor for created_at field.
+	participantDescCreatedAt := participantFields[0].Descriptor()
+	// participant.DefaultCreatedAt holds the default value on creation for the created_at field.
+	participant.DefaultCreatedAt = participantDescCreatedAt.Default.(func() time.Time)
+	// participantDescUpdatedAt is the schema descriptor for updated_at field.
+	participantDescUpdatedAt := participantFields[1].Descriptor()
+	// participant.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	participant.DefaultUpdatedAt = participantDescUpdatedAt.Default.(func() time.Time)
+	// participant.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	participant.UpdateDefaultUpdatedAt = participantDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// participantDescRequestedAt is the schema descriptor for requested_at field.
+	participantDescRequestedAt := participantFields[6].Descriptor()
+	// participant.DefaultRequestedAt holds the default value on creation for the requested_at field.
+	participant.DefaultRequestedAt = participantDescRequestedAt.Default.(func() time.Time)
+	// participantDescID is the schema descriptor for id field.
+	participantDescID := participantFields[4].Descriptor()
+	// participant.DefaultID holds the default value on creation for the id field.
+	participant.DefaultID = participantDescID.Default.(func() string)
+	physicaleventFields := schema.PhysicalEvent{}.Fields()
+	_ = physicaleventFields
+	// physicaleventDescID is the schema descriptor for id field.
+	physicaleventDescID := physicaleventFields[0].Descriptor()
+	// physicalevent.DefaultID holds the default value on creation for the id field.
+	physicalevent.DefaultID = physicaleventDescID.Default.(func() string)
+	remoteeventFields := schema.RemoteEvent{}.Fields()
+	_ = remoteeventFields
+	// remoteeventDescID is the schema descriptor for id field.
+	remoteeventDescID := remoteeventFields[0].Descriptor()
+	// remoteevent.DefaultID holds the default value on creation for the id field.
+	remoteevent.DefaultID = remoteeventDescID.Default.(func() string)
+	reportingFields := schema.Reporting{}.Fields()
+	_ = reportingFields
+	// reportingDescID is the schema descriptor for id field.
+	reportingDescID := reportingFields[0].Descriptor()
+	// reporting.DefaultID holds the default value on creation for the id field.
+	reporting.DefaultID = reportingDescID.Default.(func() string)
+	subjectMixin := schema.Subject{}.Mixin()
+	subjectMixinHooks0 := subjectMixin[0].Hooks()
+	subject.Hooks[0] = subjectMixinHooks0[0]
+	subjectMixinFields0 := subjectMixin[0].Fields()
+	_ = subjectMixinFields0
+	subjectFields := schema.Subject{}.Fields()
+	_ = subjectFields
+	// subjectDescCreatedAt is the schema descriptor for created_at field.
+	subjectDescCreatedAt := subjectMixinFields0[0].Descriptor()
+	// subject.DefaultCreatedAt holds the default value on creation for the created_at field.
+	subject.DefaultCreatedAt = subjectDescCreatedAt.Default.(func() time.Time)
+	// subjectDescUpdatedAt is the schema descriptor for updated_at field.
+	subjectDescUpdatedAt := subjectMixinFields0[1].Descriptor()
+	// subject.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	subject.DefaultUpdatedAt = subjectDescUpdatedAt.Default.(func() time.Time)
+	// subject.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	subject.UpdateDefaultUpdatedAt = subjectDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// subjectDescName is the schema descriptor for name field.
+	subjectDescName := subjectFields[1].Descriptor()
+	// subject.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	subject.NameValidator = subjectDescName.Validators[0].(func(string) error)
+	// subjectDescID is the schema descriptor for id field.
+	subjectDescID := subjectFields[0].Descriptor()
+	// subject.DefaultID holds the default value on creation for the id field.
+	subject.DefaultID = subjectDescID.Default.(func() string)
+	userMixin := schema.User{}.Mixin()
+	userMixinHooks0 := userMixin[0].Hooks()
+	user.Hooks[0] = userMixinHooks0[0]
+	userMixinFields0 := userMixin[0].Fields()
+	_ = userMixinFields0
+	userFields := schema.User{}.Fields()
+	_ = userFields
+	// userDescCreatedAt is the schema descriptor for created_at field.
+	userDescCreatedAt := userMixinFields0[0].Descriptor()
+	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
+	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
+	// userDescUpdatedAt is the schema descriptor for updated_at field.
+	userDescUpdatedAt := userMixinFields0[1].Descriptor()
+	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
+	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// userDescActivated is the schema descriptor for activated field.
+	userDescActivated := userFields[9].Descriptor()
+	// user.DefaultActivated holds the default value on creation for the activated field.
+	user.DefaultActivated = userDescActivated.Default.(bool)
+	// userDescReportNumber is the schema descriptor for reportNumber field.
+	userDescReportNumber := userFields[10].Descriptor()
+	// user.DefaultReportNumber holds the default value on creation for the reportNumber field.
+	user.DefaultReportNumber = userDescReportNumber.Default.(int)
+	// userDescID is the schema descriptor for id field.
+	userDescID := userFields[0].Descriptor()
+	// user.DefaultID holds the default value on creation for the id field.
+	user.DefaultID = userDescID.Default.(func() string)
+}
 
 const (
 	Version = "v0.14.1"                                         // Version of ent codegen.

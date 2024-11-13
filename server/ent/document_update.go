@@ -64,6 +64,12 @@ func (du *DocumentUpdate) SetNillableCreatedBy(s *string) *DocumentUpdate {
 	return du
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (du *DocumentUpdate) ClearCreatedBy() *DocumentUpdate {
+	du.mutation.ClearCreatedBy()
+	return du
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (du *DocumentUpdate) SetUpdatedBy(s string) *DocumentUpdate {
 	du.mutation.SetUpdatedBy(s)
@@ -75,6 +81,12 @@ func (du *DocumentUpdate) SetNillableUpdatedBy(s *string) *DocumentUpdate {
 	if s != nil {
 		du.SetUpdatedBy(*s)
 	}
+	return du
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (du *DocumentUpdate) ClearUpdatedBy() *DocumentUpdate {
+	du.mutation.ClearUpdatedBy()
 	return du
 }
 
@@ -223,8 +235,14 @@ func (du *DocumentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := du.mutation.CreatedBy(); ok {
 		_spec.SetField(document.FieldCreatedBy, field.TypeString, value)
 	}
+	if du.mutation.CreatedByCleared() {
+		_spec.ClearField(document.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := du.mutation.UpdatedBy(); ok {
 		_spec.SetField(document.FieldUpdatedBy, field.TypeString, value)
+	}
+	if du.mutation.UpdatedByCleared() {
+		_spec.ClearField(document.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := du.mutation.Path(); ok {
 		_spec.SetField(document.FieldPath, field.TypeString, value)
@@ -373,6 +391,12 @@ func (duo *DocumentUpdateOne) SetNillableCreatedBy(s *string) *DocumentUpdateOne
 	return duo
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (duo *DocumentUpdateOne) ClearCreatedBy() *DocumentUpdateOne {
+	duo.mutation.ClearCreatedBy()
+	return duo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (duo *DocumentUpdateOne) SetUpdatedBy(s string) *DocumentUpdateOne {
 	duo.mutation.SetUpdatedBy(s)
@@ -384,6 +408,12 @@ func (duo *DocumentUpdateOne) SetNillableUpdatedBy(s *string) *DocumentUpdateOne
 	if s != nil {
 		duo.SetUpdatedBy(*s)
 	}
+	return duo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (duo *DocumentUpdateOne) ClearUpdatedBy() *DocumentUpdateOne {
+	duo.mutation.ClearUpdatedBy()
 	return duo
 }
 
@@ -562,8 +592,14 @@ func (duo *DocumentUpdateOne) sqlSave(ctx context.Context) (_node *Document, err
 	if value, ok := duo.mutation.CreatedBy(); ok {
 		_spec.SetField(document.FieldCreatedBy, field.TypeString, value)
 	}
+	if duo.mutation.CreatedByCleared() {
+		_spec.ClearField(document.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := duo.mutation.UpdatedBy(); ok {
 		_spec.SetField(document.FieldUpdatedBy, field.TypeString, value)
+	}
+	if duo.mutation.UpdatedByCleared() {
+		_spec.ClearField(document.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := duo.mutation.Path(); ok {
 		_spec.SetField(document.FieldPath, field.TypeString, value)

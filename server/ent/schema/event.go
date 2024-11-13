@@ -14,21 +14,24 @@ type Event struct {
 	ent.Schema
 }
 
+func (Event) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		trait.Blamable{},
+	}
+}
+
 func (Event) Fields() []ent.Field {
 	ulid := utils.ULID{}
-	return append(
-		trait.Blamable{}.Fields(),
-		[]ent.Field{
-			field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
-			field.Int("nbMaxUser"),
-			field.Time("start_date"),
-			field.Time("end_date").Optional(),
-			field.Bool("isPrivate").Default(false),
-			field.String("title"),
-			field.String("description").Optional(),
-			field.String("invitationLink").Optional(),
-		}...,
-	)
+	return []ent.Field{
+		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
+		field.Int("nbMaxUser"),
+		field.Time("start_date"),
+		field.Time("end_date").Optional(),
+		field.Bool("isPrivate").Default(false),
+		field.String("title"),
+		field.String("description").Optional(),
+		field.String("invitationLink").Optional(),
+	}
 }
 
 func (Event) Edges() []ent.Edge {

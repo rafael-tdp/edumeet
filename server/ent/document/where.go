@@ -225,6 +225,16 @@ func CreatedByHasSuffix(v string) predicate.Document {
 	return predicate.Document(sql.FieldHasSuffix(FieldCreatedBy, v))
 }
 
+// CreatedByIsNil applies the IsNil predicate on the "created_by" field.
+func CreatedByIsNil() predicate.Document {
+	return predicate.Document(sql.FieldIsNull(FieldCreatedBy))
+}
+
+// CreatedByNotNil applies the NotNil predicate on the "created_by" field.
+func CreatedByNotNil() predicate.Document {
+	return predicate.Document(sql.FieldNotNull(FieldCreatedBy))
+}
+
 // CreatedByEqualFold applies the EqualFold predicate on the "created_by" field.
 func CreatedByEqualFold(v string) predicate.Document {
 	return predicate.Document(sql.FieldEqualFold(FieldCreatedBy, v))
@@ -288,6 +298,16 @@ func UpdatedByHasPrefix(v string) predicate.Document {
 // UpdatedByHasSuffix applies the HasSuffix predicate on the "updated_by" field.
 func UpdatedByHasSuffix(v string) predicate.Document {
 	return predicate.Document(sql.FieldHasSuffix(FieldUpdatedBy, v))
+}
+
+// UpdatedByIsNil applies the IsNil predicate on the "updated_by" field.
+func UpdatedByIsNil() predicate.Document {
+	return predicate.Document(sql.FieldIsNull(FieldUpdatedBy))
+}
+
+// UpdatedByNotNil applies the NotNil predicate on the "updated_by" field.
+func UpdatedByNotNil() predicate.Document {
+	return predicate.Document(sql.FieldNotNull(FieldUpdatedBy))
 }
 
 // UpdatedByEqualFold applies the EqualFold predicate on the "updated_by" field.

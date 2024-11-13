@@ -26,9 +26,9 @@ type Event struct {
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy string `json:"created_by,omitempty"`
+	CreatedBy *string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy string `json:"updated_by,omitempty"`
+	UpdatedBy *string `json:"updated_by,omitempty"`
 	// NbMaxUser holds the value of the "nbMaxUser" field.
 	NbMaxUser int `json:"nbMaxUser,omitempty"`
 	// StartDate holds the value of the "start_date" field.
@@ -196,13 +196,15 @@ func (e *Event) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				e.CreatedBy = value.String
+				e.CreatedBy = new(string)
+				*e.CreatedBy = value.String
 			}
 		case event.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				e.UpdatedBy = value.String
+				e.UpdatedBy = new(string)
+				*e.UpdatedBy = value.String
 			}
 		case event.FieldNbMaxUser:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -336,11 +338,15 @@ func (e *Event) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(e.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("created_by=")
-	builder.WriteString(e.CreatedBy)
+	if v := e.CreatedBy; v != nil {
+		builder.WriteString("created_by=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
-	builder.WriteString("updated_by=")
-	builder.WriteString(e.UpdatedBy)
+	if v := e.UpdatedBy; v != nil {
+		builder.WriteString("updated_by=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	builder.WriteString("nbMaxUser=")
 	builder.WriteString(fmt.Sprintf("%v", e.NbMaxUser))

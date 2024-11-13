@@ -57,9 +57,25 @@ func (mc *MessageCreate) SetCreatedBy(s string) *MessageCreate {
 	return mc
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (mc *MessageCreate) SetNillableCreatedBy(s *string) *MessageCreate {
+	if s != nil {
+		mc.SetCreatedBy(*s)
+	}
+	return mc
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (mc *MessageCreate) SetUpdatedBy(s string) *MessageCreate {
 	mc.mutation.SetUpdatedBy(s)
+	return mc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (mc *MessageCreate) SetNillableUpdatedBy(s *string) *MessageCreate {
+	if s != nil {
+		mc.SetUpdatedBy(*s)
+	}
 	return mc
 }
 
@@ -193,12 +209,6 @@ func (mc *MessageCreate) check() error {
 	if _, ok := mc.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Message.updated_at"`)}
 	}
-	if _, ok := mc.mutation.CreatedBy(); !ok {
-		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Message.created_by"`)}
-	}
-	if _, ok := mc.mutation.UpdatedBy(); !ok {
-		return &ValidationError{Name: "updated_by", err: errors.New(`ent: missing required field "Message.updated_by"`)}
-	}
 	if _, ok := mc.mutation.Content(); !ok {
 		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Message.content"`)}
 	}
@@ -247,11 +257,11 @@ func (mc *MessageCreate) createSpec() (*Message, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := mc.mutation.CreatedBy(); ok {
 		_spec.SetField(message.FieldCreatedBy, field.TypeString, value)
-		_node.CreatedBy = value
+		_node.CreatedBy = &value
 	}
 	if value, ok := mc.mutation.UpdatedBy(); ok {
 		_spec.SetField(message.FieldUpdatedBy, field.TypeString, value)
-		_node.UpdatedBy = value
+		_node.UpdatedBy = &value
 	}
 	if value, ok := mc.mutation.Content(); ok {
 		_spec.SetField(message.FieldContent, field.TypeString, value)

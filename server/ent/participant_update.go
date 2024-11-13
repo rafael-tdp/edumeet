@@ -64,6 +64,12 @@ func (pu *ParticipantUpdate) SetNillableCreatedBy(s *string) *ParticipantUpdate 
 	return pu
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (pu *ParticipantUpdate) ClearCreatedBy() *ParticipantUpdate {
+	pu.mutation.ClearCreatedBy()
+	return pu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (pu *ParticipantUpdate) SetUpdatedBy(s string) *ParticipantUpdate {
 	pu.mutation.SetUpdatedBy(s)
@@ -75,6 +81,12 @@ func (pu *ParticipantUpdate) SetNillableUpdatedBy(s *string) *ParticipantUpdate 
 	if s != nil {
 		pu.SetUpdatedBy(*s)
 	}
+	return pu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (pu *ParticipantUpdate) ClearUpdatedBy() *ParticipantUpdate {
+	pu.mutation.ClearUpdatedBy()
 	return pu
 }
 
@@ -235,8 +247,14 @@ func (pu *ParticipantUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := pu.mutation.CreatedBy(); ok {
 		_spec.SetField(participant.FieldCreatedBy, field.TypeString, value)
 	}
+	if pu.mutation.CreatedByCleared() {
+		_spec.ClearField(participant.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := pu.mutation.UpdatedBy(); ok {
 		_spec.SetField(participant.FieldUpdatedBy, field.TypeString, value)
+	}
+	if pu.mutation.UpdatedByCleared() {
+		_spec.ClearField(participant.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := pu.mutation.Status(); ok {
 		_spec.SetField(participant.FieldStatus, field.TypeString, value)
@@ -362,6 +380,12 @@ func (puo *ParticipantUpdateOne) SetNillableCreatedBy(s *string) *ParticipantUpd
 	return puo
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (puo *ParticipantUpdateOne) ClearCreatedBy() *ParticipantUpdateOne {
+	puo.mutation.ClearCreatedBy()
+	return puo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (puo *ParticipantUpdateOne) SetUpdatedBy(s string) *ParticipantUpdateOne {
 	puo.mutation.SetUpdatedBy(s)
@@ -373,6 +397,12 @@ func (puo *ParticipantUpdateOne) SetNillableUpdatedBy(s *string) *ParticipantUpd
 	if s != nil {
 		puo.SetUpdatedBy(*s)
 	}
+	return puo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (puo *ParticipantUpdateOne) ClearUpdatedBy() *ParticipantUpdateOne {
+	puo.mutation.ClearUpdatedBy()
 	return puo
 }
 
@@ -563,8 +593,14 @@ func (puo *ParticipantUpdateOne) sqlSave(ctx context.Context) (_node *Participan
 	if value, ok := puo.mutation.CreatedBy(); ok {
 		_spec.SetField(participant.FieldCreatedBy, field.TypeString, value)
 	}
+	if puo.mutation.CreatedByCleared() {
+		_spec.ClearField(participant.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := puo.mutation.UpdatedBy(); ok {
 		_spec.SetField(participant.FieldUpdatedBy, field.TypeString, value)
+	}
+	if puo.mutation.UpdatedByCleared() {
+		_spec.ClearField(participant.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := puo.mutation.Status(); ok {
 		_spec.SetField(participant.FieldStatus, field.TypeString, value)

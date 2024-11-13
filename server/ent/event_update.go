@@ -69,6 +69,12 @@ func (eu *EventUpdate) SetNillableCreatedBy(s *string) *EventUpdate {
 	return eu
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (eu *EventUpdate) ClearCreatedBy() *EventUpdate {
+	eu.mutation.ClearCreatedBy()
+	return eu
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (eu *EventUpdate) SetUpdatedBy(s string) *EventUpdate {
 	eu.mutation.SetUpdatedBy(s)
@@ -80,6 +86,12 @@ func (eu *EventUpdate) SetNillableUpdatedBy(s *string) *EventUpdate {
 	if s != nil {
 		eu.SetUpdatedBy(*s)
 	}
+	return eu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (eu *EventUpdate) ClearUpdatedBy() *EventUpdate {
+	eu.mutation.ClearUpdatedBy()
 	return eu
 }
 
@@ -441,7 +453,9 @@ func (eu *EventUpdate) ClearPhysicalEvent() *EventUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (eu *EventUpdate) Save(ctx context.Context) (int, error) {
-	eu.defaults()
+	if err := eu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, eu.sqlSave, eu.mutation, eu.hooks)
 }
 
@@ -468,11 +482,15 @@ func (eu *EventUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (eu *EventUpdate) defaults() {
+func (eu *EventUpdate) defaults() error {
 	if _, ok := eu.mutation.UpdatedAt(); !ok {
+		if event.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized event.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := event.UpdateDefaultUpdatedAt()
 		eu.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -493,8 +511,14 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := eu.mutation.CreatedBy(); ok {
 		_spec.SetField(event.FieldCreatedBy, field.TypeString, value)
 	}
+	if eu.mutation.CreatedByCleared() {
+		_spec.ClearField(event.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := eu.mutation.UpdatedBy(); ok {
 		_spec.SetField(event.FieldUpdatedBy, field.TypeString, value)
+	}
+	if eu.mutation.UpdatedByCleared() {
+		_spec.ClearField(event.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := eu.mutation.NbMaxUser(); ok {
 		_spec.SetField(event.FieldNbMaxUser, field.TypeInt, value)
@@ -840,6 +864,12 @@ func (euo *EventUpdateOne) SetNillableCreatedBy(s *string) *EventUpdateOne {
 	return euo
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (euo *EventUpdateOne) ClearCreatedBy() *EventUpdateOne {
+	euo.mutation.ClearCreatedBy()
+	return euo
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (euo *EventUpdateOne) SetUpdatedBy(s string) *EventUpdateOne {
 	euo.mutation.SetUpdatedBy(s)
@@ -851,6 +881,12 @@ func (euo *EventUpdateOne) SetNillableUpdatedBy(s *string) *EventUpdateOne {
 	if s != nil {
 		euo.SetUpdatedBy(*s)
 	}
+	return euo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (euo *EventUpdateOne) ClearUpdatedBy() *EventUpdateOne {
+	euo.mutation.ClearUpdatedBy()
 	return euo
 }
 
@@ -1225,7 +1261,9 @@ func (euo *EventUpdateOne) Select(field string, fields ...string) *EventUpdateOn
 
 // Save executes the query and returns the updated Event entity.
 func (euo *EventUpdateOne) Save(ctx context.Context) (*Event, error) {
-	euo.defaults()
+	if err := euo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, euo.sqlSave, euo.mutation, euo.hooks)
 }
 
@@ -1252,11 +1290,15 @@ func (euo *EventUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (euo *EventUpdateOne) defaults() {
+func (euo *EventUpdateOne) defaults() error {
 	if _, ok := euo.mutation.UpdatedAt(); !ok {
+		if event.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized event.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := event.UpdateDefaultUpdatedAt()
 		euo.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error) {
@@ -1294,8 +1336,14 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	if value, ok := euo.mutation.CreatedBy(); ok {
 		_spec.SetField(event.FieldCreatedBy, field.TypeString, value)
 	}
+	if euo.mutation.CreatedByCleared() {
+		_spec.ClearField(event.FieldCreatedBy, field.TypeString)
+	}
 	if value, ok := euo.mutation.UpdatedBy(); ok {
 		_spec.SetField(event.FieldUpdatedBy, field.TypeString, value)
+	}
+	if euo.mutation.UpdatedByCleared() {
+		_spec.ClearField(event.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := euo.mutation.NbMaxUser(); ok {
 		_spec.SetField(event.FieldNbMaxUser, field.TypeInt, value)

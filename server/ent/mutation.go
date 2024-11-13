@@ -264,7 +264,7 @@ func (m *BadgeMutation) CreatedBy() (r string, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the Badge entity.
 // If the Badge object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BadgeMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+func (m *BadgeMutation) OldCreatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -278,9 +278,22 @@ func (m *BadgeMutation) OldCreatedBy(ctx context.Context) (v string, err error) 
 	return oldValue.CreatedBy, nil
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *BadgeMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[badge.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *BadgeMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[badge.FieldCreatedBy]
+	return ok
+}
+
 // ResetCreatedBy resets all changes to the "created_by" field.
 func (m *BadgeMutation) ResetCreatedBy() {
 	m.created_by = nil
+	delete(m.clearedFields, badge.FieldCreatedBy)
 }
 
 // SetUpdatedBy sets the "updated_by" field.
@@ -300,7 +313,7 @@ func (m *BadgeMutation) UpdatedBy() (r string, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the Badge entity.
 // If the Badge object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *BadgeMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+func (m *BadgeMutation) OldUpdatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -314,9 +327,22 @@ func (m *BadgeMutation) OldUpdatedBy(ctx context.Context) (v string, err error) 
 	return oldValue.UpdatedBy, nil
 }
 
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *BadgeMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[badge.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *BadgeMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[badge.FieldUpdatedBy]
+	return ok
+}
+
 // ResetUpdatedBy resets all changes to the "updated_by" field.
 func (m *BadgeMutation) ResetUpdatedBy() {
 	m.updated_by = nil
+	delete(m.clearedFields, badge.FieldUpdatedBy)
 }
 
 // SetName sets the "name" field.
@@ -754,7 +780,14 @@ func (m *BadgeMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *BadgeMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(badge.FieldCreatedBy) {
+		fields = append(fields, badge.FieldCreatedBy)
+	}
+	if m.FieldCleared(badge.FieldUpdatedBy) {
+		fields = append(fields, badge.FieldUpdatedBy)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -767,6 +800,14 @@ func (m *BadgeMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *BadgeMutation) ClearField(name string) error {
+	switch name {
+	case badge.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case badge.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	}
 	return fmt.Errorf("unknown Badge nullable field %s", name)
 }
 
@@ -1102,7 +1143,7 @@ func (m *DocumentMutation) CreatedBy() (r string, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the Document entity.
 // If the Document object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DocumentMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+func (m *DocumentMutation) OldCreatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -1116,9 +1157,22 @@ func (m *DocumentMutation) OldCreatedBy(ctx context.Context) (v string, err erro
 	return oldValue.CreatedBy, nil
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *DocumentMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[document.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *DocumentMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[document.FieldCreatedBy]
+	return ok
+}
+
 // ResetCreatedBy resets all changes to the "created_by" field.
 func (m *DocumentMutation) ResetCreatedBy() {
 	m.created_by = nil
+	delete(m.clearedFields, document.FieldCreatedBy)
 }
 
 // SetUpdatedBy sets the "updated_by" field.
@@ -1138,7 +1192,7 @@ func (m *DocumentMutation) UpdatedBy() (r string, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the Document entity.
 // If the Document object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DocumentMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+func (m *DocumentMutation) OldUpdatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -1152,9 +1206,22 @@ func (m *DocumentMutation) OldUpdatedBy(ctx context.Context) (v string, err erro
 	return oldValue.UpdatedBy, nil
 }
 
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *DocumentMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[document.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *DocumentMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[document.FieldUpdatedBy]
+	return ok
+}
+
 // ResetUpdatedBy resets all changes to the "updated_by" field.
 func (m *DocumentMutation) ResetUpdatedBy() {
 	m.updated_by = nil
+	delete(m.clearedFields, document.FieldUpdatedBy)
 }
 
 // SetPath sets the "path" field.
@@ -1461,7 +1528,14 @@ func (m *DocumentMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *DocumentMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(document.FieldCreatedBy) {
+		fields = append(fields, document.FieldCreatedBy)
+	}
+	if m.FieldCleared(document.FieldUpdatedBy) {
+		fields = append(fields, document.FieldUpdatedBy)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1474,6 +1548,14 @@ func (m *DocumentMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *DocumentMutation) ClearField(name string) error {
+	switch name {
+	case document.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case document.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	}
 	return fmt.Errorf("unknown Document nullable field %s", name)
 }
 
@@ -1845,7 +1927,7 @@ func (m *EventMutation) CreatedBy() (r string, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the Event entity.
 // If the Event object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EventMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+func (m *EventMutation) OldCreatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -1859,9 +1941,22 @@ func (m *EventMutation) OldCreatedBy(ctx context.Context) (v string, err error) 
 	return oldValue.CreatedBy, nil
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *EventMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[event.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *EventMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[event.FieldCreatedBy]
+	return ok
+}
+
 // ResetCreatedBy resets all changes to the "created_by" field.
 func (m *EventMutation) ResetCreatedBy() {
 	m.created_by = nil
+	delete(m.clearedFields, event.FieldCreatedBy)
 }
 
 // SetUpdatedBy sets the "updated_by" field.
@@ -1881,7 +1976,7 @@ func (m *EventMutation) UpdatedBy() (r string, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the Event entity.
 // If the Event object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EventMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+func (m *EventMutation) OldUpdatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -1895,9 +1990,22 @@ func (m *EventMutation) OldUpdatedBy(ctx context.Context) (v string, err error) 
 	return oldValue.UpdatedBy, nil
 }
 
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *EventMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[event.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *EventMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[event.FieldUpdatedBy]
+	return ok
+}
+
 // ResetUpdatedBy resets all changes to the "updated_by" field.
 func (m *EventMutation) ResetUpdatedBy() {
 	m.updated_by = nil
+	delete(m.clearedFields, event.FieldUpdatedBy)
 }
 
 // SetNbMaxUser sets the "nbMaxUser" field.
@@ -2840,6 +2948,12 @@ func (m *EventMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *EventMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(event.FieldCreatedBy) {
+		fields = append(fields, event.FieldCreatedBy)
+	}
+	if m.FieldCleared(event.FieldUpdatedBy) {
+		fields = append(fields, event.FieldUpdatedBy)
+	}
 	if m.FieldCleared(event.FieldEndDate) {
 		fields = append(fields, event.FieldEndDate)
 	}
@@ -2866,6 +2980,12 @@ func (m *EventMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *EventMutation) ClearField(name string) error {
 	switch name {
+	case event.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case event.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
 	case event.FieldEndDate:
 		m.ClearEndDate()
 		return nil
@@ -3809,7 +3929,7 @@ func (m *MessageMutation) CreatedBy() (r string, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the Message entity.
 // If the Message object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MessageMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+func (m *MessageMutation) OldCreatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -3823,9 +3943,22 @@ func (m *MessageMutation) OldCreatedBy(ctx context.Context) (v string, err error
 	return oldValue.CreatedBy, nil
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *MessageMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[message.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *MessageMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[message.FieldCreatedBy]
+	return ok
+}
+
 // ResetCreatedBy resets all changes to the "created_by" field.
 func (m *MessageMutation) ResetCreatedBy() {
 	m.created_by = nil
+	delete(m.clearedFields, message.FieldCreatedBy)
 }
 
 // SetUpdatedBy sets the "updated_by" field.
@@ -3845,7 +3978,7 @@ func (m *MessageMutation) UpdatedBy() (r string, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the Message entity.
 // If the Message object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MessageMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+func (m *MessageMutation) OldUpdatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -3859,9 +3992,22 @@ func (m *MessageMutation) OldUpdatedBy(ctx context.Context) (v string, err error
 	return oldValue.UpdatedBy, nil
 }
 
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *MessageMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[message.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *MessageMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[message.FieldUpdatedBy]
+	return ok
+}
+
 // ResetUpdatedBy resets all changes to the "updated_by" field.
 func (m *MessageMutation) ResetUpdatedBy() {
 	m.updated_by = nil
+	delete(m.clearedFields, message.FieldUpdatedBy)
 }
 
 // SetContent sets the "content" field.
@@ -4192,7 +4338,14 @@ func (m *MessageMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *MessageMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(message.FieldCreatedBy) {
+		fields = append(fields, message.FieldCreatedBy)
+	}
+	if m.FieldCleared(message.FieldUpdatedBy) {
+		fields = append(fields, message.FieldUpdatedBy)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -4205,6 +4358,14 @@ func (m *MessageMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *MessageMutation) ClearField(name string) error {
+	switch name {
+	case message.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case message.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	}
 	return fmt.Errorf("unknown Message nullable field %s", name)
 }
 
@@ -4567,7 +4728,7 @@ func (m *ParticipantMutation) CreatedBy() (r string, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the Participant entity.
 // If the Participant object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ParticipantMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+func (m *ParticipantMutation) OldCreatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -4581,9 +4742,22 @@ func (m *ParticipantMutation) OldCreatedBy(ctx context.Context) (v string, err e
 	return oldValue.CreatedBy, nil
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *ParticipantMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[participant.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *ParticipantMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[participant.FieldCreatedBy]
+	return ok
+}
+
 // ResetCreatedBy resets all changes to the "created_by" field.
 func (m *ParticipantMutation) ResetCreatedBy() {
 	m.created_by = nil
+	delete(m.clearedFields, participant.FieldCreatedBy)
 }
 
 // SetUpdatedBy sets the "updated_by" field.
@@ -4603,7 +4777,7 @@ func (m *ParticipantMutation) UpdatedBy() (r string, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the Participant entity.
 // If the Participant object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ParticipantMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+func (m *ParticipantMutation) OldUpdatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -4617,9 +4791,22 @@ func (m *ParticipantMutation) OldUpdatedBy(ctx context.Context) (v string, err e
 	return oldValue.UpdatedBy, nil
 }
 
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *ParticipantMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[participant.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *ParticipantMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[participant.FieldUpdatedBy]
+	return ok
+}
+
 // ResetUpdatedBy resets all changes to the "updated_by" field.
 func (m *ParticipantMutation) ResetUpdatedBy() {
 	m.updated_by = nil
+	delete(m.clearedFields, participant.FieldUpdatedBy)
 }
 
 // SetStatus sets the "status" field.
@@ -5010,6 +5197,12 @@ func (m *ParticipantMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *ParticipantMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(participant.FieldCreatedBy) {
+		fields = append(fields, participant.FieldCreatedBy)
+	}
+	if m.FieldCleared(participant.FieldUpdatedBy) {
+		fields = append(fields, participant.FieldUpdatedBy)
+	}
 	if m.FieldCleared(participant.FieldJoinedAt) {
 		fields = append(fields, participant.FieldJoinedAt)
 	}
@@ -5027,6 +5220,12 @@ func (m *ParticipantMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ParticipantMutation) ClearField(name string) error {
 	switch name {
+	case participant.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case participant.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
 	case participant.FieldJoinedAt:
 		m.ClearJoinedAt()
 		return nil
@@ -6853,7 +7052,7 @@ func (m *SubjectMutation) CreatedBy() (r string, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the Subject entity.
 // If the Subject object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubjectMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+func (m *SubjectMutation) OldCreatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -6867,9 +7066,22 @@ func (m *SubjectMutation) OldCreatedBy(ctx context.Context) (v string, err error
 	return oldValue.CreatedBy, nil
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *SubjectMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[subject.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *SubjectMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[subject.FieldCreatedBy]
+	return ok
+}
+
 // ResetCreatedBy resets all changes to the "created_by" field.
 func (m *SubjectMutation) ResetCreatedBy() {
 	m.created_by = nil
+	delete(m.clearedFields, subject.FieldCreatedBy)
 }
 
 // SetUpdatedBy sets the "updated_by" field.
@@ -6889,7 +7101,7 @@ func (m *SubjectMutation) UpdatedBy() (r string, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the Subject entity.
 // If the Subject object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *SubjectMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+func (m *SubjectMutation) OldUpdatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -6903,9 +7115,22 @@ func (m *SubjectMutation) OldUpdatedBy(ctx context.Context) (v string, err error
 	return oldValue.UpdatedBy, nil
 }
 
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *SubjectMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[subject.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *SubjectMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[subject.FieldUpdatedBy]
+	return ok
+}
+
 // ResetUpdatedBy resets all changes to the "updated_by" field.
 func (m *SubjectMutation) ResetUpdatedBy() {
 	m.updated_by = nil
+	delete(m.clearedFields, subject.FieldUpdatedBy)
 }
 
 // SetName sets the "name" field.
@@ -7212,7 +7437,14 @@ func (m *SubjectMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *SubjectMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(subject.FieldCreatedBy) {
+		fields = append(fields, subject.FieldCreatedBy)
+	}
+	if m.FieldCleared(subject.FieldUpdatedBy) {
+		fields = append(fields, subject.FieldUpdatedBy)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -7225,6 +7457,14 @@ func (m *SubjectMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *SubjectMutation) ClearField(name string) error {
+	switch name {
+	case subject.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case subject.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	}
 	return fmt.Errorf("unknown Subject nullable field %s", name)
 }
 
@@ -7608,7 +7848,7 @@ func (m *UserMutation) CreatedBy() (r string, exists bool) {
 // OldCreatedBy returns the old "created_by" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
+func (m *UserMutation) OldCreatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
 	}
@@ -7622,9 +7862,22 @@ func (m *UserMutation) OldCreatedBy(ctx context.Context) (v string, err error) {
 	return oldValue.CreatedBy, nil
 }
 
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *UserMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.clearedFields[user.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *UserMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[user.FieldCreatedBy]
+	return ok
+}
+
 // ResetCreatedBy resets all changes to the "created_by" field.
 func (m *UserMutation) ResetCreatedBy() {
 	m.created_by = nil
+	delete(m.clearedFields, user.FieldCreatedBy)
 }
 
 // SetUpdatedBy sets the "updated_by" field.
@@ -7644,7 +7897,7 @@ func (m *UserMutation) UpdatedBy() (r string, exists bool) {
 // OldUpdatedBy returns the old "updated_by" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
+func (m *UserMutation) OldUpdatedBy(ctx context.Context) (v *string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
 	}
@@ -7658,9 +7911,22 @@ func (m *UserMutation) OldUpdatedBy(ctx context.Context) (v string, err error) {
 	return oldValue.UpdatedBy, nil
 }
 
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *UserMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.clearedFields[user.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *UserMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[user.FieldUpdatedBy]
+	return ok
+}
+
 // ResetUpdatedBy resets all changes to the "updated_by" field.
 func (m *UserMutation) ResetUpdatedBy() {
 	m.updated_by = nil
+	delete(m.clearedFields, user.FieldUpdatedBy)
 }
 
 // SetEmail sets the "email" field.
@@ -9177,6 +9443,12 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(user.FieldCreatedBy) {
+		fields = append(fields, user.FieldCreatedBy)
+	}
+	if m.FieldCleared(user.FieldUpdatedBy) {
+		fields = append(fields, user.FieldUpdatedBy)
+	}
 	if m.FieldCleared(user.FieldBirthDate) {
 		fields = append(fields, user.FieldBirthDate)
 	}
@@ -9215,6 +9487,12 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
 	switch name {
+	case user.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case user.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
 	case user.FieldBirthDate:
 		m.ClearBirthDate()
 		return nil

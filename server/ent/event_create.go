@@ -61,9 +61,25 @@ func (ec *EventCreate) SetCreatedBy(s string) *EventCreate {
 	return ec
 }
 
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (ec *EventCreate) SetNillableCreatedBy(s *string) *EventCreate {
+	if s != nil {
+		ec.SetCreatedBy(*s)
+	}
+	return ec
+}
+
 // SetUpdatedBy sets the "updated_by" field.
 func (ec *EventCreate) SetUpdatedBy(s string) *EventCreate {
 	ec.mutation.SetUpdatedBy(s)
+	return ec
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (ec *EventCreate) SetNillableUpdatedBy(s *string) *EventCreate {
+	if s != nil {
+		ec.SetUpdatedBy(*s)
+	}
 	return ec
 }
 
@@ -297,7 +313,9 @@ func (ec *EventCreate) Mutation() *EventMutation {
 
 // Save creates the Event in the database.
 func (ec *EventCreate) Save(ctx context.Context) (*Event, error) {
-	ec.defaults()
+	if err := ec.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ec.sqlSave, ec.mutation, ec.hooks)
 }
 
@@ -324,12 +342,18 @@ func (ec *EventCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ec *EventCreate) defaults() {
+func (ec *EventCreate) defaults() error {
 	if _, ok := ec.mutation.CreatedAt(); !ok {
+		if event.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized event.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := event.DefaultCreatedAt()
 		ec.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ec.mutation.UpdatedAt(); !ok {
+		if event.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized event.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := event.DefaultUpdatedAt()
 		ec.mutation.SetUpdatedAt(v)
 	}
@@ -338,9 +362,13 @@ func (ec *EventCreate) defaults() {
 		ec.mutation.SetIsPrivate(v)
 	}
 	if _, ok := ec.mutation.ID(); !ok {
+		if event.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized event.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := event.DefaultID()
 		ec.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -350,12 +378,6 @@ func (ec *EventCreate) check() error {
 	}
 	if _, ok := ec.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Event.updated_at"`)}
-	}
-	if _, ok := ec.mutation.CreatedBy(); !ok {
-		return &ValidationError{Name: "created_by", err: errors.New(`ent: missing required field "Event.created_by"`)}
-	}
-	if _, ok := ec.mutation.UpdatedBy(); !ok {
-		return &ValidationError{Name: "updated_by", err: errors.New(`ent: missing required field "Event.updated_by"`)}
 	}
 	if _, ok := ec.mutation.NbMaxUser(); !ok {
 		return &ValidationError{Name: "nbMaxUser", err: errors.New(`ent: missing required field "Event.nbMaxUser"`)}
@@ -414,11 +436,11 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := ec.mutation.CreatedBy(); ok {
 		_spec.SetField(event.FieldCreatedBy, field.TypeString, value)
-		_node.CreatedBy = value
+		_node.CreatedBy = &value
 	}
 	if value, ok := ec.mutation.UpdatedBy(); ok {
 		_spec.SetField(event.FieldUpdatedBy, field.TypeString, value)
-		_node.UpdatedBy = value
+		_node.UpdatedBy = &value
 	}
 	if value, ok := ec.mutation.NbMaxUser(); ok {
 		_spec.SetField(event.FieldNbMaxUser, field.TypeInt, value)
