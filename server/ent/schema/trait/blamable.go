@@ -3,6 +3,7 @@ package trait
 import (
 	"context"
 	"edumeet/ent/hook"
+	"flag"
 	"fmt"
 	"time"
 
@@ -30,8 +31,10 @@ func (Blamable) Hooks() []ent.Hook {
 		hook.On(
 			func(next ent.Mutator) ent.Mutator {
 				return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+					if flag.Lookup("mode").Value.String() != "normal" {
+						return next.Mutate(ctx, m)
+					}
 					// Récupérer l'ID de l'utilisateur dans le contexte
-					fmt.Print(m.Op())
 					userID, ok := ctx.Value("user_id").(string)
 					if !ok {
 						return nil, fmt.Errorf("user_id not found in context")
