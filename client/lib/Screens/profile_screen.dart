@@ -2,6 +2,7 @@ import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/profile_button.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
+import 'package:client/screens/edit_profile_page.dart';
 
 class ProfilePage extends StatelessWidget {
   final Map<String, String> user;
@@ -97,8 +98,16 @@ class ProfilePage extends StatelessWidget {
                     ProfileButton(
                       text: 'Modifier le profil',
                       backgroundColor: AppColors.purple,
-                      onPressed: () {
-                        // todo: Action to edit profile
+                      onPressed: () async {
+                        final updatedUser = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfilePage(user: user),
+                          ),
+                        );
+                        if (updatedUser != null) {
+                          // todo: Update user profile
+                        }
                       },
                     ),
                     const SizedBox(width: 10),
