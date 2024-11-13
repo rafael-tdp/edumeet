@@ -158,6 +158,26 @@ func (eu *EventUpdate) ClearInvitationLink() *EventUpdate {
 	return eu
 }
 
+// SetImage sets the "image" field.
+func (eu *EventUpdate) SetImage(s string) *EventUpdate {
+	eu.mutation.SetImage(s)
+	return eu
+}
+
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (eu *EventUpdate) SetNillableImage(s *string) *EventUpdate {
+	if s != nil {
+		eu.SetImage(*s)
+	}
+	return eu
+}
+
+// ClearImage clears the value of the "image" field.
+func (eu *EventUpdate) ClearImage() *EventUpdate {
+	eu.mutation.ClearImage()
+	return eu
+}
+
 // SetUserID sets the "user" edge to the User entity by ID.
 func (eu *EventUpdate) SetUserID(id string) *EventUpdate {
 	eu.mutation.SetUserID(id)
@@ -439,6 +459,12 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if eu.mutation.InvitationLinkCleared() {
 		_spec.ClearField(event.FieldInvitationLink, field.TypeString)
+	}
+	if value, ok := eu.mutation.Image(); ok {
+		_spec.SetField(event.FieldImage, field.TypeString, value)
+	}
+	if eu.mutation.ImageCleared() {
+		_spec.ClearField(event.FieldImage, field.TypeString)
 	}
 	if eu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -834,6 +860,26 @@ func (euo *EventUpdateOne) ClearInvitationLink() *EventUpdateOne {
 	return euo
 }
 
+// SetImage sets the "image" field.
+func (euo *EventUpdateOne) SetImage(s string) *EventUpdateOne {
+	euo.mutation.SetImage(s)
+	return euo
+}
+
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (euo *EventUpdateOne) SetNillableImage(s *string) *EventUpdateOne {
+	if s != nil {
+		euo.SetImage(*s)
+	}
+	return euo
+}
+
+// ClearImage clears the value of the "image" field.
+func (euo *EventUpdateOne) ClearImage() *EventUpdateOne {
+	euo.mutation.ClearImage()
+	return euo
+}
+
 // SetUserID sets the "user" edge to the User entity by ID.
 func (euo *EventUpdateOne) SetUserID(id string) *EventUpdateOne {
 	euo.mutation.SetUserID(id)
@@ -1145,6 +1191,12 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	}
 	if euo.mutation.InvitationLinkCleared() {
 		_spec.ClearField(event.FieldInvitationLink, field.TypeString)
+	}
+	if value, ok := euo.mutation.Image(); ok {
+		_spec.SetField(event.FieldImage, field.TypeString, value)
+	}
+	if euo.mutation.ImageCleared() {
+		_spec.ClearField(event.FieldImage, field.TypeString)
 	}
 	if euo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

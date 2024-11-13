@@ -1192,6 +1192,7 @@ type EventMutation struct {
 	title                  *string
 	description            *string
 	invitationLink         *string
+	image                  *string
 	clearedFields          map[string]struct{}
 	user                   *string
 	cleareduser            bool
@@ -1630,6 +1631,55 @@ func (m *EventMutation) ResetInvitationLink() {
 	delete(m.clearedFields, event.FieldInvitationLink)
 }
 
+// SetImage sets the "image" field.
+func (m *EventMutation) SetImage(s string) {
+	m.image = &s
+}
+
+// Image returns the value of the "image" field in the mutation.
+func (m *EventMutation) Image() (r string, exists bool) {
+	v := m.image
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldImage returns the old "image" field's value of the Event entity.
+// If the Event object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *EventMutation) OldImage(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldImage is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldImage requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldImage: %w", err)
+	}
+	return oldValue.Image, nil
+}
+
+// ClearImage clears the value of the "image" field.
+func (m *EventMutation) ClearImage() {
+	m.image = nil
+	m.clearedFields[event.FieldImage] = struct{}{}
+}
+
+// ImageCleared returns if the "image" field was cleared in this mutation.
+func (m *EventMutation) ImageCleared() bool {
+	_, ok := m.clearedFields[event.FieldImage]
+	return ok
+}
+
+// ResetImage resets all changes to the "image" field.
+func (m *EventMutation) ResetImage() {
+	m.image = nil
+	delete(m.clearedFields, event.FieldImage)
+}
+
 // SetUserID sets the "user" edge to the User entity by id.
 func (m *EventMutation) SetUserID(id string) {
 	m.user = &id
@@ -1982,7 +2032,7 @@ func (m *EventMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.nbMaxUser != nil {
 		fields = append(fields, event.FieldNbMaxUser)
 	}
@@ -2003,6 +2053,9 @@ func (m *EventMutation) Fields() []string {
 	}
 	if m.invitationLink != nil {
 		fields = append(fields, event.FieldInvitationLink)
+	}
+	if m.image != nil {
+		fields = append(fields, event.FieldImage)
 	}
 	return fields
 }
@@ -2026,6 +2079,8 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 		return m.Description()
 	case event.FieldInvitationLink:
 		return m.InvitationLink()
+	case event.FieldImage:
+		return m.Image()
 	}
 	return nil, false
 }
@@ -2049,6 +2104,8 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldDescription(ctx)
 	case event.FieldInvitationLink:
 		return m.OldInvitationLink(ctx)
+	case event.FieldImage:
+		return m.OldImage(ctx)
 	}
 	return nil, fmt.Errorf("unknown Event field %s", name)
 }
@@ -2107,6 +2164,13 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetInvitationLink(v)
 		return nil
+	case event.FieldImage:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetImage(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Event field %s", name)
 }
@@ -2161,6 +2225,9 @@ func (m *EventMutation) ClearedFields() []string {
 	if m.FieldCleared(event.FieldInvitationLink) {
 		fields = append(fields, event.FieldInvitationLink)
 	}
+	if m.FieldCleared(event.FieldImage) {
+		fields = append(fields, event.FieldImage)
+	}
 	return fields
 }
 
@@ -2183,6 +2250,9 @@ func (m *EventMutation) ClearField(name string) error {
 		return nil
 	case event.FieldInvitationLink:
 		m.ClearInvitationLink()
+		return nil
+	case event.FieldImage:
+		m.ClearImage()
 		return nil
 	}
 	return fmt.Errorf("unknown Event nullable field %s", name)
@@ -2212,6 +2282,9 @@ func (m *EventMutation) ResetField(name string) error {
 		return nil
 	case event.FieldInvitationLink:
 		m.ResetInvitationLink()
+		return nil
+	case event.FieldImage:
+		m.ResetImage()
 		return nil
 	}
 	return fmt.Errorf("unknown Event field %s", name)

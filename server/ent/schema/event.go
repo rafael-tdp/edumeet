@@ -24,6 +24,7 @@ func (Event) Fields() []ent.Field {
 		field.String("title"),
 		field.String("description").Optional(),
 		field.String("invitationLink").Optional(),
+		field.String("image").Optional(),
 	}
 }
 

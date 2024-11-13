@@ -100,6 +100,11 @@ func InvitationLink(v string) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldInvitationLink, v))
 }
 
+// Image applies equality check predicate on the "image" field. It's identical to ImageEQ.
+func Image(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldImage, v))
+}
+
 // NbMaxUserEQ applies the EQ predicate on the "nbMaxUser" field.
 func NbMaxUserEQ(v int) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldNbMaxUser, v))
@@ -453,6 +458,81 @@ func InvitationLinkEqualFold(v string) predicate.Event {
 // InvitationLinkContainsFold applies the ContainsFold predicate on the "invitationLink" field.
 func InvitationLinkContainsFold(v string) predicate.Event {
 	return predicate.Event(sql.FieldContainsFold(FieldInvitationLink, v))
+}
+
+// ImageEQ applies the EQ predicate on the "image" field.
+func ImageEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldImage, v))
+}
+
+// ImageNEQ applies the NEQ predicate on the "image" field.
+func ImageNEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldNEQ(FieldImage, v))
+}
+
+// ImageIn applies the In predicate on the "image" field.
+func ImageIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldIn(FieldImage, vs...))
+}
+
+// ImageNotIn applies the NotIn predicate on the "image" field.
+func ImageNotIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldNotIn(FieldImage, vs...))
+}
+
+// ImageGT applies the GT predicate on the "image" field.
+func ImageGT(v string) predicate.Event {
+	return predicate.Event(sql.FieldGT(FieldImage, v))
+}
+
+// ImageGTE applies the GTE predicate on the "image" field.
+func ImageGTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldGTE(FieldImage, v))
+}
+
+// ImageLT applies the LT predicate on the "image" field.
+func ImageLT(v string) predicate.Event {
+	return predicate.Event(sql.FieldLT(FieldImage, v))
+}
+
+// ImageLTE applies the LTE predicate on the "image" field.
+func ImageLTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldLTE(FieldImage, v))
+}
+
+// ImageContains applies the Contains predicate on the "image" field.
+func ImageContains(v string) predicate.Event {
+	return predicate.Event(sql.FieldContains(FieldImage, v))
+}
+
+// ImageHasPrefix applies the HasPrefix predicate on the "image" field.
+func ImageHasPrefix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasPrefix(FieldImage, v))
+}
+
+// ImageHasSuffix applies the HasSuffix predicate on the "image" field.
+func ImageHasSuffix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasSuffix(FieldImage, v))
+}
+
+// ImageIsNil applies the IsNil predicate on the "image" field.
+func ImageIsNil() predicate.Event {
+	return predicate.Event(sql.FieldIsNull(FieldImage))
+}
+
+// ImageNotNil applies the NotNil predicate on the "image" field.
+func ImageNotNil() predicate.Event {
+	return predicate.Event(sql.FieldNotNull(FieldImage))
+}
+
+// ImageEqualFold applies the EqualFold predicate on the "image" field.
+func ImageEqualFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldEqualFold(FieldImage, v))
+}
+
+// ImageContainsFold applies the ContainsFold predicate on the "image" field.
+func ImageContainsFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldContainsFold(FieldImage, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

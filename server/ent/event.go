@@ -35,6 +35,8 @@ type Event struct {
 	Description string `json:"description,omitempty"`
 	// InvitationLink holds the value of the "invitationLink" field.
 	InvitationLink string `json:"invitationLink,omitempty"`
+	// Image holds the value of the "image" field.
+	Image string `json:"image,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EventQuery when eager-loading is set.
 	Edges        EventEdges `json:"edges"`
@@ -143,7 +145,7 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case event.FieldNbMaxUser:
 			values[i] = new(sql.NullInt64)
-		case event.FieldID, event.FieldTitle, event.FieldDescription, event.FieldInvitationLink:
+		case event.FieldID, event.FieldTitle, event.FieldDescription, event.FieldInvitationLink, event.FieldImage:
 			values[i] = new(sql.NullString)
 		case event.FieldStartDate, event.FieldEndDate:
 			values[i] = new(sql.NullTime)
@@ -211,6 +213,12 @@ func (e *Event) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field invitationLink", values[i])
 			} else if value.Valid {
 				e.InvitationLink = value.String
+			}
+		case event.FieldImage:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field image", values[i])
+			} else if value.Valid {
+				e.Image = value.String
 			}
 		case event.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -310,6 +318,9 @@ func (e *Event) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("invitationLink=")
 	builder.WriteString(e.InvitationLink)
+	builder.WriteString(", ")
+	builder.WriteString("image=")
+	builder.WriteString(e.Image)
 	builder.WriteByte(')')
 	return builder.String()
 }

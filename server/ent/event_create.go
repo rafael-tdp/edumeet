@@ -101,6 +101,20 @@ func (ec *EventCreate) SetNillableInvitationLink(s *string) *EventCreate {
 	return ec
 }
 
+// SetImage sets the "image" field.
+func (ec *EventCreate) SetImage(s string) *EventCreate {
+	ec.mutation.SetImage(s)
+	return ec
+}
+
+// SetNillableImage sets the "image" field if the given value is not nil.
+func (ec *EventCreate) SetNillableImage(s *string) *EventCreate {
+	if s != nil {
+		ec.SetImage(*s)
+	}
+	return ec
+}
+
 // SetID sets the "id" field.
 func (ec *EventCreate) SetID(s string) *EventCreate {
 	ec.mutation.SetID(s)
@@ -357,6 +371,10 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	if value, ok := ec.mutation.InvitationLink(); ok {
 		_spec.SetField(event.FieldInvitationLink, field.TypeString, value)
 		_node.InvitationLink = value
+	}
+	if value, ok := ec.mutation.Image(); ok {
+		_spec.SetField(event.FieldImage, field.TypeString, value)
+		_node.Image = value
 	}
 	if nodes := ec.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

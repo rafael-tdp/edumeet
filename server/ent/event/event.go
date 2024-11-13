@@ -26,6 +26,8 @@ const (
 	FieldDescription = "description"
 	// FieldInvitationLink holds the string denoting the invitationlink field in the database.
 	FieldInvitationLink = "invitation_link"
+	// FieldImage holds the string denoting the image field in the database.
+	FieldImage = "image"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeMessages holds the string denoting the messages edge name in mutations.
@@ -101,6 +103,7 @@ var Columns = []string{
 	FieldTitle,
 	FieldDescription,
 	FieldInvitationLink,
+	FieldImage,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "events"
@@ -178,6 +181,11 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 // ByInvitationLink orders the results by the invitationLink field.
 func ByInvitationLink(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldInvitationLink, opts...).ToFunc()
+}
+
+// ByImage orders the results by the image field.
+func ByImage(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldImage, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

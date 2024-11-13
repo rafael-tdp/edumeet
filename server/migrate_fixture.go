@@ -24,7 +24,7 @@ func migrateFixture() {
 	defer client.Close()
 
 	ctx := context.Background()
-	// delete all data
+
 	client.User.Delete().ExecX(ctx)
 	userFixture := fixture.User{}
 	userFixture.GenerateUser(ctx, client)
@@ -36,6 +36,10 @@ func migrateFixture() {
 	client.Subject.Delete().ExecX(ctx)
 	subjectFixture := fixture.Subject{}
 	subjectFixture.GenerateSubject(ctx, client)
+
+	client.Event.Delete().ExecX(ctx)
+	eventFixture := fixture.Event{}
+	eventFixture.GenerateEvent(ctx, client)
 
 	log.Println("Fixtures applied successfully.")
 }
