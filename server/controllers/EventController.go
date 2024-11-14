@@ -103,3 +103,13 @@ func (ec *EventController) GetAllEvents(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(events)
 }
+
+func (ec *EventController) GetCurrentUserEvents(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+
+	events, err := ec.eventservice.GetEventsByUser(currentUser.ID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(events)
+}

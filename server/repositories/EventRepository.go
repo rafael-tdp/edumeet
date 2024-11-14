@@ -4,7 +4,9 @@ import (
 	"context"
 	"edumeet/ent"
 	"edumeet/ent/event"
+	"edumeet/ent/participant"
 	"edumeet/ent/remoteevent"
+	"edumeet/ent/user"
 )
 
 type EventRepository struct {
@@ -123,6 +125,17 @@ func (er *EventRepository) UpdateEvent(eventID string, event *ent.Event) (*ent.E
 
 func (er *EventRepository) GetEvents() ([]*ent.Event, error) {
 	events, err := er.client.Event.Query().WithRemoteEvent().WithPhysicalEvent().WithParticipants().All(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return events, nil
+}
+
+func (er *EventRepository) GetEventsByUser(userID string) ([]*ent.Event, error) {
+	events, err := er.client.Event.Query().
+		Where(event.HasParticipantsWith(participant.HasUserWith(user.IDEQ(userID)))).WithParticipants().All(context.Background())
+
 	if err != nil {
 		return nil, err
 	}

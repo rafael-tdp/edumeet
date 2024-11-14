@@ -16,6 +16,7 @@ func setupEventRoutes(app *fiber.App, eventController *controllers.EventControll
 	app.Get("/api/event/remote/:id", eventController.GetRemoteEvent)
 	app.Put("/api/event/remote/:id", eventController.UpdateRemoteEvent)
 	app.Get("/api/events", eventController.GetAllEvents)
+	app.Get("/api/events/current", middlewares.JWTAuthMiddleware, eventController.GetCurrentUserEvents)
 }
 
 func initEventController(client *ent.Client) *controllers.EventController {
@@ -24,5 +25,4 @@ func initEventController(client *ent.Client) *controllers.EventController {
 	eventService := services.NewEventService(eventRepository, participantRepository)
 	emailService := services.NewEmailService()
 	return controllers.NewEventController(eventService, emailService)
-
 }

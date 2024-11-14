@@ -1,20 +1,18 @@
+import 'package:client/core/services/event_services.dart';
 import 'package:flutter/material.dart';
-import 'package:client/fake_data.dart';
 import 'package:client/components/event_card.dart';
 import 'package:client/screens/event_details_page.dart';
+import 'package:client/core/models/event.dart';
 
 class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _EventsPageState createState() => _EventsPageState();
 }
 
 class _EventsPageState extends State<EventsPage> {
-  final List<Map<String, String>> events = FakeData.events;
-
-  void _openEventPage(Map<String, String> event) {
+  void _openEventPage(Event event) {
     Navigator.of(context).push(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 150),
@@ -34,32 +32,48 @@ class _EventsPageState extends State<EventsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: events.length,
-                itemBuilder: (context, index) {
-                  final event = events[index];
-                  return GestureDetector(
-                    onTap: () => _openEventPage(event),
-                    child: EventCard(
-                      title: event["title"]!,
-                      date: event["date"]!,
-                      imageUrl: event["image"]!,
-                      participants: event["participants"]!,
-                    ),
-                  );
-                },
-              ),
+    return FutureBuilder<List<Event>>(
+      future: EventServices.getCurrentUserEvents(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError || !snapshot.hasData) {
+          return const Center(
+              child: Text("Erreur lors du chargement des événements"));
+        }
+
+        final events = snapshot.data!;
+
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      final event = events[index];
+                      return GestureDetector(
+                        onTap: () => _openEventPage(event),
+                        child: EventCard(
+                          title: event.title,
+                          date: event.startDate,
+                          imageUrl: event.image,
+                          participants: event.participantsCount.toString(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

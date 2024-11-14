@@ -44,6 +44,9 @@ func (dto *PhysicalEventDTO) ToEntPhysicalEvent() (*ent.PhysicalEvent, error) {
 }
 
 func EntToPhysicalEventDTO(physicalEvent *ent.PhysicalEvent, event *ent.Event) *PhysicalEventDTO {
+	if physicalEvent == nil || event == nil {
+		return nil
+	}
 
 	return &PhysicalEventDTO{
 		Location: physicalEvent.Location,
