@@ -11,13 +11,13 @@ type UserDTO struct {
 	ID        string    `json:"id" validate:"required"`
 	Email     string    `json:"email" validate:"required,email"`
 	Username  string    `json:"username" validate:"required,min=3"`
-	Lastname  string    `json:"lastname"`
-	Firstname string    `json:"firstname"`
+	Lastname  string    `json:"lastname,omitempty"`
+	Firstname string    `json:"firstname,omitempty"`
 	BirthDate time.Time `json:"birthDate,omitempty"`
 	Bio       *string   `json:"bio,omitempty"`
 	Picture   *string   `json:"picture,omitempty"`
-	Activated bool      `json:"activated"`
-	ReportNum int       `json:"reportNumber"`
+	Activated bool      `json:"activated,omitempty"`
+	ReportNum int       `json:"reportNumber,omitempty"`
 	Address   string    `json:"address,omitempty"`
 	Role      user.Role `json:"role" validate:"required,oneof=SUPERADMIN ADMIN USER"`
 }

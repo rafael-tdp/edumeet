@@ -65,6 +65,16 @@ func (uc *UserController) Register(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
+	validations := validator.New()
+	err := validations.Struct(registerDTO)
+	if err != nil {
+		errors := make([]string, 0)
+		for _, err := range err.(validator.ValidationErrors) {
+			errors = append(errors, err.Error())
+		}
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
+	}
+
 	user, err := uc.userService.RegisterUser(registerDTO)
 	if err != nil {
 		log.Printf("Error creating user: %v", err)

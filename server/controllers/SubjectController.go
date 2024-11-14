@@ -4,6 +4,7 @@ import (
 	"edumeet/dtos"
 	"edumeet/services"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/oklog/ulid/v2"
 )
@@ -28,6 +29,16 @@ func (sc *SubjectController) Create(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
+	validations := validator.New()
+	err := validations.Struct(subjectDTO)
+	if err != nil {
+		errors := make([]string, 0)
+		for _, err := range err.(validator.ValidationErrors) {
+			errors = append(errors, err.Error())
+		}
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
+	}
+
 	subject, err := sc.subjectService.Create(subjectDTO)
 
 	if err != nil {
@@ -48,6 +59,16 @@ func (sc *SubjectController) Update(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&subjectDTO); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	validations := validator.New()
+	err = validations.Struct(subjectDTO)
+	if err != nil {
+		errors := make([]string, 0)
+		for _, err := range err.(validator.ValidationErrors) {
+			errors = append(errors, err.Error())
+		}
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
 	}
 
 	subject, err := sc.subjectService.Update(id.String(), subjectDTO)
