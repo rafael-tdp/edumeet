@@ -134,7 +134,7 @@ var (
 				Symbol:     "participants_events_participants",
 				Columns:    []*schema.Column{ParticipantsColumns[4]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "participants_users_participants",

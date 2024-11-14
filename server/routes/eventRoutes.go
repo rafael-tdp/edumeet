@@ -11,11 +11,11 @@ import (
 )
 
 func setupEventRoutes(app *fiber.App, eventController *controllers.EventController) {
-	app.Post("/api/event/remote", middlewares.JWTAuthMiddleware, eventController.CreateRemoteEvent)
-	app.Delete("/api/event/:id", eventController.DeleteEvent)
-	app.Get("/api/event/remote/:id", eventController.GetRemoteEvent)
-	app.Put("/api/event/remote/:id", eventController.UpdateRemoteEvent)
-	app.Get("/api/events", eventController.GetAllEvents)
+	app.Get("/api/events", middlewares.JWTAuthMiddleware, eventController.GetAllEvents)
+	app.Get("/api/events/:id", middlewares.JWTAuthMiddleware, eventController.GetEvent)
+	app.Post("/api/events", middlewares.JWTAuthMiddleware, eventController.CreateEvent)
+	app.Put("/api/events/:id", middlewares.JWTAuthMiddleware, eventController.UpdateEvent)
+	app.Delete("/api/events/:id", middlewares.JWTAuthMiddleware, eventController.DeleteEvent)
 }
 
 func initEventController(client *ent.Client) *controllers.EventController {

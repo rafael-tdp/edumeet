@@ -34,7 +34,7 @@ func (Event) Edges() []ent.Edge {
 		edge.To("messages", Message.Type).Unique(),
 		edge.To("event_documents", EventDocument.Type),
 		edge.To("subjects", Subject.Type),
-		edge.To("participants", Participant.Type),
+		edge.To("participants", Participant.Type).Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("remote_event", RemoteEvent.Type).Unique().Annotations(entsql.OnDelete(entsql.Cascade)),
 		edge.To("physical_event", PhysicalEvent.Type).Unique().Annotations(entsql.OnDelete(entsql.Cascade)),
 	}
