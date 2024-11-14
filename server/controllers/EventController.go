@@ -21,17 +21,19 @@ func NewEventController(eventservice *services.EventService, emailService *servi
 	}
 }
 
-func (ec *EventController) CreateRemoteEvent(c *fiber.Ctx) error {
+func (ec *EventController) CreateEvent(c *fiber.Ctx) error {
 
-	var remoteEventDTO dtos.RemoteEventDTO
+	var eventDTO dtos.EventDTO
 
-	if err := c.BodyParser(&remoteEventDTO); err != nil {
+	if err := c.BodyParser(&eventDTO); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
 	currentUser := c.Locals("user").(*ent.User)
 
-	remoteEvent, err := ec.eventservice.CreateRemoteEvent(remoteEventDTO, currentUser.ID)
+	ctx := c.Context()
+
+	remoteEvent, err := ec.eventservice.CreateEvent(ctx, eventDTO, currentUser.ID)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
@@ -57,7 +59,7 @@ func (ec *EventController) DeleteEvent(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
-func (ec *EventController) GetRemoteEvent(c *fiber.Ctx) error {
+func (ec *EventController) GetEvent(c *fiber.Ctx) error {
 
 	eventID, err := ulid.Parse(c.Params("id"))
 
@@ -65,29 +67,31 @@ func (ec *EventController) GetRemoteEvent(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
 
-	remoteEvent, err := ec.eventservice.GetRemoteEvent(eventID.String())
+	event, err := ec.eventservice.GetEvent(eventID.String())
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(remoteEvent)
+	return c.Status(fiber.StatusOK).JSON(event)
 }
 
-func (ec *EventController) UpdateRemoteEvent(c *fiber.Ctx) error {
+func (ec *EventController) UpdateEvent(c *fiber.Ctx) error {
 	eventID, errParse := ulid.Parse(c.Params("id"))
 
 	if errParse != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
 
-	var remoteEventDTO dtos.RemoteEventDTO
+	var eventDTO dtos.EventDTO
 
-	if err := c.BodyParser(&remoteEventDTO); err != nil {
+	if err := c.BodyParser(&eventDTO); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
-	remoteEvent, err := ec.eventservice.UpdateRemoteEvent(eventID.String(), remoteEventDTO)
+	ctx := c.Context()
+
+	remoteEvent, err := ec.eventservice.UpdateEvent(ctx, eventDTO, eventID.String())
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})

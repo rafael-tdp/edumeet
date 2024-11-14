@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/ent/event"
 	"edumeet/ent/remoteevent"
@@ -17,7 +18,7 @@ func NewEventRepository(client *ent.Client) *EventRepository {
 	}
 }
 
-func (er *EventRepository) CreateEvent(event *ent.Event) (*ent.Event, error) {
+func (er *EventRepository) CreateEvent(ctx context.Context, event dtos.EventDTO) (*ent.Event, error) {
 	createdEvent, err := er.client.Event.
 		Create().
 		SetTitle(event.Title).
@@ -27,7 +28,7 @@ func (er *EventRepository) CreateEvent(event *ent.Event) (*ent.Event, error) {
 		SetIsPrivate(event.IsPrivate).
 		SetDescription(event.Description).
 		SetInvitationLink(event.InvitationLink).
-		Save(context.Background())
+		Save(ctx)
 
 	if err != nil {
 		return nil, err
@@ -36,18 +37,34 @@ func (er *EventRepository) CreateEvent(event *ent.Event) (*ent.Event, error) {
 	return createdEvent, nil
 }
 
-func (er *EventRepository) CreateRemoteEvent(event *ent.Event, remoteEvent *ent.RemoteEvent) (*ent.RemoteEvent, error) {
+func (er *EventRepository) CreateRemoteEvent(ctx context.Context, remoteEvent dtos.RemoteEventDTO, eventID string) (*ent.RemoteEvent, error) {
 	createdRemoteEvent, err := er.client.RemoteEvent.
 		Create().
-		SetEvent(event).
+		SetEventID(eventID).
 		SetURL(remoteEvent.URL).
-		Save(context.Background())
+		Save(ctx)
 
 	if err != nil {
 		return nil, err
 	}
 
 	return createdRemoteEvent, nil
+}
+
+func (er *EventRepository) CreatePhysicalEvent(ctx context.Context, physicalEvent dtos.PhysicalEventDTO, eventID string) (*ent.PhysicalEvent, error) {
+	createdPhysicalEvent, err := er.client.PhysicalEvent.
+		Create().
+		SetEventID(eventID).
+		SetLocation(physicalEvent.Location).
+		SetLat(physicalEvent.Lat).
+		SetLng(physicalEvent.Lng).
+		Save(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return createdPhysicalEvent, nil
 }
 
 func (er *EventRepository) DeleteEvent(eventID string) error {
@@ -80,6 +97,8 @@ func (er *EventRepository) GetEvent(eventID string) (*ent.Event, error) {
 	event, err := er.client.Event.
 		Query().
 		Where(event.ID(eventID)).
+		WithRemoteEvent().
+		WithPhysicalEvent().
 		First(context.Background())
 
 	if err != nil {
@@ -89,11 +108,11 @@ func (er *EventRepository) GetEvent(eventID string) (*ent.Event, error) {
 	return event, nil
 }
 
-func (er *EventRepository) UpdateRemoteEvent(eventID string, remoteEvent *ent.RemoteEvent) (*ent.RemoteEvent, error) {
+func (er *EventRepository) UpdateRemoteEvent(ctx context.Context, remoteEvent dtos.RemoteEventDTO, eventID string) (*ent.RemoteEvent, error) {
 	updatedRemoteEvent, err := er.client.RemoteEvent.
 		UpdateOneID(eventID).
 		SetURL(remoteEvent.URL).
-		Save(context.Background())
+		Save(ctx)
 
 	if err != nil {
 		return nil, err
@@ -102,7 +121,22 @@ func (er *EventRepository) UpdateRemoteEvent(eventID string, remoteEvent *ent.Re
 	return updatedRemoteEvent, nil
 }
 
-func (er *EventRepository) UpdateEvent(eventID string, event *ent.Event) (*ent.Event, error) {
+func (er *EventRepository) UpdatePhysicalEvent(ctx context.Context, physicalEvent dtos.PhysicalEventDTO, eventID string) (*ent.PhysicalEvent, error) {
+	updatedPhysicalEvent, err := er.client.PhysicalEvent.
+		UpdateOneID(eventID).
+		SetLocation(physicalEvent.Location).
+		SetLat(physicalEvent.Lat).
+		SetLng(physicalEvent.Lng).
+		Save(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedPhysicalEvent, nil
+}
+
+func (er *EventRepository) UpdateEvent(ctx context.Context, event dtos.EventDTO, eventID string) (*ent.Event, error) {
 	updatedEvent, err := er.client.Event.
 		UpdateOneID(eventID).
 		SetTitle(event.Title).
@@ -112,7 +146,7 @@ func (er *EventRepository) UpdateEvent(eventID string, event *ent.Event) (*ent.E
 		SetIsPrivate(event.IsPrivate).
 		SetDescription(event.Description).
 		SetInvitationLink(event.InvitationLink).
-		Save(context.Background())
+		Save(ctx)
 
 	if err != nil {
 		return nil, err

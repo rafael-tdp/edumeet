@@ -1,9 +1,9 @@
 package services
 
 import (
+	"context"
 	"edumeet/dtos"
 	"edumeet/repositories"
-	"time"
 )
 
 type EventService struct {
@@ -18,36 +18,33 @@ func NewEventService(eventRepository *repositories.EventRepository, participantR
 	}
 }
 
-func (es *EventService) CreateRemoteEvent(remoteEventDTO dtos.RemoteEventDTO, userId string) (*dtos.RemoteEventDTO, error) {
-	event, err := remoteEventDTO.ToEntEvent()
-	if err != nil {
-		return nil, err
-	}
+func (es *EventService) CreateEvent(ctx context.Context, eventDTO dtos.EventDTO, userId string) (*dtos.EventDTO, error) {
 
-	remoteEvent, err := remoteEventDTO.ToEntRemoteEvent()
-	if err != nil {
-		return nil, err
-	}
-
-	createdEvent, err := es.eventRepository.CreateEvent(event)
-	if err != nil {
-		return nil, err
-	}
-
-	createdRemoteEvent, err := es.eventRepository.CreateRemoteEvent(createdEvent, remoteEvent)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = es.participantRepository.CreateParticipant(userId, createdEvent.ID, "host")
+	event, err := es.eventRepository.CreateEvent(ctx, eventDTO)
 
 	if err != nil {
 		return nil, err
 	}
 
-	remote := dtos.EntToRemoteEventDTO(createdRemoteEvent, createdEvent)
+	_, err = es.participantRepository.CreateParticipant(userId, event.ID, "host")
 
-	return remote, nil
+	if err != nil {
+		return nil, err
+	}
+
+	if nil != eventDTO.RemoteEventDTO {
+		remoteEvent, err := es.eventRepository.CreateRemoteEvent(ctx, *eventDTO.RemoteEventDTO, event.ID)
+		if err != nil {
+			return nil, err
+		}
+		return dtos.EntToEventDTO(event, remoteEvent, nil), nil
+	} else {
+		physicalevent, err := es.eventRepository.CreatePhysicalEvent(ctx, *eventDTO.PhysicalEventDTO, event.ID)
+		if err != nil {
+			return nil, err
+		}
+		return dtos.EntToEventDTO(event, nil, physicalevent), nil
+	}
 }
 
 func (es *EventService) DeleteEvent(eventID string) error {
@@ -59,81 +56,57 @@ func (es *EventService) DeleteEvent(eventID string) error {
 	return nil
 }
 
-func (es *EventService) GetRemoteEvent(eventID string) (*dtos.RemoteEventDTO, error) {
-	remoteEvent, err := es.eventRepository.GetRemoteEvent(eventID)
+func (es *EventService) GetEvent(eventID string) (*dtos.EventDTO, error) {
+
+	event, err := es.eventRepository.GetEvent(eventID)
+
 	if err != nil {
 		return nil, err
 	}
 
-	event, err := es.eventRepository.GetEvent(remoteEvent.Edges.Event.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	remote := dtos.EntToRemoteEventDTO(remoteEvent, event)
-
-	return remote, nil
+	return dtos.EntToEventDTOWithEdge(event), nil
 }
 
-func (es *EventService) UpdateRemoteEvent(eventID string, remoteEventDTO dtos.RemoteEventDTO) (*dtos.RemoteEventDTO, error) {
+func (es *EventService) UpdateEvent(ctx context.Context, event dtos.EventDTO, eventID string) (*dtos.EventDTO, error) {
 
-	currentEvent, err := es.eventRepository.GetRemoteEvent(eventID)
+	currentEvent, errGetEvent := es.eventRepository.GetEvent(eventID)
 
-	if err != nil {
-		return nil, err
+	if errGetEvent != nil {
+		return nil, errGetEvent
 	}
 
-	event, err := remoteEventDTO.ToEntEvent()
-	if err != nil {
-		return nil, err
+	updatedEvent, errUpdateEvent := es.eventRepository.UpdateEvent(ctx, event, eventID)
+
+	if errUpdateEvent != nil {
+		return nil, errUpdateEvent
 	}
 
-	remoteEvent, err := remoteEventDTO.ToEntRemoteEvent()
-	if err != nil {
-		return nil, err
+	if currentEvent.Edges.RemoteEvent != nil {
+		remoteEvent, err := es.eventRepository.UpdateRemoteEvent(ctx, *event.RemoteEventDTO, currentEvent.Edges.RemoteEvent.ID)
+		if err != nil {
+			return nil, err
+		}
+		return dtos.EntToEventDTO(updatedEvent, remoteEvent, nil), nil
+	} else {
+		physicalEvent, err := es.eventRepository.UpdatePhysicalEvent(ctx, *event.PhysicalEventDTO, currentEvent.Edges.PhysicalEvent.ID)
+		if err != nil {
+			return nil, err
+		}
+		return dtos.EntToEventDTO(updatedEvent, nil, physicalEvent), nil
 	}
-
-	updatedRemoteEvent, err := es.eventRepository.UpdateRemoteEvent(eventID, remoteEvent)
-	if err != nil {
-		return nil, err
-	}
-
-	updatedEvent, err := es.eventRepository.UpdateEvent(currentEvent.Edges.Event.ID, event)
-	if err != nil {
-		return nil, err
-	}
-
-	remote := dtos.EntToRemoteEventDTO(updatedRemoteEvent, updatedEvent)
-
-	return remote, nil
 }
 
-type Event struct {
-	ID             string    `json:"id"`
-	NbMaxUser      int       `json:"nb_max_user"`
-	StartDate      time.Time `json:"start_date"`
-	EndDate        time.Time `json:"end_date,omitempty"`
-	IsPrivate      bool      `json:"is_private"`
-	Title          string    `json:"title"`
-	Description    string    `json:"description,omitempty"`
-	InvitationLink string    `json:"invitation_link,omitempty"`
-	Location       *string   `json:"location,omitempty"`
-	Lng            *float64  `json:"lng,omitempty"`
-	Lat            *float64  `json:"lat,omitempty"`
-	URL            *string   `json:"url,omitempty"`
-}
-
-func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
+func (es *EventService) GetAllEvents() ([]dtos.EventDTO, error) {
 	events, err := es.eventRepository.GetEvents()
 	if err != nil {
 		return nil, err
 	}
 
-	var eventsWithType []dtos.EventWithTypeDTO
+	var eventsWithType []dtos.EventDTO
 
 	for _, event := range events {
 		if event.Edges.RemoteEvent != nil {
-			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
+			eventsWithType = append(eventsWithType, dtos.EventDTO{
 				ID:             event.ID,
 				NbMaxUser:      event.NbMaxUser,
 				StartDate:      event.StartDate,
@@ -142,10 +115,10 @@ func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
 				Title:          event.Title,
 				Description:    event.Description,
 				InvitationLink: event.InvitationLink,
-				RemoteEventDTO: dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent, event),
+				RemoteEventDTO: dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent),
 			})
 		} else {
-			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
+			eventsWithType = append(eventsWithType, dtos.EventDTO{
 				ID:               event.ID,
 				NbMaxUser:        event.NbMaxUser,
 				StartDate:        event.StartDate,
@@ -154,7 +127,7 @@ func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
 				Title:            event.Title,
 				Description:      event.Description,
 				InvitationLink:   event.InvitationLink,
-				PhysicalEventDTO: dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent, event),
+				PhysicalEventDTO: dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent),
 			})
 		}
 	}
