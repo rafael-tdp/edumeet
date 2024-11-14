@@ -33,18 +33,22 @@ func (es *EventService) CreateEvent(ctx context.Context, eventDTO dtos.EventDTO,
 	}
 
 	if nil != eventDTO.RemoteEventDTO {
-		remoteEvent, err := es.eventRepository.CreateRemoteEvent(ctx, *eventDTO.RemoteEventDTO, event.ID)
+		_, err := es.eventRepository.CreateRemoteEvent(ctx, *eventDTO.RemoteEventDTO, event.ID)
 		if err != nil {
 			return nil, err
 		}
-		return dtos.EntToEventDTO(event, remoteEvent, nil), nil
 	} else {
-		physicalevent, err := es.eventRepository.CreatePhysicalEvent(ctx, *eventDTO.PhysicalEventDTO, event.ID)
+		_, err := es.eventRepository.CreatePhysicalEvent(ctx, *eventDTO.PhysicalEventDTO, event.ID)
 		if err != nil {
 			return nil, err
 		}
-		return dtos.EntToEventDTO(event, nil, physicalevent), nil
 	}
+
+	eventCreatedWithEdge, err := es.eventRepository.GetEvent(event.ID)
+	if err != nil {
+		return nil, err
+	}
+	return dtos.EntToEventDTO(eventCreatedWithEdge), nil
 }
 
 func (es *EventService) DeleteEvent(eventID string) error {
@@ -64,7 +68,7 @@ func (es *EventService) GetEvent(eventID string) (*dtos.EventDTO, error) {
 		return nil, err
 	}
 
-	return dtos.EntToEventDTOWithEdge(event), nil
+	return dtos.EntToEventDTO(event), nil
 }
 
 func (es *EventService) UpdateEvent(ctx context.Context, event dtos.EventDTO, eventID string) (*dtos.EventDTO, error) {
@@ -75,25 +79,29 @@ func (es *EventService) UpdateEvent(ctx context.Context, event dtos.EventDTO, ev
 		return nil, errGetEvent
 	}
 
-	updatedEvent, errUpdateEvent := es.eventRepository.UpdateEvent(ctx, event, eventID)
+	_, errUpdateEvent := es.eventRepository.UpdateEvent(ctx, event, eventID)
 
 	if errUpdateEvent != nil {
 		return nil, errUpdateEvent
 	}
 
 	if currentEvent.Edges.RemoteEvent != nil {
-		remoteEvent, err := es.eventRepository.UpdateRemoteEvent(ctx, *event.RemoteEventDTO, currentEvent.Edges.RemoteEvent.ID)
+		_, err := es.eventRepository.UpdateRemoteEvent(ctx, *event.RemoteEventDTO, currentEvent.Edges.RemoteEvent.ID)
 		if err != nil {
 			return nil, err
 		}
-		return dtos.EntToEventDTO(updatedEvent, remoteEvent, nil), nil
 	} else {
-		physicalEvent, err := es.eventRepository.UpdatePhysicalEvent(ctx, *event.PhysicalEventDTO, currentEvent.Edges.PhysicalEvent.ID)
+		_, err := es.eventRepository.UpdatePhysicalEvent(ctx, *event.PhysicalEventDTO, currentEvent.Edges.PhysicalEvent.ID)
 		if err != nil {
 			return nil, err
 		}
-		return dtos.EntToEventDTO(updatedEvent, nil, physicalEvent), nil
 	}
+
+	eventCreatedWithEdge, err := es.eventRepository.GetEvent(currentEvent.ID)
+	if err != nil {
+		return nil, err
+	}
+	return dtos.EntToEventDTO(eventCreatedWithEdge), nil
 }
 
 func (es *EventService) GetAllEvents() ([]dtos.EventDTO, error) {

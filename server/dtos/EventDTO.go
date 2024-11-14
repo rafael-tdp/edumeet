@@ -18,33 +18,7 @@ type EventDTO struct {
 	RemoteEventDTO   *RemoteEventDTO   `json:"remote_event,omitempty"`
 }
 
-func EntToEventDTO(event *ent.Event, remoteEvent *ent.RemoteEvent, physicalEvent *ent.PhysicalEvent) *EventDTO {
-	var remoteEventDTO *RemoteEventDTO
-	var physicalEventDTO *PhysicalEventDTO
-
-	if remoteEvent != nil {
-		remoteEventDTO = EntToRemoteEventDTO(remoteEvent)
-	}
-
-	if physicalEvent != nil {
-		physicalEventDTO = EntToPhysicalEventDTO(physicalEvent)
-	}
-
-	return &EventDTO{
-		ID:               event.ID,
-		NbMaxUser:        event.NbMaxUser,
-		StartDate:        event.StartDate,
-		EndDate:          event.EndDate,
-		IsPrivate:        event.IsPrivate,
-		Title:            event.Title,
-		Description:      event.Description,
-		InvitationLink:   event.InvitationLink,
-		RemoteEventDTO:   remoteEventDTO,
-		PhysicalEventDTO: physicalEventDTO,
-	}
-}
-
-func EntToEventDTOWithEdge(event *ent.Event) *EventDTO {
+func EntToEventDTO(event *ent.Event) *EventDTO {
 
 	var remoteEventDTO *RemoteEventDTO
 	var physicalEventDTO *PhysicalEventDTO
