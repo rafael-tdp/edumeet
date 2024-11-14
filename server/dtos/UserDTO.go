@@ -4,14 +4,13 @@ import (
 	"edumeet/ent"
 	"edumeet/ent/user"
 	"edumeet/utils"
-	"errors"
 	"time"
 )
 
 type UserDTO struct {
-	ID        string    `json:"id"`
-	Email     string    `json:"email"`
-	Username  string    `json:"username"`
+	ID        string    `json:"id" validate:"required"`
+	Email     string    `json:"email" validate:"required,email"`
+	Username  string    `json:"username" validate:"required,min=3"`
 	Lastname  string    `json:"lastname"`
 	Firstname string    `json:"firstname"`
 	BirthDate time.Time `json:"birthDate,omitempty"`
@@ -20,34 +19,14 @@ type UserDTO struct {
 	Activated bool      `json:"activated"`
 	ReportNum int       `json:"reportNumber"`
 	Address   string    `json:"address,omitempty"`
-	Role      user.Role `json:"role"`
+	Role      user.Role `json:"role" validate:"required,oneof=SUPERADMIN ADMIN USER"`
 }
 
-func ParseUserDTO(user *ent.User) (*UserDTO, error) {
-	if user == nil {
-		return nil, errors.New("user cannot be nil")
-	}
+func UserEntToDto(user *ent.User) (*UserDTO, error) {
+	address, err := utils.GetAddress(*user.Lat, *user.Lng)
 
-	// Validation des champs obligatoires
-	if user.ID == "" {
-		return nil, errors.New("id is required")
-	}
-
-	if user.Email == "" {
-		return nil, errors.New("email is required")
-	}
-
-	if user.Username == "" {
-		return nil, errors.New("username is required")
-	}
-
-	if user.Role == "" {
-		return nil, errors.New("role is required")
-	}
-
-	var address string
-	if user.Lat != nil || user.Lng != nil {
-		address, _ = utils.GetAddress(*user.Lat, *user.Lng)
+	if err != nil {
+		return nil, err
 	}
 
 	userDTO := &UserDTO{

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/ent/subject"
 	"errors"
@@ -25,9 +26,9 @@ func (sr *SubjectRepository) GetById(subjectID string) (*ent.Subject, error) {
 	return subject, nil
 }
 
-func (sr *SubjectRepository) Create(subject *ent.Subject) (*ent.Subject, error) {
+func (sr *SubjectRepository) Create(subjectDTO dtos.SubjectDTO) (*ent.Subject, error) {
 	subject, err := sr.client.Subject.Create().
-		SetName(subject.Name).
+		SetName(subjectDTO.Name).
 		Save(context.Background())
 	if err != nil {
 		return nil, errors.New("error creating subject")
@@ -51,9 +52,9 @@ func (sr *SubjectRepository) GetSubjects() ([]*ent.Subject, error) {
 	return subjects, nil
 }
 
-func (sr *SubjectRepository) Update(subjectID string, subject *ent.Subject) (*ent.Subject, error) {
+func (sr *SubjectRepository) Update(subjectID string, subjectDTO dtos.SubjectDTO) (*ent.Subject, error) {
 	subject, err := sr.client.Subject.UpdateOneID(subjectID).
-		SetName(subject.Name).
+		SetName(subjectDTO.Name).
 		Save(context.Background())
 	if err != nil {
 		return nil, errors.New("error updating subject")

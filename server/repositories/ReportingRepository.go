@@ -46,11 +46,11 @@ func (r *ReportingRepository) DeleteReporting(reportingID string) error {
 	return nil
 }
 
-func (r *ReportingRepository) CreateReporting(reportingDTO dtos.ReportingDTO) error {
+func (r *ReportingRepository) CreateReporting(reportingDTO dtos.ReportingDTO) (*ent.Reporting, error) {
 
 	userReporter, err := r.client.User.Query().Where(user.IDEQ(reportingDTO.UserID)).Only(context.Background())
 	if err != nil {
-		return errors.New("user not found")
+		return nil, errors.New("user not found")
 	}
 
 	switch reportingDTO.Type {
@@ -64,19 +64,19 @@ func (r *ReportingRepository) CreateReporting(reportingDTO dtos.ReportingDTO) er
 		_, err = r.client.Event.Query().Where(event.IDEQ(reportingDTO.EntityID)).Only(context.Background())
 		break
 	default:
-		return errors.New("invalid entity type")
+		return nil, errors.New("invalid entity type")
 	}
 
 	if err != nil {
-		return errors.New("entity not found")
+		return nil, errors.New("entity not found")
 	}
-
-	_, err = r.client.Reporting.Create().SetReason(reportingDTO.Reason).SetType(reportingDTO.Type).SetUser(userReporter).SetEntityID(reportingDTO.EntityID).Save(context.Background())
+	var reporting *ent.Reporting
+	reporting, err = r.client.Reporting.Create().SetReason(reportingDTO.Reason).SetType(reportingDTO.Type).SetUser(userReporter).SetEntityID(reportingDTO.EntityID).Save(context.Background())
 	if err != nil {
-		return errors.New("error creating reporting")
+		return nil, errors.New("error creating reporting")
 	}
 
-	return nil
+	return reporting, nil
 }
 
 func (r *ReportingRepository) GetEntity(entityType string, entityID string) (interface{}, error) {
