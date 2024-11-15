@@ -25,13 +25,7 @@ func (r *ReportingService) GetReportingById(reportingID string) (dtos.ReportingD
 	if err != nil {
 		return dtos.ReportingDTO{}, err
 	}
-	reportingDTO := dtos.ReportingDTO{
-		ID:     reporting.ID,
-		Reason: reporting.Reason,
-		Type:   reporting.Type,
-		Entity: entity,
-		User:   reporting.Edges.User,
-	}
+	reportingDTO := dtos.ReportingEntToDTO(reporting, entity)
 
 	return reportingDTO, nil
 }
@@ -46,10 +40,16 @@ func (r *ReportingService) DeleteReporting(reportingID string) error {
 }
 
 func (r *ReportingService) CreateReporting(reportingDTO dtos.ReportingDTO) (dtos.ReportingDTO, error) {
-	err := r.reportingRepo.CreateReporting(reportingDTO)
+	reporting, err := r.reportingRepo.CreateReporting(reportingDTO)
 	if err != nil {
 		return dtos.ReportingDTO{}, err
 	}
+
+	entity, err := r.reportingRepo.GetEntity(reporting.Type, reporting.EntityID)
+	if err != nil {
+		return dtos.ReportingDTO{}, err
+	}
+	reportingDTO = dtos.ReportingEntToDTO(reporting, entity)
 
 	return reportingDTO, nil
 }

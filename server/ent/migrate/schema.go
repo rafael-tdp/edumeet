@@ -11,6 +11,10 @@ var (
 	// BadgesColumns holds the columns for the "badges" table.
 	BadgesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString},
 		{Name: "svg", Type: field.TypeString},
 		{Name: "nb_requirement_event", Type: field.TypeInt},
@@ -25,6 +29,10 @@ var (
 	// DocumentsColumns holds the columns for the "documents" table.
 	DocumentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "path", Type: field.TypeString},
 	}
 	// DocumentsTable holds the schema information for the "documents" table.
@@ -36,6 +44,10 @@ var (
 	// EventsColumns holds the columns for the "events" table.
 	EventsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "nb_max_user", Type: field.TypeInt},
 		{Name: "start_date", Type: field.TypeTime},
 		{Name: "end_date", Type: field.TypeTime, Nullable: true},
@@ -54,7 +66,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "events_users_events",
-				Columns:    []*schema.Column{EventsColumns[9]},
+				Columns:    []*schema.Column{EventsColumns[13]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -90,8 +102,11 @@ var (
 	// MessagesColumns holds the columns for the "messages" table.
 	MessagesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "content", Type: field.TypeString},
-		{Name: "sent_at", Type: field.TypeTime},
 		{Name: "event_messages", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "user_messages", Type: field.TypeString, Nullable: true},
 	}
@@ -103,13 +118,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "messages_events_messages",
-				Columns:    []*schema.Column{MessagesColumns[3]},
+				Columns:    []*schema.Column{MessagesColumns[6]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "messages_users_messages",
-				Columns:    []*schema.Column{MessagesColumns[4]},
+				Columns:    []*schema.Column{MessagesColumns[7]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -118,6 +133,10 @@ var (
 	// ParticipantsColumns holds the columns for the "participants" table.
 	ParticipantsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeString},
 		{Name: "requested_at", Type: field.TypeTime},
 		{Name: "joined_at", Type: field.TypeTime, Nullable: true},
@@ -132,13 +151,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "participants_events_participants",
-				Columns:    []*schema.Column{ParticipantsColumns[4]},
+				Columns:    []*schema.Column{ParticipantsColumns[8]},
 				RefColumns: []*schema.Column{EventsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "participants_users_participants",
-				Columns:    []*schema.Column{ParticipantsColumns[5]},
+				Columns:    []*schema.Column{ParticipantsColumns[9]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -211,6 +230,10 @@ var (
 	// SubjectsColumns holds the columns for the "subjects" table.
 	SubjectsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
 	}
 	// SubjectsTable holds the schema information for the "subjects" table.
@@ -222,6 +245,10 @@ var (
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "created_by", Type: field.TypeString, Nullable: true},
+		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "username", Type: field.TypeString},
 		{Name: "lastname", Type: field.TypeString},
@@ -235,7 +262,6 @@ var (
 		{Name: "lng", Type: field.TypeFloat64, Nullable: true},
 		{Name: "lat", Type: field.TypeFloat64, Nullable: true},
 		{Name: "zip_code", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime},
 		{Name: "code", Type: field.TypeString, Nullable: true},
 		{Name: "code_expiration", Type: field.TypeTime, Nullable: true},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"SUPER ADMIN", "ADMIN", "USER"}, Default: "USER"},

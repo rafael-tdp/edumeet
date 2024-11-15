@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"edumeet/ent/schema/trait"
 	"edumeet/utils"
 
 	"entgo.io/ent"
@@ -10,6 +11,12 @@ import (
 
 type Badge struct {
 	ent.Schema
+}
+
+func (Badge) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		trait.Blamable{},
+	}
 }
 
 func (Badge) Fields() []ent.Field {

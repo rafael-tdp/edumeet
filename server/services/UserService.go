@@ -28,7 +28,7 @@ func (us *UserService) GetUser(userID string) (*dtos.UserDTO, error) {
 		return nil, errors.New("user not found in service")
 	}
 
-	userDTO, err := dtos.ParseUserDTO(user)
+	userDTO, err := dtos.UserEntToDto(user)
 	if err != nil {
 		return nil, fmt.Errorf("error parsing user DTO: %w", err)
 	}
@@ -42,7 +42,7 @@ func (us *UserService) GetUserProfile(userID string) (*dtos.UserProfileDTO, erro
 		return nil, errors.New("user not found in service")
 	}
 
-	userProfileDTO, err := dtos.ParseUserProfileDTO(user)
+	userProfileDTO, err := dtos.UserProfileEntToDto(user)
 
 	if err != nil {
 		return nil, fmt.Errorf("error parsing user profile DTO: %w", err)
@@ -136,24 +136,13 @@ func (us *UserService) Verify(code string) (dtos.UserDTO, error) {
 		return dtos.UserDTO{}, err
 	}
 
-	address, err := utils.GetAddress(*user.Lat, *user.Lng)
+	userDTO, err := dtos.UserEntToDto(user)
 
-	userDTO := dtos.UserDTO{
-		ID:        user.ID,
-		Email:     user.Email,
-		Username:  user.Username,
-		Lastname:  user.Lastname,
-		Firstname: user.Firstname,
-		BirthDate: *user.BirthDate,
-		Bio:       user.Bio,
-		Picture:   user.Picture,
-		Activated: user.Activated,
-		ReportNum: user.ReportNumber,
-		Address:   address,
-		Role:      user.Role,
+	if err != nil {
+		return dtos.UserDTO{}, err
 	}
 
-	return userDTO, nil
+	return *userDTO, nil
 }
 
 func (us *UserService) ResetPassword(code string, requestBody dtos.ResetPasswordDTO) error {

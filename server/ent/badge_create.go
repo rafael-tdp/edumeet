@@ -8,6 +8,7 @@ import (
 	"edumeet/ent/user"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -18,6 +19,62 @@ type BadgeCreate struct {
 	config
 	mutation *BadgeMutation
 	hooks    []Hook
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (bc *BadgeCreate) SetCreatedAt(t time.Time) *BadgeCreate {
+	bc.mutation.SetCreatedAt(t)
+	return bc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (bc *BadgeCreate) SetNillableCreatedAt(t *time.Time) *BadgeCreate {
+	if t != nil {
+		bc.SetCreatedAt(*t)
+	}
+	return bc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (bc *BadgeCreate) SetUpdatedAt(t time.Time) *BadgeCreate {
+	bc.mutation.SetUpdatedAt(t)
+	return bc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (bc *BadgeCreate) SetNillableUpdatedAt(t *time.Time) *BadgeCreate {
+	if t != nil {
+		bc.SetUpdatedAt(*t)
+	}
+	return bc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (bc *BadgeCreate) SetCreatedBy(s string) *BadgeCreate {
+	bc.mutation.SetCreatedBy(s)
+	return bc
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (bc *BadgeCreate) SetNillableCreatedBy(s *string) *BadgeCreate {
+	if s != nil {
+		bc.SetCreatedBy(*s)
+	}
+	return bc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (bc *BadgeCreate) SetUpdatedBy(s string) *BadgeCreate {
+	bc.mutation.SetUpdatedBy(s)
+	return bc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (bc *BadgeCreate) SetNillableUpdatedBy(s *string) *BadgeCreate {
+	if s != nil {
+		bc.SetUpdatedBy(*s)
+	}
+	return bc
 }
 
 // SetName sets the "name" field.
@@ -80,7 +137,9 @@ func (bc *BadgeCreate) Mutation() *BadgeMutation {
 
 // Save creates the Badge in the database.
 func (bc *BadgeCreate) Save(ctx context.Context) (*Badge, error) {
-	bc.defaults()
+	if err := bc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, bc.sqlSave, bc.mutation, bc.hooks)
 }
 
@@ -107,15 +166,39 @@ func (bc *BadgeCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (bc *BadgeCreate) defaults() {
+func (bc *BadgeCreate) defaults() error {
+	if _, ok := bc.mutation.CreatedAt(); !ok {
+		if badge.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized badge.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
+		v := badge.DefaultCreatedAt()
+		bc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := bc.mutation.UpdatedAt(); !ok {
+		if badge.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized badge.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
+		v := badge.DefaultUpdatedAt()
+		bc.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := bc.mutation.ID(); !ok {
+		if badge.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized badge.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := badge.DefaultID()
 		bc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (bc *BadgeCreate) check() error {
+	if _, ok := bc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Badge.created_at"`)}
+	}
+	if _, ok := bc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Badge.updated_at"`)}
+	}
 	if _, ok := bc.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Badge.name"`)}
 	}
@@ -162,6 +245,22 @@ func (bc *BadgeCreate) createSpec() (*Badge, *sqlgraph.CreateSpec) {
 	if id, ok := bc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := bc.mutation.CreatedAt(); ok {
+		_spec.SetField(badge.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := bc.mutation.UpdatedAt(); ok {
+		_spec.SetField(badge.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := bc.mutation.CreatedBy(); ok {
+		_spec.SetField(badge.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = &value
+	}
+	if value, ok := bc.mutation.UpdatedBy(); ok {
+		_spec.SetField(badge.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = &value
 	}
 	if value, ok := bc.mutation.Name(); ok {
 		_spec.SetField(badge.FieldName, field.TypeString, value)

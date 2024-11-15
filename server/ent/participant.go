@@ -19,6 +19,14 @@ type Participant struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy *string `json:"created_by,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy *string `json:"updated_by,omitempty"`
 	// Status holds the value of the "status" field.
 	Status string `json:"status,omitempty"`
 	// RequestedAt holds the value of the "requested_at" field.
@@ -71,9 +79,9 @@ func (*Participant) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case participant.FieldID, participant.FieldStatus:
+		case participant.FieldID, participant.FieldCreatedBy, participant.FieldUpdatedBy, participant.FieldStatus:
 			values[i] = new(sql.NullString)
-		case participant.FieldRequestedAt, participant.FieldJoinedAt:
+		case participant.FieldCreatedAt, participant.FieldUpdatedAt, participant.FieldRequestedAt, participant.FieldJoinedAt:
 			values[i] = new(sql.NullTime)
 		case participant.ForeignKeys[0]: // event_participants
 			values[i] = new(sql.NullString)
@@ -99,6 +107,32 @@ func (pa *Participant) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				pa.ID = value.String
+			}
+		case participant.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				pa.CreatedAt = value.Time
+			}
+		case participant.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				pa.UpdatedAt = value.Time
+			}
+		case participant.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				pa.CreatedBy = new(string)
+				*pa.CreatedBy = value.String
+			}
+		case participant.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				pa.UpdatedBy = new(string)
+				*pa.UpdatedBy = value.String
 			}
 		case participant.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -178,6 +212,22 @@ func (pa *Participant) String() string {
 	var builder strings.Builder
 	builder.WriteString("Participant(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", pa.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(pa.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(pa.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	if v := pa.CreatedBy; v != nil {
+		builder.WriteString("created_by=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := pa.UpdatedBy; v != nil {
+		builder.WriteString("updated_by=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(pa.Status)
 	builder.WriteString(", ")

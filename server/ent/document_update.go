@@ -10,6 +10,7 @@ import (
 	"edumeet/ent/predicate"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -26,6 +27,66 @@ type DocumentUpdate struct {
 // Where appends a list predicates to the DocumentUpdate builder.
 func (du *DocumentUpdate) Where(ps ...predicate.Document) *DocumentUpdate {
 	du.mutation.Where(ps...)
+	return du
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (du *DocumentUpdate) SetCreatedAt(t time.Time) *DocumentUpdate {
+	du.mutation.SetCreatedAt(t)
+	return du
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (du *DocumentUpdate) SetNillableCreatedAt(t *time.Time) *DocumentUpdate {
+	if t != nil {
+		du.SetCreatedAt(*t)
+	}
+	return du
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (du *DocumentUpdate) SetUpdatedAt(t time.Time) *DocumentUpdate {
+	du.mutation.SetUpdatedAt(t)
+	return du
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (du *DocumentUpdate) SetCreatedBy(s string) *DocumentUpdate {
+	du.mutation.SetCreatedBy(s)
+	return du
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (du *DocumentUpdate) SetNillableCreatedBy(s *string) *DocumentUpdate {
+	if s != nil {
+		du.SetCreatedBy(*s)
+	}
+	return du
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (du *DocumentUpdate) ClearCreatedBy() *DocumentUpdate {
+	du.mutation.ClearCreatedBy()
+	return du
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (du *DocumentUpdate) SetUpdatedBy(s string) *DocumentUpdate {
+	du.mutation.SetUpdatedBy(s)
+	return du
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (du *DocumentUpdate) SetNillableUpdatedBy(s *string) *DocumentUpdate {
+	if s != nil {
+		du.SetUpdatedBy(*s)
+	}
+	return du
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (du *DocumentUpdate) ClearUpdatedBy() *DocumentUpdate {
+	du.mutation.ClearUpdatedBy()
 	return du
 }
 
@@ -122,6 +183,7 @@ func (du *DocumentUpdate) RemoveMessage(m ...*Message) *DocumentUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (du *DocumentUpdate) Save(ctx context.Context) (int, error) {
+	du.defaults()
 	return withHooks(ctx, du.sqlSave, du.mutation, du.hooks)
 }
 
@@ -147,6 +209,14 @@ func (du *DocumentUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (du *DocumentUpdate) defaults() {
+	if _, ok := du.mutation.UpdatedAt(); !ok {
+		v := document.UpdateDefaultUpdatedAt()
+		du.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (du *DocumentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(document.Table, document.Columns, sqlgraph.NewFieldSpec(document.FieldID, field.TypeString))
 	if ps := du.mutation.predicates; len(ps) > 0 {
@@ -155,6 +225,24 @@ func (du *DocumentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := du.mutation.CreatedAt(); ok {
+		_spec.SetField(document.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := du.mutation.UpdatedAt(); ok {
+		_spec.SetField(document.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := du.mutation.CreatedBy(); ok {
+		_spec.SetField(document.FieldCreatedBy, field.TypeString, value)
+	}
+	if du.mutation.CreatedByCleared() {
+		_spec.ClearField(document.FieldCreatedBy, field.TypeString)
+	}
+	if value, ok := du.mutation.UpdatedBy(); ok {
+		_spec.SetField(document.FieldUpdatedBy, field.TypeString, value)
+	}
+	if du.mutation.UpdatedByCleared() {
+		_spec.ClearField(document.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := du.mutation.Path(); ok {
 		_spec.SetField(document.FieldPath, field.TypeString, value)
@@ -269,6 +357,66 @@ type DocumentUpdateOne struct {
 	mutation *DocumentMutation
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (duo *DocumentUpdateOne) SetCreatedAt(t time.Time) *DocumentUpdateOne {
+	duo.mutation.SetCreatedAt(t)
+	return duo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (duo *DocumentUpdateOne) SetNillableCreatedAt(t *time.Time) *DocumentUpdateOne {
+	if t != nil {
+		duo.SetCreatedAt(*t)
+	}
+	return duo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (duo *DocumentUpdateOne) SetUpdatedAt(t time.Time) *DocumentUpdateOne {
+	duo.mutation.SetUpdatedAt(t)
+	return duo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (duo *DocumentUpdateOne) SetCreatedBy(s string) *DocumentUpdateOne {
+	duo.mutation.SetCreatedBy(s)
+	return duo
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (duo *DocumentUpdateOne) SetNillableCreatedBy(s *string) *DocumentUpdateOne {
+	if s != nil {
+		duo.SetCreatedBy(*s)
+	}
+	return duo
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (duo *DocumentUpdateOne) ClearCreatedBy() *DocumentUpdateOne {
+	duo.mutation.ClearCreatedBy()
+	return duo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (duo *DocumentUpdateOne) SetUpdatedBy(s string) *DocumentUpdateOne {
+	duo.mutation.SetUpdatedBy(s)
+	return duo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (duo *DocumentUpdateOne) SetNillableUpdatedBy(s *string) *DocumentUpdateOne {
+	if s != nil {
+		duo.SetUpdatedBy(*s)
+	}
+	return duo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (duo *DocumentUpdateOne) ClearUpdatedBy() *DocumentUpdateOne {
+	duo.mutation.ClearUpdatedBy()
+	return duo
+}
+
 // SetPath sets the "path" field.
 func (duo *DocumentUpdateOne) SetPath(s string) *DocumentUpdateOne {
 	duo.mutation.SetPath(s)
@@ -375,6 +523,7 @@ func (duo *DocumentUpdateOne) Select(field string, fields ...string) *DocumentUp
 
 // Save executes the query and returns the updated Document entity.
 func (duo *DocumentUpdateOne) Save(ctx context.Context) (*Document, error) {
+	duo.defaults()
 	return withHooks(ctx, duo.sqlSave, duo.mutation, duo.hooks)
 }
 
@@ -397,6 +546,14 @@ func (duo *DocumentUpdateOne) Exec(ctx context.Context) error {
 func (duo *DocumentUpdateOne) ExecX(ctx context.Context) {
 	if err := duo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (duo *DocumentUpdateOne) defaults() {
+	if _, ok := duo.mutation.UpdatedAt(); !ok {
+		v := document.UpdateDefaultUpdatedAt()
+		duo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -425,6 +582,24 @@ func (duo *DocumentUpdateOne) sqlSave(ctx context.Context) (_node *Document, err
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := duo.mutation.CreatedAt(); ok {
+		_spec.SetField(document.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := duo.mutation.UpdatedAt(); ok {
+		_spec.SetField(document.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := duo.mutation.CreatedBy(); ok {
+		_spec.SetField(document.FieldCreatedBy, field.TypeString, value)
+	}
+	if duo.mutation.CreatedByCleared() {
+		_spec.ClearField(document.FieldCreatedBy, field.TypeString)
+	}
+	if value, ok := duo.mutation.UpdatedBy(); ok {
+		_spec.SetField(document.FieldUpdatedBy, field.TypeString, value)
+	}
+	if duo.mutation.UpdatedByCleared() {
+		_spec.ClearField(document.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := duo.mutation.Path(); ok {
 		_spec.SetField(document.FieldPath, field.TypeString, value)

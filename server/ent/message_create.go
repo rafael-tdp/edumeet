@@ -23,23 +23,65 @@ type MessageCreate struct {
 	hooks    []Hook
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (mc *MessageCreate) SetCreatedAt(t time.Time) *MessageCreate {
+	mc.mutation.SetCreatedAt(t)
+	return mc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (mc *MessageCreate) SetNillableCreatedAt(t *time.Time) *MessageCreate {
+	if t != nil {
+		mc.SetCreatedAt(*t)
+	}
+	return mc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (mc *MessageCreate) SetUpdatedAt(t time.Time) *MessageCreate {
+	mc.mutation.SetUpdatedAt(t)
+	return mc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (mc *MessageCreate) SetNillableUpdatedAt(t *time.Time) *MessageCreate {
+	if t != nil {
+		mc.SetUpdatedAt(*t)
+	}
+	return mc
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (mc *MessageCreate) SetCreatedBy(s string) *MessageCreate {
+	mc.mutation.SetCreatedBy(s)
+	return mc
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (mc *MessageCreate) SetNillableCreatedBy(s *string) *MessageCreate {
+	if s != nil {
+		mc.SetCreatedBy(*s)
+	}
+	return mc
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (mc *MessageCreate) SetUpdatedBy(s string) *MessageCreate {
+	mc.mutation.SetUpdatedBy(s)
+	return mc
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (mc *MessageCreate) SetNillableUpdatedBy(s *string) *MessageCreate {
+	if s != nil {
+		mc.SetUpdatedBy(*s)
+	}
+	return mc
+}
+
 // SetContent sets the "content" field.
 func (mc *MessageCreate) SetContent(s string) *MessageCreate {
 	mc.mutation.SetContent(s)
-	return mc
-}
-
-// SetSentAt sets the "sent_at" field.
-func (mc *MessageCreate) SetSentAt(t time.Time) *MessageCreate {
-	mc.mutation.SetSentAt(t)
-	return mc
-}
-
-// SetNillableSentAt sets the "sent_at" field if the given value is not nil.
-func (mc *MessageCreate) SetNillableSentAt(t *time.Time) *MessageCreate {
-	if t != nil {
-		mc.SetSentAt(*t)
-	}
 	return mc
 }
 
@@ -145,9 +187,13 @@ func (mc *MessageCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (mc *MessageCreate) defaults() {
-	if _, ok := mc.mutation.SentAt(); !ok {
-		v := message.DefaultSentAt()
-		mc.mutation.SetSentAt(v)
+	if _, ok := mc.mutation.CreatedAt(); !ok {
+		v := message.DefaultCreatedAt()
+		mc.mutation.SetCreatedAt(v)
+	}
+	if _, ok := mc.mutation.UpdatedAt(); !ok {
+		v := message.DefaultUpdatedAt()
+		mc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := mc.mutation.ID(); !ok {
 		v := message.DefaultID()
@@ -157,11 +203,14 @@ func (mc *MessageCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (mc *MessageCreate) check() error {
+	if _, ok := mc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Message.created_at"`)}
+	}
+	if _, ok := mc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Message.updated_at"`)}
+	}
 	if _, ok := mc.mutation.Content(); !ok {
 		return &ValidationError{Name: "content", err: errors.New(`ent: missing required field "Message.content"`)}
-	}
-	if _, ok := mc.mutation.SentAt(); !ok {
-		return &ValidationError{Name: "sent_at", err: errors.New(`ent: missing required field "Message.sent_at"`)}
 	}
 	return nil
 }
@@ -198,13 +247,25 @@ func (mc *MessageCreate) createSpec() (*Message, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := mc.mutation.CreatedAt(); ok {
+		_spec.SetField(message.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := mc.mutation.UpdatedAt(); ok {
+		_spec.SetField(message.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := mc.mutation.CreatedBy(); ok {
+		_spec.SetField(message.FieldCreatedBy, field.TypeString, value)
+		_node.CreatedBy = &value
+	}
+	if value, ok := mc.mutation.UpdatedBy(); ok {
+		_spec.SetField(message.FieldUpdatedBy, field.TypeString, value)
+		_node.UpdatedBy = &value
+	}
 	if value, ok := mc.mutation.Content(); ok {
 		_spec.SetField(message.FieldContent, field.TypeString, value)
 		_node.Content = value
-	}
-	if value, ok := mc.mutation.SentAt(); ok {
-		_spec.SetField(message.FieldSentAt, field.TypeTime, value)
-		_node.SentAt = value
 	}
 	if nodes := mc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

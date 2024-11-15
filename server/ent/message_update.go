@@ -31,6 +31,66 @@ func (mu *MessageUpdate) Where(ps ...predicate.Message) *MessageUpdate {
 	return mu
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (mu *MessageUpdate) SetCreatedAt(t time.Time) *MessageUpdate {
+	mu.mutation.SetCreatedAt(t)
+	return mu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (mu *MessageUpdate) SetNillableCreatedAt(t *time.Time) *MessageUpdate {
+	if t != nil {
+		mu.SetCreatedAt(*t)
+	}
+	return mu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (mu *MessageUpdate) SetUpdatedAt(t time.Time) *MessageUpdate {
+	mu.mutation.SetUpdatedAt(t)
+	return mu
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (mu *MessageUpdate) SetCreatedBy(s string) *MessageUpdate {
+	mu.mutation.SetCreatedBy(s)
+	return mu
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (mu *MessageUpdate) SetNillableCreatedBy(s *string) *MessageUpdate {
+	if s != nil {
+		mu.SetCreatedBy(*s)
+	}
+	return mu
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (mu *MessageUpdate) ClearCreatedBy() *MessageUpdate {
+	mu.mutation.ClearCreatedBy()
+	return mu
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (mu *MessageUpdate) SetUpdatedBy(s string) *MessageUpdate {
+	mu.mutation.SetUpdatedBy(s)
+	return mu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (mu *MessageUpdate) SetNillableUpdatedBy(s *string) *MessageUpdate {
+	if s != nil {
+		mu.SetUpdatedBy(*s)
+	}
+	return mu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (mu *MessageUpdate) ClearUpdatedBy() *MessageUpdate {
+	mu.mutation.ClearUpdatedBy()
+	return mu
+}
+
 // SetContent sets the "content" field.
 func (mu *MessageUpdate) SetContent(s string) *MessageUpdate {
 	mu.mutation.SetContent(s)
@@ -41,20 +101,6 @@ func (mu *MessageUpdate) SetContent(s string) *MessageUpdate {
 func (mu *MessageUpdate) SetNillableContent(s *string) *MessageUpdate {
 	if s != nil {
 		mu.SetContent(*s)
-	}
-	return mu
-}
-
-// SetSentAt sets the "sent_at" field.
-func (mu *MessageUpdate) SetSentAt(t time.Time) *MessageUpdate {
-	mu.mutation.SetSentAt(t)
-	return mu
-}
-
-// SetNillableSentAt sets the "sent_at" field if the given value is not nil.
-func (mu *MessageUpdate) SetNillableSentAt(t *time.Time) *MessageUpdate {
-	if t != nil {
-		mu.SetSentAt(*t)
 	}
 	return mu
 }
@@ -152,6 +198,7 @@ func (mu *MessageUpdate) RemoveDocuments(d ...*Document) *MessageUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (mu *MessageUpdate) Save(ctx context.Context) (int, error) {
+	mu.defaults()
 	return withHooks(ctx, mu.sqlSave, mu.mutation, mu.hooks)
 }
 
@@ -177,6 +224,14 @@ func (mu *MessageUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (mu *MessageUpdate) defaults() {
+	if _, ok := mu.mutation.UpdatedAt(); !ok {
+		v := message.UpdateDefaultUpdatedAt()
+		mu.mutation.SetUpdatedAt(v)
+	}
+}
+
 func (mu *MessageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(message.Table, message.Columns, sqlgraph.NewFieldSpec(message.FieldID, field.TypeString))
 	if ps := mu.mutation.predicates; len(ps) > 0 {
@@ -186,11 +241,26 @@ func (mu *MessageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := mu.mutation.CreatedAt(); ok {
+		_spec.SetField(message.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := mu.mutation.UpdatedAt(); ok {
+		_spec.SetField(message.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := mu.mutation.CreatedBy(); ok {
+		_spec.SetField(message.FieldCreatedBy, field.TypeString, value)
+	}
+	if mu.mutation.CreatedByCleared() {
+		_spec.ClearField(message.FieldCreatedBy, field.TypeString)
+	}
+	if value, ok := mu.mutation.UpdatedBy(); ok {
+		_spec.SetField(message.FieldUpdatedBy, field.TypeString, value)
+	}
+	if mu.mutation.UpdatedByCleared() {
+		_spec.ClearField(message.FieldUpdatedBy, field.TypeString)
+	}
 	if value, ok := mu.mutation.Content(); ok {
 		_spec.SetField(message.FieldContent, field.TypeString, value)
-	}
-	if value, ok := mu.mutation.SentAt(); ok {
-		_spec.SetField(message.FieldSentAt, field.TypeTime, value)
 	}
 	if mu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -315,6 +385,66 @@ type MessageUpdateOne struct {
 	mutation *MessageMutation
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (muo *MessageUpdateOne) SetCreatedAt(t time.Time) *MessageUpdateOne {
+	muo.mutation.SetCreatedAt(t)
+	return muo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (muo *MessageUpdateOne) SetNillableCreatedAt(t *time.Time) *MessageUpdateOne {
+	if t != nil {
+		muo.SetCreatedAt(*t)
+	}
+	return muo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (muo *MessageUpdateOne) SetUpdatedAt(t time.Time) *MessageUpdateOne {
+	muo.mutation.SetUpdatedAt(t)
+	return muo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (muo *MessageUpdateOne) SetCreatedBy(s string) *MessageUpdateOne {
+	muo.mutation.SetCreatedBy(s)
+	return muo
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (muo *MessageUpdateOne) SetNillableCreatedBy(s *string) *MessageUpdateOne {
+	if s != nil {
+		muo.SetCreatedBy(*s)
+	}
+	return muo
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (muo *MessageUpdateOne) ClearCreatedBy() *MessageUpdateOne {
+	muo.mutation.ClearCreatedBy()
+	return muo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (muo *MessageUpdateOne) SetUpdatedBy(s string) *MessageUpdateOne {
+	muo.mutation.SetUpdatedBy(s)
+	return muo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (muo *MessageUpdateOne) SetNillableUpdatedBy(s *string) *MessageUpdateOne {
+	if s != nil {
+		muo.SetUpdatedBy(*s)
+	}
+	return muo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (muo *MessageUpdateOne) ClearUpdatedBy() *MessageUpdateOne {
+	muo.mutation.ClearUpdatedBy()
+	return muo
+}
+
 // SetContent sets the "content" field.
 func (muo *MessageUpdateOne) SetContent(s string) *MessageUpdateOne {
 	muo.mutation.SetContent(s)
@@ -325,20 +455,6 @@ func (muo *MessageUpdateOne) SetContent(s string) *MessageUpdateOne {
 func (muo *MessageUpdateOne) SetNillableContent(s *string) *MessageUpdateOne {
 	if s != nil {
 		muo.SetContent(*s)
-	}
-	return muo
-}
-
-// SetSentAt sets the "sent_at" field.
-func (muo *MessageUpdateOne) SetSentAt(t time.Time) *MessageUpdateOne {
-	muo.mutation.SetSentAt(t)
-	return muo
-}
-
-// SetNillableSentAt sets the "sent_at" field if the given value is not nil.
-func (muo *MessageUpdateOne) SetNillableSentAt(t *time.Time) *MessageUpdateOne {
-	if t != nil {
-		muo.SetSentAt(*t)
 	}
 	return muo
 }
@@ -449,6 +565,7 @@ func (muo *MessageUpdateOne) Select(field string, fields ...string) *MessageUpda
 
 // Save executes the query and returns the updated Message entity.
 func (muo *MessageUpdateOne) Save(ctx context.Context) (*Message, error) {
+	muo.defaults()
 	return withHooks(ctx, muo.sqlSave, muo.mutation, muo.hooks)
 }
 
@@ -471,6 +588,14 @@ func (muo *MessageUpdateOne) Exec(ctx context.Context) error {
 func (muo *MessageUpdateOne) ExecX(ctx context.Context) {
 	if err := muo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (muo *MessageUpdateOne) defaults() {
+	if _, ok := muo.mutation.UpdatedAt(); !ok {
+		v := message.UpdateDefaultUpdatedAt()
+		muo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -500,11 +625,26 @@ func (muo *MessageUpdateOne) sqlSave(ctx context.Context) (_node *Message, err e
 			}
 		}
 	}
+	if value, ok := muo.mutation.CreatedAt(); ok {
+		_spec.SetField(message.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := muo.mutation.UpdatedAt(); ok {
+		_spec.SetField(message.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := muo.mutation.CreatedBy(); ok {
+		_spec.SetField(message.FieldCreatedBy, field.TypeString, value)
+	}
+	if muo.mutation.CreatedByCleared() {
+		_spec.ClearField(message.FieldCreatedBy, field.TypeString)
+	}
+	if value, ok := muo.mutation.UpdatedBy(); ok {
+		_spec.SetField(message.FieldUpdatedBy, field.TypeString, value)
+	}
+	if muo.mutation.UpdatedByCleared() {
+		_spec.ClearField(message.FieldUpdatedBy, field.TypeString)
+	}
 	if value, ok := muo.mutation.Content(); ok {
 		_spec.SetField(message.FieldContent, field.TypeString, value)
-	}
-	if value, ok := muo.mutation.SentAt(); ok {
-		_spec.SetField(message.FieldSentAt, field.TypeTime, value)
 	}
 	if muo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

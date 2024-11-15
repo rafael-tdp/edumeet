@@ -1,8 +1,8 @@
 package schema
 
 import (
+	"edumeet/ent/schema/trait"
 	"edumeet/utils"
-	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
@@ -15,11 +15,13 @@ type Message struct {
 
 func (Message) Fields() []ent.Field {
 	ulid := utils.ULID{}
-	return []ent.Field{
-		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
-		field.String("content"),
-		field.Time("sent_at").Default(time.Now),
-	}
+	return append(
+		trait.Blamable{}.Fields(),
+		[]ent.Field{
+			field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
+			field.String("content"),
+		}...,
+	)
 }
 
 func (Message) Edges() []ent.Edge {

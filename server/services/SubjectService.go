@@ -22,32 +22,18 @@ func (sr *SubjectService) GetSubject(subjectID string) (*dtos.SubjectDTO, error)
 		return nil, errors.New("user not found in service")
 	}
 
-	subjectDTO, err := dtos.ParseSubjectDTO(subject)
-
-	if err != nil {
-		return nil, errors.New("error parsing subject DTO")
-	}
+	subjectDTO := dtos.SubjectEntToDTO(subject)
 
 	return subjectDTO, nil
 }
 
 func (sr *SubjectService) Create(subjectDTO dtos.SubjectDTO) (*dtos.SubjectDTO, error) {
-
-	subjectEnt, err := dtos.ConvertSubjectDTOToEnt(&subjectDTO)
-	if err != nil {
-		return nil, errors.New("error converting DTO to ent")
-	}
-
-	subject, err := sr.subjectRepository.Create(subjectEnt)
+	subject, err := sr.subjectRepository.Create(subjectDTO)
 	if err != nil {
 		return nil, errors.New("error creating subject")
 	}
 
-	createdSubject, err := dtos.ParseSubjectDTO(subject)
-
-	if err != nil {
-		return nil, errors.New("error parsing subject DTO")
-	}
+	createdSubject := dtos.SubjectEntToDTO(subject)
 
 	return createdSubject, nil
 }
@@ -69,10 +55,7 @@ func (sr *SubjectService) GetSubjects() ([]*dtos.SubjectDTO, error) {
 	subjectsDTO := make([]*dtos.SubjectDTO, 0)
 
 	for _, subject := range subjects {
-		subjectDTO, err := dtos.ParseSubjectDTO(subject)
-		if err != nil {
-			return nil, errors.New("error parsing subject DTO")
-		}
+		subjectDTO := dtos.SubjectEntToDTO(subject)
 		subjectsDTO = append(subjectsDTO, subjectDTO)
 	}
 
@@ -80,17 +63,12 @@ func (sr *SubjectService) GetSubjects() ([]*dtos.SubjectDTO, error) {
 }
 
 func (sr *SubjectService) Update(subjectID string, subjectDTO dtos.SubjectDTO) (*dtos.SubjectDTO, error) {
-	subjectEnt, err := dtos.ConvertSubjectDTOToEnt(&subjectDTO)
-	if err != nil {
-		return nil, errors.New("error converting DTO to ent")
-	}
-
-	subject, err := sr.subjectRepository.Update(subjectID, subjectEnt)
+	subject, err := sr.subjectRepository.Update(subjectID, subjectDTO)
 	if err != nil {
 		return nil, errors.New("error updating subject")
 	}
 
-	updatedSubject, err := dtos.ParseSubjectDTO(subject)
+	updatedSubject := dtos.SubjectEntToDTO(subject)
 
 	if err != nil {
 		return nil, errors.New("error parsing subject DTO")

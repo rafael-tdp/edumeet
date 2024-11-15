@@ -1,8 +1,8 @@
 package schema
 
 import (
+	"edumeet/ent/schema/trait"
 	"edumeet/utils"
-	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/schema/edge"
@@ -11,6 +11,12 @@ import (
 
 type User struct {
 	ent.Schema
+}
+
+func (User) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		trait.Blamable{},
+	}
 }
 
 func (User) Fields() []ent.Field {
@@ -30,7 +36,6 @@ func (User) Fields() []ent.Field {
 		field.Float("lng").Optional().Nillable(),
 		field.Float("lat").Optional().Nillable(),
 		field.String("zipCode").Optional().Nillable(),
-		field.Time("created_at").Default(time.Now),
 		field.String("code").Optional().Nillable(),
 		field.Time("code_expiration").Optional().Nillable(),
 		field.Enum("role").Values("SUPER ADMIN", "ADMIN", "USER").Default("USER"),

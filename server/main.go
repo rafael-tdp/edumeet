@@ -7,12 +7,15 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"log"
 
+	_ "edumeet/ent/runtime"
+
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/gofiber/fiber/v2"
 	"github.com/oklog/ulid/v2"
 )
 
 func main() {
+
 	// Utilisation de flag pour choisir le mode (normal, fixture ou migrate)
 	mode := flag.String("mode", "normal", "Choose the mode: normal, fixture or migrate")
 	flag.Parse()

@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"edumeet/ent/schema/trait"
 	"edumeet/utils"
 
 	"entgo.io/ent"
@@ -11,6 +12,12 @@ import (
 
 type Event struct {
 	ent.Schema
+}
+
+func (Event) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		trait.Blamable{},
+	}
 }
 
 func (Event) Fields() []ent.Field {

@@ -9,6 +9,7 @@ import (
 	"edumeet/ent/user"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -25,6 +26,66 @@ type BadgeUpdate struct {
 // Where appends a list predicates to the BadgeUpdate builder.
 func (bu *BadgeUpdate) Where(ps ...predicate.Badge) *BadgeUpdate {
 	bu.mutation.Where(ps...)
+	return bu
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (bu *BadgeUpdate) SetCreatedAt(t time.Time) *BadgeUpdate {
+	bu.mutation.SetCreatedAt(t)
+	return bu
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (bu *BadgeUpdate) SetNillableCreatedAt(t *time.Time) *BadgeUpdate {
+	if t != nil {
+		bu.SetCreatedAt(*t)
+	}
+	return bu
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (bu *BadgeUpdate) SetUpdatedAt(t time.Time) *BadgeUpdate {
+	bu.mutation.SetUpdatedAt(t)
+	return bu
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (bu *BadgeUpdate) SetCreatedBy(s string) *BadgeUpdate {
+	bu.mutation.SetCreatedBy(s)
+	return bu
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (bu *BadgeUpdate) SetNillableCreatedBy(s *string) *BadgeUpdate {
+	if s != nil {
+		bu.SetCreatedBy(*s)
+	}
+	return bu
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (bu *BadgeUpdate) ClearCreatedBy() *BadgeUpdate {
+	bu.mutation.ClearCreatedBy()
+	return bu
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (bu *BadgeUpdate) SetUpdatedBy(s string) *BadgeUpdate {
+	bu.mutation.SetUpdatedBy(s)
+	return bu
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (bu *BadgeUpdate) SetNillableUpdatedBy(s *string) *BadgeUpdate {
+	if s != nil {
+		bu.SetUpdatedBy(*s)
+	}
+	return bu
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (bu *BadgeUpdate) ClearUpdatedBy() *BadgeUpdate {
+	bu.mutation.ClearUpdatedBy()
 	return bu
 }
 
@@ -134,6 +195,9 @@ func (bu *BadgeUpdate) RemoveUsers(u ...*User) *BadgeUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (bu *BadgeUpdate) Save(ctx context.Context) (int, error) {
+	if err := bu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, bu.sqlSave, bu.mutation, bu.hooks)
 }
 
@@ -159,6 +223,18 @@ func (bu *BadgeUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (bu *BadgeUpdate) defaults() error {
+	if _, ok := bu.mutation.UpdatedAt(); !ok {
+		if badge.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized badge.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
+		v := badge.UpdateDefaultUpdatedAt()
+		bu.mutation.SetUpdatedAt(v)
+	}
+	return nil
+}
+
 func (bu *BadgeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(badge.Table, badge.Columns, sqlgraph.NewFieldSpec(badge.FieldID, field.TypeString))
 	if ps := bu.mutation.predicates; len(ps) > 0 {
@@ -167,6 +243,24 @@ func (bu *BadgeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := bu.mutation.CreatedAt(); ok {
+		_spec.SetField(badge.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := bu.mutation.UpdatedAt(); ok {
+		_spec.SetField(badge.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := bu.mutation.CreatedBy(); ok {
+		_spec.SetField(badge.FieldCreatedBy, field.TypeString, value)
+	}
+	if bu.mutation.CreatedByCleared() {
+		_spec.ClearField(badge.FieldCreatedBy, field.TypeString)
+	}
+	if value, ok := bu.mutation.UpdatedBy(); ok {
+		_spec.SetField(badge.FieldUpdatedBy, field.TypeString, value)
+	}
+	if bu.mutation.UpdatedByCleared() {
+		_spec.ClearField(badge.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := bu.mutation.Name(); ok {
 		_spec.SetField(badge.FieldName, field.TypeString, value)
@@ -246,6 +340,66 @@ type BadgeUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *BadgeMutation
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (buo *BadgeUpdateOne) SetCreatedAt(t time.Time) *BadgeUpdateOne {
+	buo.mutation.SetCreatedAt(t)
+	return buo
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (buo *BadgeUpdateOne) SetNillableCreatedAt(t *time.Time) *BadgeUpdateOne {
+	if t != nil {
+		buo.SetCreatedAt(*t)
+	}
+	return buo
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (buo *BadgeUpdateOne) SetUpdatedAt(t time.Time) *BadgeUpdateOne {
+	buo.mutation.SetUpdatedAt(t)
+	return buo
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (buo *BadgeUpdateOne) SetCreatedBy(s string) *BadgeUpdateOne {
+	buo.mutation.SetCreatedBy(s)
+	return buo
+}
+
+// SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
+func (buo *BadgeUpdateOne) SetNillableCreatedBy(s *string) *BadgeUpdateOne {
+	if s != nil {
+		buo.SetCreatedBy(*s)
+	}
+	return buo
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (buo *BadgeUpdateOne) ClearCreatedBy() *BadgeUpdateOne {
+	buo.mutation.ClearCreatedBy()
+	return buo
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (buo *BadgeUpdateOne) SetUpdatedBy(s string) *BadgeUpdateOne {
+	buo.mutation.SetUpdatedBy(s)
+	return buo
+}
+
+// SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
+func (buo *BadgeUpdateOne) SetNillableUpdatedBy(s *string) *BadgeUpdateOne {
+	if s != nil {
+		buo.SetUpdatedBy(*s)
+	}
+	return buo
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (buo *BadgeUpdateOne) ClearUpdatedBy() *BadgeUpdateOne {
+	buo.mutation.ClearUpdatedBy()
+	return buo
 }
 
 // SetName sets the "name" field.
@@ -367,6 +521,9 @@ func (buo *BadgeUpdateOne) Select(field string, fields ...string) *BadgeUpdateOn
 
 // Save executes the query and returns the updated Badge entity.
 func (buo *BadgeUpdateOne) Save(ctx context.Context) (*Badge, error) {
+	if err := buo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, buo.sqlSave, buo.mutation, buo.hooks)
 }
 
@@ -390,6 +547,18 @@ func (buo *BadgeUpdateOne) ExecX(ctx context.Context) {
 	if err := buo.Exec(ctx); err != nil {
 		panic(err)
 	}
+}
+
+// defaults sets the default values of the builder before save.
+func (buo *BadgeUpdateOne) defaults() error {
+	if _, ok := buo.mutation.UpdatedAt(); !ok {
+		if badge.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized badge.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
+		v := badge.UpdateDefaultUpdatedAt()
+		buo.mutation.SetUpdatedAt(v)
+	}
+	return nil
 }
 
 func (buo *BadgeUpdateOne) sqlSave(ctx context.Context) (_node *Badge, err error) {
@@ -417,6 +586,24 @@ func (buo *BadgeUpdateOne) sqlSave(ctx context.Context) (_node *Badge, err error
 				ps[i](selector)
 			}
 		}
+	}
+	if value, ok := buo.mutation.CreatedAt(); ok {
+		_spec.SetField(badge.FieldCreatedAt, field.TypeTime, value)
+	}
+	if value, ok := buo.mutation.UpdatedAt(); ok {
+		_spec.SetField(badge.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := buo.mutation.CreatedBy(); ok {
+		_spec.SetField(badge.FieldCreatedBy, field.TypeString, value)
+	}
+	if buo.mutation.CreatedByCleared() {
+		_spec.ClearField(badge.FieldCreatedBy, field.TypeString)
+	}
+	if value, ok := buo.mutation.UpdatedBy(); ok {
+		_spec.SetField(badge.FieldUpdatedBy, field.TypeString, value)
+	}
+	if buo.mutation.UpdatedByCleared() {
+		_spec.ClearField(badge.FieldUpdatedBy, field.TypeString)
 	}
 	if value, ok := buo.mutation.Name(); ok {
 		_spec.SetField(badge.FieldName, field.TypeString, value)

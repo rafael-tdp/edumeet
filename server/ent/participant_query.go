@@ -335,12 +335,12 @@ func (pq *ParticipantQuery) WithEvent(opts ...func(*EventQuery)) *ParticipantQue
 // Example:
 //
 //	var v []struct {
-//		Status string `json:"status,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Participant.Query().
-//		GroupBy(participant.FieldStatus).
+//		GroupBy(participant.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (pq *ParticipantQuery) GroupBy(field string, fields ...string) *ParticipantGroupBy {
@@ -358,11 +358,11 @@ func (pq *ParticipantQuery) GroupBy(field string, fields ...string) *Participant
 // Example:
 //
 //	var v []struct {
-//		Status string `json:"status,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Participant.Query().
-//		Select(participant.FieldStatus).
+//		Select(participant.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (pq *ParticipantQuery) Select(fields ...string) *ParticipantSelect {
 	pq.ctx.Fields = append(pq.ctx.Fields, fields...)

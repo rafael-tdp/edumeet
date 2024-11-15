@@ -9,6 +9,7 @@ import (
 type Badge struct{}
 
 func (b *Badge) GenerateBadge(ctx context.Context, client *ent.Client) {
+	users := client.User.Query().AllX(ctx)
 	badges := []dtos.BadgeDTO{
 		{
 			Name:               "Creator Beginner",
@@ -35,6 +36,8 @@ func (b *Badge) GenerateBadge(ctx context.Context, client *ent.Client) {
 			SetType(badges[i].Type).
 			SetNbRequirementEvent(badges[i].NbRequirementEvent).
 			SetSvg(badges[i].Svg).
+			SetCreatedBy(users[i%4].ID).
+			SetUpdatedBy(users[i%4].ID).
 			SaveX(ctx)
 	}
 }

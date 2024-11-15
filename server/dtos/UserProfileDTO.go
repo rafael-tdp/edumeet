@@ -3,25 +3,16 @@ package dtos
 import (
 	"edumeet/ent"
 	"edumeet/utils"
-	"errors"
 )
 
 type UserProfileDTO struct {
-	Username string  `json:"username"`
+	Username string  `json:"username" validate:"required,min=3"`
 	Bio      *string `json:"bio,omitempty"`
 	Picture  *string `json:"picture,omitempty"`
 	Address  string  `json:"address,omitempty"`
 }
 
-func ParseUserProfileDTO(user *ent.User) (*UserProfileDTO, error) {
-	if user == nil {
-		return nil, errors.New("user cannot be nil")
-	}
-
-	if user.Username == "" {
-		return nil, errors.New("username is required")
-	}
-
+func UserProfileEntToDto(user *ent.User) (*UserProfileDTO, error) {
 	address, err := utils.GetAddress(*user.Lat, *user.Lng)
 
 	if err != nil {

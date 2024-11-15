@@ -335,12 +335,12 @@ func (sq *SubjectQuery) WithEvents(opts ...func(*EventQuery)) *SubjectQuery {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Subject.Query().
-//		GroupBy(subject.FieldName).
+//		GroupBy(subject.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (sq *SubjectQuery) GroupBy(field string, fields ...string) *SubjectGroupBy {
@@ -358,11 +358,11 @@ func (sq *SubjectQuery) GroupBy(field string, fields ...string) *SubjectGroupBy 
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Subject.Query().
-//		Select(subject.FieldName).
+//		Select(subject.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (sq *SubjectQuery) Select(fields ...string) *SubjectSelect {
 	sq.ctx.Fields = append(sq.ctx.Fields, fields...)

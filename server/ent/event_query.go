@@ -516,12 +516,12 @@ func (eq *EventQuery) WithPhysicalEvent(opts ...func(*PhysicalEventQuery)) *Even
 // Example:
 //
 //	var v []struct {
-//		NbMaxUser int `json:"nbMaxUser,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Event.Query().
-//		GroupBy(event.FieldNbMaxUser).
+//		GroupBy(event.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (eq *EventQuery) GroupBy(field string, fields ...string) *EventGroupBy {
@@ -539,11 +539,11 @@ func (eq *EventQuery) GroupBy(field string, fields ...string) *EventGroupBy {
 // Example:
 //
 //	var v []struct {
-//		NbMaxUser int `json:"nbMaxUser,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Event.Query().
-//		Select(event.FieldNbMaxUser).
+//		Select(event.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (eq *EventQuery) Select(fields ...string) *EventSelect {
 	eq.ctx.Fields = append(eq.ctx.Fields, fields...)

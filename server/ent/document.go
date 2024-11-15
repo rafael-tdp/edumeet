@@ -6,6 +6,7 @@ import (
 	"edumeet/ent/document"
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -16,6 +17,14 @@ type Document struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy *string `json:"created_by,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy *string `json:"updated_by,omitempty"`
 	// Path holds the value of the "path" field.
 	Path string `json:"path,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -58,8 +67,10 @@ func (*Document) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case document.FieldID, document.FieldPath:
+		case document.FieldID, document.FieldCreatedBy, document.FieldUpdatedBy, document.FieldPath:
 			values[i] = new(sql.NullString)
+		case document.FieldCreatedAt, document.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -80,6 +91,32 @@ func (d *Document) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				d.ID = value.String
+			}
+		case document.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				d.CreatedAt = value.Time
+			}
+		case document.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				d.UpdatedAt = value.Time
+			}
+		case document.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				d.CreatedBy = new(string)
+				*d.CreatedBy = value.String
+			}
+		case document.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				d.UpdatedBy = new(string)
+				*d.UpdatedBy = value.String
 			}
 		case document.FieldPath:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -133,6 +170,22 @@ func (d *Document) String() string {
 	var builder strings.Builder
 	builder.WriteString("Document(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", d.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(d.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(d.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	if v := d.CreatedBy; v != nil {
+		builder.WriteString("created_by=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := d.UpdatedBy; v != nil {
+		builder.WriteString("updated_by=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
 	builder.WriteString("path=")
 	builder.WriteString(d.Path)
 	builder.WriteByte(')')

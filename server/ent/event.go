@@ -21,6 +21,14 @@ type Event struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// CreatedBy holds the value of the "created_by" field.
+	CreatedBy *string `json:"created_by,omitempty"`
+	// UpdatedBy holds the value of the "updated_by" field.
+	UpdatedBy *string `json:"updated_by,omitempty"`
 	// NbMaxUser holds the value of the "nbMaxUser" field.
 	NbMaxUser int `json:"nbMaxUser,omitempty"`
 	// StartDate holds the value of the "start_date" field.
@@ -145,9 +153,9 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case event.FieldNbMaxUser:
 			values[i] = new(sql.NullInt64)
-		case event.FieldID, event.FieldTitle, event.FieldDescription, event.FieldInvitationLink, event.FieldImage:
+		case event.FieldID, event.FieldCreatedBy, event.FieldUpdatedBy, event.FieldTitle, event.FieldDescription, event.FieldInvitationLink, event.FieldImage:
 			values[i] = new(sql.NullString)
-		case event.FieldStartDate, event.FieldEndDate:
+		case event.FieldCreatedAt, event.FieldUpdatedAt, event.FieldStartDate, event.FieldEndDate:
 			values[i] = new(sql.NullTime)
 		case event.ForeignKeys[0]: // user_events
 			values[i] = new(sql.NullString)
@@ -171,6 +179,32 @@ func (e *Event) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				e.ID = value.String
+			}
+		case event.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				e.CreatedAt = value.Time
+			}
+		case event.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				e.UpdatedAt = value.Time
+			}
+		case event.FieldCreatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field created_by", values[i])
+			} else if value.Valid {
+				e.CreatedBy = new(string)
+				*e.CreatedBy = value.String
+			}
+		case event.FieldUpdatedBy:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
+			} else if value.Valid {
+				e.UpdatedBy = new(string)
+				*e.UpdatedBy = value.String
 			}
 		case event.FieldNbMaxUser:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -298,6 +332,22 @@ func (e *Event) String() string {
 	var builder strings.Builder
 	builder.WriteString("Event(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", e.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(e.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(e.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	if v := e.CreatedBy; v != nil {
+		builder.WriteString("created_by=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := e.UpdatedBy; v != nil {
+		builder.WriteString("updated_by=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
 	builder.WriteString("nbMaxUser=")
 	builder.WriteString(fmt.Sprintf("%v", e.NbMaxUser))
 	builder.WriteString(", ")

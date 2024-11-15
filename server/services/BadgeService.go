@@ -25,13 +25,7 @@ func (r *BadgeService) GetBadgeById(badgeID string) (dtos.BadgeDTO, error) {
 		return dtos.BadgeDTO{}, err
 	}
 
-	badgeDTO := dtos.BadgeDTO{
-		ID:                 badge.ID,
-		Name:               badge.Name,
-		Type:               badge.Type,
-		NbRequirementEvent: badge.NbRequirementEvent,
-		Svg:                badge.Svg,
-	}
+	badgeDTO := dtos.BadgeEntToDTO(badge)
 
 	return badgeDTO, nil
 }
@@ -51,13 +45,7 @@ func (r *BadgeService) CreateBadge(badgeDTO dtos.BadgeDTO) (dtos.BadgeDTO, error
 		return dtos.BadgeDTO{}, err
 	}
 
-	return dtos.BadgeDTO{
-		ID:                 badge.ID,
-		Name:               badge.Name,
-		Type:               badge.Type,
-		NbRequirementEvent: badge.NbRequirementEvent,
-		Svg:                badge.Svg,
-	}, nil
+	return dtos.BadgeEntToDTO(badge), nil
 }
 
 func (r *BadgeService) GetBadges() ([]dtos.BadgeDTO, error) {
@@ -71,13 +59,7 @@ func (r *BadgeService) GetBadges() ([]dtos.BadgeDTO, error) {
 		if err != nil {
 			return nil, err
 		}
-		badgeDTO := dtos.BadgeDTO{
-			ID:                 badge.ID,
-			Name:               badge.Name,
-			Type:               badge.Type,
-			NbRequirementEvent: badge.NbRequirementEvent,
-			Svg:                badge.Svg,
-		}
+		badgeDTO := dtos.BadgeEntToDTO(badge)
 		badgesDTO = append(badgesDTO, badgeDTO)
 	}
 
@@ -90,11 +72,5 @@ func (r *BadgeService) UpdateBadge(badgeId string, badgeDTO dtos.BadgeDTO) (dtos
 		return dtos.BadgeDTO{}, err
 	}
 
-	return dtos.BadgeDTO{
-		ID:                 badge.ID,
-		Name:               badge.Name,
-		Type:               badge.Type,
-		NbRequirementEvent: badge.NbRequirementEvent,
-		Svg:                badge.Svg,
-	}, nil
+	return dtos.BadgeEntToDTO(badge), nil
 }

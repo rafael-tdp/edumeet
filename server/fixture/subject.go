@@ -41,9 +41,12 @@ func (b *Subject) GenerateSubject(ctx context.Context, client *ent.Client) {
 		{Name: "Gestion de la Supply Chain"},
 		{Name: "Génie Civil"},
 	}
+	users := client.User.Query().AllX(ctx)
 	for i := 0; i < len(subjects); i++ {
 		client.Subject.Create().
 			SetName(subjects[i].Name).
+			SetCreatedBy(users[i%4].ID).
+			SetUpdatedBy(users[i%4].ID).
 			SaveX(ctx)
 	}
 }

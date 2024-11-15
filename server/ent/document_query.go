@@ -335,12 +335,12 @@ func (dq *DocumentQuery) WithMessage(opts ...func(*MessageQuery)) *DocumentQuery
 // Example:
 //
 //	var v []struct {
-//		Path string `json:"path,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Document.Query().
-//		GroupBy(document.FieldPath).
+//		GroupBy(document.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (dq *DocumentQuery) GroupBy(field string, fields ...string) *DocumentGroupBy {
@@ -358,11 +358,11 @@ func (dq *DocumentQuery) GroupBy(field string, fields ...string) *DocumentGroupB
 // Example:
 //
 //	var v []struct {
-//		Path string `json:"path,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.Document.Query().
-//		Select(document.FieldPath).
+//		Select(document.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (dq *DocumentQuery) Select(fields ...string) *DocumentSelect {
 	dq.ctx.Fields = append(dq.ctx.Fields, fields...)

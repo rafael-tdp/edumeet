@@ -16,6 +16,7 @@ type EventDTO struct {
 	InvitationLink   string            `json:"invitation_link,omitempty"`
 	PhysicalEventDTO *PhysicalEventDTO `json:"physical_event,omitempty"`
 	RemoteEventDTO   *RemoteEventDTO   `json:"remote_event,omitempty"`
+	CreatedBy        *string           `json:"created_by,omitempty"`
 }
 
 func EntToEventDTO(event *ent.Event) *EventDTO {
@@ -41,5 +42,10 @@ func EntToEventDTO(event *ent.Event) *EventDTO {
 		InvitationLink:   event.InvitationLink,
 		RemoteEventDTO:   remoteEventDTO,
 		PhysicalEventDTO: physicalEventDTO,
+		CreatedBy:        event.CreatedBy,
 	}
+}
+
+func (e *EventDTO) GetCreatedBy() *string {
+	return e.CreatedBy
 }
