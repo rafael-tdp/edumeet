@@ -224,20 +224,6 @@ func (uc *UserCreate) SetNillableZipCode(s *string) *UserCreate {
 	return uc
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
-	uc.mutation.SetCreatedAt(t)
-	return uc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
-	if t != nil {
-		uc.SetCreatedAt(*t)
-	}
-	return uc
-}
-
 // SetCode sets the "code" field.
 func (uc *UserCreate) SetCode(s string) *UserCreate {
 	uc.mutation.SetCode(s)
@@ -596,10 +582,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.ZipCode(); ok {
 		_spec.SetField(user.FieldZipCode, field.TypeString, value)
 		_node.ZipCode = &value
-	}
-	if value, ok := uc.mutation.CreatedAt(); ok {
-		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
 	}
 	if value, ok := uc.mutation.Code(); ok {
 		_spec.SetField(user.FieldCode, field.TypeString, value)

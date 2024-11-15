@@ -333,20 +333,6 @@ func (uu *UserUpdate) ClearZipCode() *UserUpdate {
 	return uu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetCreatedAt(t)
-	return uu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetCreatedAt(*t)
-	}
-	return uu
-}
-
 // SetCode sets the "code" field.
 func (uu *UserUpdate) SetCode(s string) *UserUpdate {
 	uu.mutation.SetCode(s)
@@ -769,9 +755,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.ZipCodeCleared() {
 		_spec.ClearField(user.FieldZipCode, field.TypeString)
-	}
-	if value, ok := uu.mutation.CreatedAt(); ok {
-		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
 	}
 	if value, ok := uu.mutation.Code(); ok {
 		_spec.SetField(user.FieldCode, field.TypeString, value)
@@ -1377,20 +1360,6 @@ func (uuo *UserUpdateOne) ClearZipCode() *UserUpdateOne {
 	return uuo
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (uuo *UserUpdateOne) SetCreatedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetCreatedAt(t)
-	return uuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetCreatedAt(*t)
-	}
-	return uuo
-}
-
 // SetCode sets the "code" field.
 func (uuo *UserUpdateOne) SetCode(s string) *UserUpdateOne {
 	uuo.mutation.SetCode(s)
@@ -1843,9 +1812,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.ZipCodeCleared() {
 		_spec.ClearField(user.FieldZipCode, field.TypeString)
-	}
-	if value, ok := uuo.mutation.CreatedAt(); ok {
-		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
 	}
 	if value, ok := uuo.mutation.Code(); ok {
 		_spec.SetField(user.FieldCode, field.TypeString, value)

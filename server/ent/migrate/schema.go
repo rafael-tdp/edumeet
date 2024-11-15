@@ -66,7 +66,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "events_users_events",
-				Columns:    []*schema.Column{EventsColumns[9]},
+				Columns:    []*schema.Column{EventsColumns[13]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -262,7 +262,6 @@ var (
 		{Name: "lng", Type: field.TypeFloat64, Nullable: true},
 		{Name: "lat", Type: field.TypeFloat64, Nullable: true},
 		{Name: "zip_code", Type: field.TypeString, Nullable: true},
-		{Name: "created_at", Type: field.TypeTime},
 		{Name: "code", Type: field.TypeString, Nullable: true},
 		{Name: "code_expiration", Type: field.TypeTime, Nullable: true},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"SUPER ADMIN", "ADMIN", "USER"}, Default: "USER"},

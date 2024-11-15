@@ -2720,7 +2720,19 @@ func (m *EventMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 12)
+	if m.created_at != nil {
+		fields = append(fields, event.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, event.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, event.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, event.FieldUpdatedBy)
+	}
 	if m.nbMaxUser != nil {
 		fields = append(fields, event.FieldNbMaxUser)
 	}
@@ -7627,7 +7639,6 @@ type UserMutation struct {
 	lat                 *float64
 	addlat              *float64
 	zipCode             *string
-	created_at          *time.Time
 	code                *string
 	code_expiration     *time.Time
 	role                *user.Role
@@ -8537,42 +8548,6 @@ func (m *UserMutation) ResetZipCode() {
 	delete(m.clearedFields, user.FieldZipCode)
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (m *UserMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *UserMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *UserMutation) ResetCreatedAt() {
-	m.created_at = nil
-}
-
 // SetCode sets the "code" field.
 func (m *UserMutation) SetCode(s string) {
 	m.code = &s
@@ -9065,7 +9040,19 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 20)
+	if m.created_at != nil {
+		fields = append(fields, user.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, user.FieldUpdatedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, user.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, user.FieldUpdatedBy)
+	}
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
 	}
@@ -9104,9 +9091,6 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.zipCode != nil {
 		fields = append(fields, user.FieldZipCode)
-	}
-	if m.created_at != nil {
-		fields = append(fields, user.FieldCreatedAt)
 	}
 	if m.code != nil {
 		fields = append(fields, user.FieldCode)
@@ -9159,8 +9143,6 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Lat()
 	case user.FieldZipCode:
 		return m.ZipCode()
-	case user.FieldCreatedAt:
-		return m.CreatedAt()
 	case user.FieldCode:
 		return m.Code()
 	case user.FieldCodeExpiration:
@@ -9210,8 +9192,6 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldLat(ctx)
 	case user.FieldZipCode:
 		return m.OldZipCode(ctx)
-	case user.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
 	case user.FieldCode:
 		return m.OldCode(ctx)
 	case user.FieldCodeExpiration:
@@ -9345,13 +9325,6 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetZipCode(v)
-		return nil
-	case user.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
 		return nil
 	case user.FieldCode:
 		v, ok := value.(string)
@@ -9575,9 +9548,6 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldZipCode:
 		m.ResetZipCode()
-		return nil
-	case user.FieldCreatedAt:
-		m.ResetCreatedAt()
 		return nil
 	case user.FieldCode:
 		m.ResetCode()

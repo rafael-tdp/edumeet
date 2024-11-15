@@ -51,8 +51,6 @@ type User struct {
 	Lat *float64 `json:"lat,omitempty"`
 	// ZipCode holds the value of the "zipCode" field.
 	ZipCode *string `json:"zipCode,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
 	// Code holds the value of the "code" field.
 	Code *string `json:"code,omitempty"`
 	// CodeExpiration holds the value of the "code_expiration" field.
@@ -149,9 +147,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case user.FieldReportNumber:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldEmail, user.FieldUsername, user.FieldLastname, user.FieldFirstname, user.FieldPassword, user.FieldBio, user.FieldPicture, user.FieldZipCode, user.FieldCode, user.FieldRole:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldEmail, user.FieldUsername, user.FieldLastname, user.FieldFirstname, user.FieldPassword, user.FieldBio, user.FieldPicture, user.FieldZipCode, user.FieldCode, user.FieldRole:
 			values[i] = new(sql.NullString)
-		case user.FieldBirthDate, user.FieldCreatedAt, user.FieldCodeExpiration:
+		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldBirthDate, user.FieldCodeExpiration:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -283,12 +281,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.ZipCode = new(string)
 				*u.ZipCode = value.String
-			}
-		case user.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				u.CreatedAt = value.Time
 			}
 		case user.FieldCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -441,9 +433,6 @@ func (u *User) String() string {
 		builder.WriteString("zipCode=")
 		builder.WriteString(*v)
 	}
-	builder.WriteString(", ")
-	builder.WriteString("created_at=")
-	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	if v := u.Code; v != nil {
 		builder.WriteString("code=")

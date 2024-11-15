@@ -153,7 +153,7 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case event.FieldNbMaxUser:
 			values[i] = new(sql.NullInt64)
-		case event.FieldID, event.FieldTitle, event.FieldDescription, event.FieldInvitationLink, event.FieldImage:
+		case event.FieldID, event.FieldCreatedBy, event.FieldUpdatedBy, event.FieldTitle, event.FieldDescription, event.FieldInvitationLink, event.FieldImage:
 			values[i] = new(sql.NullString)
 		case event.FieldCreatedAt, event.FieldUpdatedAt, event.FieldStartDate, event.FieldEndDate:
 			values[i] = new(sql.NullTime)

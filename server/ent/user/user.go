@@ -50,8 +50,6 @@ const (
 	FieldLat = "lat"
 	// FieldZipCode holds the string denoting the zipcode field in the database.
 	FieldZipCode = "zip_code"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
 	// FieldCode holds the string denoting the code field in the database.
 	FieldCode = "code"
 	// FieldCodeExpiration holds the string denoting the code_expiration field in the database.
@@ -132,7 +130,6 @@ var Columns = []string{
 	FieldLng,
 	FieldLat,
 	FieldZipCode,
-	FieldCreatedAt,
 	FieldCode,
 	FieldCodeExpiration,
 	FieldRole,
@@ -296,11 +293,6 @@ func ByLat(opts ...sql.OrderTermOption) OrderOption {
 // ByZipCode orders the results by the zipCode field.
 func ByZipCode(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldZipCode, opts...).ToFunc()
-}
-
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
 }
 
 // ByCode orders the results by the code field.
