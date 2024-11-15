@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"edumeet/dtos"
+	"edumeet/ent"
+	"edumeet/guards"
 	"edumeet/services"
 
 	"github.com/go-playground/validator/v10"
@@ -24,6 +26,10 @@ func NewSubjectController(subjectService *services.SubjectService, emailService 
 func (sc *SubjectController) Create(c *fiber.Ctx) error {
 
 	var subjectDTO dtos.SubjectDTO
+	currentUser := c.Locals("user").(*ent.User)
+	if !guards.IsAdmin(currentUser) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
 
 	if err := c.BodyParser(&subjectDTO); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
@@ -86,6 +92,11 @@ func (sc *SubjectController) Delete(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
+	currentUser := c.Locals("user").(*ent.User)
+	if !guards.IsAdmin(currentUser) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
 	errDelete := sc.subjectService.Delete(id.String())
 
 	if errDelete != nil {
