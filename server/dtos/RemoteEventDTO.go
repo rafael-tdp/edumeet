@@ -4,7 +4,7 @@ import "edumeet/ent"
 
 type RemoteEventDTO struct {
 	ID  string `json:"id"`
-	URL string `json:"url"`
+	URL string `json:"url" validate:"required,url"`
 }
 
 func EntToRemoteEventDTO(remoteEvent *ent.RemoteEvent) *RemoteEventDTO {
