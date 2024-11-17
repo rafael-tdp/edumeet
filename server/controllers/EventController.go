@@ -7,6 +7,9 @@ import (
 	"edumeet/guards"
 	"edumeet/services"
 
+	customValidators "edumeet/validator"
+
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/oklog/ulid/v2"
 )
@@ -34,6 +37,23 @@ func (ec *EventController) CreateEvent(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 
 	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+
+	validations := validator.New()
+	validations.RegisterValidation("isAfterNow", customValidators.IsAfterNow)
+	validations.RegisterValidation("isBefore", customValidators.IsBefore)
+
+	errors, err := customValidators.ValidateDTO(validations, &eventDTO)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Erreur de validation interne",
+		})
+	}
+	if len(errors) > 0 {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"errors": errors,
+		})
+	}
 
 	remoteEvent, err := ec.eventservice.CreateEvent(ctx, eventDTO, currentUser.ID)
 
@@ -97,6 +117,18 @@ func (ec *EventController) UpdateEvent(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
 
+	currentUser := c.Locals("user").(*ent.User)
+
+	event, errGetEvent := ec.eventservice.GetEvent(eventID.String())
+
+	if errGetEvent != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": errGetEvent.Error()})
+	}
+
+	if !guards.CanAuthorize(currentUser, event) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
 	var eventDTO dtos.EventDTO
 
 	if err := c.BodyParser(&eventDTO); err != nil {
@@ -104,6 +136,23 @@ func (ec *EventController) UpdateEvent(c *fiber.Ctx) error {
 	}
 
 	ctx := context.WithValue(c.Context(), "user_id", c.Locals("user").(*ent.User).ID)
+
+	validations := validator.New()
+	validations.RegisterValidation("isAfterNow", customValidators.IsAfterNow)
+	validations.RegisterValidation("isBefore", customValidators.IsBefore)
+
+	errors, err := customValidators.ValidateDTO(validations, &eventDTO)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Erreur de validation interne",
+		})
+	}
+	if len(errors) > 0 {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"errors": errors,
+		})
+	}
 
 	remoteEvent, err := ec.eventservice.UpdateEvent(ctx, eventDTO, eventID.String())
 
