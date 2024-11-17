@@ -7,12 +7,12 @@ import (
 
 type EventDTO struct {
 	ID               string            `json:"id"`
-	NbMaxUser        int               `json:"nb_max_user"`
-	StartDate        time.Time         `json:"start_date"`
-	EndDate          time.Time         `json:"end_date,omitempty"`
+	NbMaxUser        int               `json:"nb_max_user" validate:"required,min=2,max=100" message:"The number of maximum users must be between 2 and 100"`
+	StartDate        time.Time         `json:"start_date" validate:"required,isAfterNow" error_message:"La date de début doit être dans le futur."`
+	EndDate          time.Time         `json:"end_date,omitempty" validate:"required,isBefore" error_message:"La date de fin doit être après la date de début."`
 	IsPrivate        bool              `json:"is_private"`
-	Title            string            `json:"title"`
-	Description      string            `json:"description,omitempty"`
+	Title            string            `json:"title" validate:"required,min=3"`
+	Description      string            `json:"description,omitempty" validate:"required,min=3"`
 	InvitationLink   string            `json:"invitation_link,omitempty"`
 	PhysicalEventDTO *PhysicalEventDTO `json:"physical_event,omitempty"`
 	RemoteEventDTO   *RemoteEventDTO   `json:"remote_event,omitempty"`
