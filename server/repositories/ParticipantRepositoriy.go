@@ -62,3 +62,15 @@ func (pr *ParticipantRepository) GetParticipantByEventAndUser(eventId string, us
 
 	return participant, nil
 }
+
+func (pr *ParticipantRepository) GetParticipantsByEvent(eventId string) ([]*ent.Participant, error) {
+	participants, err := pr.client.Participant.Query().
+		Where(participant.HasEventWith(event.IDEQ(eventId))).
+		WithUser().
+		All(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return participants, nil
+}

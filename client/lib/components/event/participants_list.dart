@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:client/screens/profile_screen.dart';
 
 class ParticipantsList extends StatelessWidget {
-  final List<Map<String, String>> participants;
+  final List<dynamic> participants;
 
   const ParticipantsList({super.key, required this.participants});
 
@@ -33,7 +33,7 @@ class ParticipantsList extends StatelessWidget {
               return GestureDetector(
                 onTap: () {
                   final bool isCurrentUser =
-                      participant['id'] == 'test'; // userId;
+                      participant['user']['id'] == 'test'; // userId;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -50,11 +50,26 @@ class ParticipantsList extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 30,
-                        backgroundImage: NetworkImage(participant['image']!),
+                        backgroundImage: participant['user']['picture'] != null
+                            ? NetworkImage(participant['user']['picture']!)
+                            : null,
+                        backgroundColor: participant['user']['picture'] == null
+                            ? Colors.grey
+                            : Colors.transparent,
+                        child: participant['user']['picture'] == null
+                            ? Text(
+                                participant['user']['firstname']![0]
+                                    .toUpperCase(),
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 24),
+                              )
+                            : null,
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        participant['name']!,
+                        participant['user']['firstname']! +
+                            ' ' +
+                            participant['user']['lastname']!,
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,

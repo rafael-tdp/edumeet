@@ -67,3 +67,29 @@ func ParseUserDTO(user *ent.User) (*UserDTO, error) {
 
 	return userDTO, nil
 }
+
+func EntToUserDTO(user *ent.User) *UserDTO {
+	if user == nil {
+		return nil
+	}
+
+	var address string
+	if user.Lat != nil || user.Lng != nil {
+		address, _ = utils.GetAddress(*user.Lat, *user.Lng)
+	}
+
+	return &UserDTO{
+		ID:        user.ID,
+		Email:     user.Email,
+		Username:  user.Username,
+		Lastname:  user.Lastname,
+		Firstname: user.Firstname,
+		BirthDate: *user.BirthDate,
+		Bio:       user.Bio,
+		Picture:   user.Picture,
+		Activated: user.Activated,
+		ReportNum: user.ReportNumber,
+		Address:   address,
+		Role:      user.Role,
+	}
+}

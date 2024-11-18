@@ -79,10 +79,16 @@ func (er *EventRepository) GetRemoteEvent(eventID string) (*ent.RemoteEvent, err
 }
 
 func (er *EventRepository) GetEvent(eventID string) (*ent.Event, error) {
-	event, err := er.client.Event.
+	eventQuery := er.client.Event.
 		Query().
 		Where(event.ID(eventID)).
-		First(context.Background())
+		WithParticipants(func(pq *ent.ParticipantQuery) {
+			pq.WithUser()
+		}).
+		WithRemoteEvent().
+		WithPhysicalEvent()
+
+	event, err := eventQuery.First(context.Background())
 
 	if err != nil {
 		return nil, err

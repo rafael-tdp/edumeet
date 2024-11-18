@@ -1,19 +1,19 @@
+import 'package:client/core/models/event.dart';
 import 'package:flutter/material.dart';
+import 'package:client/core/services/event_services.dart';
 import 'package:client/components/event/event_header.dart';
 import 'package:client/components/event/participants_list.dart';
 import 'package:client/components/event/messages_preview.dart';
 import 'package:client/screens/event_chat_page.dart';
 import 'package:client/components/event/resources_section.dart';
 import 'package:client/components/event/event_details_section.dart';
-import 'package:client/fake_data.dart';
 
 class EventDetailsPage extends StatefulWidget {
-  final dynamic event = FakeData.eventDetails;
+  final String eventId;
 
-  EventDetailsPage({super.key});
+  EventDetailsPage({super.key, required this.eventId});
 
   @override
-  // ignore: library_private_types_in_public_api
   _EventDetailsPageState createState() => _EventDetailsPageState();
 }
 
@@ -25,10 +25,13 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(() {
-      setState(() {
-        _isAppBarExpanded = _scrollController.hasClients &&
-            _scrollController.offset > (400 - kToolbarHeight);
-      });
+      final isExpanded = _scrollController.hasClients &&
+          _scrollController.offset > (400 - kToolbarHeight);
+      if (_isAppBarExpanded != isExpanded) {
+        setState(() {
+          _isAppBarExpanded = isExpanded;
+        });
+      }
     });
   }
 
@@ -38,11 +41,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     super.dispose();
   }
 
-  void _navigateToChat(BuildContext context) {
+  void _navigateToChat(BuildContext context, dynamic event) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EventChatPage(event: widget.event),
+        builder: (context) => EventChatPage(event: event),
       ),
     );
   }
@@ -51,71 +54,83 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 400,
-            flexibleSpace: FlexibleSpaceBar(
-              background: EventHeader(
-                date: widget.event['date']!,
-                image: widget.event['image']!,
-                title: widget.event['title']!,
-                description: widget.event['description']!,
-                participantsCount: widget.event['participants'].length,
+      body: FutureBuilder<Event>(
+        future: EventServices.getEventDetails(widget.eventId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text("Event not found"));
+          }
+
+          final event = snapshot.data;
+
+          return CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverAppBar(
+                expandedHeight: 400,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: EventHeader(
+                    date: event!.startDate,
+                    image: event.image,
+                    title: event.title,
+                    description: event.description,
+                    participantsCount: event.participantsCount,
+                  ),
+                ),
+                pinned: true,
+                backgroundColor: Colors.white,
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: _isAppBarExpanded ? Colors.black : Colors.white,
+                    weight: 30,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
               ),
-            ),
-            pinned: true,
-            backgroundColor: Colors.white,
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: _isAppBarExpanded ? Colors.black : Colors.white,
-                weight: 30,
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    EventDetailsSection(
+                      eventDate: event.startDate,
+                      address: event.physicalEvent?['location'],
+                      link: event.remoteEvent?['url'],
+                    ),
+                    const SizedBox(height: 20),
+                    AnimatedOpacity(
+                      opacity: 1.0,
+                      duration: const Duration(milliseconds: 500),
+                      child: ParticipantsList(
+                          participants: event.participants ?? const []),
+                    ),
+                    const SizedBox(height: 20),
+                    AnimatedOpacity(
+                      opacity: 1.0,
+                      duration: const Duration(milliseconds: 500),
+                      child: MessagesPreview(
+                        messages: const [],
+                        onSeeAllMessages: () => _navigateToChat(context, event),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const ResourcesSection(
+                      resources: [],
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 20),
-                EventDetailsSection(
-                  eventDate: widget.event['date']!,
-                  address: widget.event['physical_event'] == null
-                      ? null
-                      : widget.event['physical_event']['address'],
-                  link: widget.event['remote_event'] == null
-                      ? null
-                      : widget.event['remote_event']['link'],
-                ),
-                const SizedBox(height: 20),
-                AnimatedOpacity(
-                  opacity: 1.0,
-                  duration: const Duration(milliseconds: 500),
-                  child: ParticipantsList(
-                      participants: widget.event['participants']),
-                ),
-                const SizedBox(height: 20),
-                AnimatedOpacity(
-                  opacity: 1.0,
-                  duration: const Duration(milliseconds: 500),
-                  child: MessagesPreview(
-                      messages: widget.event['last_messages'],
-                      onSeeAllMessages: () => _navigateToChat(context)),
-                ),
-                const SizedBox(height: 20),
-                ResourcesSection(
-                  resources: widget.event['event_documents'],
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }

@@ -12,7 +12,7 @@ class EventsPage extends StatefulWidget {
 }
 
 class _EventsPageState extends State<EventsPage> {
-  void _openEventPage(Event event) {
+  void _openEventPage(String eventId) {
     Navigator.of(context).push(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 150),
@@ -23,7 +23,7 @@ class _EventsPageState extends State<EventsPage> {
               begin: const Offset(1.0, 0.0),
               end: Offset.zero,
             ).animate(animation),
-            child: EventDetailsPage(),
+            child: EventDetailsPage(eventId: eventId),
           );
         },
       ),
@@ -58,7 +58,7 @@ class _EventsPageState extends State<EventsPage> {
                     itemBuilder: (context, index) {
                       final event = events[index];
                       return GestureDetector(
-                        onTap: () => _openEventPage(event),
+                        onTap: () => _openEventPage(event.id),
                         child: EventCard(
                           title: event.title,
                           date: event.startDate,

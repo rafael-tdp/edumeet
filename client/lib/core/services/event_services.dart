@@ -43,7 +43,7 @@ class EventServices {
       }
 
       final response = await http.get(
-        Uri.parse('${Env.BACKEND_URL}/api/events/current'),
+        Uri.parse('${Env.BACKEND_URL}/api/events/user/current'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -54,6 +54,29 @@ class EventServices {
     } catch (error) {
       log('An error occurred while retrieving recipes', error: error);
       return [];
+    }
+  }
+
+  static Future<Event> getEventDetails(String eventId) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      final response = await http.get(
+        Uri.parse('${Env.BACKEND_URL}/api/event/$eventId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      final event = jsonDecode(response.body);
+      return Event.fromJson(event);
+    } catch (error) {
+      log('An error occurred while retrieving event details', error: error);
+      rethrow;
     }
   }
 }

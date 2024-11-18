@@ -210,3 +210,37 @@ func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO,
 
 	return eventsWithType, nil
 }
+
+func (es *EventService) GetEvent(eventID string) (dtos.EventWithDetailsDTO, error) {
+	event, err := es.eventRepository.GetEvent(eventID)
+	if err != nil {
+		return dtos.EventWithDetailsDTO{}, err
+	}
+
+	participants, err := es.participantRepository.GetParticipantsByEvent(eventID)
+	if err != nil {
+		return dtos.EventWithDetailsDTO{}, err
+	}
+
+	eventDetails := dtos.EventWithDetailsDTO{
+		ID:                event.ID,
+		NbMaxUser:         event.NbMaxUser,
+		StartDate:         event.StartDate,
+		EndDate:           event.EndDate,
+		IsPrivate:         event.IsPrivate,
+		Title:             event.Title,
+		Description:       event.Description,
+		InvitationLink:    event.InvitationLink,
+		Image:             event.Image,
+		Participants:      dtos.ConvertParticipantsWithUser(participants),
+		ParticipantsCount: len(participants),
+	}
+
+	if event.Edges.RemoteEvent != nil {
+		eventDetails.RemoteEventDTO = dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent, event)
+	} else {
+		eventDetails.PhysicalEventDTO = dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent, event)
+	}
+
+	return eventDetails, nil
+}
