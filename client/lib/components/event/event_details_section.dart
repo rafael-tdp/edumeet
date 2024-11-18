@@ -1,6 +1,8 @@
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
+import 'package:url_launcher/url_launcher.dart';
 
 class EventDetailsSection extends StatelessWidget {
   final String eventDate;
@@ -57,19 +59,30 @@ class EventDetailsSection extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             if (address != null) ...[
-              Row(
-                children: [
-                  const Icon(Icons.location_on,
-                      color: AppColors.purple, size: 24),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      address!,
-                      style:
-                          const TextStyle(fontSize: 16, color: Colors.black87),
+              GestureDetector(
+                onTap: () {
+                  if (address != null) {
+                    Clipboard.setData(ClipboardData(text: address!));
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Adresse copiée dans le presse-papier')),
+                  );
+                },
+                child: Row(
+                  children: [
+                    const Icon(Icons.location_on,
+                        color: AppColors.purple, size: 24),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        address!,
+                        style: const TextStyle(
+                            fontSize: 16, color: Colors.black87),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ] else if (link != null) ...[
               if (_isEventPassed(parsedDate)) ...[
@@ -78,15 +91,21 @@ class EventDetailsSection extends StatelessWidget {
                     const Icon(Icons.link, color: Colors.blue, size: 24),
                     const SizedBox(width: 8),
                     GestureDetector(
-                      onTap: () {
-                        // todo: Open the link
+                      onTap: () async {
+                        final Uri url = Uri.parse(link!);
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url);
+                        } else {
+                          print('Impossible d\'ouvrir le lien');
+                        }
                       },
-                      child: Text(
-                        link!,
-                        style: const TextStyle(
+                      child: const Text(
+                        "Rejoindre l'évènement",
+                        style: TextStyle(
                           fontSize: 16,
                           color: Colors.blue,
                           decoration: TextDecoration.underline,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),

@@ -24,5 +24,4 @@ func initEventController(client *ent.Client) *controllers.EventController {
 	eventService := services.NewEventService(eventRepository, participantRepository)
 	emailService := services.NewEmailService()
 	return controllers.NewEventController(eventService, emailService)
-
 }

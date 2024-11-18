@@ -170,3 +170,26 @@ func (ec *EventController) GetAllEvents(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(events)
 }
+
+func (ec *EventController) GetCurrentUserEvents(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+
+	events, err := ec.eventservice.GetEventsByUser(currentUser.ID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(events)
+}
+
+func (ec *EventController) GetEvent(c *fiber.Ctx) error {
+	eventID, err := ulid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	event, err := ec.eventservice.GetEvent(eventID.String())
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(event)
+}

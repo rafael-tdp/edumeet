@@ -4,6 +4,7 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/repositories"
+	"log"
 )
 
 type EventService struct {
@@ -104,41 +105,123 @@ func (es *EventService) UpdateEvent(ctx context.Context, event dtos.EventDTO, ev
 	return dtos.EntToEventDTO(eventCreatedWithEdge), nil
 }
 
-func (es *EventService) GetAllEvents() ([]dtos.EventDTO, error) {
+func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
 	events, err := es.eventRepository.GetEvents()
 	if err != nil {
 		return nil, err
 	}
 
-	var eventsWithType []dtos.EventDTO
+	var eventsWithType []dtos.EventWithTypeDTO
 
 	for _, event := range events {
 		if event.Edges.RemoteEvent != nil {
-			eventsWithType = append(eventsWithType, dtos.EventDTO{
-				ID:             event.ID,
-				NbMaxUser:      event.NbMaxUser,
-				StartDate:      event.StartDate,
-				EndDate:        event.EndDate,
-				IsPrivate:      event.IsPrivate,
-				Title:          event.Title,
-				Description:    event.Description,
-				InvitationLink: event.InvitationLink,
-				RemoteEventDTO: dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent),
+			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
+				ID:                event.ID,
+				NbMaxUser:         event.NbMaxUser,
+				StartDate:         event.StartDate,
+				EndDate:           event.EndDate,
+				IsPrivate:         event.IsPrivate,
+				Title:             event.Title,
+				Description:       event.Description,
+				InvitationLink:    event.InvitationLink,
+				Image:             event.Image,
+				RemoteEventDTO:    dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent),
+				ParticipantsCount: len(event.Edges.Participants),
 			})
 		} else {
-			eventsWithType = append(eventsWithType, dtos.EventDTO{
-				ID:               event.ID,
-				NbMaxUser:        event.NbMaxUser,
-				StartDate:        event.StartDate,
-				EndDate:          event.EndDate,
-				IsPrivate:        event.IsPrivate,
-				Title:            event.Title,
-				Description:      event.Description,
-				InvitationLink:   event.InvitationLink,
-				PhysicalEventDTO: dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent),
+			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
+				ID:                event.ID,
+				NbMaxUser:         event.NbMaxUser,
+				StartDate:         event.StartDate,
+				EndDate:           event.EndDate,
+				IsPrivate:         event.IsPrivate,
+				Title:             event.Title,
+				Description:       event.Description,
+				InvitationLink:    event.InvitationLink,
+				Image:             event.Image,
+				PhysicalEventDTO:  dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent),
+				ParticipantsCount: len(event.Edges.Participants),
 			})
 		}
 	}
 
 	return eventsWithType, nil
+}
+
+func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO, error) {
+	events, err := es.eventRepository.GetEventsByUser(userID)
+	if err != nil {
+		return nil, err
+	}
+	log.Println(events)
+
+	var eventsWithType []dtos.EventWithTypeDTO
+
+	for _, event := range events {
+		if event.Edges.RemoteEvent != nil {
+			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
+				ID:                event.ID,
+				NbMaxUser:         event.NbMaxUser,
+				StartDate:         event.StartDate,
+				EndDate:           event.EndDate,
+				IsPrivate:         event.IsPrivate,
+				Title:             event.Title,
+				Description:       event.Description,
+				InvitationLink:    event.InvitationLink,
+				Image:             event.Image,
+				RemoteEventDTO:    dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent),
+				ParticipantsCount: len(event.Edges.Participants),
+			})
+		} else {
+			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
+				ID:                event.ID,
+				NbMaxUser:         event.NbMaxUser,
+				StartDate:         event.StartDate,
+				EndDate:           event.EndDate,
+				IsPrivate:         event.IsPrivate,
+				Title:             event.Title,
+				Description:       event.Description,
+				InvitationLink:    event.InvitationLink,
+				Image:             event.Image,
+				PhysicalEventDTO:  dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent),
+				ParticipantsCount: len(event.Edges.Participants),
+			})
+		}
+	}
+
+	return eventsWithType, nil
+}
+
+func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetailsDTO, error) {
+	event, err := es.eventRepository.GetEvent(eventID)
+	if err != nil {
+		return dtos.EventWithDetailsDTO{}, err
+	}
+
+	participants, err := es.participantRepository.GetParticipantsByEvent(eventID)
+	if err != nil {
+		return dtos.EventWithDetailsDTO{}, err
+	}
+
+	eventDetails := dtos.EventWithDetailsDTO{
+		ID:                event.ID,
+		NbMaxUser:         event.NbMaxUser,
+		StartDate:         event.StartDate,
+		EndDate:           event.EndDate,
+		IsPrivate:         event.IsPrivate,
+		Title:             event.Title,
+		Description:       event.Description,
+		InvitationLink:    event.InvitationLink,
+		Image:             event.Image,
+		Participants:      dtos.ConvertParticipantsWithUser(participants),
+		ParticipantsCount: len(participants),
+	}
+
+	if event.Edges.RemoteEvent != nil {
+		eventDetails.RemoteEventDTO = dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent)
+	} else {
+		eventDetails.PhysicalEventDTO = dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent)
+	}
+
+	return eventDetails, nil
 }

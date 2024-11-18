@@ -10,6 +10,10 @@ type PhysicalEventDTO struct {
 }
 
 func EntToPhysicalEventDTO(physicalEvent *ent.PhysicalEvent) *PhysicalEventDTO {
+	if physicalEvent == nil {
+		return nil
+	}
+
 	return &PhysicalEventDTO{
 		ID:       physicalEvent.ID,
 		Location: physicalEvent.Location,
