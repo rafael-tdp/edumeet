@@ -4,7 +4,6 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/repositories"
-	"log"
 )
 
 type EventService struct {
@@ -153,7 +152,6 @@ func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO,
 	if err != nil {
 		return nil, err
 	}
-	log.Println(events)
 
 	var eventsWithType []dtos.EventWithTypeDTO
 

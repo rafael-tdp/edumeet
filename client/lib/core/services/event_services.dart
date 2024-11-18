@@ -43,7 +43,7 @@ class EventServices {
       }
 
       final response = await http.get(
-        Uri.parse('${Env.BACKEND_URL}/api/events/user/current'),
+        Uri.parse('${Env.BACKEND_URL}/api/events/users/current'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -66,7 +66,7 @@ class EventServices {
       }
 
       final response = await http.get(
-        Uri.parse('${Env.BACKEND_URL}/api/event/$eventId'),
+        Uri.parse('${Env.BACKEND_URL}/api/events/$eventId/details'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
