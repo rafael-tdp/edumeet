@@ -4,8 +4,9 @@ import (
 	"edumeet/routes"
 	"flag"
 	"fmt"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"log"
+
+	"github.com/gofiber/fiber/v2/middleware/cors"
 
 	_ "edumeet/ent/runtime"
 
@@ -22,6 +23,7 @@ func main() {
 
 	// Vérifier le mode sélectionné et appeler les fonctions appropriées
 	if *mode == "migrate" {
+		drop()
 		migrate()
 	} else if *mode == "fixture" {
 		migrateFixture()
