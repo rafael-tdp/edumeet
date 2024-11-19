@@ -35,4 +35,8 @@ func InitRoutes(app *fiber.App) {
 	//Initialiser les routes participant
 	participantController := initParticipantController(client)
 	setupRoutesParticipant(app, participantController)
+
+	//Initialiser les routes document
+	documentController := initDocumentController(client)
+	setupRoutesDocument(app, documentController)
 }

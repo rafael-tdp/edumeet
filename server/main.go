@@ -29,7 +29,9 @@ func main() {
 		migrateFixture()
 	} else {
 		// Initialiser une nouvelle application Fiber
-		app := fiber.New()
+		app := fiber.New(fiber.Config{
+			BodyLimit: 25 * 1024 * 1024,
+		})
 
 		app.Use(cors.New())
 

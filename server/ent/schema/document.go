@@ -13,15 +13,18 @@ type Document struct {
 	ent.Schema
 }
 
+func (Document) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		trait.Blamable{},
+	}
+}
+
 func (Document) Fields() []ent.Field {
 	ulid := utils.ULID{}
-	return append(
-		trait.Blamable{}.Fields(),
-		[]ent.Field{
-			field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
-			field.String("path"),
-		}...,
-	)
+	return []ent.Field{
+		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
+		field.String("path"),
+	}
 }
 
 func (Document) Edges() []ent.Edge {

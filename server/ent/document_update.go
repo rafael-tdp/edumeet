@@ -183,7 +183,9 @@ func (du *DocumentUpdate) RemoveMessage(m ...*Message) *DocumentUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (du *DocumentUpdate) Save(ctx context.Context) (int, error) {
-	du.defaults()
+	if err := du.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, du.sqlSave, du.mutation, du.hooks)
 }
 
@@ -210,11 +212,15 @@ func (du *DocumentUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (du *DocumentUpdate) defaults() {
+func (du *DocumentUpdate) defaults() error {
 	if _, ok := du.mutation.UpdatedAt(); !ok {
+		if document.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized document.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := document.UpdateDefaultUpdatedAt()
 		du.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 func (du *DocumentUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -523,7 +529,9 @@ func (duo *DocumentUpdateOne) Select(field string, fields ...string) *DocumentUp
 
 // Save executes the query and returns the updated Document entity.
 func (duo *DocumentUpdateOne) Save(ctx context.Context) (*Document, error) {
-	duo.defaults()
+	if err := duo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, duo.sqlSave, duo.mutation, duo.hooks)
 }
 
@@ -550,11 +558,15 @@ func (duo *DocumentUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (duo *DocumentUpdateOne) defaults() {
+func (duo *DocumentUpdateOne) defaults() error {
 	if _, ok := duo.mutation.UpdatedAt(); !ok {
+		if document.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized document.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := document.UpdateDefaultUpdatedAt()
 		duo.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 func (duo *DocumentUpdateOne) sqlSave(ctx context.Context) (_node *Document, err error) {
