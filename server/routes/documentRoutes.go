@@ -20,6 +20,7 @@ func setupRoutesDocument(app *fiber.App, documentController *controllers.Documen
 func initDocumentController(client *ent.Client) *controllers.DocumentController {
 
 	documentRepo := repositories.NewDocumentRepository(client)
-	documentService := services.NewDocumentService(documentRepo)
+	eventRepo := repositories.NewEventRepository(client)
+	documentService := services.NewDocumentService(documentRepo, eventRepo)
 	return controllers.NewDocumentController(documentService)
 }

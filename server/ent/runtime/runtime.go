@@ -43,20 +43,25 @@ func init() {
 	badgeDescID := badgeFields[0].Descriptor()
 	// badge.DefaultID holds the default value on creation for the id field.
 	badge.DefaultID = badgeDescID.Default.(func() string)
+	documentMixin := schema.Document{}.Mixin()
+	documentMixinHooks0 := documentMixin[0].Hooks()
+	document.Hooks[0] = documentMixinHooks0[0]
+	documentMixinFields0 := documentMixin[0].Fields()
+	_ = documentMixinFields0
 	documentFields := schema.Document{}.Fields()
 	_ = documentFields
 	// documentDescCreatedAt is the schema descriptor for created_at field.
-	documentDescCreatedAt := documentFields[0].Descriptor()
+	documentDescCreatedAt := documentMixinFields0[0].Descriptor()
 	// document.DefaultCreatedAt holds the default value on creation for the created_at field.
 	document.DefaultCreatedAt = documentDescCreatedAt.Default.(func() time.Time)
 	// documentDescUpdatedAt is the schema descriptor for updated_at field.
-	documentDescUpdatedAt := documentFields[1].Descriptor()
+	documentDescUpdatedAt := documentMixinFields0[1].Descriptor()
 	// document.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	document.DefaultUpdatedAt = documentDescUpdatedAt.Default.(func() time.Time)
 	// document.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	document.UpdateDefaultUpdatedAt = documentDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// documentDescID is the schema descriptor for id field.
-	documentDescID := documentFields[4].Descriptor()
+	documentDescID := documentFields[0].Descriptor()
 	// document.DefaultID holds the default value on creation for the id field.
 	document.DefaultID = documentDescID.Default.(func() string)
 	eventMixin := schema.Event{}.Mixin()

@@ -135,7 +135,9 @@ func (dc *DocumentCreate) Mutation() *DocumentMutation {
 
 // Save creates the Document in the database.
 func (dc *DocumentCreate) Save(ctx context.Context) (*Document, error) {
-	dc.defaults()
+	if err := dc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, dc.sqlSave, dc.mutation, dc.hooks)
 }
 
@@ -162,19 +164,29 @@ func (dc *DocumentCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (dc *DocumentCreate) defaults() {
+func (dc *DocumentCreate) defaults() error {
 	if _, ok := dc.mutation.CreatedAt(); !ok {
+		if document.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized document.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := document.DefaultCreatedAt()
 		dc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := dc.mutation.UpdatedAt(); !ok {
+		if document.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized document.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := document.DefaultUpdatedAt()
 		dc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := dc.mutation.ID(); !ok {
+		if document.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized document.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := document.DefaultID()
 		dc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

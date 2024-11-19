@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"edumeet/dtos"
 	"edumeet/repositories"
 	"edumeet/utils"
@@ -11,11 +12,13 @@ import (
 
 type DocumentService struct {
 	documentRepo *repositories.DocumentRepository
+	eventRepo    *repositories.EventRepository
 }
 
-func NewDocumentService(documentRepo *repositories.DocumentRepository) *DocumentService {
+func NewDocumentService(documentRepo *repositories.DocumentRepository, eventRepo *repositories.EventRepository) *DocumentService {
 	return &DocumentService{
 		documentRepo: documentRepo,
+		eventRepo:    eventRepo,
 	}
 }
 
@@ -54,7 +57,18 @@ func (r *DocumentService) DeleteDocument(documentID string) error {
 	return nil
 }
 
-func (r *DocumentService) CreateDocument(documentDTO dtos.DocumentDTO) (dtos.DocumentDTO, error) {
+func (r *DocumentService) CreateDocument(ctx context.Context, documentDTO dtos.DocumentDTO) (dtos.DocumentDTO, error) {
+	if documentDTO.EventID != "" {
+		_, err := r.eventRepo.GetEvent(documentDTO.EventID)
+		if err != nil {
+			return dtos.DocumentDTO{}, err
+		}
+	} //else if documentDTO.MessageID != "" {
+	// 	_, err = r.messageRepo.GetMessageById(documentDTO.MessageID)
+	// 	if err != nil {
+	// 		return dtos.DocumentDTO{}, err
+	// 	}
+	// }
 	uploadDir := "documentUpload/"
 	fileName := documentDTO.File.Filename
 	ulid := utils.ULID{}
@@ -80,7 +94,13 @@ func (r *DocumentService) CreateDocument(documentDTO dtos.DocumentDTO) (dtos.Doc
 
 	documentDTO.Path = filePath
 
-	err = r.documentRepo.CreateDocument(documentDTO)
+	documentCreated, err := r.documentRepo.CreateDocument(ctx, documentDTO)
+
+	if err != nil {
+		return dtos.DocumentDTO{}, err
+	}
+
+	documentDTO = dtos.DocumentEntToDTO(documentCreated)
 
 	return documentDTO, nil
 }

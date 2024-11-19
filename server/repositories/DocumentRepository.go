@@ -43,12 +43,27 @@ func (r *DocumentRepository) DeleteDocument(documentID string) error {
 	return nil
 }
 
-func (r *DocumentRepository) CreateDocument(documentDTO dtos.DocumentDTO) error {
+func (r *DocumentRepository) CreateDocument(ctx context.Context, documentDTO dtos.DocumentDTO) (*ent.Document, error) {
 
-	_, err := r.client.Document.Create().SetPath(documentDTO.Path).Save(context.Background())
+	documentCreated, err := r.client.Document.Create().SetPath(documentDTO.Path).Save(ctx)
 	if err != nil {
-		return errors.New("error creating document")
+		return nil, errors.New("error creating document")
 	}
 
-	return nil
+	if documentDTO.EventID != "" {
+		_, err = r.client.EventDocument.Create().SetDocumentID(documentCreated.ID).SetEventID(documentDTO.EventID).SetType(documentDTO.Type).Save(ctx)
+		if err != nil {
+			return nil, errors.New("error adding document to event")
+		}
+
+	} else if documentDTO.MessageID != "" {
+		_, err := documentCreated.Update().AddEventDocumentIDs(documentDTO.MessageID).Save(ctx)
+		if err != nil {
+			return nil, errors.New("error adding message to document")
+		}
+	}
+
+	document := r.client.Document.Query().Where(document.IDEQ(documentCreated.ID)).WithEventDocuments().WithMessage().OnlyX(ctx)
+
+	return document, nil
 }
