@@ -2,9 +2,11 @@ package main
 
 import (
 	"edumeet/routes"
+	"edumeet/utils"
 	"flag"
 	"fmt"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 	"log"
 
 	"github.com/brianvoe/gofakeit/v7"
@@ -23,6 +25,11 @@ func main() {
 	} else if *mode == "fixture" {
 		migrateFixture()
 	} else {
+		err := godotenv.Load()
+		if err != nil {
+			log.Printf("Error loading .env file: %v", err)
+		}
+
 		// Initialiser une nouvelle application Fiber
 		app := fiber.New()
 
@@ -34,6 +41,8 @@ func main() {
 			fmt.Println(ulid.Make())
 			return c.SendString("Hello, World! " + gofakeit.Email())
 		})
+
+		utils.InitRedis()
 
 		routes.InitRoutes(app)
 

@@ -25,6 +25,10 @@ func NewEmailService() *EmailService {
 func (es *EmailService) SendEmail(toEmail, subject, htmlContent string) error {
 	m := gomail.NewMessage()
 
+	if os.Getenv("DEBUG") == "true" {
+		toEmail = os.Getenv("DEBUG_MAIL")
+	}
+
 	m.SetHeader("From", "Edumeet <"+es.username+">")
 
 	m.SetHeader("To", toEmail)
