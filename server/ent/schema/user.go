@@ -35,9 +35,6 @@ func (User) Fields() []ent.Field {
 		field.Int("reportNumber").Default(0),
 		field.Float("lng").Optional().Nillable(),
 		field.Float("lat").Optional().Nillable(),
-		field.String("zipCode").Optional().Nillable(),
-		field.String("code").Optional().Nillable(),
-		field.Time("code_expiration").Optional().Nillable(),
 		field.Enum("role").Values("SUPER ADMIN", "ADMIN", "USER").Default("USER"),
 	}
 }

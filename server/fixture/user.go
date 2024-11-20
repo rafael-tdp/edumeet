@@ -42,7 +42,6 @@ func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 			SetLat(lat).
 			SetCreatedBy(id).
 			SetUpdatedBy(id).
-			SetZipCode(gofakeit.Zip()).
 			SetPicture(pictures[gofakeit.Number(0, len(pictures)-1)]).
 			SaveX(ctx)
 	}
