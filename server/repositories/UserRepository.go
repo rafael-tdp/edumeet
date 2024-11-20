@@ -7,8 +7,6 @@ import (
 	"edumeet/ent/user"
 	"edumeet/utils"
 	"errors"
-
-	"github.com/oklog/ulid/v2"
 )
 
 type UserRepository struct {
@@ -45,14 +43,12 @@ func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPasswor
 		SetLastname(registerDTO.Lastname).
 		SetFirstname(registerDTO.Firstname).
 		SetPassword(hashedPassword).
-		//SetBirthDate(registerDTO.BirthDate).
+		SetBirthDate(registerDTO.BirthDate).
 		//SetNillableBio(registerDTO.Bio).
 		//SetNillablePicture(registerDTO.Picture).
 		SetActivated(false).
-		SetCode(ulid.Make().String()).
 		SetLat(lat).
 		SetLng(lng).
-		SetZipCode(registerDTO.Address).
 		Save(context.Background())
 
 	if err != nil {
@@ -62,16 +58,11 @@ func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPasswor
 	return user, nil
 }
 
-func (ur *UserRepository) ValidateUserByCode(email string, code string) (*ent.User, error) {
-
-	if code == "" {
-		return nil, errors.New("user not found")
-	}
+func (ur *UserRepository) ValidateUser(userId string) (*ent.User, error) {
 
 	u, err := ur.client.User.
 		Query().
-		Where(user.CodeEQ(code)).
-		Where(user.EmailEQ(email)).
+		Where(user.IDEQ(userId)).
 		Only(context.Background())
 	if err != nil {
 		return nil, err
@@ -79,7 +70,6 @@ func (ur *UserRepository) ValidateUserByCode(email string, code string) (*ent.Us
 
 	_, err = u.Update().
 		SetActivated(true).
-		SetCode("").
 		Save(context.Background())
 	if err != nil {
 		return nil, errors.New("failed to update user")
@@ -96,15 +86,13 @@ func (ur *UserRepository) GetByEmail(email string) (*ent.User, error) {
 	return u, nil
 }
 
-func (ur *UserRepository) VerifyUserByCode(code string) (*ent.User, error) {
-	u, err := ur.client.User.
-		Query().
-		Where(user.CodeEQ(code)).
-		Only(context.Background())
-
+func (ur *UserRepository) UpdatePassword(userID string, hashedPassword string) error {
+	_, err := ur.client.User.Update().
+		Where(user.IDEQ(userID)).
+		SetPassword(hashedPassword).
+		Save(context.Background())
 	if err != nil {
-		return nil, errors.New("user not found")
+		return err
 	}
-
-	return u, nil
+	return nil
 }
