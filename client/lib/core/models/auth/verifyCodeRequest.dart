@@ -1,8 +1,8 @@
-class VerifyCodeRequest {
+class ValidateAccountRequest {
   final String email;
   final String code;
 
-  VerifyCodeRequest({
+  ValidateAccountRequest({
     required this.email,
     required this.code,
   });
