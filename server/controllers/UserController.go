@@ -6,10 +6,13 @@ import (
 	"edumeet/ent"
 	"edumeet/services"
 	"edumeet/utils"
+	customValidator "edumeet/validator"
 	"fmt"
 	"html/template"
 	"log"
 	"os"
+
+	"github.com/go-playground/validator/v10"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/oklog/ulid/v2"
@@ -263,13 +266,31 @@ func (uc *UserController) Verify(c *fiber.Ctx) error {
 }
 
 func (uc *UserController) ResetPassword(c *fiber.Ctx) error {
+	code := c.Params("code")
+	if code == "" || len(code) == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid code"})
+	}
+
+	fmt.Printf("Code %v \n", code)
+
 	var requestBody dtos.ResetPasswordDTO
 
 	if err := c.BodyParser(&requestBody); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	err := uc.userService.ResetPassword(requestBody)
+	validations := validator.New()
+	validations.RegisterValidation("strongPassword", customValidator.StrongPassword)
+	err := validations.Struct(requestBody)
+	if err != nil {
+		errors := make([]string, 0)
+		for _, err := range err.(validator.ValidationErrors) {
+			errors = append(errors, err.Error())
+		}
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
+	}
+
+	err = uc.userService.ResetPassword(requestBody)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "An error occurred"})
 	}

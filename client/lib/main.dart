@@ -1,10 +1,8 @@
-import 'package:client/screens/edit_profil_page.dart';
+import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/register_screen.dart';
-import 'package:client/screens/reset_password_screen.dart';
-import 'package:client/screens/valide_account_screen.dart';
 import 'package:client/screens/welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/swipe_cards_screen.dart';
@@ -23,20 +21,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
-        '/': (context) => const WelcomeScreen(),
+        '/': (context) => const RegisterPage(),
         LoginPage.routeName: (context) => const LoginPage(),
         RegisterPage.routeName: (context) => const RegisterPage(),
         HomePage.routeName: (context) => const HomePage(),
         ForgotPasswordPage.routeName: (context) => const ForgotPasswordPage(),
       },
       onGenerateRoute: (routeSettings) {
-          switch(routeSettings.name) {
-            case EditProfilePage.routeName:
-              return MaterialPageRoute(
-                builder: (context) => EditProfilePage(user: routeSettings.arguments as Map<String, dynamic>)
-              );
-          }
-          return null;
+        switch (routeSettings.name) {
+          case EditProfilePage.routeName:
+            return MaterialPageRoute(
+              builder: (context) => EditProfilePage(user: routeSettings.arguments as Map<String, dynamic>),
+            );
+        }
+        return null;
       },
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -44,7 +42,7 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('fr')
+        Locale('fr'),
       ],
     );
   }

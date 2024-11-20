@@ -141,9 +141,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case user.FieldReportNumber:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldEmail, user.FieldUsername, user.FieldLastname, user.FieldFirstname, user.FieldPassword, user.FieldBio, user.FieldPicture, user.FieldRole:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldEmail, user.FieldUsername, user.FieldLastname, user.FieldFirstname, user.FieldPassword, user.FieldBio, user.FieldPicture, user.FieldRole:
 			values[i] = new(sql.NullString)
-		case user.FieldBirthDate, user.FieldCreatedAt:
+		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldBirthDate:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)

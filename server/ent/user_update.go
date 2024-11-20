@@ -313,7 +313,6 @@ func (uu *UserUpdate) ClearLat() *UserUpdate {
 	return uu
 }
 
-
 // SetRole sets the "role" field.
 func (uu *UserUpdate) SetRole(u user.Role) *UserUpdate {
 	uu.mutation.SetRole(u)
