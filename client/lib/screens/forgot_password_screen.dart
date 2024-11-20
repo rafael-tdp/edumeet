@@ -1,12 +1,18 @@
 import 'package:client/core/models/response.dart';
-import 'package:client/screens/verify_code_screen.dart';
+import 'package:client/screens/valide_account_screen.dart';
 import 'package:flutter/material.dart';
-import '../core/models/auth/forgotPassword.dart';
+import '../core/exceptions/app_exception.dart';
+import '../core/models/auth/forgotPasswordRequest.dart';
 import '../core/services/auth_services.dart';
 import '../utils/colors.dart';
 import 'login_screen.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
+  static const String routeName = '/forgot-password';
+  static navigateTo(BuildContext context) {
+    Navigator.pushNamed(context, routeName);
+  }
+
   const ForgotPasswordPage({super.key});
 
   @override
@@ -14,6 +20,7 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  final AuthServices _authServices = AuthServices();
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
@@ -35,27 +42,20 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
     try {
       ForgotPasswordRequest forgotPasswordRequest = ForgotPasswordRequest(
-          email: _emailController.text)
-      ;
-      ResponseRequest response = await AuthServices.forgotPassword(forgotPasswordRequest);
+          email: _emailController.text
+      );
+      await _authServices.forgotPassword(forgotPasswordRequest);
 
-      if (response.success) {
-        // Show success message and navigate back to login
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Instructions de réinitialisation envoyées à votre e-mail')),
-        );
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => VerifyCodePage(isResetPassword: true, email: _emailController.text)),
-        );
-      } else {
-        setState(() {
-          _errorMessage = response.message;
-        });
-      }
-    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Instructions de réinitialisation envoyées à votre e-mail')),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ValidateAccountPage(isResetPassword: true, email: _emailController.text)),
+      );
+    } on AppException catch (error) {
       setState(() {
-        _errorMessage = error.toString();
+        _errorMessage = error.message;
       });
     } finally {
       setState(() {

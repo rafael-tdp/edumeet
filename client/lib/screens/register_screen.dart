@@ -1,7 +1,9 @@
 import 'package:client/core/models/response.dart';
-import 'package:client/screens/verify_code_screen.dart';
+import 'package:client/screens/valide_account_screen.dart';
 import 'package:flutter/material.dart';
-import '../core/models/auth/register.dart';
+import 'package:client/utils/date_utils.dart' as custom_date_utils;
+import '../core/models/auth/registerRequest.dart';
+import '../core/services/adresse_services.dart';
 import '../core/services/auth_services.dart';
 import '../utils/colors.dart';
 import '../widgets/password_condition_widget.dart';
@@ -9,15 +11,23 @@ import 'login_screen.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+  static const String routeName = '/register';
+  static navigateTo(BuildContext context) {
+    Navigator.pushNamed(context, routeName);
+  }
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final AuthServices _authServices = AuthServices();
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _zipCodeController = TextEditingController();
+  final _firstnameController = TextEditingController();
+  final _lastnameController = TextEditingController();
+  final _birthDateController = TextEditingController();
+  final _addressController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -32,7 +42,6 @@ class _RegisterPageState extends State<RegisterPage> {
   bool get _hasDigit => _passwordController.text.contains(RegExp(r'\d'));
   bool get _hasSpecialChar => _passwordController.text.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
   bool get _isPasswordMatch => _passwordController.text == _confirmPasswordController.text;
-  bool get _isZipCodeValid => _zipCodeController.text.length == 5 && int.tryParse(_zipCodeController.text) != null;
 
   @override
   void initState() {
@@ -46,6 +55,10 @@ class _RegisterPageState extends State<RegisterPage> {
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
+    _firstnameController.dispose();
+    _lastnameController.dispose();
+    _birthDateController.dispose();
+    _addressController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -69,13 +82,17 @@ class _RegisterPageState extends State<RegisterPage> {
         email: _emailController.text,
         password: _passwordController.text,
         username: _usernameController.text,
-        zipCode: _zipCodeController.text,
+        firstname: _firstnameController.text,
+        lastname: _lastnameController.text,
+        birthDate: custom_date_utils.DateUtils.stringToFomattedDateTime(_birthDateController.text),
+        address: _addressController.text,
       );
-      ResponseRequest response = await AuthServices.register(registerRequest);
+      ResponseRequest response = await _authServices.register(registerRequest);
       if (response.success) {
+        final userId = response.data["id"];
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => VerifyCodePage(isResetPassword: false, email: _emailController.text)),
+          MaterialPageRoute(builder: (context) => ValidateAccountPage(isResetPassword: false, email: registerRequest.email)),
         );
       } else {
         setState(() {
@@ -141,6 +158,55 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    controller: _firstnameController,
+                    decoration: InputDecoration(
+                      labelText: 'Prénom',
+                      hintText: 'Christiane',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      prefixIcon: const Icon(Icons.person),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer votre prénom';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _lastnameController,
+                    decoration: InputDecoration(
+                      labelText: 'Nom',
+                      hintText: 'Delmas',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      prefixIcon: const Icon(Icons.person),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Veuillez entrer votre nom';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _birthDateController,
+                    decoration: const InputDecoration(
+                      labelText: 'Date de naissance',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      prefixIcon: Icon(Icons.calendar_today),
+                    ),
+                    readOnly: true,
+                    onTap: () => custom_date_utils.DateUtils.selectDate(context, _birthDateController),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
@@ -162,25 +228,35 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _zipCodeController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Code postal',
-                      hintText: '75000',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      prefixIcon: const Icon(Icons.location_on),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre code postal';
+                  Autocomplete<String>(
+                    optionsBuilder: (TextEditingValue textEditingValue) {
+                      if (textEditingValue.text.isEmpty || textEditingValue.text.length < 5) {
+                        return const Iterable<String>.empty();
                       }
-                      if (!_isZipCodeValid) {
-                        return 'Veuillez entrer un code postal valide';
-                      }
-                      return null;
+                      return fetchAddressSuggestions(textEditingValue.text);
+                    },
+                    onSelected: (String selection) {
+                      _addressController.text = selection;
+                    },
+                    fieldViewBuilder: (BuildContext context, TextEditingController fieldTextEditingController, FocusNode fieldFocusNode, VoidCallback onFieldSubmitted) {
+                      return TextFormField(
+                        controller: fieldTextEditingController,
+                        focusNode: fieldFocusNode,
+                        decoration: InputDecoration(
+                          labelText: 'Adresse',
+                          hintText: '1 rue de Paris, 75000 Paris',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          prefixIcon: const Icon(Icons.location_on),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer une adresse valide';
+                          }
+                          return null;
+                        },
+                      );
                     },
                   ),
                   const SizedBox(height: 16),
