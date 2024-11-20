@@ -1,11 +1,17 @@
+import 'package:client/screens/edit_profil_page.dart';
+import 'package:client/screens/forgot_password_screen.dart';
+import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/register_screen.dart';
+import 'package:client/screens/reset_password_screen.dart';
+import 'package:client/screens/valide_account_screen.dart';
 import 'package:client/screens/welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
 import 'utils/colors.dart';
 import 'screens/conversations_screen.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,13 +19,41 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
+      routes: {
+        '/': (context) => const WelcomeScreen(),
+        LoginPage.routeName: (context) => const LoginPage(),
+        RegisterPage.routeName: (context) => const RegisterPage(),
+        HomePage.routeName: (context) => const HomePage(),
+        ForgotPasswordPage.routeName: (context) => const ForgotPasswordPage(),
+      },
+      onGenerateRoute: (routeSettings) {
+          switch(routeSettings.name) {
+            case EditProfilePage.routeName:
+              return MaterialPageRoute(
+                builder: (context) => EditProfilePage(user: routeSettings.arguments as Map<String, dynamic>)
+              );
+          }
+          return null;
+      },
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('fr')
+      ],
     );
   }
 }
 
 class HomePage extends StatefulWidget {
+  static const String routeName = '/home';
+  static navigateTo(BuildContext context) {
+    Navigator.pushNamed(context, routeName);
+  }
   const HomePage({super.key});
 
   @override

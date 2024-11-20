@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:client/core/services/auth_services.dart';
-import 'package:client/core/models/auth/login.dart';
+import 'package:client/core/models/auth/loginRequest.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:client/screens/forgot_password_screen.dart';
@@ -9,12 +9,17 @@ import '../utils/colors.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+  static const String routeName = '/login';
+  static navigateTo(BuildContext context) {
+    Navigator.pushNamed(context, routeName);
+  }
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final AuthServices _authServices = AuthServices();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -33,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      ResponseRequest response = await AuthServices.login(loginRequest);
+      ResponseRequest response = await _authServices.login(loginRequest);
       if (response.success) {
         Navigator.push(
           context,

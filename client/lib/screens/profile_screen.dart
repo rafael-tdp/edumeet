@@ -1,3 +1,4 @@
+import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
@@ -16,15 +17,16 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final AuthServices _authServices = AuthServices();
+  final UserServices _userServices = UserServices();
   Map<String, dynamic>? user;
 
   @override
   void initState() {
     super.initState();
-    AuthServices.getUserInfo().then((value) {
+    _userServices.getUserInfo().then((value) {
       setState(() {
         user = value;
-        debugPrint(user.toString());
       });
     });
   }
@@ -49,7 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 20),
               Text(
-                  "${(user?['firstname']?.isNotEmpty ?? false) && (user?['lastname']?.isNotEmpty ?? false) ? '${user?['firstname']?.substring(0, 1).toUpperCase()}${user?['firstname']?.substring(1)} ${user?['lastname']?.substring(0, 1).toUpperCase()}${user?['lastname']?.substring(1)} !' : 'Anonyme'}",                style: const TextStyle(
+                  (user?['firstname']?.isNotEmpty ?? false) && (user?['lastname']?.isNotEmpty ?? false) ? '${user?['firstname']?.substring(0, 1).toUpperCase()}${user?['firstname']?.substring(1)} ${user?['lastname']?.substring(0, 1).toUpperCase()}${user?['lastname']?.substring(1)} !' : 'Anonyme',                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
@@ -127,7 +129,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   ProfileButton(
                     text: 'Se déconnecter',
                     backgroundColor: Colors.redAccent,
-                    onPressed: () {
+                    onPressed: () async {
+                      await _authServices.logout();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const LoginPage()),

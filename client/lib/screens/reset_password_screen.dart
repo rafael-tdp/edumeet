@@ -1,4 +1,4 @@
-import 'package:client/core/models/auth/resetPassword.dart';
+import 'package:client/core/models/auth/resetPasswordRequest.dart';
 import 'package:flutter/material.dart';
 import '../core/services/auth_services.dart';
 import '../utils/colors.dart';
@@ -6,15 +6,17 @@ import '../widgets/password_condition_widget.dart';
 import 'login_screen.dart';
 
 class ResetPasswordPage extends StatefulWidget {
-  final String token;
+  final String code;
+  final String email;
 
-  const ResetPasswordPage({super.key, required this.token});
+  const ResetPasswordPage({super.key, required this.email, required this.code});
 
   @override
   _ResetPasswordPageState createState() => _ResetPasswordPageState();
 }
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
+  final AuthServices _authServices = AuthServices();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -49,11 +51,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
     try {
       ResetPasswordRequest resetPasswordRequest = ResetPasswordRequest(
-        plainPassword: _passwordController.text,
-        confirmPassword: _confirmPasswordController.text,
-        code: widget.token,
+        email: widget.email,
+        code: widget.code,
+        password: _passwordController.text,
       );
-      final response = await AuthServices.resetPassword(resetPasswordRequest);
+      final response = await _authServices.resetPassword(resetPasswordRequest);
       if (response.success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Mot de passe réinitialisé avec succès')),
