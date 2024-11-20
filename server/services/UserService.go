@@ -1,7 +1,6 @@
 package services
 
 import (
-	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/repositories"
@@ -9,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"time"
 )
 
 type UserService struct {
@@ -78,9 +76,28 @@ func (us *UserService) RegisterUser(registerDTO dtos.RegisterDTO) (*ent.User, er
 	return user, nil
 }
 
-func (us *UserService) ValidateUser(requestBody dtos.VerifyCodeDTO) (*ent.User, error) {
-	user, _ := us.userRepo.ValidateUserByCode(requestBody.Email, requestBody.Code)
-	return user, nil
+func (us *UserService) ValidateUser(requestBody dtos.ValidateUserDTO) (bool, error) {
+	user, err := us.userRepo.GetByEmail(requestBody.Email)
+	if err != nil {
+		return false, err
+	}
+
+	if user.Activated == false {
+		code := utils.GetValidationCodeFromRedis(user.ID)
+		if code != requestBody.Code {
+			return false, errors.New("invalid code")
+		} else {
+			_, err = us.userRepo.ValidateUser(user.ID)
+			if err != nil {
+				return false, err
+			}
+			utils.DeleteValidationCodeFromRedis(user.ID)
+		}
+	} else {
+		return false, errors.New("user already activated")
+	}
+
+	return true, nil
 }
 
 func (us *UserService) Login(requestBody dtos.LoginDTO) (string, error) {
@@ -108,77 +125,75 @@ func (us *UserService) Login(requestBody dtos.LoginDTO) (string, error) {
 	return jwtToken, nil
 }
 
-func (us *UserService) ForgotPassword(requestBody dtos.ForgotPasswordDTO) (*ent.User, error) {
+func (us *UserService) ForgotPassword(requestBody dtos.ForgotPasswordDTO) (*ent.User, string, error) {
 	user, err := us.userRepo.GetByEmail(requestBody.Email)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
-	ulidUtil := utils.ULID{}
-	code := ulidUtil.GenerateUlid()()
-
-	expirationTime := time.Now().Add(time.Minute * 30)
-
-	updatedUser, err := user.Update().
-		SetCode(code).
-		SetCodeExpiration(expirationTime).
-		Save(context.Background())
-
-	if err != nil {
-		return nil, err
+	if user.Activated == false {
+		return nil, "", errors.New("user not activated")
 	}
 
-	return updatedUser, nil
+	ulidUtils := utils.ULID{}
+	code := ulidUtils.GenerateUlid()()
+
+	utils.StoreValidationCodeInRedis(user.ID, code)
+
+	return user, code, nil
 }
 
-func (us *UserService) Verify(code string) (dtos.UserDTO, error) {
-	user, err := us.userRepo.VerifyUserByCode(code)
+func (us *UserService) Verify(requestBody dtos.VerifyCodeDTO) (dtos.UserDTO, error) {
+	user, err := us.userRepo.GetByEmail(requestBody.Email)
+	if err != nil {
+		return dtos.UserDTO{}, errors.New("user not found")
+	}
+
+	code := utils.GetValidationCodeFromRedis(user.ID)
+	if code != requestBody.Code {
+		return dtos.UserDTO{}, errors.New("invalid code")
+	}
+
+	user, err = us.userRepo.ValidateUser(user.ID)
 	if err != nil {
 		return dtos.UserDTO{}, err
 	}
 
-	address, err := utils.GetAddress(*user.Lat, *user.Lng)
-
-	userDTO := dtos.UserDTO{
-		ID:        user.ID,
-		Email:     user.Email,
-		Username:  user.Username,
-		Lastname:  user.Lastname,
-		Firstname: user.Firstname,
-		BirthDate: *user.BirthDate,
-		Bio:       user.Bio,
-		Picture:   user.Picture,
-		Activated: user.Activated,
-		ReportNum: user.ReportNumber,
-		Address:   address,
-		Role:      user.Role,
+	if user.Activated == false {
+		return dtos.UserDTO{}, errors.New("user not activated")
 	}
 
-	return userDTO, nil
+	userDTO, err := dtos.ParseUserDTO(user)
+	if err != nil {
+		return dtos.UserDTO{}, fmt.Errorf("error parsing user DTO: %w", err)
+	}
+
+	return *userDTO, nil
 }
 
-func (us *UserService) ResetPassword(code string, requestBody dtos.ResetPasswordDTO) error {
-	user, err := us.userRepo.VerifyUserByCode(code)
+func (us *UserService) ResetPassword(requestBody dtos.ResetPasswordDTO) error {
+	user, err := us.userRepo.GetByEmail(requestBody.Email)
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	if user.Activated == false {
+		return errors.New("user not activated")
+	}
+
+	code := utils.GetValidationCodeFromRedis(user.ID)
+	if code != requestBody.Code {
+		return errors.New("invalid code")
+	}
+
+	bcryptUtils := utils.Bcrypt{}
+	hashedPassword := bcryptUtils.HashPassword(requestBody.Password)
+
+	err = us.userRepo.UpdatePassword(user.ID, hashedPassword)
 	if err != nil {
 		return err
 	}
 
-	if user.CodeExpiration == nil || user.CodeExpiration.Before(time.Now()) {
-		return errors.New("code expired")
-	}
-
-	bcryptUtil := utils.Bcrypt{}
-	passwordHashed := bcryptUtil.HashPassword(requestBody.PlainPassword)
-
-	_, err = user.Update().
-		SetPassword(passwordHashed).
-		SetCode("").
-		SetCodeExpiration(time.Time{}).
-		Save(context.Background())
-
-	if err != nil {
-		return err
-	}
-
+	utils.DeleteValidationCodeFromRedis(user.ID)
 	return nil
 }
