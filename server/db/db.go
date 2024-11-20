@@ -5,8 +5,6 @@ import (
 	"log"
 	"os"
 	"sync"
-
-	"github.com/joho/godotenv"
 )
 
 var (
@@ -18,11 +16,6 @@ func OpenDBConnection() (*ent.Client, error) {
 	var err error
 
 	once.Do(func() {
-		err := godotenv.Load()
-		if err != nil {
-			log.Printf("Error loading .env file: %v", err)
-		}
-
 		dbURL := os.Getenv("DATABASE_URL")
 		if dbURL == "" {
 			log.Fatalf("DATABASE_URL is not set in the environment")
