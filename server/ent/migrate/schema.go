@@ -233,10 +233,7 @@ var (
 		{Name: "report_number", Type: field.TypeInt, Default: 0},
 		{Name: "lng", Type: field.TypeFloat64, Nullable: true},
 		{Name: "lat", Type: field.TypeFloat64, Nullable: true},
-		{Name: "zip_code", Type: field.TypeString, Nullable: true},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "code", Type: field.TypeString, Nullable: true},
-		{Name: "code_expiration", Type: field.TypeTime, Nullable: true},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"SUPER ADMIN", "ADMIN", "USER"}, Default: "USER"},
 	}
 	// UsersTable holds the schema information for the "users" table.

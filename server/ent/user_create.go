@@ -154,20 +154,6 @@ func (uc *UserCreate) SetNillableLat(f *float64) *UserCreate {
 	return uc
 }
 
-// SetZipCode sets the "zipCode" field.
-func (uc *UserCreate) SetZipCode(s string) *UserCreate {
-	uc.mutation.SetZipCode(s)
-	return uc
-}
-
-// SetNillableZipCode sets the "zipCode" field if the given value is not nil.
-func (uc *UserCreate) SetNillableZipCode(s *string) *UserCreate {
-	if s != nil {
-		uc.SetZipCode(*s)
-	}
-	return uc
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
 	uc.mutation.SetCreatedAt(t)
@@ -178,34 +164,6 @@ func (uc *UserCreate) SetCreatedAt(t time.Time) *UserCreate {
 func (uc *UserCreate) SetNillableCreatedAt(t *time.Time) *UserCreate {
 	if t != nil {
 		uc.SetCreatedAt(*t)
-	}
-	return uc
-}
-
-// SetCode sets the "code" field.
-func (uc *UserCreate) SetCode(s string) *UserCreate {
-	uc.mutation.SetCode(s)
-	return uc
-}
-
-// SetNillableCode sets the "code" field if the given value is not nil.
-func (uc *UserCreate) SetNillableCode(s *string) *UserCreate {
-	if s != nil {
-		uc.SetCode(*s)
-	}
-	return uc
-}
-
-// SetCodeExpiration sets the "code_expiration" field.
-func (uc *UserCreate) SetCodeExpiration(t time.Time) *UserCreate {
-	uc.mutation.SetCodeExpiration(t)
-	return uc
-}
-
-// SetNillableCodeExpiration sets the "code_expiration" field if the given value is not nil.
-func (uc *UserCreate) SetNillableCodeExpiration(t *time.Time) *UserCreate {
-	if t != nil {
-		uc.SetCodeExpiration(*t)
 	}
 	return uc
 }
@@ -502,21 +460,9 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldLat, field.TypeFloat64, value)
 		_node.Lat = &value
 	}
-	if value, ok := uc.mutation.ZipCode(); ok {
-		_spec.SetField(user.FieldZipCode, field.TypeString, value)
-		_node.ZipCode = &value
-	}
 	if value, ok := uc.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
-	}
-	if value, ok := uc.mutation.Code(); ok {
-		_spec.SetField(user.FieldCode, field.TypeString, value)
-		_node.Code = &value
-	}
-	if value, ok := uc.mutation.CodeExpiration(); ok {
-		_spec.SetField(user.FieldCodeExpiration, field.TypeTime, value)
-		_node.CodeExpiration = &value
 	}
 	if value, ok := uc.mutation.Role(); ok {
 		_spec.SetField(user.FieldRole, field.TypeEnum, value)

@@ -6079,10 +6079,7 @@ type UserMutation struct {
 	addlng              *float64
 	lat                 *float64
 	addlat              *float64
-	zipCode             *string
 	created_at          *time.Time
-	code                *string
-	code_expiration     *time.Time
 	role                *user.Role
 	clearedFields       map[string]struct{}
 	badges              map[string]struct{}
@@ -6771,55 +6768,6 @@ func (m *UserMutation) ResetLat() {
 	delete(m.clearedFields, user.FieldLat)
 }
 
-// SetZipCode sets the "zipCode" field.
-func (m *UserMutation) SetZipCode(s string) {
-	m.zipCode = &s
-}
-
-// ZipCode returns the value of the "zipCode" field in the mutation.
-func (m *UserMutation) ZipCode() (r string, exists bool) {
-	v := m.zipCode
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldZipCode returns the old "zipCode" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldZipCode(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldZipCode is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldZipCode requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldZipCode: %w", err)
-	}
-	return oldValue.ZipCode, nil
-}
-
-// ClearZipCode clears the value of the "zipCode" field.
-func (m *UserMutation) ClearZipCode() {
-	m.zipCode = nil
-	m.clearedFields[user.FieldZipCode] = struct{}{}
-}
-
-// ZipCodeCleared returns if the "zipCode" field was cleared in this mutation.
-func (m *UserMutation) ZipCodeCleared() bool {
-	_, ok := m.clearedFields[user.FieldZipCode]
-	return ok
-}
-
-// ResetZipCode resets all changes to the "zipCode" field.
-func (m *UserMutation) ResetZipCode() {
-	m.zipCode = nil
-	delete(m.clearedFields, user.FieldZipCode)
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (m *UserMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
@@ -6854,104 +6802,6 @@ func (m *UserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error
 // ResetCreatedAt resets all changes to the "created_at" field.
 func (m *UserMutation) ResetCreatedAt() {
 	m.created_at = nil
-}
-
-// SetCode sets the "code" field.
-func (m *UserMutation) SetCode(s string) {
-	m.code = &s
-}
-
-// Code returns the value of the "code" field in the mutation.
-func (m *UserMutation) Code() (r string, exists bool) {
-	v := m.code
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCode returns the old "code" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldCode(ctx context.Context) (v *string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCode is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCode requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCode: %w", err)
-	}
-	return oldValue.Code, nil
-}
-
-// ClearCode clears the value of the "code" field.
-func (m *UserMutation) ClearCode() {
-	m.code = nil
-	m.clearedFields[user.FieldCode] = struct{}{}
-}
-
-// CodeCleared returns if the "code" field was cleared in this mutation.
-func (m *UserMutation) CodeCleared() bool {
-	_, ok := m.clearedFields[user.FieldCode]
-	return ok
-}
-
-// ResetCode resets all changes to the "code" field.
-func (m *UserMutation) ResetCode() {
-	m.code = nil
-	delete(m.clearedFields, user.FieldCode)
-}
-
-// SetCodeExpiration sets the "code_expiration" field.
-func (m *UserMutation) SetCodeExpiration(t time.Time) {
-	m.code_expiration = &t
-}
-
-// CodeExpiration returns the value of the "code_expiration" field in the mutation.
-func (m *UserMutation) CodeExpiration() (r time.Time, exists bool) {
-	v := m.code_expiration
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCodeExpiration returns the old "code_expiration" field's value of the User entity.
-// If the User object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldCodeExpiration(ctx context.Context) (v *time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCodeExpiration is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCodeExpiration requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCodeExpiration: %w", err)
-	}
-	return oldValue.CodeExpiration, nil
-}
-
-// ClearCodeExpiration clears the value of the "code_expiration" field.
-func (m *UserMutation) ClearCodeExpiration() {
-	m.code_expiration = nil
-	m.clearedFields[user.FieldCodeExpiration] = struct{}{}
-}
-
-// CodeExpirationCleared returns if the "code_expiration" field was cleared in this mutation.
-func (m *UserMutation) CodeExpirationCleared() bool {
-	_, ok := m.clearedFields[user.FieldCodeExpiration]
-	return ok
-}
-
-// ResetCodeExpiration resets all changes to the "code_expiration" field.
-func (m *UserMutation) ResetCodeExpiration() {
-	m.code_expiration = nil
-	delete(m.clearedFields, user.FieldCodeExpiration)
 }
 
 // SetRole sets the "role" field.
@@ -7348,7 +7198,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 14)
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
 	}
@@ -7385,17 +7235,8 @@ func (m *UserMutation) Fields() []string {
 	if m.lat != nil {
 		fields = append(fields, user.FieldLat)
 	}
-	if m.zipCode != nil {
-		fields = append(fields, user.FieldZipCode)
-	}
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
-	}
-	if m.code != nil {
-		fields = append(fields, user.FieldCode)
-	}
-	if m.code_expiration != nil {
-		fields = append(fields, user.FieldCodeExpiration)
 	}
 	if m.role != nil {
 		fields = append(fields, user.FieldRole)
@@ -7432,14 +7273,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Lng()
 	case user.FieldLat:
 		return m.Lat()
-	case user.FieldZipCode:
-		return m.ZipCode()
 	case user.FieldCreatedAt:
 		return m.CreatedAt()
-	case user.FieldCode:
-		return m.Code()
-	case user.FieldCodeExpiration:
-		return m.CodeExpiration()
 	case user.FieldRole:
 		return m.Role()
 	}
@@ -7475,14 +7310,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldLng(ctx)
 	case user.FieldLat:
 		return m.OldLat(ctx)
-	case user.FieldZipCode:
-		return m.OldZipCode(ctx)
 	case user.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case user.FieldCode:
-		return m.OldCode(ctx)
-	case user.FieldCodeExpiration:
-		return m.OldCodeExpiration(ctx)
 	case user.FieldRole:
 		return m.OldRole(ctx)
 	}
@@ -7578,33 +7407,12 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLat(v)
 		return nil
-	case user.FieldZipCode:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetZipCode(v)
-		return nil
 	case user.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
-		return nil
-	case user.FieldCode:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCode(v)
-		return nil
-	case user.FieldCodeExpiration:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCodeExpiration(v)
 		return nil
 	case user.FieldRole:
 		v, ok := value.(user.Role)
@@ -7697,15 +7505,6 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldLat) {
 		fields = append(fields, user.FieldLat)
 	}
-	if m.FieldCleared(user.FieldZipCode) {
-		fields = append(fields, user.FieldZipCode)
-	}
-	if m.FieldCleared(user.FieldCode) {
-		fields = append(fields, user.FieldCode)
-	}
-	if m.FieldCleared(user.FieldCodeExpiration) {
-		fields = append(fields, user.FieldCodeExpiration)
-	}
 	return fields
 }
 
@@ -7734,15 +7533,6 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldLat:
 		m.ClearLat()
-		return nil
-	case user.FieldZipCode:
-		m.ClearZipCode()
-		return nil
-	case user.FieldCode:
-		m.ClearCode()
-		return nil
-	case user.FieldCodeExpiration:
-		m.ClearCodeExpiration()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -7788,17 +7578,8 @@ func (m *UserMutation) ResetField(name string) error {
 	case user.FieldLat:
 		m.ResetLat()
 		return nil
-	case user.FieldZipCode:
-		m.ResetZipCode()
-		return nil
 	case user.FieldCreatedAt:
 		m.ResetCreatedAt()
-		return nil
-	case user.FieldCode:
-		m.ResetCode()
-		return nil
-	case user.FieldCodeExpiration:
-		m.ResetCodeExpiration()
 		return nil
 	case user.FieldRole:
 		m.ResetRole()

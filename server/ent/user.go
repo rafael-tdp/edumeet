@@ -41,14 +41,8 @@ type User struct {
 	Lng *float64 `json:"lng,omitempty"`
 	// Lat holds the value of the "lat" field.
 	Lat *float64 `json:"lat,omitempty"`
-	// ZipCode holds the value of the "zipCode" field.
-	ZipCode *string `json:"zipCode,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
-	// Code holds the value of the "code" field.
-	Code *string `json:"code,omitempty"`
-	// CodeExpiration holds the value of the "code_expiration" field.
-	CodeExpiration *time.Time `json:"code_expiration,omitempty"`
 	// Role holds the value of the "role" field.
 	Role user.Role `json:"role,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -141,9 +135,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case user.FieldReportNumber:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldEmail, user.FieldUsername, user.FieldLastname, user.FieldFirstname, user.FieldPassword, user.FieldBio, user.FieldPicture, user.FieldZipCode, user.FieldCode, user.FieldRole:
+		case user.FieldID, user.FieldEmail, user.FieldUsername, user.FieldLastname, user.FieldFirstname, user.FieldPassword, user.FieldBio, user.FieldPicture, user.FieldRole:
 			values[i] = new(sql.NullString)
-		case user.FieldBirthDate, user.FieldCreatedAt, user.FieldCodeExpiration:
+		case user.FieldBirthDate, user.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -243,32 +237,11 @@ func (u *User) assignValues(columns []string, values []any) error {
 				u.Lat = new(float64)
 				*u.Lat = value.Float64
 			}
-		case user.FieldZipCode:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field zipCode", values[i])
-			} else if value.Valid {
-				u.ZipCode = new(string)
-				*u.ZipCode = value.String
-			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				u.CreatedAt = value.Time
-			}
-		case user.FieldCode:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field code", values[i])
-			} else if value.Valid {
-				u.Code = new(string)
-				*u.Code = value.String
-			}
-		case user.FieldCodeExpiration:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field code_expiration", values[i])
-			} else if value.Valid {
-				u.CodeExpiration = new(time.Time)
-				*u.CodeExpiration = value.Time
 			}
 		case user.FieldRole:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -387,23 +360,8 @@ func (u *User) String() string {
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
-	if v := u.ZipCode; v != nil {
-		builder.WriteString("zipCode=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := u.Code; v != nil {
-		builder.WriteString("code=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := u.CodeExpiration; v != nil {
-		builder.WriteString("code_expiration=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
 	builder.WriteString(", ")
 	builder.WriteString("role=")
 	builder.WriteString(fmt.Sprintf("%v", u.Role))

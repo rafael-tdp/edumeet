@@ -39,14 +39,8 @@ const (
 	FieldLng = "lng"
 	// FieldLat holds the string denoting the lat field in the database.
 	FieldLat = "lat"
-	// FieldZipCode holds the string denoting the zipcode field in the database.
-	FieldZipCode = "zip_code"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
-	// FieldCode holds the string denoting the code field in the database.
-	FieldCode = "code"
-	// FieldCodeExpiration holds the string denoting the code_expiration field in the database.
-	FieldCodeExpiration = "code_expiration"
 	// FieldRole holds the string denoting the role field in the database.
 	FieldRole = "role"
 	// EdgeBadges holds the string denoting the badges edge name in mutations.
@@ -118,10 +112,7 @@ var Columns = []string{
 	FieldReportNumber,
 	FieldLng,
 	FieldLat,
-	FieldZipCode,
 	FieldCreatedAt,
-	FieldCode,
-	FieldCodeExpiration,
 	FieldRole,
 }
 
@@ -250,24 +241,9 @@ func ByLat(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLat, opts...).ToFunc()
 }
 
-// ByZipCode orders the results by the zipCode field.
-func ByZipCode(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldZipCode, opts...).ToFunc()
-}
-
 // ByCreatedAt orders the results by the created_at field.
 func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByCode orders the results by the code field.
-func ByCode(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCode, opts...).ToFunc()
-}
-
-// ByCodeExpiration orders the results by the code_expiration field.
-func ByCodeExpiration(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCodeExpiration, opts...).ToFunc()
 }
 
 // ByRole orders the results by the role field.

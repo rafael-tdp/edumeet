@@ -32,7 +32,6 @@ func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 			SetActivated(true).
 			SetLng(lng).
 			SetLat(lat).
-			SetZipCode(gofakeit.Zip()).
 			SaveX(ctx)
 	}
 }
