@@ -1,4 +1,4 @@
-import 'package:client/screens/edit_profil_page.dart';
+import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/profile_screen.dart';
