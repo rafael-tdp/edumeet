@@ -29,7 +29,7 @@ func (ur *UserRepository) GetById(userID string) (*ent.User, error) {
 	return user, nil
 }
 
-func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPassword string) (*ent.User, error) {
+func (ur *UserRepository) CreateUser(ctx context.Context, registerDTO dtos.RegisterDTO, hashedPassword string) (*ent.User, error) {
 	lat, lng, err := utils.GetLatLng(registerDTO.Address)
 
 	if err != nil {
@@ -49,7 +49,7 @@ func (ur *UserRepository) CreateUser(registerDTO dtos.RegisterDTO, hashedPasswor
 		SetActivated(false).
 		SetLat(lat).
 		SetLng(lng).
-		Save(context.Background())
+		Save(ctx)
 
 	if err != nil {
 		return nil, err

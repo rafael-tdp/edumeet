@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/services"
@@ -74,8 +75,8 @@ func (uc *UserController) Register(c *fiber.Ctx) error {
 		}
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
 	}
-
-	user, err := uc.userService.RegisterUser(registerDTO)
+	ctx := context.WithValue(c.Context(), "user_id", "register")
+	user, err := uc.userService.RegisterUser(ctx, registerDTO)
 	if err != nil {
 		log.Printf("Error creating user: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})

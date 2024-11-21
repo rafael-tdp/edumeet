@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/repositories"
@@ -57,7 +58,7 @@ func (us *UserService) GetUserByEmail(email string) (*ent.User, error) {
 	return user, nil
 }
 
-func (us *UserService) RegisterUser(registerDTO dtos.RegisterDTO) (*ent.User, error) {
+func (us *UserService) RegisterUser(ctx context.Context, registerDTO dtos.RegisterDTO) (*ent.User, error) {
 
 	existingUser, err := us.userRepo.GetByEmail(registerDTO.Email)
 	if err == nil && existingUser != nil {
@@ -68,7 +69,7 @@ func (us *UserService) RegisterUser(registerDTO dtos.RegisterDTO) (*ent.User, er
 
 	hashedPassword := bcryptUtils.HashPassword(registerDTO.Password)
 
-	user, err := us.userRepo.CreateUser(registerDTO, hashedPassword)
+	user, err := us.userRepo.CreateUser(ctx, registerDTO, hashedPassword)
 	if err != nil {
 		log.Printf("Error saving user to database: %v", err)
 		return nil, err

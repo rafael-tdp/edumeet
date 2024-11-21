@@ -31,7 +31,7 @@ func (Blamable) Hooks() []ent.Hook {
 		hook.On(
 			func(next ent.Mutator) ent.Mutator {
 				return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-					if flag.Lookup("mode").Value.String() != "normal" {
+					if flag.Lookup("mode").Value.String() != "normal" || ctx.Value("user_id") == "register" {
 						return next.Mutate(ctx, m)
 					}
 					// Récupérer l'ID de l'utilisateur dans le contexte
