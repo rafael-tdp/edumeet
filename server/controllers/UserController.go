@@ -266,13 +266,6 @@ func (uc *UserController) Verify(c *fiber.Ctx) error {
 }
 
 func (uc *UserController) ResetPassword(c *fiber.Ctx) error {
-	code := c.Params("code")
-	if code == "" || len(code) == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid code"})
-	}
-
-	fmt.Printf("Code %v \n", code)
-
 	var requestBody dtos.ResetPasswordDTO
 
 	if err := c.BodyParser(&requestBody); err != nil {

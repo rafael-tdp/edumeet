@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Pour le format de date
 import 'package:client/core/services/user_services.dart';
+import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:client/components/profile_button.dart';
