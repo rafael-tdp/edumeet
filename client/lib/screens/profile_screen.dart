@@ -49,10 +49,10 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 60,
-                backgroundImage: NetworkImage(user!['image'] ?? ''),
-              ),
+              // CircleAvatar(
+              //   radius: 60,
+              //   backgroundImage: NetworkImage(user!['image'] ?? ''),
+              // ),
               const SizedBox(height: 20),
               Text(
                   (user?['firstname']?.isNotEmpty ?? false) && (user?['lastname']?.isNotEmpty ?? false) ? '${user?['firstname']?.substring(0, 1).toUpperCase()}${user?['firstname']?.substring(1)} ${user?['lastname']?.substring(0, 1).toUpperCase()}${user?['lastname']?.substring(1)} !' : 'Anonyme',                style: const TextStyle(
