@@ -313,66 +313,6 @@ func (uu *UserUpdate) ClearLat() *UserUpdate {
 	return uu
 }
 
-// SetZipCode sets the "zipCode" field.
-func (uu *UserUpdate) SetZipCode(s string) *UserUpdate {
-	uu.mutation.SetZipCode(s)
-	return uu
-}
-
-// SetNillableZipCode sets the "zipCode" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableZipCode(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetZipCode(*s)
-	}
-	return uu
-}
-
-// ClearZipCode clears the value of the "zipCode" field.
-func (uu *UserUpdate) ClearZipCode() *UserUpdate {
-	uu.mutation.ClearZipCode()
-	return uu
-}
-
-// SetCode sets the "code" field.
-func (uu *UserUpdate) SetCode(s string) *UserUpdate {
-	uu.mutation.SetCode(s)
-	return uu
-}
-
-// SetNillableCode sets the "code" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableCode(s *string) *UserUpdate {
-	if s != nil {
-		uu.SetCode(*s)
-	}
-	return uu
-}
-
-// ClearCode clears the value of the "code" field.
-func (uu *UserUpdate) ClearCode() *UserUpdate {
-	uu.mutation.ClearCode()
-	return uu
-}
-
-// SetCodeExpiration sets the "code_expiration" field.
-func (uu *UserUpdate) SetCodeExpiration(t time.Time) *UserUpdate {
-	uu.mutation.SetCodeExpiration(t)
-	return uu
-}
-
-// SetNillableCodeExpiration sets the "code_expiration" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableCodeExpiration(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetCodeExpiration(*t)
-	}
-	return uu
-}
-
-// ClearCodeExpiration clears the value of the "code_expiration" field.
-func (uu *UserUpdate) ClearCodeExpiration() *UserUpdate {
-	uu.mutation.ClearCodeExpiration()
-	return uu
-}
-
 // SetRole sets the "role" field.
 func (uu *UserUpdate) SetRole(u user.Role) *UserUpdate {
 	uu.mutation.SetRole(u)
@@ -749,24 +689,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.LatCleared() {
 		_spec.ClearField(user.FieldLat, field.TypeFloat64)
-	}
-	if value, ok := uu.mutation.ZipCode(); ok {
-		_spec.SetField(user.FieldZipCode, field.TypeString, value)
-	}
-	if uu.mutation.ZipCodeCleared() {
-		_spec.ClearField(user.FieldZipCode, field.TypeString)
-	}
-	if value, ok := uu.mutation.Code(); ok {
-		_spec.SetField(user.FieldCode, field.TypeString, value)
-	}
-	if uu.mutation.CodeCleared() {
-		_spec.ClearField(user.FieldCode, field.TypeString)
-	}
-	if value, ok := uu.mutation.CodeExpiration(); ok {
-		_spec.SetField(user.FieldCodeExpiration, field.TypeTime, value)
-	}
-	if uu.mutation.CodeExpirationCleared() {
-		_spec.ClearField(user.FieldCodeExpiration, field.TypeTime)
 	}
 	if value, ok := uu.mutation.Role(); ok {
 		_spec.SetField(user.FieldRole, field.TypeEnum, value)
@@ -1340,66 +1262,6 @@ func (uuo *UserUpdateOne) ClearLat() *UserUpdateOne {
 	return uuo
 }
 
-// SetZipCode sets the "zipCode" field.
-func (uuo *UserUpdateOne) SetZipCode(s string) *UserUpdateOne {
-	uuo.mutation.SetZipCode(s)
-	return uuo
-}
-
-// SetNillableZipCode sets the "zipCode" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableZipCode(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetZipCode(*s)
-	}
-	return uuo
-}
-
-// ClearZipCode clears the value of the "zipCode" field.
-func (uuo *UserUpdateOne) ClearZipCode() *UserUpdateOne {
-	uuo.mutation.ClearZipCode()
-	return uuo
-}
-
-// SetCode sets the "code" field.
-func (uuo *UserUpdateOne) SetCode(s string) *UserUpdateOne {
-	uuo.mutation.SetCode(s)
-	return uuo
-}
-
-// SetNillableCode sets the "code" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableCode(s *string) *UserUpdateOne {
-	if s != nil {
-		uuo.SetCode(*s)
-	}
-	return uuo
-}
-
-// ClearCode clears the value of the "code" field.
-func (uuo *UserUpdateOne) ClearCode() *UserUpdateOne {
-	uuo.mutation.ClearCode()
-	return uuo
-}
-
-// SetCodeExpiration sets the "code_expiration" field.
-func (uuo *UserUpdateOne) SetCodeExpiration(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetCodeExpiration(t)
-	return uuo
-}
-
-// SetNillableCodeExpiration sets the "code_expiration" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableCodeExpiration(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetCodeExpiration(*t)
-	}
-	return uuo
-}
-
-// ClearCodeExpiration clears the value of the "code_expiration" field.
-func (uuo *UserUpdateOne) ClearCodeExpiration() *UserUpdateOne {
-	uuo.mutation.ClearCodeExpiration()
-	return uuo
-}
-
 // SetRole sets the "role" field.
 func (uuo *UserUpdateOne) SetRole(u user.Role) *UserUpdateOne {
 	uuo.mutation.SetRole(u)
@@ -1806,24 +1668,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.LatCleared() {
 		_spec.ClearField(user.FieldLat, field.TypeFloat64)
-	}
-	if value, ok := uuo.mutation.ZipCode(); ok {
-		_spec.SetField(user.FieldZipCode, field.TypeString, value)
-	}
-	if uuo.mutation.ZipCodeCleared() {
-		_spec.ClearField(user.FieldZipCode, field.TypeString)
-	}
-	if value, ok := uuo.mutation.Code(); ok {
-		_spec.SetField(user.FieldCode, field.TypeString, value)
-	}
-	if uuo.mutation.CodeCleared() {
-		_spec.ClearField(user.FieldCode, field.TypeString)
-	}
-	if value, ok := uuo.mutation.CodeExpiration(); ok {
-		_spec.SetField(user.FieldCodeExpiration, field.TypeTime, value)
-	}
-	if uuo.mutation.CodeExpirationCleared() {
-		_spec.ClearField(user.FieldCodeExpiration, field.TypeTime)
 	}
 	if value, ok := uuo.mutation.Role(); ok {
 		_spec.SetField(user.FieldRole, field.TypeEnum, value)

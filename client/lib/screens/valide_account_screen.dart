@@ -1,4 +1,4 @@
-import 'package:client/core/models/auth/verifyCode.dart';
+import 'package:client/core/models/auth/verifyCodeRequest.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/screens/reset_password_screen.dart';
@@ -6,22 +6,23 @@ import 'package:flutter/material.dart';
 import '../utils/colors.dart';
 import 'login_screen.dart';
 
-class VerifyCodePage extends StatefulWidget {
+class ValidateAccountPage extends StatefulWidget {
   final bool isResetPassword;
   final String email;
 
-  const VerifyCodePage({super.key, required this.isResetPassword, required this.email});
+  const ValidateAccountPage({super.key, required this.isResetPassword, required this.email});
 
   @override
-  _VerifyCodePageState createState() => _VerifyCodePageState();
+  _ValidateAccountPageState createState() => _ValidateAccountPageState();
 }
 
-class _VerifyCodePageState extends State<VerifyCodePage> {
-  final _codeController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+class _ValidateAccountPageState extends State<ValidateAccountPage> {
+  final AuthServices _authServices = AuthServices();
   final PageController _pageController = PageController();
+  final _codeController = TextEditingController();
+  late final _passwordController = TextEditingController();
+  late final _confirmPasswordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -42,25 +43,30 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
 
     try {
 
-      VerifyCodeRequest verifyCodeRequest = VerifyCodeRequest(
+      ValidateAccountRequest verifyCodeRequest = ValidateAccountRequest(
         code: _codeController.text,
         email: widget.email,
       );
-      ResponseRequest response = await AuthServices.valideCode(verifyCodeRequest);
-
-      if(!response.success) {
-        setState(() {
-          _errorMessage = response.message;
-        });
-        return;
-      }
-
       if (widget.isResetPassword) {
+        ResponseRequest response = await _authServices.verify(verifyCodeRequest);
+        if(!response.success) {
+          setState(() {
+            _errorMessage = response.message;
+          });
+          return;
+        }
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
       } else {
+        ResponseRequest response = await _authServices.validateAccount(verifyCodeRequest);
+        if(!response.success) {
+          setState(() {
+            _errorMessage = response.message;
+          });
+          return;
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Inscription confirmée avec succès')),
         );
@@ -92,7 +98,7 @@ class _VerifyCodePageState extends State<VerifyCodePage> {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               _buildVerifyCodeForm(),
-              if (widget.isResetPassword) ResetPasswordPage(token: _codeController.text)
+              if (widget.isResetPassword) ResetPasswordPage(email: widget.email, code: _codeController.text)
             ],
           ),
         ),

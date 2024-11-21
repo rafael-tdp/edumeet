@@ -1,43 +1,33 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:client/core/exceptions/app_exception.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:client/core/models/auth/resetPassword.dart';
-import 'package:client/core/models/auth/verifyCode.dart';
+import 'package:client/core/models/auth/resetPasswordRequest.dart';
+import 'package:client/core/models/auth/verifyCodeRequest.dart';
 import 'package:http/http.dart' as http;
 import '../../env/env.dart';
-import '../models/auth/login.dart';
-import '../models/auth/register.dart';
-import '../models/auth/forgotPassword.dart';
+import '../models/auth/loginRequest.dart';
+import '../models/auth/registerRequest.dart';
+import '../models/auth/forgotPasswordRequest.dart';
 import '../models/response.dart';
 
+enum AuthenticationStatus { authenticated, unauthenticated }
+
 class AuthServices {
-  static Future<String?> getToken() async {
+  final _controller = StreamController<AuthenticationStatus>();
+
+  Stream<AuthenticationStatus> get status async* {
+    await Future<void>.delayed(const Duration(seconds: 1));
+    yield AuthenticationStatus.unauthenticated;
+    yield* _controller.stream;
+  }
+
+  Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('auth_token');
   }
 
-  static Future<Map<String, dynamic>?> getUserInfo() async {
-    final token = await getToken();
-
-    if (token == null) {
-      return null;
-    }
-
-    final response = await http.get(
-      Uri.parse('${Env.BACKEND_URL}/me'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      return null;
-    }
-  }
-
-  static Future<ResponseRequest> login(LoginRequest loginRequest) async {
+  Future<ResponseRequest> login(LoginRequest loginRequest) async {
     final response = await http.post(
       Uri.parse('${Env.BACKEND_URL}/login'),
       headers: {'Content-Type': 'application/json'},
@@ -46,21 +36,25 @@ class AuthServices {
 
     if (response.statusCode == 200) {
       final token = jsonDecode(response.body)['token'];
+      //Sauvegarde du token
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('auth_token', token);
+      //Emission de l'evenement d'authentification
+      _controller.add(AuthenticationStatus.authenticated);
       return ResponseRequest(success: true, message: 'Login successful', data: token);
     } else {
       return ResponseRequest(success: false, message: jsonDecode(response.body)['error']);
     }
   }
 
-  static Future<void> logout() async {
+  Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_token');
+    _controller.add(AuthenticationStatus.unauthenticated);
     print('Logged out');
   }
 
-  static Future<ResponseRequest> register(RegisterRequest signupRequest) async {
+  Future<ResponseRequest> register(RegisterRequest signupRequest) async {
     final response = await http.post(
       Uri.parse('${Env.BACKEND_URL}/user/register'),
       headers: <String, String>{
@@ -70,13 +64,14 @@ class AuthServices {
     );
 
     if (response.statusCode == 201) {
-      return ResponseRequest(success: true, message: 'Signup successful');
+      final data = {"id" : jsonDecode(response.body)['id']};
+      return ResponseRequest(success: true, message: 'Signup successful', data: data);
     } else {
       return ResponseRequest(success: false, message: jsonDecode(response.body)['error']);
     }
   }
 
-  static Future<ResponseRequest> forgotPassword(ForgotPasswordRequest passwordResetRequest) async {
+  Future<ResponseRequest> forgotPassword(ForgotPasswordRequest passwordResetRequest) async {
     final response = await http.post(
       Uri.parse('${Env.BACKEND_URL}/user/forgot-password'),
       headers: <String, String>{
@@ -88,20 +83,18 @@ class AuthServices {
     if (response.statusCode == 200) {
       return ResponseRequest(success: true, message: jsonDecode(response.body)['message']);
     } else {
-      throw Exception('Failed to reset password: ${response.statusCode} ${response.reasonPhrase}');
+      // throw Exception('Failed to reset password: ${jsonDecode(response.body)['error']}');
+      throw AppException(message: jsonDecode(response.body)['error']);
     }
   }
 
-  static Future<ResponseRequest> resetPassword(ResetPasswordRequest resetPasswordRequest) async {
+  Future<ResponseRequest> resetPassword(ResetPasswordRequest resetPasswordRequest) async {
     final response = await http.post(
-      Uri.parse('${Env.BACKEND_URL}/user/reset-password/${resetPasswordRequest.code}'),
+      Uri.parse('${Env.BACKEND_URL}/user/reset-password'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({
-        'plainPassword': resetPasswordRequest.plainPassword,
-        'confirmPassword': resetPasswordRequest.confirmPassword,
-      }),
+      body: jsonEncode(resetPasswordRequest.toJson()),
     );
 
     if (response.statusCode == 200) {
@@ -111,16 +104,13 @@ class AuthServices {
     }
   }
 
-  static Future<ResponseRequest> valideCode(VerifyCodeRequest verifyCodeRequest) async {
+  Future<ResponseRequest> validateAccount(ValidateAccountRequest verifyCodeRequest) async {
     final response = await http.post(
       Uri.parse('${Env.BACKEND_URL}/user/validate-user'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({
-        'code': verifyCodeRequest.code,
-        'email': verifyCodeRequest.email,
-      }),
+      body: jsonEncode(verifyCodeRequest.toJson()),
     );
 
     if (response.statusCode == 200) {
@@ -129,4 +119,22 @@ class AuthServices {
       throw Exception('Failed to verify code: ${response.statusCode} ${response.reasonPhrase}');
     }
   }
+
+  Future<ResponseRequest> verify(ValidateAccountRequest verifyCodeRequest) async {
+    final response = await http.post(
+      Uri.parse('${Env.BACKEND_URL}/user/verify'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(verifyCodeRequest.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      return ResponseRequest(success: true, message: jsonDecode(response.body)['message']);
+    } else {
+      throw Exception('Failed to verify code: ${response.statusCode} ${response.reasonPhrase}');
+    }
+  }
+
+  void dispose() => _controller.close();
 }

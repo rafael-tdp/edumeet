@@ -2,11 +2,13 @@ package main
 
 import (
 	"edumeet/routes"
+	"edumeet/utils"
 	"flag"
 	"fmt"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 	"log"
 
-	"github.com/gofiber/fiber/v2/middleware/cors"
 
 	_ "edumeet/ent/runtime"
 
@@ -16,7 +18,6 @@ import (
 )
 
 func main() {
-
 	// Utilisation de flag pour choisir le mode (normal, fixture ou migrate)
 	mode := flag.String("mode", "normal", "Choose the mode: normal, fixture or migrate")
 	flag.Parse()
@@ -28,6 +29,11 @@ func main() {
 	} else if *mode == "fixture" {
 		migrateFixture()
 	} else {
+		err := godotenv.Load()
+		if err != nil {
+			log.Printf("Error loading .env file: %v", err)
+		}
+
 		// Initialiser une nouvelle application Fiber
 		app := fiber.New(fiber.Config{
 			BodyLimit: 25 * 1024 * 1024,
@@ -41,6 +47,8 @@ func main() {
 			fmt.Println(ulid.Make())
 			return c.SendString("Hello, World! " + gofakeit.Email())
 		})
+
+		utils.InitRedis()
 
 		routes.InitRoutes(app)
 

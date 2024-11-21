@@ -6,14 +6,14 @@ import (
 	"edumeet/ent"
 	"edumeet/services"
 	"edumeet/utils"
+	customValidator "edumeet/validator"
 	"fmt"
 	"html/template"
 	"log"
 	"os"
 
-	customValidator "edumeet/validator"
-
 	"github.com/go-playground/validator/v10"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/oklog/ulid/v2"
 )
@@ -87,9 +87,13 @@ func (uc *UserController) Register(c *fiber.Ctx) error {
 		return err
 	}
 
+	ulid := utils.ULID{}
+	verificationCode := ulid.GenerateUlid()()
+	utils.StoreValidationCodeInRedis(user.ID, verificationCode, 30)
+
 	var body bytes.Buffer
 	var data = map[string]interface{}{
-		"VERIFICATION_CODE": *user.Code,
+		"VERIFICATION_CODE": verificationCode,
 		"USER_FIRSTNAME":    user.Firstname,
 	}
 
@@ -109,26 +113,22 @@ func (uc *UserController) Register(c *fiber.Ctx) error {
 }
 
 func (uc *UserController) ValidateUser(c *fiber.Ctx) error {
-	var requestBody dtos.VerifyCodeDTO
+	var requestBody dtos.ValidateUserDTO
 
 	if err := c.BodyParser(&requestBody); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
-	user, err := uc.userService.ValidateUser(requestBody)
+	hasBeenUserUpdated, err := uc.userService.ValidateUser(requestBody)
 	if err != nil {
-
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "An error occurred"})
 	}
 
-	if user == nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "User not found"})
+	if !hasBeenUserUpdated {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid code"})
+	} else {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "User activated successfully"})
 	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "User activated successfully",
-		"user":    user,
-	})
 }
 
 func (uc *UserController) ResendEmailValidateUser(c *fiber.Ctx) error {
@@ -150,9 +150,12 @@ func (uc *UserController) ResendEmailValidateUser(c *fiber.Ctx) error {
 		return err
 	}
 
+	ulid := utils.ULID{}
+	verificationCode := ulid.GenerateUlid()()
+
 	var body bytes.Buffer
 	var data = map[string]interface{}{
-		"URL": fmt.Sprintf("%s/user/verify-email/%s", os.Getenv("FRONTEND_URL"), *user.Code),
+		"URL": fmt.Sprintf("%s/user/verify-email/%s", os.Getenv("FRONTEND_URL"), verificationCode),
 	}
 
 	if err := tmpl.Execute(&body, data); err != nil {
@@ -161,11 +164,12 @@ func (uc *UserController) ResendEmailValidateUser(c *fiber.Ctx) error {
 	}
 
 	err = uc.emailService.SendEmail(user.Email, "Welcome!", body.String())
-
 	if err != nil {
 		log.Printf("Error sending email: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not send confirmation email"})
 	}
+
+	utils.StoreValidationCodeInRedis(user.ID, verificationCode)
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "User activated successfully",
@@ -204,8 +208,6 @@ func (uc *UserController) Me(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	fmt.Printf("user connectes %v \n", userDTO)
-
 	return c.JSON(userDTO)
 }
 
@@ -216,9 +218,9 @@ func (uc *UserController) ForgotPassword(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
-	user, err := uc.userService.ForgotPassword(requestBody)
+	currentUser, code, err := uc.userService.ForgotPassword(requestBody)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "An error occurred"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error(), "message": "An error occurred"})
 	}
 
 	tmpl, err := template.ParseFiles("./email/forgotPwd.html")
@@ -229,8 +231,8 @@ func (uc *UserController) ForgotPassword(c *fiber.Ctx) error {
 
 	var body bytes.Buffer
 	var data = map[string]interface{}{
-		"VERIFICATION_CODE": *user.Code,
-		"USER_FIRSTNAME":    user.Firstname,
+		"VERIFICATION_CODE": code,
+		"USER_FIRSTNAME":    currentUser.Firstname,
 	}
 
 	if err := tmpl.Execute(&body, data); err != nil {
@@ -238,35 +240,32 @@ func (uc *UserController) ForgotPassword(c *fiber.Ctx) error {
 		return err
 	}
 
-	err = uc.emailService.SendEmail(user.Email, "Reset your password", body.String())
+	err = uc.emailService.SendEmail(currentUser.Email, "Reset your password", body.String())
 
 	if err != nil {
 		log.Printf("Error sending email: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not send confirmation email"})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Email sent successfully"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Id sent successfully"})
 }
 
 func (uc *UserController) Verify(c *fiber.Ctx) error {
-	code := c.Params("code")
+	var requestBody dtos.VerifyCodeDTO
 
-	user, err := uc.userService.Verify(code)
+	if err := c.BodyParser(&requestBody); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	user, err := uc.userService.Verify(requestBody)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "An error occurred"})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Email verified successfully", "user": user})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Id verified successfully", "user": user})
 }
 
 func (uc *UserController) ResetPassword(c *fiber.Ctx) error {
-	code := c.Params("code")
-	if code == "" || len(code) == 0 {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid code"})
-	}
-
-	fmt.Printf("Code %v \n", code)
-
 	var requestBody dtos.ResetPasswordDTO
 
 	if err := c.BodyParser(&requestBody); err != nil {
@@ -284,8 +283,7 @@ func (uc *UserController) ResetPassword(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
 	}
 
-	err = uc.userService.ResetPassword(code, requestBody)
-
+	err = uc.userService.ResetPassword(requestBody)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "An error occurred"})
 	}

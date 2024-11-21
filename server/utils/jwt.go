@@ -35,6 +35,8 @@ func GenerateJWT(email string, id string, role user.Role) (string, error) {
 		return "", err
 	}
 
+	StoreTokenInRedis(id, tokenString)
+
 	return tokenString, nil
 }
 

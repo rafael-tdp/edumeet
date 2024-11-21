@@ -1,14 +1,18 @@
 import 'package:client/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/colors.dart';
-import 'package:intl/intl.dart';
+import 'package:client/utils/date_utils.dart' as custom_date_utils;
 
 import '../components/profile_button.dart';
 
 class EditProfilePage extends StatefulWidget {
-  final Map<String, dynamic> user;
+  static const String routeName = '/edit-profile';
+  static navigateTo(BuildContext context, {required Map<String, dynamic> user}) {
+    Navigator.pushNamed(context, routeName, arguments: user);
+  }
 
   const EditProfilePage({super.key, required this.user});
+  final Map<String, dynamic> user;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -48,20 +52,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _birthDateController.dispose();
     _addressController.dispose();
     super.dispose();
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        _birthDateController.text = DateFormat('yyyy-MM-dd').format(picked);
-      });
-    }
   }
 
   Future<void> _saveProfile() async {
@@ -182,7 +172,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   prefixIcon: Icon(Icons.calendar_today),
                 ),
                 readOnly: true,
-                onTap: () => _selectDate(context),
+                onTap: () => custom_date_utils.DateUtils.selectDate(context, _birthDateController),
               ),
               const SizedBox(height: 20),
               TextFormField(

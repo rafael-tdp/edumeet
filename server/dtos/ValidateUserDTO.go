@@ -1,6 +1,6 @@
 package dtos
 
-type VerifyCodeDTO struct {
+type ValidateUserDTO struct {
 	Code  string `json:"code" validate:"required"`
 	Email string `json:"email" validate:"required"`
 }

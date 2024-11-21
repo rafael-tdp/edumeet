@@ -1,6 +1,7 @@
 package dtos
 
 type ResetPasswordDTO struct {
-	PlainPassword   string `json:"plainPassword" validate:"required,min=8,max=30,strongPassword"`
-	ConfirmPassword string `json:"confirmPassword" validate:"required,eqfield=PlainPassword"`
+	Email    string `json:"email"`
+	Code     string `json:"code"`
+	Password string `json:"password"`
 }
