@@ -1,3 +1,4 @@
+import 'package:client/core/guard/auth_gard.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/screens/login_screen.dart';
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: {
-        '/': (context) => const WelcomeScreen(),
+        '/': (context) => const AuthGuard(child: HomePage()),
         LoginPage.routeName: (context) => const LoginPage(),
         RegisterPage.routeName: (context) => const RegisterPage(),
         HomePage.routeName: (context) => const HomePage(),

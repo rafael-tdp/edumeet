@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:client/core/exceptions/app_exception.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:client/core/models/auth/resetPasswordRequest.dart';
 import 'package:client/core/models/auth/verifyCodeRequest.dart';
 import 'package:http/http.dart' as http;
@@ -10,6 +9,7 @@ import '../models/auth/loginRequest.dart';
 import '../models/auth/registerRequest.dart';
 import '../models/auth/forgotPasswordRequest.dart';
 import '../models/response.dart';
+import 'cache_service.dart';
 
 enum AuthenticationStatus { authenticated, unauthenticated }
 
@@ -23,8 +23,7 @@ class AuthServices {
   }
 
   Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('auth_token');
+    return await CacheService.getDataFromCache('auth_token');
   }
 
   Future<ResponseRequest> login(LoginRequest loginRequest) async {
@@ -37,8 +36,9 @@ class AuthServices {
     if (response.statusCode == 200) {
       final token = jsonDecode(response.body)['token'];
       //Sauvegarde du token
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('auth_token', token);
+      await CacheService.saveDataToCache('auth_token', token);
+      //Sauvegarde la date d'authentification
+      await CacheService.saveDataToCache('first_launch', DateTime.now().toString());
       //Emission de l'evenement d'authentification
       _controller.add(AuthenticationStatus.authenticated);
       return ResponseRequest(success: true, message: 'Login successful', data: token);
@@ -48,8 +48,7 @@ class AuthServices {
   }
 
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
+    await CacheService.removeDataFromCache('auth_token');
     _controller.add(AuthenticationStatus.unauthenticated);
     print('Logged out');
   }
