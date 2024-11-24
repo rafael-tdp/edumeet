@@ -45,4 +45,8 @@ func InitRoutes(app *fiber.App) {
 	//Initialiser les routes document
 	documentController := initDocumentController(client)
 	setupRoutesDocument(app, documentController)
+
+	//Initialiser les routes chat
+	chatController := initChatController(client)
+	setupRoutesChat(app, chatController)
 }
