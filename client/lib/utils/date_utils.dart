@@ -5,7 +5,7 @@ class DateUtils {
   static String isoToFormattedDate(String isoDate) {
     try {
       final dateTime = DateTime.parse(isoDate);
-      return DateFormat('dd/MM/yyyy HH:mm').format(dateTime);
+      return DateFormat('dd/MM/yyyy').format(dateTime);
     } catch (e) {
       return 'Invalid date';
     }
@@ -61,7 +61,6 @@ class DateUtils {
       helpText: 'Sélectionner votre date de naissance',
       cancelText: 'Annuler',
       confirmText: 'Valider',
-      locale: const Locale('fr', 'FR'),
       initialEntryMode: DatePickerEntryMode.input,
     );
     if (picked != null) {

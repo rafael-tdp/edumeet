@@ -1,36 +1,30 @@
+import 'package:intl/intl.dart';
+
 class User {
   final String id;
-  final String? email;
-  final String? username;
-  final String? lastname;
-  final String? firstname;
-  final String? password;
-  final DateTime? birthDate;
+  final String email;
+  final String username;
+  final String lastname;
+  final String firstname;
+  final DateTime birthDate;
   final String? bio;
   final String? picture;
-  final bool activated;
   final int? reportNumber;
-  final double? lng;
-  final double? lat;
-  final DateTime? createdAt;
+  final String? address;
   final String? role;
 
   User({
     required this.id,
-    this.email,
-    this.username,
-    this.lastname,
-    this.firstname,
-    this.password,
-    this.birthDate,
+    required this.email,
+    required this.username,
+    required this.lastname,
+    required this.firstname,
+    required this.birthDate,
     this.bio,
     this.picture,
-    this.activated = false,
     this.reportNumber,
-    this.lng,
-    this.lat,
-    this.createdAt,
-    this.role = 'USER'
+    this.address,
+    this.role,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -40,15 +34,11 @@ class User {
       username: json['username'],
       lastname: json['lastname'],
       firstname: json['firstname'],
-      password: json['password'],
-      birthDate: json['birthDate'] != null ? DateTime.parse(json['birthDate']) : null,
-      bio: json['bio'],
-      picture: json['picture'],
-      activated: json['activated'],
-      reportNumber: json['reportNumber'],
-      lng: json['lng']?.toDouble(),
-      lat: json['lat']?.toDouble(),
-      createdAt: DateTime.parse(json['created_at']),
+      birthDate: DateTime.parse(json['birthDate']),
+      bio: json['bio'] ?? '',
+      picture: json['picture'] ?? '',
+      reportNumber: json['reportNumber'] ?? 0,
+      address: json['address'],
       role: json['role'],
     );
   }
@@ -60,15 +50,11 @@ class User {
       'username': username,
       'lastname': lastname,
       'firstname': firstname,
-      'password': password,
-      'birthDate': birthDate?.toIso8601String(),
+      'birthDate': '${birthDate.toIso8601String()}Z',
       'bio': bio,
       'picture': picture,
-      'activated': activated,
       'reportNumber': reportNumber,
-      'lng': lng,
-      'lat': lat,
-      'created_at': createdAt?.toIso8601String(),
+      'address': address,
       'role': role,
     };
   }

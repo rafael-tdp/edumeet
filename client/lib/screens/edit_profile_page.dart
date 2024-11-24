@@ -1,9 +1,12 @@
+import 'package:client/core/models/response.dart';
+import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/colors.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 
 import '../components/profile_button.dart';
+import '../core/models/user.dart';
 
 class EditProfilePage extends StatefulWidget {
   static const String routeName = '/edit-profile';
@@ -12,7 +15,7 @@ class EditProfilePage extends StatefulWidget {
   }
 
   const EditProfilePage({super.key, required this.user});
-  final Map<String, dynamic> user;
+  final User user;
 
   @override
   // ignore: library_private_types_in_public_api
@@ -31,16 +34,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     super.initState();
-    _firstnameController =
-        TextEditingController(text: widget.user['firstname'] ?? '');
-    _lastnameController =
-        TextEditingController(text: widget.user['lastname'] ?? '');
-    _bioController = TextEditingController(text: widget.user['bio'] ?? '');
-    _emailController = TextEditingController(text: widget.user['email'] ?? '');
-    _birthDateController =
-        TextEditingController(text: widget.user['birthDate'] ?? '');
-    _addressController =
-        TextEditingController(text: widget.user['address'] ?? '');
+    _firstnameController = TextEditingController(text: widget.user.firstname);
+    _lastnameController = TextEditingController(text: widget.user.lastname);
+    _bioController = TextEditingController(text: widget.user.bio);
+    _emailController = TextEditingController(text: widget.user.email);
+    _birthDateController =TextEditingController(text: custom_date_utils.DateUtils.isoToFormattedDate(widget.user.birthDate.toString()));
+    _addressController = TextEditingController(text: widget.user.address);
   }
 
   @override
@@ -56,16 +55,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _saveProfile() async {
     if (_formKey.currentState?.validate() == true) {
-      // final updatedUser = {
-      //   'firstname': _firstnameController.text,
-      //   'lastname': _lastnameController.text,
-      //   'bio': _bioController.text,
-      //   'email': _emailController.text,
-      //   'birthDate': _birthDateController.text,
-      //   'address': _addressController.text,
-      // };
-      // await AuthServices.updateUserInfo(updatedUser);
-      // Navigator.pop(context, updatedUser);
+      final User updatedUser = User(
+        id: widget.user.id,
+        email: _emailController.text,
+        username: widget.user.username,
+        lastname: _lastnameController.text,
+        firstname: _firstnameController.text,
+        birthDate: custom_date_utils.DateUtils.stringToFomattedDateTime(_birthDateController.text),
+        bio: _bioController.text,
+        picture: widget.user.picture,
+        address: _addressController.text,
+      );
+      ResponseRequest response = await UserServices().updateUserInfo(updatedUser);
+      if (response.success) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const ProfilePage(
+                    isCurrentUser: true,
+                  )),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message!),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+
+
     }
   }
 
@@ -93,7 +112,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundImage: NetworkImage(widget.user['image'] ?? ''),
+                backgroundImage: NetworkImage(widget.user.picture ?? ''),
               ),
               const SizedBox(height: 20),
               TextFormField(

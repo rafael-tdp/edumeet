@@ -1,12 +1,10 @@
 import 'package:client/core/guard/auth_gard.dart';
+import 'package:client/core/models/user.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/register_screen.dart';
-import 'package:client/screens/reset_password_screen.dart';
-import 'package:client/screens/valide_account_screen.dart';
-import 'package:client/screens/welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
@@ -34,7 +32,7 @@ class MyApp extends StatelessWidget {
           switch(routeSettings.name) {
             case EditProfilePage.routeName:
               return MaterialPageRoute(
-                builder: (context) => EditProfilePage(user: routeSettings.arguments as Map<String, dynamic>)
+                builder: (context) => EditProfilePage(user: routeSettings.arguments as User)
               );
           }
           return null;
@@ -44,8 +42,10 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      locale: const Locale('fr', 'FR'),
       supportedLocales: const [
-        Locale('fr')
+        Locale('fr', ''),
+        Locale('en', ''),
       ],
     );
   }
