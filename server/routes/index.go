@@ -18,6 +18,10 @@ func InitRoutes(app *fiber.App) {
 	userController := initUserController(client)
 	setupRoutesUser(app, userController)
 
+	//Initialiser les routes auth
+	authController := initAuthController(client)
+	setupRoutesAuth(app, authController, userController)
+
 	//Initialiser les routes reporting
 	reportingController := initReportingController(client)
 	setupRoutesReporting(app, reportingController)
@@ -25,9 +29,11 @@ func InitRoutes(app *fiber.App) {
 	//Initialiser les routes badge
 	badgeController := initBadgeController(client)
 	setupRoutesBadge(app, badgeController)
+
 	//Initialiser les routes subject
 	subjectController := initSubjectController(client)
 	setupRoutesSubject(app, subjectController)
+
 	//Initialiser les routes event
 	eventController := initEventController(client)
 	setupEventRoutes(app, eventController)
