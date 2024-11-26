@@ -104,6 +104,9 @@ func (er *EventRepository) GetEvent(eventID string) (*ent.Event, error) {
 		}).
 		WithRemoteEvent().
 		WithPhysicalEvent().
+		WithEventDocuments(func(edq *ent.EventDocumentQuery) {
+			edq.WithDocument()
+		}).
 		First(context.Background())
 
 	if err != nil {

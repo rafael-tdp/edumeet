@@ -213,6 +213,7 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 		Image:             event.Image,
 		Participants:      dtos.ConvertParticipantsWithUser(participants),
 		ParticipantsCount: len(participants),
+		EventDocuments:    dtos.EntToEventDocumentDTO(event.Edges.EventDocuments),
 	}
 
 	if event.Edges.RemoteEvent != nil {

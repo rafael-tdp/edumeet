@@ -79,4 +79,5 @@ type EventWithDetailsDTO struct {
 	RemoteEventDTO    *RemoteEventDTO          `json:"remote_event,omitempty"`
 	ParticipantsCount int                      `json:"participants_count"`
 	Participants      []ParticipantWithUserDTO `json:"participants"`
+	EventDocuments    []*EventDocumentDTO      `json:"event_documents"`
 }
