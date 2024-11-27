@@ -29,7 +29,7 @@ class AuthServices {
   Future<ResponseRequest> login(LoginRequest loginRequest) async {
     final response = await http.post(
       Uri.parse('${Env.BACKEND_URL}/login'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json; charset=UTF-8'},
       body: jsonEncode(loginRequest.toJson()),
     );
 
@@ -55,9 +55,9 @@ class AuthServices {
 
   Future<ResponseRequest> register(RegisterRequest signupRequest) async {
     final response = await http.post(
-      Uri.parse('${Env.BACKEND_URL}/user/register'),
+      Uri.parse('${Env.BACKEND_URL}/register'),
       headers: <String, String>{
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(signupRequest.toJson()),
     );
@@ -72,9 +72,9 @@ class AuthServices {
 
   Future<ResponseRequest> forgotPassword(ForgotPasswordRequest passwordResetRequest) async {
     final response = await http.post(
-      Uri.parse('${Env.BACKEND_URL}/user/forgot-password'),
+      Uri.parse('${Env.BACKEND_URL}/forgot-password'),
       headers: <String, String>{
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(passwordResetRequest.toJson()),
     );
@@ -89,9 +89,9 @@ class AuthServices {
 
   Future<ResponseRequest> resetPassword(ResetPasswordRequest resetPasswordRequest) async {
     final response = await http.post(
-      Uri.parse('${Env.BACKEND_URL}/user/reset-password'),
+      Uri.parse('${Env.BACKEND_URL}/reset-password'),
       headers: <String, String>{
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(resetPasswordRequest.toJson()),
     );
@@ -107,7 +107,7 @@ class AuthServices {
     final response = await http.post(
       Uri.parse('${Env.BACKEND_URL}/user/validate-user'),
       headers: <String, String>{
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(verifyCodeRequest.toJson()),
     );
@@ -123,7 +123,7 @@ class AuthServices {
     final response = await http.post(
       Uri.parse('${Env.BACKEND_URL}/user/verify'),
       headers: <String, String>{
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(verifyCodeRequest.toJson()),
     );

@@ -1,12 +1,13 @@
+import 'package:client/core/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Pour le format de date
-import 'package:client/core/services/user_services.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:client/components/profile_button.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/core/services/auth_services.dart';
+import 'package:client/utils/date_utils.dart' as custom_date_utils;
 
 import '../fake_data.dart';
 
@@ -25,14 +26,26 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final AuthServices _authServices = AuthServices();
   final UserServices _userServices = UserServices();
-  Map<String, dynamic>? user;
+  late User user = User(
+    id: '',
+    email: '',
+    username: '',
+    lastname: '',
+    firstname: '',
+    birthDate: DateTime.now(),
+    bio: '',
+    picture: '',
+    reportNumber: 0,
+    address: '',
+    role: '',
+  );
 
   @override
   void initState() {
     super.initState();
     _userServices.getUserInfo().then((value) {
       setState(() {
-        user = value;
+        user = value.data;
       });
     });
   }
@@ -49,13 +62,20 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // CircleAvatar(
-              //   radius: 60,
-              //   backgroundImage: NetworkImage(user!['image'] ?? ''),
-              // ),
+              CircleAvatar(
+                radius: 60,
+                backgroundImage: NetworkImage(
+                  user.picture ?? '',
+                  scale: 1,
+                ),
+                onBackgroundImageError: (exception, stackTrace) {},
+              ),
               const SizedBox(height: 20),
               Text(
-                  (user?['firstname']?.isNotEmpty ?? false) && (user?['lastname']?.isNotEmpty ?? false) ? '${user?['firstname']?.substring(0, 1).toUpperCase()}${user?['firstname']?.substring(1)} ${user?['lastname']?.substring(0, 1).toUpperCase()}${user?['lastname']?.substring(1)} !' : 'Anonyme',                style: const TextStyle(
+                (user.firstname.isNotEmpty && user.lastname.isNotEmpty)
+                  ? '${user.firstname.substring(0, 1).toUpperCase()}${user.firstname.substring(1)} ${user.lastname.substring(0, 1).toUpperCase()}${user.lastname.substring(1)} !'
+                  : 'Anonyme',
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
@@ -63,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 10),
               Text(
-                user?['bio'] != null && user!['bio'].isNotEmpty ? user!['bio'] : "Aucune description",
+                user.bio != null && user.bio!.isNotEmpty ? user.bio! : "Aucune description",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 16,
@@ -84,25 +104,37 @@ class _ProfilePageState extends State<ProfilePage> {
                       leading: const Icon(Icons.email, color: AppColors.purple),
                       title: const Text('Email'),
                       subtitle: Text(
-                        user?['email'] ?? 'Email non disponible',
+                        user.email ?? 'Email non disponible',
+                      ),
+                    ),
+                    const Divider(),
+                    ListTile(
+                      leading: const Icon(Icons.person, color: AppColors.purple),
+                      title: const Text('Nom d\'utilisateur'),
+                      subtitle: Text(
+                        user.username ?? 'Nom d\'utilisateur non disponible',
                       ),
                     ),
                     const Divider(),
                     ListTile(
                       leading: const Icon(Icons.phone, color: AppColors.purple),
                       title: const Text('Date de naissance'),
-                      subtitle: Text(
-                        user?['birthDate'] != null
-                            ? DateFormat('dd MMMM yyyy').format(DateTime.parse(user!['birthDate']))
-                            : 'Date de naissance non disponible',
-                      ),
+                      subtitle: Text(custom_date_utils.DateUtils.isoToFormattedDate(user.birthDate.toString())),
                     ),
                     const Divider(),
                     ListTile(
                       leading: const Icon(Icons.location_on, color: AppColors.purple),
                       title: const Text('Localisation'),
                       subtitle: Text(
-                        user?['address'] ?? 'Adresse non disponible',
+                        user.address ?? 'Adresse non disponible',
+                      ),
+                    ),
+                    const Divider(),
+                    ListTile(
+                      leading: const Icon(Icons.report, color: AppColors.purple),
+                      title: const Text('Nombre de signalements'),
+                      subtitle: Text(
+                        user.reportNumber?.toString() ?? 'Nombre de signalements non disponible',
                       ),
                     ),
                   ],
@@ -119,7 +151,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       final updatedUser = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EditProfilePage(user: user!),
+                          builder: (context) => EditProfilePage(user: user),
                         ),
                       );
                       if (updatedUser != null) {

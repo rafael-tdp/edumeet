@@ -19,16 +19,6 @@ func NewUserRepository(client *ent.Client) *UserRepository {
 	}
 }
 
-func (ur *UserRepository) GetById(userID string) (*ent.User, error) {
-
-	user, err := ur.client.User.Query().Where(user.IDEQ(userID)).Only(context.Background())
-	if err != nil {
-		return nil, errors.New("user not found")
-	}
-
-	return user, nil
-}
-
 func (ur *UserRepository) CreateUser(ctx context.Context, registerDTO dtos.RegisterDTO, hashedPassword string) (*ent.User, error) {
 	lat, lng, err := utils.GetLatLng(registerDTO.Address)
 
@@ -44,8 +34,6 @@ func (ur *UserRepository) CreateUser(ctx context.Context, registerDTO dtos.Regis
 		SetFirstname(registerDTO.Firstname).
 		SetPassword(hashedPassword).
 		SetBirthDate(registerDTO.BirthDate).
-		//SetNillableBio(registerDTO.Bio).
-		//SetNillablePicture(registerDTO.Picture).
 		SetActivated(false).
 		SetLat(lat).
 		SetLng(lng).
@@ -58,24 +46,34 @@ func (ur *UserRepository) CreateUser(ctx context.Context, registerDTO dtos.Regis
 	return user, nil
 }
 
-func (ur *UserRepository) ValidateUser(userId string) (*ent.User, error) {
+func (ur *UserRepository) ValidateUser(ctx context.Context, userId string) (*ent.User, error) {
 
 	u, err := ur.client.User.
 		Query().
 		Where(user.IDEQ(userId)).
-		Only(context.Background())
+		Only(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	_, err = u.Update().
 		SetActivated(true).
-		Save(context.Background())
+		Save(ctx)
 	if err != nil {
 		return nil, errors.New("failed to update user")
 	}
 
 	return u, nil
+}
+
+func (ur *UserRepository) GetById(userID string) (*ent.User, error) {
+
+	user, err := ur.client.User.Query().Where(user.IDEQ(userID)).Only(context.Background())
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	return user, nil
 }
 
 func (ur *UserRepository) GetByEmail(email string) (*ent.User, error) {
@@ -95,4 +93,31 @@ func (ur *UserRepository) UpdatePassword(userID string, hashedPassword string) e
 		return err
 	}
 	return nil
+}
+
+func (ur *UserRepository) UpdateUser(ctx context.Context, userID string, updateUserDTO dtos.UpdateUserDTO) (*ent.User, error) {
+	lat, lng, err := utils.GetLatLng(updateUserDTO.Address)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := ur.client.User.
+		UpdateOneID(userID).
+		SetEmail(updateUserDTO.Email).
+		SetUsername(updateUserDTO.Username).
+		SetFirstname(updateUserDTO.Firstname).
+		SetLastname(updateUserDTO.Lastname).
+		SetBirthDate(updateUserDTO.Birthdate).
+		SetNillableBio(&updateUserDTO.Bio).
+		SetNillablePicture(&updateUserDTO.Picture).
+		//SetRole(updateUserDTO.Role).
+		SetLng(lng).
+		SetLat(lat).
+		Save(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

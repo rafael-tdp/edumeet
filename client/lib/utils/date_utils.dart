@@ -5,7 +5,7 @@ class DateUtils {
   static String isoToFormattedDate(String isoDate) {
     try {
       final dateTime = DateTime.parse(isoDate);
-      return DateFormat('dd/MM/yyyy HH:mm').format(dateTime);
+      return DateFormat('dd/MM/yyyy').format(dateTime);
     } catch (e) {
       return 'Invalid date';
     }
@@ -55,13 +55,14 @@ class DateUtils {
   static Future<void> selectDate(BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: controller.text.isEmpty
+          ? DateTime.now()
+          : stringToFomattedDateTime(controller.text),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       helpText: 'Sélectionner votre date de naissance',
       cancelText: 'Annuler',
       confirmText: 'Valider',
-      locale: const Locale('fr', 'FR'),
       initialEntryMode: DatePickerEntryMode.input,
     );
     if (picked != null) {
