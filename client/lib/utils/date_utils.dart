@@ -55,7 +55,9 @@ class DateUtils {
   static Future<void> selectDate(BuildContext context, TextEditingController controller) async {
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: controller.text.isEmpty
+          ? DateTime.now()
+          : stringToFomattedDateTime(controller.text),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
       helpText: 'Sélectionner votre date de naissance',
