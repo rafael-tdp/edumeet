@@ -49,4 +49,7 @@ func InitRoutes(app *fiber.App) {
 	//Initialiser les routes chat
 	chatController := initChatController(client)
 	setupRoutesChat(app, chatController)
+	//Initialiser les routes ai
+	aiController := initAIController(client)
+	setupRoutesAI(app, aiController)
 }
