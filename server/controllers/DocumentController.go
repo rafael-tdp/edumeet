@@ -93,3 +93,17 @@ func (uc *DocumentController) CreateDocument(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(document)
 }
+
+func (uc *DocumentController) GetEventDocuments(c *fiber.Ctx) error {
+	eventId, err := ulid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	documents, err := uc.documentService.GetEventDocuments(eventId.String())
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Documents not found"})
+	}
+
+	return c.JSON(documents)
+}

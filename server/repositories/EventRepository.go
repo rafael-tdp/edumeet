@@ -174,7 +174,7 @@ func (er *EventRepository) GetEvents() ([]*ent.Event, error) {
 
 func (er *EventRepository) GetEventsByUser(userID string) ([]*ent.Event, error) {
 	events, err := er.client.Event.Query().
-		Where(event.HasParticipantsWith(participant.HasUserWith(user.IDEQ(userID)))).WithParticipants().All(context.Background())
+		Where(event.HasParticipantsWith(participant.HasUserWith(user.IDEQ(userID)))).WithParticipants().WithEventDocuments().All(context.Background())
 
 	if err != nil {
 		return nil, err

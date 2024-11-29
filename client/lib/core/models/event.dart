@@ -10,6 +10,7 @@ class Event {
   final dynamic physicalEvent;
   final dynamic remoteEvent;
   final List<dynamic>? participants;
+  final List<dynamic>? documents;
 
   Event({
     required this.id,
@@ -23,6 +24,7 @@ class Event {
     this.physicalEvent,
     this.remoteEvent,
     this.participants,
+    this.documents,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class Event {
       physicalEvent: json['physical_event'],
       remoteEvent: json['remote_event'],
       participants: json['participants'],
+      documents: json['event_documents'],
     );
   }
 }

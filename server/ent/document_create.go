@@ -84,6 +84,12 @@ func (dc *DocumentCreate) SetPath(s string) *DocumentCreate {
 	return dc
 }
 
+// SetName sets the "name" field.
+func (dc *DocumentCreate) SetName(s string) *DocumentCreate {
+	dc.mutation.SetName(s)
+	return dc
+}
+
 // SetID sets the "id" field.
 func (dc *DocumentCreate) SetID(s string) *DocumentCreate {
 	dc.mutation.SetID(s)
@@ -200,6 +206,9 @@ func (dc *DocumentCreate) check() error {
 	if _, ok := dc.mutation.Path(); !ok {
 		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "Document.path"`)}
 	}
+	if _, ok := dc.mutation.Name(); !ok {
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Document.name"`)}
+	}
 	return nil
 }
 
@@ -254,6 +263,10 @@ func (dc *DocumentCreate) createSpec() (*Document, *sqlgraph.CreateSpec) {
 	if value, ok := dc.mutation.Path(); ok {
 		_spec.SetField(document.FieldPath, field.TypeString, value)
 		_node.Path = value
+	}
+	if value, ok := dc.mutation.Name(); ok {
+		_spec.SetField(document.FieldName, field.TypeString, value)
+		_node.Name = value
 	}
 	if nodes := dc.mutation.EventDocumentsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
