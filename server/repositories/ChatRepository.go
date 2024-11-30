@@ -30,3 +30,11 @@ func (cr *ChatRepository) CreateMessage(ctx context.Context, messageDTO dtos.Mes
 
 	return message, nil
 }
+
+func (cr *ChatRepository) DeleteMessage(messageID string) error {
+	err := cr.client.Message.DeleteOneID(messageID).Exec(context.Background())
+	if err != nil {
+		return err
+	}
+	return nil
+}

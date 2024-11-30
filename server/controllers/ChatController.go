@@ -123,3 +123,35 @@ func (cc *ChatController) SendMessage(c *fiber.Ctx) error {
 
 	return c.JSON(responseMessage)
 }
+
+func (cc *ChatController) DeleteMessage(c *fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	messageID := c.Params("message_id")
+
+	eventID := c.Params("event_id")
+
+	// Vérifiez si l'event existe
+	event, errEvent := cc.eventService.GetEvent(eventID)
+	if errEvent != nil {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+
+			"error": "Event not found",
+		})
+	}
+
+	if !cc.chatService.CheckUserHasPermission(event.Participants, user.ID) {
+		return c.Status(http.StatusForbidden).JSON(fiber.Map{
+			"error": "You don't have permission to access this event",
+		})
+	}
+
+	deleteMessage, err := cc.chatService.DeleteMessage(eventID, messageID, user.ID)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(deleteMessage)
+}

@@ -9,6 +9,7 @@ type ResponseMessageDTO struct {
 	Message   string   `json:"message"`
 	Documents []string `json:"documents"`
 	CreatedAt string   `json:"created_at"`
+	MessageID string   `json:"message_id"`
 }
 
 func EntToResponseMessageDTO(message *ent.Message, documents []string, action string, userID string) *ResponseMessageDTO {
@@ -18,5 +19,6 @@ func EntToResponseMessageDTO(message *ent.Message, documents []string, action st
 		Message:   message.Content,
 		Documents: documents,
 		CreatedAt: message.CreatedAt.String(),
+		MessageID: message.ID,
 	}
 }

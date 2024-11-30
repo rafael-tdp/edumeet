@@ -91,3 +91,38 @@ func (cs *ChatService) CheckUserHasPermission(participants []dtos.ParticipantDTO
 	})
 	return foundParticipant
 }
+
+//delete message
+
+func (cs *ChatService) DeleteMessage(eventID, messageID, userID string) (*dtos.DeleteMessageDTO, error) {
+
+	cs.mu.Lock()
+	event, exists := cs.events[eventID]
+	cs.mu.Unlock()
+
+	if !exists {
+		return nil, fmt.Errorf("event %s not found", eventID)
+	}
+
+	err := cs.chatRepo.DeleteMessage(messageID)
+	if err != nil {
+		fmt.Printf("Error deleting message: %v\n", err)
+		return nil, err
+	}
+	// Envoie de messages à tous les utilisateurs du bon événement
+	event.mu.Lock()
+	defer event.mu.Unlock()
+
+	deleteMessageDTO := dtos.EntToDeleteMessageDTO(messageID, "DELETE", userID)
+
+	for userID, ch := range event.Listeners {
+		select {
+		case ch <- utils.JSONStringify(deleteMessageDTO):
+			fmt.Printf("Message sent to %s in event %s\n", userID, eventID)
+		default:
+			fmt.Printf("Unable to send message to %s in event %s\n", userID, eventID)
+		}
+	}
+
+	return deleteMessageDTO, nil
+}
