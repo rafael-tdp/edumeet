@@ -204,23 +204,19 @@ func (ec *EventCreate) SetUser(u *User) *EventCreate {
 	return ec.SetUserID(u.ID)
 }
 
-// SetMessagesID sets the "messages" edge to the Message entity by ID.
-func (ec *EventCreate) SetMessagesID(id string) *EventCreate {
-	ec.mutation.SetMessagesID(id)
+// AddMessageIDs adds the "messages" edge to the Message entity by IDs.
+func (ec *EventCreate) AddMessageIDs(ids ...string) *EventCreate {
+	ec.mutation.AddMessageIDs(ids...)
 	return ec
 }
 
-// SetNillableMessagesID sets the "messages" edge to the Message entity by ID if the given value is not nil.
-func (ec *EventCreate) SetNillableMessagesID(id *string) *EventCreate {
-	if id != nil {
-		ec = ec.SetMessagesID(*id)
+// AddMessages adds the "messages" edges to the Message entity.
+func (ec *EventCreate) AddMessages(m ...*Message) *EventCreate {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
 	}
-	return ec
-}
-
-// SetMessages sets the "messages" edge to the Message entity.
-func (ec *EventCreate) SetMessages(m *Message) *EventCreate {
-	return ec.SetMessagesID(m.ID)
+	return ec.AddMessageIDs(ids...)
 }
 
 // AddEventDocumentIDs adds the "event_documents" edge to the EventDocument entity by IDs.
@@ -493,7 +489,7 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	}
 	if nodes := ec.mutation.MessagesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   event.MessagesTable,
 			Columns: []string{event.MessagesColumn},

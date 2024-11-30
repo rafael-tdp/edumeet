@@ -198,7 +198,9 @@ func (mu *MessageUpdate) RemoveDocuments(d ...*Document) *MessageUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (mu *MessageUpdate) Save(ctx context.Context) (int, error) {
-	mu.defaults()
+	if err := mu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, mu.sqlSave, mu.mutation, mu.hooks)
 }
 
@@ -225,11 +227,15 @@ func (mu *MessageUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (mu *MessageUpdate) defaults() {
+func (mu *MessageUpdate) defaults() error {
 	if _, ok := mu.mutation.UpdatedAt(); !ok {
+		if message.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized message.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := message.UpdateDefaultUpdatedAt()
 		mu.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 func (mu *MessageUpdate) sqlSave(ctx context.Context) (n int, err error) {
@@ -293,7 +299,7 @@ func (mu *MessageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if mu.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   message.EventTable,
 			Columns: []string{message.EventColumn},
@@ -306,7 +312,7 @@ func (mu *MessageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := mu.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   message.EventTable,
 			Columns: []string{message.EventColumn},
@@ -565,7 +571,9 @@ func (muo *MessageUpdateOne) Select(field string, fields ...string) *MessageUpda
 
 // Save executes the query and returns the updated Message entity.
 func (muo *MessageUpdateOne) Save(ctx context.Context) (*Message, error) {
-	muo.defaults()
+	if err := muo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, muo.sqlSave, muo.mutation, muo.hooks)
 }
 
@@ -592,11 +600,15 @@ func (muo *MessageUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (muo *MessageUpdateOne) defaults() {
+func (muo *MessageUpdateOne) defaults() error {
 	if _, ok := muo.mutation.UpdatedAt(); !ok {
+		if message.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized message.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := message.UpdateDefaultUpdatedAt()
 		muo.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 func (muo *MessageUpdateOne) sqlSave(ctx context.Context) (_node *Message, err error) {
@@ -677,7 +689,7 @@ func (muo *MessageUpdateOne) sqlSave(ctx context.Context) (_node *Message, err e
 	}
 	if muo.mutation.EventCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   message.EventTable,
 			Columns: []string{message.EventColumn},
@@ -690,7 +702,7 @@ func (muo *MessageUpdateOne) sqlSave(ctx context.Context) (_node *Message, err e
 	}
 	if nodes := muo.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   message.EventTable,
 			Columns: []string{message.EventColumn},

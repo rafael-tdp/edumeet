@@ -159,7 +159,9 @@ func (mc *MessageCreate) Mutation() *MessageMutation {
 
 // Save creates the Message in the database.
 func (mc *MessageCreate) Save(ctx context.Context) (*Message, error) {
-	mc.defaults()
+	if err := mc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, mc.sqlSave, mc.mutation, mc.hooks)
 }
 
@@ -186,19 +188,29 @@ func (mc *MessageCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (mc *MessageCreate) defaults() {
+func (mc *MessageCreate) defaults() error {
 	if _, ok := mc.mutation.CreatedAt(); !ok {
+		if message.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized message.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := message.DefaultCreatedAt()
 		mc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := mc.mutation.UpdatedAt(); !ok {
+		if message.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized message.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := message.DefaultUpdatedAt()
 		mc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := mc.mutation.ID(); !ok {
+		if message.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized message.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := message.DefaultID()
 		mc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -286,7 +298,7 @@ func (mc *MessageCreate) createSpec() (*Message, *sqlgraph.CreateSpec) {
 	}
 	if nodes := mc.mutation.EventIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   message.EventTable,
 			Columns: []string{message.EventColumn},

@@ -107,7 +107,7 @@ var (
 		{Name: "created_by", Type: field.TypeString, Nullable: true},
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "content", Type: field.TypeString},
-		{Name: "event_messages", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "event_messages", Type: field.TypeString, Nullable: true},
 		{Name: "user_messages", Type: field.TypeString, Nullable: true},
 	}
 	// MessagesTable holds the schema information for the "messages" table.

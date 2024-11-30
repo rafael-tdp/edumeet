@@ -4,7 +4,6 @@ package ent
 
 import (
 	"edumeet/ent/event"
-	"edumeet/ent/message"
 	"edumeet/ent/physicalevent"
 	"edumeet/ent/remoteevent"
 	"edumeet/ent/user"
@@ -57,7 +56,7 @@ type EventEdges struct {
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
 	// Messages holds the value of the messages edge.
-	Messages *Message `json:"messages,omitempty"`
+	Messages []*Message `json:"messages,omitempty"`
 	// EventDocuments holds the value of the event_documents edge.
 	EventDocuments []*EventDocument `json:"event_documents,omitempty"`
 	// Subjects holds the value of the subjects edge.
@@ -85,12 +84,10 @@ func (e EventEdges) UserOrErr() (*User, error) {
 }
 
 // MessagesOrErr returns the Messages value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e EventEdges) MessagesOrErr() (*Message, error) {
-	if e.Messages != nil {
+// was not loaded in eager-loading.
+func (e EventEdges) MessagesOrErr() ([]*Message, error) {
+	if e.loadedTypes[1] {
 		return e.Messages, nil
-	} else if e.loadedTypes[1] {
-		return nil, &NotFoundError{label: message.Label}
 	}
 	return nil, &NotLoadedError{edge: "messages"}
 }

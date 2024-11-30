@@ -5,10 +5,10 @@ import (
 	"edumeet/utils"
 	"flag"
 	"fmt"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/joho/godotenv"
 	"log"
 
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 
 	_ "edumeet/ent/runtime"
 
@@ -41,7 +41,6 @@ func main() {
 
 		app.Use(cors.New())
 
-		// Définir une route GET pour l'URL racine '/'
 		app.Get("/", func(c *fiber.Ctx) error {
 			// Générer un ULID et un email aléatoire, et les retourner dans la réponse
 			fmt.Println(ulid.Make())
@@ -52,7 +51,7 @@ func main() {
 
 		routes.InitRoutes(app)
 
-		// Démarrer le serveur sur le port 3000
-		log.Fatal(app.Listen(":3000"))
+		app.Listen(":3000")
+
 	}
 }

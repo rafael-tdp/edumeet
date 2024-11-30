@@ -13,15 +13,18 @@ type Message struct {
 	ent.Schema
 }
 
+func (Message) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		trait.Blamable{},
+	}
+}
+
 func (Message) Fields() []ent.Field {
 	ulid := utils.ULID{}
-	return append(
-		trait.Blamable{}.Fields(),
-		[]ent.Field{
-			field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
-			field.String("content"),
-		}...,
-	)
+	return []ent.Field{
+		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
+		field.String("content"),
+	}
 }
 
 func (Message) Edges() []ent.Edge {

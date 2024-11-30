@@ -736,7 +736,7 @@ func (c *EventClient) QueryMessages(e *Event) *MessageQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(event.Table, event.FieldID, id),
 			sqlgraph.To(message.Table, message.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, event.MessagesTable, event.MessagesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, event.MessagesTable, event.MessagesColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
@@ -1147,7 +1147,7 @@ func (c *MessageClient) QueryEvent(m *Message) *EventQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(message.Table, message.FieldID, id),
 			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, message.EventTable, message.EventColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, message.EventTable, message.EventColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil
@@ -1173,7 +1173,8 @@ func (c *MessageClient) QueryDocuments(m *Message) *DocumentQuery {
 
 // Hooks returns the client hooks.
 func (c *MessageClient) Hooks() []Hook {
-	return c.hooks.Message
+	hooks := c.hooks.Message
+	return append(hooks[:len(hooks):len(hooks)], message.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

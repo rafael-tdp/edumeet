@@ -110,7 +110,7 @@ func (eq *EventQuery) QueryMessages() *MessageQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(event.Table, event.FieldID, selector),
 			sqlgraph.To(message.Table, message.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, event.MessagesTable, event.MessagesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, event.MessagesTable, event.MessagesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -630,8 +630,9 @@ func (eq *EventQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Event,
 		}
 	}
 	if query := eq.withMessages; query != nil {
-		if err := eq.loadMessages(ctx, query, nodes, nil,
-			func(n *Event, e *Message) { n.Edges.Messages = e }); err != nil {
+		if err := eq.loadMessages(ctx, query, nodes,
+			func(n *Event) { n.Edges.Messages = []*Message{} },
+			func(n *Event, e *Message) { n.Edges.Messages = append(n.Edges.Messages, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -709,6 +710,9 @@ func (eq *EventQuery) loadMessages(ctx context.Context, query *MessageQuery, nod
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
 	}
 	query.withFKs = true
 	query.Where(predicate.Message(func(s *sql.Selector) {

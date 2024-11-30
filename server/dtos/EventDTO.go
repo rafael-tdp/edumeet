@@ -17,6 +17,7 @@ type EventDTO struct {
 	PhysicalEventDTO *PhysicalEventDTO `json:"physical_event,omitempty"`
 	RemoteEventDTO   *RemoteEventDTO   `json:"remote_event,omitempty"`
 	CreatedBy        *string           `json:"created_by,omitempty"`
+	Participants     []ParticipantDTO  `json:"participants,omitempty"`
 }
 
 func EntToEventDTO(event *ent.Event) *EventDTO {
@@ -43,6 +44,7 @@ func EntToEventDTO(event *ent.Event) *EventDTO {
 		RemoteEventDTO:   remoteEventDTO,
 		PhysicalEventDTO: physicalEventDTO,
 		CreatedBy:        event.CreatedBy,
+		Participants:     ConvertParticipants(event.Edges.Participants),
 	}
 }
 
