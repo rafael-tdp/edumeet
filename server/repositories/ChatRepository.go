@@ -54,3 +54,17 @@ func (cr *ChatRepository) GetChatsByEventID(eventID string) ([]*ent.Message, err
 
 	return messages, nil
 }
+
+func (cr *ChatRepository) GetChat(messageID string) (*ent.Message, error) {
+	message, err := cr.client.Message.Query().
+		Where(message.IDEQ(messageID)).
+		WithUser().
+		WithEvent().
+		Only(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return message, nil
+}

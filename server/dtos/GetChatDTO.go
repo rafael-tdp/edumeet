@@ -9,6 +9,10 @@ type GetChatDTO struct {
 	CreatedBy string   `json:"createdBy"`
 }
 
+func (e *GetChatDTO) GetCreatedBy() *string {
+	return &e.CreatedBy
+}
+
 func EntToGetChatDTO(eventID, message, messageID, createdAt, createdBy string, documents []string) *GetChatDTO {
 	return &GetChatDTO{
 		EventID:   eventID,

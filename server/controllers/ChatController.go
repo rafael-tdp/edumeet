@@ -5,6 +5,7 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
+	"edumeet/guards"
 	"edumeet/services"
 	"fmt"
 	"net/http"
@@ -151,6 +152,18 @@ func (cc *ChatController) DeleteMessage(c *fiber.Ctx) error {
 
 			"error": "Event not found",
 		})
+	}
+
+	// Vérifiez si le message existe
+	msg, errMessage := cc.chatService.GetChat(messageID.String())
+	if errMessage != nil {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+			"error": "Message not found",
+		})
+	}
+
+	if !guards.CanAuthorize(user, msg) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
 	}
 
 	if !cc.chatService.CheckUserHasPermission(event.Participants, user.ID) {

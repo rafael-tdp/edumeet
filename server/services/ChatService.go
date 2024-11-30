@@ -30,6 +30,15 @@ func NewChatService(chatRepo *repositories.ChatRepository) *ChatService {
 	}
 }
 
+func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {
+	message, err := cs.chatRepo.GetChat(messageID)
+	if err != nil {
+		return nil, err
+	}
+
+	return dtos.EntToGetChatDTO(message.Edges.Event.ID, message.Content, message.ID, message.CreatedAt.String(), message.Edges.User.ID, []string{}), nil
+}
+
 func (cs *ChatService) SubscribeToEvent(eventID, userID string, ch chan string) {
 	cs.mu.Lock()
 	defer cs.mu.Unlock() // Assurez-vous que le verrou est libéré dès que possible
