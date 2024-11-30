@@ -813,7 +813,7 @@ func HasMessages() predicate.Event {
 	return predicate.Event(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, MessagesTable, MessagesColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, MessagesTable, MessagesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

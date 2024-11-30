@@ -38,7 +38,7 @@ func (Event) Fields() []ent.Field {
 func (Event) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).Ref("events").Unique(),
-		edge.To("messages", Message.Type).Unique(),
+		edge.To("messages", Message.Type),
 		edge.To("event_documents", EventDocument.Type),
 		edge.To("subjects", Subject.Type),
 		edge.To("participants", Participant.Type).Annotations(entsql.OnDelete(entsql.Cascade)),

@@ -1714,7 +1714,8 @@ type EventMutation struct {
 	clearedFields          map[string]struct{}
 	user                   *string
 	cleareduser            bool
-	messages               *string
+	messages               map[string]struct{}
+	removedmessages        map[string]struct{}
 	clearedmessages        bool
 	event_documents        map[string]struct{}
 	removedevent_documents map[string]struct{}
@@ -2407,9 +2408,14 @@ func (m *EventMutation) ResetUser() {
 	m.cleareduser = false
 }
 
-// SetMessagesID sets the "messages" edge to the Message entity by id.
-func (m *EventMutation) SetMessagesID(id string) {
-	m.messages = &id
+// AddMessageIDs adds the "messages" edge to the Message entity by ids.
+func (m *EventMutation) AddMessageIDs(ids ...string) {
+	if m.messages == nil {
+		m.messages = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.messages[ids[i]] = struct{}{}
+	}
 }
 
 // ClearMessages clears the "messages" edge to the Message entity.
@@ -2422,20 +2428,29 @@ func (m *EventMutation) MessagesCleared() bool {
 	return m.clearedmessages
 }
 
-// MessagesID returns the "messages" edge ID in the mutation.
-func (m *EventMutation) MessagesID() (id string, exists bool) {
-	if m.messages != nil {
-		return *m.messages, true
+// RemoveMessageIDs removes the "messages" edge to the Message entity by IDs.
+func (m *EventMutation) RemoveMessageIDs(ids ...string) {
+	if m.removedmessages == nil {
+		m.removedmessages = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.messages, ids[i])
+		m.removedmessages[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMessages returns the removed IDs of the "messages" edge to the Message entity.
+func (m *EventMutation) RemovedMessagesIDs() (ids []string) {
+	for id := range m.removedmessages {
+		ids = append(ids, id)
 	}
 	return
 }
 
 // MessagesIDs returns the "messages" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// MessagesID instead. It exists only for internal usage by the builders.
 func (m *EventMutation) MessagesIDs() (ids []string) {
-	if id := m.messages; id != nil {
-		ids = append(ids, *id)
+	for id := range m.messages {
+		ids = append(ids, id)
 	}
 	return
 }
@@ -2444,6 +2459,7 @@ func (m *EventMutation) MessagesIDs() (ids []string) {
 func (m *EventMutation) ResetMessages() {
 	m.messages = nil
 	m.clearedmessages = false
+	m.removedmessages = nil
 }
 
 // AddEventDocumentIDs adds the "event_documents" edge to the EventDocument entity by ids.
@@ -3094,9 +3110,11 @@ func (m *EventMutation) AddedIDs(name string) []ent.Value {
 			return []ent.Value{*id}
 		}
 	case event.EdgeMessages:
-		if id := m.messages; id != nil {
-			return []ent.Value{*id}
+		ids := make([]ent.Value, 0, len(m.messages))
+		for id := range m.messages {
+			ids = append(ids, id)
 		}
+		return ids
 	case event.EdgeEventDocuments:
 		ids := make([]ent.Value, 0, len(m.event_documents))
 		for id := range m.event_documents {
@@ -3130,6 +3148,9 @@ func (m *EventMutation) AddedIDs(name string) []ent.Value {
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EventMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 7)
+	if m.removedmessages != nil {
+		edges = append(edges, event.EdgeMessages)
+	}
 	if m.removedevent_documents != nil {
 		edges = append(edges, event.EdgeEventDocuments)
 	}
@@ -3146,6 +3167,12 @@ func (m *EventMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *EventMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case event.EdgeMessages:
+		ids := make([]ent.Value, 0, len(m.removedmessages))
+		for id := range m.removedmessages {
+			ids = append(ids, id)
+		}
+		return ids
 	case event.EdgeEventDocuments:
 		ids := make([]ent.Value, 0, len(m.removedevent_documents))
 		for id := range m.removedevent_documents {
@@ -3223,9 +3250,6 @@ func (m *EventMutation) ClearEdge(name string) error {
 	switch name {
 	case event.EdgeUser:
 		m.ClearUser()
-		return nil
-	case event.EdgeMessages:
-		m.ClearMessages()
 		return nil
 	case event.EdgeRemoteEvent:
 		m.ClearRemoteEvent()

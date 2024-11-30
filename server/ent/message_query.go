@@ -102,7 +102,7 @@ func (mq *MessageQuery) QueryEvent() *EventQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(message.Table, message.FieldID, selector),
 			sqlgraph.To(event.Table, event.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, message.EventTable, message.EventColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, message.EventTable, message.EventColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil

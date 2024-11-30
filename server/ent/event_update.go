@@ -257,23 +257,19 @@ func (eu *EventUpdate) SetUser(u *User) *EventUpdate {
 	return eu.SetUserID(u.ID)
 }
 
-// SetMessagesID sets the "messages" edge to the Message entity by ID.
-func (eu *EventUpdate) SetMessagesID(id string) *EventUpdate {
-	eu.mutation.SetMessagesID(id)
+// AddMessageIDs adds the "messages" edge to the Message entity by IDs.
+func (eu *EventUpdate) AddMessageIDs(ids ...string) *EventUpdate {
+	eu.mutation.AddMessageIDs(ids...)
 	return eu
 }
 
-// SetNillableMessagesID sets the "messages" edge to the Message entity by ID if the given value is not nil.
-func (eu *EventUpdate) SetNillableMessagesID(id *string) *EventUpdate {
-	if id != nil {
-		eu = eu.SetMessagesID(*id)
+// AddMessages adds the "messages" edges to the Message entity.
+func (eu *EventUpdate) AddMessages(m ...*Message) *EventUpdate {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
 	}
-	return eu
-}
-
-// SetMessages sets the "messages" edge to the Message entity.
-func (eu *EventUpdate) SetMessages(m *Message) *EventUpdate {
-	return eu.SetMessagesID(m.ID)
+	return eu.AddMessageIDs(ids...)
 }
 
 // AddEventDocumentIDs adds the "event_documents" edge to the EventDocument entity by IDs.
@@ -370,10 +366,25 @@ func (eu *EventUpdate) ClearUser() *EventUpdate {
 	return eu
 }
 
-// ClearMessages clears the "messages" edge to the Message entity.
+// ClearMessages clears all "messages" edges to the Message entity.
 func (eu *EventUpdate) ClearMessages() *EventUpdate {
 	eu.mutation.ClearMessages()
 	return eu
+}
+
+// RemoveMessageIDs removes the "messages" edge to Message entities by IDs.
+func (eu *EventUpdate) RemoveMessageIDs(ids ...string) *EventUpdate {
+	eu.mutation.RemoveMessageIDs(ids...)
+	return eu
+}
+
+// RemoveMessages removes "messages" edges to Message entities.
+func (eu *EventUpdate) RemoveMessages(m ...*Message) *EventUpdate {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return eu.RemoveMessageIDs(ids...)
 }
 
 // ClearEventDocuments clears all "event_documents" edges to the EventDocument entity.
@@ -590,7 +601,7 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if eu.mutation.MessagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   event.MessagesTable,
 			Columns: []string{event.MessagesColumn},
@@ -601,9 +612,25 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := eu.mutation.RemovedMessagesIDs(); len(nodes) > 0 && !eu.mutation.MessagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   event.MessagesTable,
+			Columns: []string{event.MessagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := eu.mutation.MessagesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   event.MessagesTable,
 			Columns: []string{event.MessagesColumn},
@@ -1052,23 +1079,19 @@ func (euo *EventUpdateOne) SetUser(u *User) *EventUpdateOne {
 	return euo.SetUserID(u.ID)
 }
 
-// SetMessagesID sets the "messages" edge to the Message entity by ID.
-func (euo *EventUpdateOne) SetMessagesID(id string) *EventUpdateOne {
-	euo.mutation.SetMessagesID(id)
+// AddMessageIDs adds the "messages" edge to the Message entity by IDs.
+func (euo *EventUpdateOne) AddMessageIDs(ids ...string) *EventUpdateOne {
+	euo.mutation.AddMessageIDs(ids...)
 	return euo
 }
 
-// SetNillableMessagesID sets the "messages" edge to the Message entity by ID if the given value is not nil.
-func (euo *EventUpdateOne) SetNillableMessagesID(id *string) *EventUpdateOne {
-	if id != nil {
-		euo = euo.SetMessagesID(*id)
+// AddMessages adds the "messages" edges to the Message entity.
+func (euo *EventUpdateOne) AddMessages(m ...*Message) *EventUpdateOne {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
 	}
-	return euo
-}
-
-// SetMessages sets the "messages" edge to the Message entity.
-func (euo *EventUpdateOne) SetMessages(m *Message) *EventUpdateOne {
-	return euo.SetMessagesID(m.ID)
+	return euo.AddMessageIDs(ids...)
 }
 
 // AddEventDocumentIDs adds the "event_documents" edge to the EventDocument entity by IDs.
@@ -1165,10 +1188,25 @@ func (euo *EventUpdateOne) ClearUser() *EventUpdateOne {
 	return euo
 }
 
-// ClearMessages clears the "messages" edge to the Message entity.
+// ClearMessages clears all "messages" edges to the Message entity.
 func (euo *EventUpdateOne) ClearMessages() *EventUpdateOne {
 	euo.mutation.ClearMessages()
 	return euo
+}
+
+// RemoveMessageIDs removes the "messages" edge to Message entities by IDs.
+func (euo *EventUpdateOne) RemoveMessageIDs(ids ...string) *EventUpdateOne {
+	euo.mutation.RemoveMessageIDs(ids...)
+	return euo
+}
+
+// RemoveMessages removes "messages" edges to Message entities.
+func (euo *EventUpdateOne) RemoveMessages(m ...*Message) *EventUpdateOne {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return euo.RemoveMessageIDs(ids...)
 }
 
 // ClearEventDocuments clears all "event_documents" edges to the EventDocument entity.
@@ -1415,7 +1453,7 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	}
 	if euo.mutation.MessagesCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   event.MessagesTable,
 			Columns: []string{event.MessagesColumn},
@@ -1426,9 +1464,25 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := euo.mutation.RemovedMessagesIDs(); len(nodes) > 0 && !euo.mutation.MessagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   event.MessagesTable,
+			Columns: []string{event.MessagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := euo.mutation.MessagesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   event.MessagesTable,
 			Columns: []string{event.MessagesColumn},

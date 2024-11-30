@@ -413,7 +413,7 @@ func HasEvent() predicate.Message {
 	return predicate.Message(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, EventTable, EventColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, EventTable, EventColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

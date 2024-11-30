@@ -95,20 +95,25 @@ func init() {
 	eventdocumentDescID := eventdocumentFields[0].Descriptor()
 	// eventdocument.DefaultID holds the default value on creation for the id field.
 	eventdocument.DefaultID = eventdocumentDescID.Default.(func() string)
+	messageMixin := schema.Message{}.Mixin()
+	messageMixinHooks0 := messageMixin[0].Hooks()
+	message.Hooks[0] = messageMixinHooks0[0]
+	messageMixinFields0 := messageMixin[0].Fields()
+	_ = messageMixinFields0
 	messageFields := schema.Message{}.Fields()
 	_ = messageFields
 	// messageDescCreatedAt is the schema descriptor for created_at field.
-	messageDescCreatedAt := messageFields[0].Descriptor()
+	messageDescCreatedAt := messageMixinFields0[0].Descriptor()
 	// message.DefaultCreatedAt holds the default value on creation for the created_at field.
 	message.DefaultCreatedAt = messageDescCreatedAt.Default.(func() time.Time)
 	// messageDescUpdatedAt is the schema descriptor for updated_at field.
-	messageDescUpdatedAt := messageFields[1].Descriptor()
+	messageDescUpdatedAt := messageMixinFields0[1].Descriptor()
 	// message.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	message.DefaultUpdatedAt = messageDescUpdatedAt.Default.(func() time.Time)
 	// message.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	message.UpdateDefaultUpdatedAt = messageDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// messageDescID is the schema descriptor for id field.
-	messageDescID := messageFields[4].Descriptor()
+	messageDescID := messageFields[0].Descriptor()
 	// message.DefaultID holds the default value on creation for the id field.
 	message.DefaultID = messageDescID.Default.(func() string)
 	participantFields := schema.Participant{}.Fields()

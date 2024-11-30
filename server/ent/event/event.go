@@ -242,10 +242,17 @@ func ByUserField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByMessagesField orders the results by messages field.
-func ByMessagesField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByMessagesCount orders the results by messages count.
+func ByMessagesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newMessagesStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newMessagesStep(), opts...)
+	}
+}
+
+// ByMessages orders the results by messages terms.
+func ByMessages(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMessagesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -315,7 +322,7 @@ func newMessagesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(MessagesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, MessagesTable, MessagesColumn),
+		sqlgraph.Edge(sqlgraph.O2M, false, MessagesTable, MessagesColumn),
 	)
 }
 func newEventDocumentsStep() *sqlgraph.Step {
