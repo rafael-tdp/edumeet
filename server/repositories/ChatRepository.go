@@ -4,6 +4,8 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
+	"edumeet/ent/event"
+	"edumeet/ent/message"
 )
 
 type ChatRepository struct {
@@ -37,4 +39,18 @@ func (cr *ChatRepository) DeleteMessage(messageID string) error {
 		return err
 	}
 	return nil
+}
+
+func (cr *ChatRepository) GetChatsByEventID(eventID string) ([]*ent.Message, error) {
+
+	messages, err := cr.client.Message.Query().
+		Where(message.HasEventWith(event.IDEQ(eventID))).
+		WithUser().
+		All(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return messages, nil
 }
