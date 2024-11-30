@@ -5,12 +5,14 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
+	"edumeet/guards"
 	"edumeet/services"
 	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/oklog/ulid/v2"
 	"github.com/valyala/fasthttp"
 )
 
@@ -29,10 +31,13 @@ func NewChatController(chatService *services.ChatService, eventService *services
 func (cc *ChatController) ConnectToEvent(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
-	eventID := c.Params("event_id")
+	eventID, err := ulid.Parse(c.Params("event_id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
 
 	// Vérifiez si l'event existe
-	event, err := cc.eventService.GetEvent(eventID)
+	event, err := cc.eventService.GetEvent(eventID.String())
 	if err != nil {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{
 
@@ -53,7 +58,7 @@ func (cc *ChatController) ConnectToEvent(c *fiber.Ctx) error {
 	c.Set("Transfer-Encoding", "chunked")
 
 	messageChannel := make(chan string)
-	cc.chatService.SubscribeToEvent(eventID, user.ID, messageChannel)
+	cc.chatService.SubscribeToEvent(eventID.String(), user.ID, messageChannel)
 
 	c.Status(fiber.StatusOK).Context().SetBodyStreamWriter(fasthttp.StreamWriter(func(w *bufio.Writer) {
 
@@ -78,10 +83,13 @@ func (cc *ChatController) SendMessage(c *fiber.Ctx) error {
 
 	user := c.Locals("user").(*ent.User)
 
-	eventID := c.Params("event_id")
+	eventID, err := ulid.Parse(c.Params("event_id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
 
 	// Vérifiez si l'event existe
-	event, errEvent := cc.eventService.GetEvent(eventID)
+	event, errEvent := cc.eventService.GetEvent(eventID.String())
 	if errEvent != nil {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{
 
@@ -103,8 +111,8 @@ func (cc *ChatController) SendMessage(c *fiber.Ctx) error {
 	}
 
 	validations := validator.New()
-	err := validations.Struct(messageDTO)
-	if err != nil {
+	errValidations := validations.Struct(messageDTO)
+	if errValidations != nil {
 		errors := make([]string, 0)
 		for _, err := range err.(validator.ValidationErrors) {
 			errors = append(errors, err.Error())
@@ -114,7 +122,7 @@ func (cc *ChatController) SendMessage(c *fiber.Ctx) error {
 
 	ctx := context.WithValue(c.Context(), "user_id", user.ID)
 
-	responseMessage, err := cc.chatService.BroadcastMessage(ctx, messageDTO, eventID, user.ID)
+	responseMessage, err := cc.chatService.BroadcastMessage(ctx, messageDTO, eventID.String(), user.ID)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -127,12 +135,63 @@ func (cc *ChatController) SendMessage(c *fiber.Ctx) error {
 func (cc *ChatController) DeleteMessage(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
-	messageID := c.Params("message_id")
+	messageID, err := ulid.Parse(c.Params("message_id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
 
-	eventID := c.Params("event_id")
+	eventID, err := ulid.Parse(c.Params("event_id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
 
 	// Vérifiez si l'event existe
-	event, errEvent := cc.eventService.GetEvent(eventID)
+	event, errEvent := cc.eventService.GetEvent(eventID.String())
+	if errEvent != nil {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+
+			"error": "Event not found",
+		})
+	}
+
+	// Vérifiez si le message existe
+	msg, errMessage := cc.chatService.GetChat(messageID.String())
+	if errMessage != nil {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+			"error": "Message not found",
+		})
+	}
+
+	if !guards.CanAuthorize(user, msg) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
+	if !cc.chatService.CheckUserHasPermission(event.Participants, user.ID) {
+		return c.Status(http.StatusForbidden).JSON(fiber.Map{
+			"error": "You don't have permission to access this event",
+		})
+	}
+
+	deleteMessage, err := cc.chatService.DeleteMessage(eventID.String(), messageID.String(), user.ID)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(deleteMessage)
+}
+
+func (cc *ChatController) GetChats(c *fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	eventID, err := ulid.Parse(c.Params("event_id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	// Vérifiez si l'event existe
+	event, errEvent := cc.eventService.GetEvent(eventID.String())
 	if errEvent != nil {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{
 
@@ -146,12 +205,12 @@ func (cc *ChatController) DeleteMessage(c *fiber.Ctx) error {
 		})
 	}
 
-	deleteMessage, err := cc.chatService.DeleteMessage(eventID, messageID, user.ID)
+	chats, err := cc.chatService.GetChats(eventID.String())
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	return c.JSON(deleteMessage)
+	return c.JSON(chats)
 }

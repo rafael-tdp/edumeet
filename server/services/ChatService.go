@@ -30,6 +30,15 @@ func NewChatService(chatRepo *repositories.ChatRepository) *ChatService {
 	}
 }
 
+func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {
+	message, err := cs.chatRepo.GetChat(messageID)
+	if err != nil {
+		return nil, err
+	}
+
+	return dtos.EntToGetChatDTO(message.Edges.Event.ID, message.Content, message.ID, message.CreatedAt.String(), message.Edges.User.ID, []string{}), nil
+}
+
 func (cs *ChatService) SubscribeToEvent(eventID, userID string, ch chan string) {
 	cs.mu.Lock()
 	defer cs.mu.Unlock() // Assurez-vous que le verrou est libéré dès que possible
@@ -125,4 +134,18 @@ func (cs *ChatService) DeleteMessage(eventID, messageID, userID string) (*dtos.D
 	}
 
 	return deleteMessageDTO, nil
+}
+
+func (cs *ChatService) GetChats(eventID string) ([]*dtos.GetChatDTO, error) {
+	chats, err := cs.chatRepo.GetChatsByEventID(eventID)
+	if err != nil {
+		return nil, err
+	}
+
+	var getChatDtos []*dtos.GetChatDTO
+	for _, chat := range chats {
+		getChatDtos = append(getChatDtos, dtos.EntToGetChatDTO(eventID, chat.Content, chat.ID, chat.CreatedAt.String(), chat.Edges.User.ID, []string{}))
+	}
+
+	return getChatDtos, nil
 }
