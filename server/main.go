@@ -6,8 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
-	"sync"
 
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
@@ -53,24 +51,7 @@ func main() {
 
 		routes.InitRoutes(app)
 
-		http.HandleFunc("/ws", utils.HandleConnection)
+		app.Listen(":3000")
 
-		var wg sync.WaitGroup
-		wg.Add(2)
-
-		go func() {
-			defer wg.Done()
-			if err := app.Listen(":3000"); err != nil {
-				log.Fatal(err)
-			}
-		}()
-
-		go func() {
-			defer wg.Done()
-			if err := http.ListenAndServe(":8081", nil); err != nil {
-				log.Fatal(err)
-			}
-		}()
-		wg.Wait()
 	}
 }
