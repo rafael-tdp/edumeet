@@ -104,6 +104,20 @@ func (du *DocumentUpdate) SetNillablePath(s *string) *DocumentUpdate {
 	return du
 }
 
+// SetName sets the "name" field.
+func (du *DocumentUpdate) SetName(s string) *DocumentUpdate {
+	du.mutation.SetName(s)
+	return du
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (du *DocumentUpdate) SetNillableName(s *string) *DocumentUpdate {
+	if s != nil {
+		du.SetName(*s)
+	}
+	return du
+}
+
 // AddEventDocumentIDs adds the "event_documents" edge to the EventDocument entity by IDs.
 func (du *DocumentUpdate) AddEventDocumentIDs(ids ...string) *DocumentUpdate {
 	du.mutation.AddEventDocumentIDs(ids...)
@@ -252,6 +266,9 @@ func (du *DocumentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := du.mutation.Path(); ok {
 		_spec.SetField(document.FieldPath, field.TypeString, value)
+	}
+	if value, ok := du.mutation.Name(); ok {
+		_spec.SetField(document.FieldName, field.TypeString, value)
 	}
 	if du.mutation.EventDocumentsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -437,6 +454,20 @@ func (duo *DocumentUpdateOne) SetNillablePath(s *string) *DocumentUpdateOne {
 	return duo
 }
 
+// SetName sets the "name" field.
+func (duo *DocumentUpdateOne) SetName(s string) *DocumentUpdateOne {
+	duo.mutation.SetName(s)
+	return duo
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (duo *DocumentUpdateOne) SetNillableName(s *string) *DocumentUpdateOne {
+	if s != nil {
+		duo.SetName(*s)
+	}
+	return duo
+}
+
 // AddEventDocumentIDs adds the "event_documents" edge to the EventDocument entity by IDs.
 func (duo *DocumentUpdateOne) AddEventDocumentIDs(ids ...string) *DocumentUpdateOne {
 	duo.mutation.AddEventDocumentIDs(ids...)
@@ -615,6 +646,9 @@ func (duo *DocumentUpdateOne) sqlSave(ctx context.Context) (_node *Document, err
 	}
 	if value, ok := duo.mutation.Path(); ok {
 		_spec.SetField(document.FieldPath, field.TypeString, value)
+	}
+	if value, ok := duo.mutation.Name(); ok {
+		_spec.SetField(document.FieldName, field.TypeString, value)
 	}
 	if duo.mutation.EventDocumentsCleared() {
 		edge := &sqlgraph.EdgeSpec{

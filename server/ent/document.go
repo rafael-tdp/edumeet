@@ -27,6 +27,8 @@ type Document struct {
 	UpdatedBy *string `json:"updated_by,omitempty"`
 	// Path holds the value of the "path" field.
 	Path string `json:"path,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the DocumentQuery when eager-loading is set.
 	Edges        DocumentEdges `json:"edges"`
@@ -67,7 +69,7 @@ func (*Document) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case document.FieldID, document.FieldCreatedBy, document.FieldUpdatedBy, document.FieldPath:
+		case document.FieldID, document.FieldCreatedBy, document.FieldUpdatedBy, document.FieldPath, document.FieldName:
 			values[i] = new(sql.NullString)
 		case document.FieldCreatedAt, document.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -123,6 +125,12 @@ func (d *Document) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field path", values[i])
 			} else if value.Valid {
 				d.Path = value.String
+			}
+		case document.FieldName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field name", values[i])
+			} else if value.Valid {
+				d.Name = value.String
 			}
 		default:
 			d.selectValues.Set(columns[i], values[i])
@@ -188,6 +196,9 @@ func (d *Document) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("path=")
 	builder.WriteString(d.Path)
+	builder.WriteString(", ")
+	builder.WriteString("name=")
+	builder.WriteString(d.Name)
 	builder.WriteByte(')')
 	return builder.String()
 }

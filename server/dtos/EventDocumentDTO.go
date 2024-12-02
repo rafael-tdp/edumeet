@@ -10,6 +10,7 @@ type EventDocumentDTO struct {
 	Type       string    `json:"type"`
 	Path       string    `json:"path"`
 	CreatedAt  time.Time `json:"created_at"`
+	Name       string    `json:"name"`
 }
 
 func EntToEventDocumentDTO(eventDocument []*ent.EventDocument) []*EventDocumentDTO {
@@ -18,6 +19,7 @@ func EntToEventDocumentDTO(eventDocument []*ent.EventDocument) []*EventDocumentD
 		eventDocumentDTO = append(eventDocumentDTO, &EventDocumentDTO{
 			DocumentID: ed.Edges.Document.ID,
 			Type:       ed.Type,
+			Name:       ed.Edges.Document.Name,
 			Path:       ed.Edges.Document.Path,
 			CreatedAt:  ed.Edges.Document.CreatedAt,
 		})

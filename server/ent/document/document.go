@@ -25,6 +25,8 @@ const (
 	FieldUpdatedBy = "updated_by"
 	// FieldPath holds the string denoting the path field in the database.
 	FieldPath = "path"
+	// FieldName holds the string denoting the name field in the database.
+	FieldName = "name"
 	// EdgeEventDocuments holds the string denoting the event_documents edge name in mutations.
 	EdgeEventDocuments = "event_documents"
 	// EdgeMessage holds the string denoting the message edge name in mutations.
@@ -53,6 +55,7 @@ var Columns = []string{
 	FieldCreatedBy,
 	FieldUpdatedBy,
 	FieldPath,
+	FieldName,
 }
 
 var (
@@ -119,6 +122,11 @@ func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByPath orders the results by the path field.
 func ByPath(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPath, opts...).ToFunc()
+}
+
+// ByName orders the results by the name field.
+func ByName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldName, opts...).ToFunc()
 }
 
 // ByEventDocumentsCount orders the results by event_documents count.

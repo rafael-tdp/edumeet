@@ -5,6 +5,8 @@ import (
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/ent/document"
+	"edumeet/ent/event"
+	"edumeet/ent/eventdocument"
 	"errors"
 )
 
@@ -66,4 +68,23 @@ func (r *DocumentRepository) CreateDocument(ctx context.Context, documentDTO dto
 	document := r.client.Document.Query().Where(document.IDEQ(documentCreated.ID)).WithEventDocuments().WithMessage().OnlyX(ctx)
 
 	return document, nil
+}
+
+func (r *DocumentRepository) GetEventDocuments(eventID string) ([]*ent.EventDocument, error) {
+	if r == nil {
+		return nil, errors.New("client is not initialized")
+	}
+
+	eventDocuments, err := r.client.EventDocument.
+		Query().
+		Where(
+			eventdocument.HasEventWith(event.IDEQ(eventID)),
+		).
+		WithDocument().All(context.Background())
+
+	if err != nil {
+		return nil, errors.New("error getting event documents: " + err.Error())
+	}
+
+	return eventDocuments, nil
 }

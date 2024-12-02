@@ -121,8 +121,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const ResourcesSection(
-                      resources: [],
+                    ResourcesSection(
+                      resources: event.documents ?? const [],
                     ),
                     const SizedBox(height: 20),
                   ],

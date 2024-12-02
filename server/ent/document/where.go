@@ -90,6 +90,11 @@ func Path(v string) predicate.Document {
 	return predicate.Document(sql.FieldEQ(FieldPath, v))
 }
 
+// Name applies equality check predicate on the "name" field. It's identical to NameEQ.
+func Name(v string) predicate.Document {
+	return predicate.Document(sql.FieldEQ(FieldName, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Document {
 	return predicate.Document(sql.FieldEQ(FieldCreatedAt, v))
@@ -383,6 +388,71 @@ func PathEqualFold(v string) predicate.Document {
 // PathContainsFold applies the ContainsFold predicate on the "path" field.
 func PathContainsFold(v string) predicate.Document {
 	return predicate.Document(sql.FieldContainsFold(FieldPath, v))
+}
+
+// NameEQ applies the EQ predicate on the "name" field.
+func NameEQ(v string) predicate.Document {
+	return predicate.Document(sql.FieldEQ(FieldName, v))
+}
+
+// NameNEQ applies the NEQ predicate on the "name" field.
+func NameNEQ(v string) predicate.Document {
+	return predicate.Document(sql.FieldNEQ(FieldName, v))
+}
+
+// NameIn applies the In predicate on the "name" field.
+func NameIn(vs ...string) predicate.Document {
+	return predicate.Document(sql.FieldIn(FieldName, vs...))
+}
+
+// NameNotIn applies the NotIn predicate on the "name" field.
+func NameNotIn(vs ...string) predicate.Document {
+	return predicate.Document(sql.FieldNotIn(FieldName, vs...))
+}
+
+// NameGT applies the GT predicate on the "name" field.
+func NameGT(v string) predicate.Document {
+	return predicate.Document(sql.FieldGT(FieldName, v))
+}
+
+// NameGTE applies the GTE predicate on the "name" field.
+func NameGTE(v string) predicate.Document {
+	return predicate.Document(sql.FieldGTE(FieldName, v))
+}
+
+// NameLT applies the LT predicate on the "name" field.
+func NameLT(v string) predicate.Document {
+	return predicate.Document(sql.FieldLT(FieldName, v))
+}
+
+// NameLTE applies the LTE predicate on the "name" field.
+func NameLTE(v string) predicate.Document {
+	return predicate.Document(sql.FieldLTE(FieldName, v))
+}
+
+// NameContains applies the Contains predicate on the "name" field.
+func NameContains(v string) predicate.Document {
+	return predicate.Document(sql.FieldContains(FieldName, v))
+}
+
+// NameHasPrefix applies the HasPrefix predicate on the "name" field.
+func NameHasPrefix(v string) predicate.Document {
+	return predicate.Document(sql.FieldHasPrefix(FieldName, v))
+}
+
+// NameHasSuffix applies the HasSuffix predicate on the "name" field.
+func NameHasSuffix(v string) predicate.Document {
+	return predicate.Document(sql.FieldHasSuffix(FieldName, v))
+}
+
+// NameEqualFold applies the EqualFold predicate on the "name" field.
+func NameEqualFold(v string) predicate.Document {
+	return predicate.Document(sql.FieldEqualFold(FieldName, v))
+}
+
+// NameContainsFold applies the ContainsFold predicate on the "name" field.
+func NameContainsFold(v string) predicate.Document {
+	return predicate.Document(sql.FieldContainsFold(FieldName, v))
 }
 
 // HasEventDocuments applies the HasEdge predicate on the "event_documents" edge.

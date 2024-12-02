@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"edumeet/dtos"
+	"edumeet/ent"
 	"edumeet/repositories"
 	"edumeet/utils"
 	"fmt"
@@ -24,10 +25,6 @@ func NewDocumentService(documentRepo *repositories.DocumentRepository, eventRepo
 
 func (r *DocumentService) GetDocumentById(documentID string) (dtos.DocumentDTO, error) {
 	document, err := r.documentRepo.GetDocumentById(documentID)
-	if err != nil {
-		return dtos.DocumentDTO{}, err
-	}
-
 	if err != nil {
 		return dtos.DocumentDTO{}, err
 	}
@@ -103,4 +100,22 @@ func (r *DocumentService) CreateDocument(ctx context.Context, documentDTO dtos.D
 	documentDTO = dtos.DocumentEntToDTO(documentCreated)
 
 	return documentDTO, nil
+}
+
+func (ds *DocumentService) GetEventDocuments(eventID string) ([]dtos.EventDocumentDTO, error) {
+	eventDocuments, err := ds.documentRepo.GetEventDocuments(eventID)
+	if err != nil {
+		return []dtos.EventDocumentDTO{}, err
+	}
+
+	eventDocumentDTOs := make([]dtos.EventDocumentDTO, 0, len(eventDocuments))
+
+	for _, eventDocument := range eventDocuments {
+		dto := dtos.EntToEventDocumentDTO([]*ent.EventDocument{eventDocument})
+		for _, d := range dto {
+			eventDocumentDTOs = append(eventDocumentDTOs, *d)
+		}
+	}
+
+	return eventDocumentDTOs, nil
 }

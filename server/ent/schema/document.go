@@ -24,6 +24,7 @@ func (Document) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
 		field.String("path"),
+		field.String("name"),
 	}
 }
 
