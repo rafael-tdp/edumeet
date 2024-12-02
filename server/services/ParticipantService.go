@@ -55,7 +55,7 @@ func (ps *ParticipantService) RequestParticipant(eventID string, userID string) 
 
 func (ps *ParticipantService) ProcessParticipant(participant dtos.ParticipantDetailDTO, statut string) error {
 
-	if participant.Status != string(enums.ParticipantPending) {
+	if participant.Status == string(enums.ParticipantRejected) {
 		return errors.New("le participant a déjà été traité")
 	}
 
