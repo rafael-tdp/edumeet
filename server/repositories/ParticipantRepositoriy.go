@@ -32,11 +32,16 @@ func (pr *ParticipantRepository) CreateParticipant(userId string, eventId string
 }
 
 func (pr *ParticipantRepository) GetParticipant(participantId string) (*ent.Participant, error) {
-	participant, err := pr.client.Participant.Get(context.Background(), participantId)
+	participant, err := pr.client.Participant.
+		Query().
+		Where(participant.IDEQ(participantId)).
+		WithEvent().
+		WithUser().
+		First(context.Background())
+
 	if err != nil {
 		return nil, err
 	}
-
 	return participant, nil
 }
 

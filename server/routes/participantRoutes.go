@@ -12,7 +12,7 @@ import (
 
 func setupRoutesParticipant(app *fiber.App, participantController *controllers.ParticipantController) {
 	app.Get("/participant/request/:eventID", middlewares.JWTAuthMiddleware, participantController.RequestParticipant)
-	app.Get("/participant/accept/:participantID", middlewares.JWTAuthMiddleware, participantController.AcceptParticipant)
+	app.Get("/participant/process/:participantID/:status", middlewares.JWTAuthMiddleware, participantController.ProcessParticipant)
 }
 
 func initParticipantController(client *ent.Client) *controllers.ParticipantController {

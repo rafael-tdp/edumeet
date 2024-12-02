@@ -1,6 +1,8 @@
 package services
 
 import (
+	"edumeet/dtos"
+	"edumeet/enums"
 	"edumeet/repositories"
 	"errors"
 	"time"
@@ -37,9 +39,9 @@ func (ps *ParticipantService) RequestParticipant(eventID string, userID string) 
 		return errors.New("le participant est déjà dans l'événement")
 	}
 
-	status := "accepted"
+	status := string(enums.ParticipantAccepted)
 	if event.IsPrivate {
-		status = "pending"
+		status = string(enums.ParticipantPending)
 	}
 
 	_, err := ps.participantRepository.CreateParticipant(userID, eventID, status)
@@ -51,23 +53,28 @@ func (ps *ParticipantService) RequestParticipant(eventID string, userID string) 
 	return nil
 }
 
-func (ps *ParticipantService) ProcessParticipant(participantID string, statut string) error {
+func (ps *ParticipantService) ProcessParticipant(participant dtos.ParticipantDTO, statut string) error {
 
-	participant, err := ps.participantRepository.GetParticipant(participantID)
-
-	if err != nil {
-		return err
+	if participant.Status != string(enums.ParticipantPending) {
+		return errors.New("le participant a déjà été traité")
 	}
 
-	if participant.Status == "accepted" {
-		return errors.New("Participant is already accepted")
-	}
-
-	_, err = ps.participantRepository.UpdateParticipantStatut(participantID, statut)
+	_, err := ps.participantRepository.UpdateParticipantStatut(participant.ID, statut)
 
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (ps *ParticipantService) GetParticipant(participantID string) (*dtos.ParticipantDTO, error) {
+
+	participant, err := ps.participantRepository.GetParticipant(participantID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return dtos.EntToParticipantDTO(participant), nil
 }

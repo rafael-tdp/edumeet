@@ -34,10 +34,26 @@ func (pc *ParticipantController) RequestParticipant(c *fiber.Ctx) error {
 	return pc.participantService.RequestParticipant(eventID.String(), user.ID)
 }
 
-func (pc *ParticipantController) AcceptParticipant(c *fiber.Ctx) error {
+func (pc *ParticipantController) ProcessParticipant(c *fiber.Ctx) error {
 
 	statut := c.Params("statut")
 	participantID := c.Params("participantID")
 
-	return pc.participantService.ProcessParticipant(participantID, statut)
+	user := c.Locals("user").(*ent.User)
+
+	participantDetail, err := pc.participantService.GetParticipant(participantID)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid participant ID",
+		})
+	}
+
+	if *participantDetail.Event.CreatedBy != user.ID || user.Role != "admin" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	return pc.participantService.ProcessParticipant(*participantDetail, statut)
 }
