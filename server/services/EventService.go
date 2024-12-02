@@ -213,3 +213,20 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 
 	return eventDetails, nil
 }
+
+func (es *EventService) GetParticipantPending(eventID string) ([]dtos.PendingParticipantDTO, error) {
+
+	participants, err := es.participantRepository.GetPendingParticipantsByEvent(eventID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	pendingParticipantsDTO := []dtos.PendingParticipantDTO{}
+
+	for _, participant := range participants {
+		pendingParticipantsDTO = append(pendingParticipantsDTO, *dtos.EntToPendingParticipantDTO(participant))
+	}
+
+	return pendingParticipantsDTO, nil
+}

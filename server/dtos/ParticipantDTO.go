@@ -38,7 +38,7 @@ func EntToParticipantDTO(ent *ent.Participant) *ParticipantDTO {
 		RequestedAt: ent.RequestedAt,
 		JoinedAt:    ent.JoinedAt,
 		UserID:      ent.Edges.User.ID,
-		EventID:     ent.Edges.Event.ID,
+		//		EventID:     ent.Edges.Event.ID,
 	}
 }
 

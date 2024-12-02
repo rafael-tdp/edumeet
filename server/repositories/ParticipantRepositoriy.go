@@ -89,3 +89,16 @@ func (pr *ParticipantRepository) GetParticipantsByEvent(eventId string) ([]*ent.
 
 	return participants, nil
 }
+
+func (pr *ParticipantRepository) GetPendingParticipantsByEvent(eventId string) ([]*ent.Participant, error) {
+	participants, err := pr.client.Participant.Query().
+		Where(participant.HasEventWith(event.IDEQ(eventId))).
+		Where(participant.StatusEQ("pending")).
+		WithUser().
+		All(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return participants, nil
+}

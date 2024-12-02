@@ -193,3 +193,40 @@ func (ec *EventController) GetEventWithDetails(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(event)
 }
+
+func (ec *EventController) GetPendingParticipant(c *fiber.Ctx) error {
+
+	eventID, err := ulid.Parse(c.Params("eventID"))
+	user := c.Locals("user").(*ent.User)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid event ID",
+		})
+	}
+
+	event, err := ec.eventservice.GetEvent(eventID.String())
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if !guards.CanAuthorize(user, event) {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	pendingParticipants, err := ec.eventservice.GetParticipantPending(eventID.String())
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(pendingParticipants)
+
+}
