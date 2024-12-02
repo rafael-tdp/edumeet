@@ -36,7 +36,7 @@ func (pc *ParticipantController) RequestParticipant(c *fiber.Ctx) error {
 
 func (pc *ParticipantController) ProcessParticipant(c *fiber.Ctx) error {
 
-	statut := c.Params("statut")
+	statut := c.Params("status")
 	participantID := c.Params("participantID")
 
 	user := c.Locals("user").(*ent.User)
@@ -49,7 +49,7 @@ func (pc *ParticipantController) ProcessParticipant(c *fiber.Ctx) error {
 		})
 	}
 
-	if *participantDetail.Event.CreatedBy != user.ID || user.Role != "admin" {
+	if *participantDetail.Event.CreatedBy != user.ID && user.Role != "admin" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized",
 		})
