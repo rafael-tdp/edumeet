@@ -110,7 +110,6 @@ func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
 		if event.Edges.RemoteEvent != nil {
 			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
 				ID:                event.ID,
-				NbMaxUser:         event.NbMaxUser,
 				StartDate:         event.StartDate,
 				EndDate:           event.EndDate,
 				IsPrivate:         event.IsPrivate,
@@ -124,7 +123,6 @@ func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
 		} else {
 			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
 				ID:                event.ID,
-				NbMaxUser:         event.NbMaxUser,
 				StartDate:         event.StartDate,
 				EndDate:           event.EndDate,
 				IsPrivate:         event.IsPrivate,
@@ -153,7 +151,6 @@ func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO,
 		if event.Edges.RemoteEvent != nil {
 			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
 				ID:                event.ID,
-				NbMaxUser:         event.NbMaxUser,
 				StartDate:         event.StartDate,
 				EndDate:           event.EndDate,
 				IsPrivate:         event.IsPrivate,
@@ -167,7 +164,6 @@ func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO,
 		} else {
 			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
 				ID:                event.ID,
-				NbMaxUser:         event.NbMaxUser,
 				StartDate:         event.StartDate,
 				EndDate:           event.EndDate,
 				IsPrivate:         event.IsPrivate,
@@ -197,7 +193,6 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 
 	eventDetails := dtos.EventWithDetailsDTO{
 		ID:                event.ID,
-		NbMaxUser:         event.NbMaxUser,
 		StartDate:         event.StartDate,
 		EndDate:           event.EndDate,
 		IsPrivate:         event.IsPrivate,
