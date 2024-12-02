@@ -53,10 +53,14 @@ func (ps *ParticipantService) RequestParticipant(eventID string, userID string) 
 	return nil
 }
 
-func (ps *ParticipantService) ProcessParticipant(participant dtos.ParticipantDTO, statut string) error {
+func (ps *ParticipantService) ProcessParticipant(participant dtos.ParticipantDetailDTO, statut string) error {
 
 	if participant.Status != string(enums.ParticipantPending) {
 		return errors.New("le participant a déjà été traité")
+	}
+
+	if statut != string(enums.ParticipantAccepted) && statut != string(enums.ParticipantRejected) {
+		return errors.New("statut invalide")
 	}
 
 	_, err := ps.participantRepository.UpdateParticipantStatut(participant.ID, statut)

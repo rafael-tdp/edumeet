@@ -41,7 +41,7 @@ func (pc *ParticipantController) ProcessParticipant(c *fiber.Ctx) error {
 
 	user := c.Locals("user").(*ent.User)
 
-	participantDetail, err := pc.participantService.GetParticipant(participantID)
+	participantDetail, err := pc.participantService.GetParticipantDetail(participantID)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
