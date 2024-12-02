@@ -23,8 +23,6 @@ const (
 	FieldCreatedBy = "created_by"
 	// FieldUpdatedBy holds the string denoting the updated_by field in the database.
 	FieldUpdatedBy = "updated_by"
-	// FieldNbMaxUser holds the string denoting the nbmaxuser field in the database.
-	FieldNbMaxUser = "nb_max_user"
 	// FieldStartDate holds the string denoting the start_date field in the database.
 	FieldStartDate = "start_date"
 	// FieldEndDate holds the string denoting the end_date field in the database.
@@ -111,7 +109,6 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldCreatedBy,
 	FieldUpdatedBy,
-	FieldNbMaxUser,
 	FieldStartDate,
 	FieldEndDate,
 	FieldIsPrivate,
@@ -193,11 +190,6 @@ func ByCreatedBy(opts ...sql.OrderTermOption) OrderOption {
 // ByUpdatedBy orders the results by the updated_by field.
 func ByUpdatedBy(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedBy, opts...).ToFunc()
-}
-
-// ByNbMaxUser orders the results by the nbMaxUser field.
-func ByNbMaxUser(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldNbMaxUser, opts...).ToFunc()
 }
 
 // ByStartDate orders the results by the start_date field.

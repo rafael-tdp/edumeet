@@ -31,7 +31,6 @@ func (e *Event) GenerateEvent(ctx context.Context, client *ent.Client) {
 		event, err := client.Event.Create().
 			SetTitle(gofakeit.Name()).
 			SetDescription(gofakeit.Sentence(10)).
-			SetNbMaxUser(gofakeit.Number(1, 10)).
 			SetStartDate(start).
 			SetEndDate(end).
 			// SetIsPrivate(gofakeit.Bool()).

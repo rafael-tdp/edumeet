@@ -24,7 +24,6 @@ func (er *EventRepository) CreateEvent(ctx context.Context, event dtos.EventDTO)
 	createdEvent, err := er.client.Event.
 		Create().
 		SetTitle(event.Title).
-		SetNbMaxUser(event.NbMaxUser).
 		SetStartDate(event.StartDate).
 		SetEndDate(event.EndDate).
 		SetIsPrivate(event.IsPrivate).
@@ -148,7 +147,6 @@ func (er *EventRepository) UpdateEvent(ctx context.Context, event dtos.EventDTO,
 	updatedEvent, err := er.client.Event.
 		UpdateOneID(eventID).
 		SetTitle(event.Title).
-		SetNbMaxUser(event.NbMaxUser).
 		SetStartDate(event.StartDate).
 		SetEndDate(event.EndDate).
 		SetIsPrivate(event.IsPrivate).

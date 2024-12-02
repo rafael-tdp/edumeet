@@ -1756,8 +1756,6 @@ type EventMutation struct {
 	updated_at             *time.Time
 	created_by             *string
 	updated_by             *string
-	nbMaxUser              *int
-	addnbMaxUser           *int
 	start_date             *time.Time
 	end_date               *time.Time
 	isPrivate              *bool
@@ -2061,62 +2059,6 @@ func (m *EventMutation) UpdatedByCleared() bool {
 func (m *EventMutation) ResetUpdatedBy() {
 	m.updated_by = nil
 	delete(m.clearedFields, event.FieldUpdatedBy)
-}
-
-// SetNbMaxUser sets the "nbMaxUser" field.
-func (m *EventMutation) SetNbMaxUser(i int) {
-	m.nbMaxUser = &i
-	m.addnbMaxUser = nil
-}
-
-// NbMaxUser returns the value of the "nbMaxUser" field in the mutation.
-func (m *EventMutation) NbMaxUser() (r int, exists bool) {
-	v := m.nbMaxUser
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldNbMaxUser returns the old "nbMaxUser" field's value of the Event entity.
-// If the Event object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EventMutation) OldNbMaxUser(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldNbMaxUser is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldNbMaxUser requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldNbMaxUser: %w", err)
-	}
-	return oldValue.NbMaxUser, nil
-}
-
-// AddNbMaxUser adds i to the "nbMaxUser" field.
-func (m *EventMutation) AddNbMaxUser(i int) {
-	if m.addnbMaxUser != nil {
-		*m.addnbMaxUser += i
-	} else {
-		m.addnbMaxUser = &i
-	}
-}
-
-// AddedNbMaxUser returns the value that was added to the "nbMaxUser" field in this mutation.
-func (m *EventMutation) AddedNbMaxUser() (r int, exists bool) {
-	v := m.addnbMaxUser
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetNbMaxUser resets all changes to the "nbMaxUser" field.
-func (m *EventMutation) ResetNbMaxUser() {
-	m.nbMaxUser = nil
-	m.addnbMaxUser = nil
 }
 
 // SetStartDate sets the "start_date" field.
@@ -2790,7 +2732,7 @@ func (m *EventMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *EventMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, event.FieldCreatedAt)
 	}
@@ -2802,9 +2744,6 @@ func (m *EventMutation) Fields() []string {
 	}
 	if m.updated_by != nil {
 		fields = append(fields, event.FieldUpdatedBy)
-	}
-	if m.nbMaxUser != nil {
-		fields = append(fields, event.FieldNbMaxUser)
 	}
 	if m.start_date != nil {
 		fields = append(fields, event.FieldStartDate)
@@ -2843,8 +2782,6 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedBy()
 	case event.FieldUpdatedBy:
 		return m.UpdatedBy()
-	case event.FieldNbMaxUser:
-		return m.NbMaxUser()
 	case event.FieldStartDate:
 		return m.StartDate()
 	case event.FieldEndDate:
@@ -2876,8 +2813,6 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldCreatedBy(ctx)
 	case event.FieldUpdatedBy:
 		return m.OldUpdatedBy(ctx)
-	case event.FieldNbMaxUser:
-		return m.OldNbMaxUser(ctx)
 	case event.FieldStartDate:
 		return m.OldStartDate(ctx)
 	case event.FieldEndDate:
@@ -2928,13 +2863,6 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedBy(v)
-		return nil
-	case event.FieldNbMaxUser:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetNbMaxUser(v)
 		return nil
 	case event.FieldStartDate:
 		v, ok := value.(time.Time)
@@ -2992,21 +2920,13 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *EventMutation) AddedFields() []string {
-	var fields []string
-	if m.addnbMaxUser != nil {
-		fields = append(fields, event.FieldNbMaxUser)
-	}
-	return fields
+	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *EventMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case event.FieldNbMaxUser:
-		return m.AddedNbMaxUser()
-	}
 	return nil, false
 }
 
@@ -3015,13 +2935,6 @@ func (m *EventMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *EventMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case event.FieldNbMaxUser:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddNbMaxUser(v)
-		return nil
 	}
 	return fmt.Errorf("unknown Event numeric field %s", name)
 }
@@ -3099,9 +3012,6 @@ func (m *EventMutation) ResetField(name string) error {
 		return nil
 	case event.FieldUpdatedBy:
 		m.ResetUpdatedBy()
-		return nil
-	case event.FieldNbMaxUser:
-		m.ResetNbMaxUser()
 		return nil
 	case event.FieldStartDate:
 		m.ResetStartDate()

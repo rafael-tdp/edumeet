@@ -28,8 +28,6 @@ type Event struct {
 	CreatedBy *string `json:"created_by,omitempty"`
 	// UpdatedBy holds the value of the "updated_by" field.
 	UpdatedBy *string `json:"updated_by,omitempty"`
-	// NbMaxUser holds the value of the "nbMaxUser" field.
-	NbMaxUser int `json:"nbMaxUser,omitempty"`
 	// StartDate holds the value of the "start_date" field.
 	StartDate time.Time `json:"start_date,omitempty"`
 	// EndDate holds the value of the "end_date" field.
@@ -148,8 +146,6 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case event.FieldIsPrivate:
 			values[i] = new(sql.NullBool)
-		case event.FieldNbMaxUser:
-			values[i] = new(sql.NullInt64)
 		case event.FieldID, event.FieldCreatedBy, event.FieldUpdatedBy, event.FieldTitle, event.FieldDescription, event.FieldInvitationLink, event.FieldImage:
 			values[i] = new(sql.NullString)
 		case event.FieldCreatedAt, event.FieldUpdatedAt, event.FieldStartDate, event.FieldEndDate:
@@ -202,12 +198,6 @@ func (e *Event) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.UpdatedBy = new(string)
 				*e.UpdatedBy = value.String
-			}
-		case event.FieldNbMaxUser:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field nbMaxUser", values[i])
-			} else if value.Valid {
-				e.NbMaxUser = int(value.Int64)
 			}
 		case event.FieldStartDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -344,9 +334,6 @@ func (e *Event) String() string {
 		builder.WriteString("updated_by=")
 		builder.WriteString(*v)
 	}
-	builder.WriteString(", ")
-	builder.WriteString("nbMaxUser=")
-	builder.WriteString(fmt.Sprintf("%v", e.NbMaxUser))
 	builder.WriteString(", ")
 	builder.WriteString("start_date=")
 	builder.WriteString(e.StartDate.Format(time.ANSIC))

@@ -85,11 +85,6 @@ func UpdatedBy(v string) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
-// NbMaxUser applies equality check predicate on the "nbMaxUser" field. It's identical to NbMaxUserEQ.
-func NbMaxUser(v int) predicate.Event {
-	return predicate.Event(sql.FieldEQ(FieldNbMaxUser, v))
-}
-
 // StartDate applies equality check predicate on the "start_date" field. It's identical to StartDateEQ.
 func StartDate(v time.Time) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldStartDate, v))
@@ -353,46 +348,6 @@ func UpdatedByEqualFold(v string) predicate.Event {
 // UpdatedByContainsFold applies the ContainsFold predicate on the "updated_by" field.
 func UpdatedByContainsFold(v string) predicate.Event {
 	return predicate.Event(sql.FieldContainsFold(FieldUpdatedBy, v))
-}
-
-// NbMaxUserEQ applies the EQ predicate on the "nbMaxUser" field.
-func NbMaxUserEQ(v int) predicate.Event {
-	return predicate.Event(sql.FieldEQ(FieldNbMaxUser, v))
-}
-
-// NbMaxUserNEQ applies the NEQ predicate on the "nbMaxUser" field.
-func NbMaxUserNEQ(v int) predicate.Event {
-	return predicate.Event(sql.FieldNEQ(FieldNbMaxUser, v))
-}
-
-// NbMaxUserIn applies the In predicate on the "nbMaxUser" field.
-func NbMaxUserIn(vs ...int) predicate.Event {
-	return predicate.Event(sql.FieldIn(FieldNbMaxUser, vs...))
-}
-
-// NbMaxUserNotIn applies the NotIn predicate on the "nbMaxUser" field.
-func NbMaxUserNotIn(vs ...int) predicate.Event {
-	return predicate.Event(sql.FieldNotIn(FieldNbMaxUser, vs...))
-}
-
-// NbMaxUserGT applies the GT predicate on the "nbMaxUser" field.
-func NbMaxUserGT(v int) predicate.Event {
-	return predicate.Event(sql.FieldGT(FieldNbMaxUser, v))
-}
-
-// NbMaxUserGTE applies the GTE predicate on the "nbMaxUser" field.
-func NbMaxUserGTE(v int) predicate.Event {
-	return predicate.Event(sql.FieldGTE(FieldNbMaxUser, v))
-}
-
-// NbMaxUserLT applies the LT predicate on the "nbMaxUser" field.
-func NbMaxUserLT(v int) predicate.Event {
-	return predicate.Event(sql.FieldLT(FieldNbMaxUser, v))
-}
-
-// NbMaxUserLTE applies the LTE predicate on the "nbMaxUser" field.
-func NbMaxUserLTE(v int) predicate.Event {
-	return predicate.Event(sql.FieldLTE(FieldNbMaxUser, v))
 }
 
 // StartDateEQ applies the EQ predicate on the "start_date" field.

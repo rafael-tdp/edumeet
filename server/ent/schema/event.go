@@ -24,7 +24,6 @@ func (Event) Fields() []ent.Field {
 	ulid := utils.ULID{}
 	return []ent.Field{
 		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
-		field.Int("nbMaxUser"),
 		field.Time("start_date"),
 		field.Time("end_date").Optional(),
 		field.Bool("isPrivate").Default(false),

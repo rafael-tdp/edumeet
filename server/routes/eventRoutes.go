@@ -18,6 +18,7 @@ func setupEventRoutes(app *fiber.App, eventController *controllers.EventControll
 	app.Post("/api/events", middlewares.JWTAuthMiddleware, eventController.CreateEvent)
 	app.Put("/api/events/:id", middlewares.JWTAuthMiddleware, eventController.UpdateEvent)
 	app.Delete("/api/events/:id", middlewares.JWTAuthMiddleware, eventController.DeleteEvent)
+	app.Get("/api/events/:eventID/participants/pending", middlewares.JWTAuthMiddleware, eventController.GetPendingParticipant)
 }
 
 func initEventController(client *ent.Client) *controllers.EventController {

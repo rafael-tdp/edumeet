@@ -7,7 +7,6 @@ import (
 
 type EventDTO struct {
 	ID               string            `json:"id"`
-	NbMaxUser        int               `json:"nb_max_user" validate:"required,min=2,max=100" message:"The number of maximum users must be between 2 and 100"`
 	StartDate        time.Time         `json:"start_date" validate:"required,isAfterNow" error_message:"La date de début doit être dans le futur."`
 	EndDate          time.Time         `json:"end_date,omitempty" validate:"required,isBefore" error_message:"La date de fin doit être après la date de début."`
 	IsPrivate        bool              `json:"is_private"`
@@ -34,7 +33,6 @@ func EntToEventDTO(event *ent.Event) *EventDTO {
 	}
 	return &EventDTO{
 		ID:               event.ID,
-		NbMaxUser:        event.NbMaxUser,
 		StartDate:        event.StartDate,
 		EndDate:          event.EndDate,
 		IsPrivate:        event.IsPrivate,
@@ -54,7 +52,6 @@ func (e *EventDTO) GetCreatedBy() *string {
 
 type EventWithTypeDTO struct {
 	ID                string            `json:"id"`
-	NbMaxUser         int               `json:"nb_max_user"`
 	StartDate         time.Time         `json:"start_date"`
 	EndDate           time.Time         `json:"end_date,omitempty"`
 	IsPrivate         bool              `json:"is_private"`
@@ -69,7 +66,6 @@ type EventWithTypeDTO struct {
 
 type EventWithDetailsDTO struct {
 	ID                string                   `json:"id"`
-	NbMaxUser         int                      `json:"nb_max_user"`
 	StartDate         time.Time                `json:"start_date"`
 	EndDate           time.Time                `json:"end_date,omitempty"`
 	IsPrivate         bool                     `json:"is_private"`

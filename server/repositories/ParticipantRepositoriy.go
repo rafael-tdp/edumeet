@@ -40,7 +40,21 @@ func (pr *ParticipantRepository) GetParticipant(participantId string) (*ent.Part
 	return participant, nil
 }
 
-func (pr *ParticipantRepository) UpdateParticipant(participantId string, status string) (*ent.Participant, error) {
+func (pr *ParticipantRepository) GetParticipantDetail(participantId string) (*ent.Participant, error) {
+	participant, err := pr.client.Participant.
+		Query().
+		Where(participant.IDEQ(participantId)).
+		WithEvent().
+		WithUser().
+		First(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	return participant, nil
+}
+
+func (pr *ParticipantRepository) UpdateParticipantStatut(participantId string, status string) (*ent.Participant, error) {
 	participant, err := pr.client.Participant.UpdateOneID(participantId).
 		SetStatus(status).
 		Save(context.Background())
@@ -56,6 +70,7 @@ func (pr *ParticipantRepository) GetParticipantByEventAndUser(eventId string, us
 		Where(participant.HasEventWith(event.IDEQ(eventId))).
 		Where(participant.HasUserWith(user.IDEQ(userId))).
 		First(context.Background())
+
 	if err != nil {
 		return nil, err
 	}
@@ -66,6 +81,19 @@ func (pr *ParticipantRepository) GetParticipantByEventAndUser(eventId string, us
 func (pr *ParticipantRepository) GetParticipantsByEvent(eventId string) ([]*ent.Participant, error) {
 	participants, err := pr.client.Participant.Query().
 		Where(participant.HasEventWith(event.IDEQ(eventId))).
+		WithUser().
+		All(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return participants, nil
+}
+
+func (pr *ParticipantRepository) GetPendingParticipantsByEvent(eventId string) ([]*ent.Participant, error) {
+	participants, err := pr.client.Participant.Query().
+		Where(participant.HasEventWith(event.IDEQ(eventId))).
+		Where(participant.StatusEQ("pending")).
 		WithUser().
 		All(context.Background())
 	if err != nil {
