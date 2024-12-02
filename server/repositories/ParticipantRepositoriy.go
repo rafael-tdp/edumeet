@@ -40,7 +40,7 @@ func (pr *ParticipantRepository) GetParticipant(participantId string) (*ent.Part
 	return participant, nil
 }
 
-func (pr *ParticipantRepository) UpdateParticipant(participantId string, status string) (*ent.Participant, error) {
+func (pr *ParticipantRepository) UpdateParticipantStatut(participantId string, status string) (*ent.Participant, error) {
 	participant, err := pr.client.Participant.UpdateOneID(participantId).
 		SetStatus(status).
 		Save(context.Background())
@@ -56,6 +56,7 @@ func (pr *ParticipantRepository) GetParticipantByEventAndUser(eventId string, us
 		Where(participant.HasEventWith(event.IDEQ(eventId))).
 		Where(participant.HasUserWith(user.IDEQ(userId))).
 		First(context.Background())
+
 	if err != nil {
 		return nil, err
 	}

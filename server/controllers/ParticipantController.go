@@ -36,6 +36,8 @@ func (pc *ParticipantController) RequestParticipant(c *fiber.Ctx) error {
 
 func (pc *ParticipantController) AcceptParticipant(c *fiber.Ctx) error {
 
+	statut := c.Params("statut")
 	participantID := c.Params("participantID")
-	return pc.participantService.AcceptParticipant(participantID)
+
+	return pc.participantService.ProcessParticipant(participantID, statut)
 }

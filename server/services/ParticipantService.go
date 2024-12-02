@@ -26,15 +26,15 @@ func (ps *ParticipantService) RequestParticipant(eventID string, userID string) 
 		return errEvent
 	}
 
+	if event.StartDate.Before(time.Now()) {
+		return errors.New("Event is already started")
+	}
+
 	//check if participant is already in the event
 	_, errParticipant := ps.participantRepository.GetParticipantByEventAndUser(eventID, userID)
 
 	if errParticipant == nil || userID == *event.CreatedBy {
-		return errors.New("Participant already requested event")
-	}
-
-	if event.StartDate.Before(time.Now()) {
-		return errors.New("Event is already started")
+		return errors.New("le participant est déjà dans l'événement")
 	}
 
 	status := "accepted"
@@ -51,7 +51,7 @@ func (ps *ParticipantService) RequestParticipant(eventID string, userID string) 
 	return nil
 }
 
-func (ps *ParticipantService) AcceptParticipant(participantID string) error {
+func (ps *ParticipantService) ProcessParticipant(participantID string, statut string) error {
 
 	participant, err := ps.participantRepository.GetParticipant(participantID)
 
@@ -63,7 +63,7 @@ func (ps *ParticipantService) AcceptParticipant(participantID string) error {
 		return errors.New("Participant is already accepted")
 	}
 
-	_, err = ps.participantRepository.UpdateParticipant(participantID, "accepted")
+	_, err = ps.participantRepository.UpdateParticipantStatut(participantID, statut)
 
 	if err != nil {
 		return err
