@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/guards"
@@ -102,5 +103,41 @@ func (ai *AIController) GenerateCorrection(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"correction": correction,
+	})
+}
+
+func (ai *AIController) SaveGenerateDocument(c *fiber.Ctx) error {
+	var aiDocumentDTO dtos.AIDocumentSaveDTO
+
+	currentUser := c.Locals("user").(*ent.User)
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	if err := c.BodyParser(&aiDocumentDTO); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	validations := validator.New()
+	err := validations.Struct(aiDocumentDTO)
+	if err != nil {
+		errors := make([]string, 0)
+		for _, err := range err.(validator.ValidationErrors) {
+			errors = append(errors, err.Error())
+		}
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
+	}
+
+	event, err := ai.eventService.GetEvent(aiDocumentDTO.EventID)
+	if !guards.CanAuthorize(currentUser, event) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
+	err = ai.aiService.SaveGenerateDocument(ctx, aiDocumentDTO)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Document saved successfully",
 	})
 }
