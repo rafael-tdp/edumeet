@@ -26,12 +26,6 @@ func (es *EventService) CreateEvent(ctx context.Context, eventDTO dtos.EventDTO,
 		return nil, err
 	}
 
-	_, err = es.participantRepository.CreateParticipant(userId, event.ID, "host")
-
-	if err != nil {
-		return nil, err
-	}
-
 	if nil != eventDTO.RemoteEventDTO {
 		_, err := es.eventRepository.CreateRemoteEvent(ctx, *eventDTO.RemoteEventDTO, event.ID)
 		if err != nil {

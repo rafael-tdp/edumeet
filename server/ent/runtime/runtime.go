@@ -82,7 +82,7 @@ func init() {
 	// event.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	event.UpdateDefaultUpdatedAt = eventDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// eventDescIsPrivate is the schema descriptor for isPrivate field.
-	eventDescIsPrivate := eventFields[4].Descriptor()
+	eventDescIsPrivate := eventFields[3].Descriptor()
 	// event.DefaultIsPrivate holds the default value on creation for the isPrivate field.
 	event.DefaultIsPrivate = eventDescIsPrivate.Default.(bool)
 	// eventDescID is the schema descriptor for id field.

@@ -5,6 +5,7 @@ import (
 	"edumeet/services"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/oklog/ulid/v2"
 )
 
 type ParticipantController struct {
@@ -21,10 +22,16 @@ func NewParticipantController(participantService *services.ParticipantService, e
 
 func (pc *ParticipantController) RequestParticipant(c *fiber.Ctx) error {
 
-	eventID := c.Params("eventID")
+	eventID, err := ulid.Parse(c.Params("eventID"))
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid event ID",
+		})
+	}
 
 	user := c.Locals("user").(*ent.User)
-	return pc.participantService.RequestParticipant(eventID, user.ID)
+	return pc.participantService.RequestParticipant(eventID.String(), user.ID)
 }
 
 func (pc *ParticipantController) AcceptParticipant(c *fiber.Ctx) error {

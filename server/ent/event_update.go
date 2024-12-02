@@ -95,27 +95,6 @@ func (eu *EventUpdate) ClearUpdatedBy() *EventUpdate {
 	return eu
 }
 
-// SetNbMaxUser sets the "nbMaxUser" field.
-func (eu *EventUpdate) SetNbMaxUser(i int) *EventUpdate {
-	eu.mutation.ResetNbMaxUser()
-	eu.mutation.SetNbMaxUser(i)
-	return eu
-}
-
-// SetNillableNbMaxUser sets the "nbMaxUser" field if the given value is not nil.
-func (eu *EventUpdate) SetNillableNbMaxUser(i *int) *EventUpdate {
-	if i != nil {
-		eu.SetNbMaxUser(*i)
-	}
-	return eu
-}
-
-// AddNbMaxUser adds i to the "nbMaxUser" field.
-func (eu *EventUpdate) AddNbMaxUser(i int) *EventUpdate {
-	eu.mutation.AddNbMaxUser(i)
-	return eu
-}
-
 // SetStartDate sets the "start_date" field.
 func (eu *EventUpdate) SetStartDate(t time.Time) *EventUpdate {
 	eu.mutation.SetStartDate(t)
@@ -531,12 +510,6 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if eu.mutation.UpdatedByCleared() {
 		_spec.ClearField(event.FieldUpdatedBy, field.TypeString)
 	}
-	if value, ok := eu.mutation.NbMaxUser(); ok {
-		_spec.SetField(event.FieldNbMaxUser, field.TypeInt, value)
-	}
-	if value, ok := eu.mutation.AddedNbMaxUser(); ok {
-		_spec.AddField(event.FieldNbMaxUser, field.TypeInt, value)
-	}
 	if value, ok := eu.mutation.StartDate(); ok {
 		_spec.SetField(event.FieldStartDate, field.TypeTime, value)
 	}
@@ -914,27 +887,6 @@ func (euo *EventUpdateOne) SetNillableUpdatedBy(s *string) *EventUpdateOne {
 // ClearUpdatedBy clears the value of the "updated_by" field.
 func (euo *EventUpdateOne) ClearUpdatedBy() *EventUpdateOne {
 	euo.mutation.ClearUpdatedBy()
-	return euo
-}
-
-// SetNbMaxUser sets the "nbMaxUser" field.
-func (euo *EventUpdateOne) SetNbMaxUser(i int) *EventUpdateOne {
-	euo.mutation.ResetNbMaxUser()
-	euo.mutation.SetNbMaxUser(i)
-	return euo
-}
-
-// SetNillableNbMaxUser sets the "nbMaxUser" field if the given value is not nil.
-func (euo *EventUpdateOne) SetNillableNbMaxUser(i *int) *EventUpdateOne {
-	if i != nil {
-		euo.SetNbMaxUser(*i)
-	}
-	return euo
-}
-
-// AddNbMaxUser adds i to the "nbMaxUser" field.
-func (euo *EventUpdateOne) AddNbMaxUser(i int) *EventUpdateOne {
-	euo.mutation.AddNbMaxUser(i)
 	return euo
 }
 
@@ -1382,12 +1334,6 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	}
 	if euo.mutation.UpdatedByCleared() {
 		_spec.ClearField(event.FieldUpdatedBy, field.TypeString)
-	}
-	if value, ok := euo.mutation.NbMaxUser(); ok {
-		_spec.SetField(event.FieldNbMaxUser, field.TypeInt, value)
-	}
-	if value, ok := euo.mutation.AddedNbMaxUser(); ok {
-		_spec.AddField(event.FieldNbMaxUser, field.TypeInt, value)
 	}
 	if value, ok := euo.mutation.StartDate(); ok {
 		_spec.SetField(event.FieldStartDate, field.TypeTime, value)

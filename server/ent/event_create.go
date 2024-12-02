@@ -83,12 +83,6 @@ func (ec *EventCreate) SetNillableUpdatedBy(s *string) *EventCreate {
 	return ec
 }
 
-// SetNbMaxUser sets the "nbMaxUser" field.
-func (ec *EventCreate) SetNbMaxUser(i int) *EventCreate {
-	ec.mutation.SetNbMaxUser(i)
-	return ec
-}
-
 // SetStartDate sets the "start_date" field.
 func (ec *EventCreate) SetStartDate(t time.Time) *EventCreate {
 	ec.mutation.SetStartDate(t)
@@ -375,9 +369,6 @@ func (ec *EventCreate) check() error {
 	if _, ok := ec.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Event.updated_at"`)}
 	}
-	if _, ok := ec.mutation.NbMaxUser(); !ok {
-		return &ValidationError{Name: "nbMaxUser", err: errors.New(`ent: missing required field "Event.nbMaxUser"`)}
-	}
 	if _, ok := ec.mutation.StartDate(); !ok {
 		return &ValidationError{Name: "start_date", err: errors.New(`ent: missing required field "Event.start_date"`)}
 	}
@@ -437,10 +428,6 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 	if value, ok := ec.mutation.UpdatedBy(); ok {
 		_spec.SetField(event.FieldUpdatedBy, field.TypeString, value)
 		_node.UpdatedBy = &value
-	}
-	if value, ok := ec.mutation.NbMaxUser(); ok {
-		_spec.SetField(event.FieldNbMaxUser, field.TypeInt, value)
-		_node.NbMaxUser = value
 	}
 	if value, ok := ec.mutation.StartDate(); ok {
 		_spec.SetField(event.FieldStartDate, field.TypeTime, value)
