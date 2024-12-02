@@ -32,6 +32,15 @@ func (pr *ParticipantRepository) CreateParticipant(userId string, eventId string
 }
 
 func (pr *ParticipantRepository) GetParticipant(participantId string) (*ent.Participant, error) {
+	participant, err := pr.client.Participant.Get(context.Background(), participantId)
+	if err != nil {
+		return nil, err
+	}
+
+	return participant, nil
+}
+
+func (pr *ParticipantRepository) GetParticipantDetail(participantId string) (*ent.Participant, error) {
 	participant, err := pr.client.Participant.
 		Query().
 		Where(participant.IDEQ(participantId)).

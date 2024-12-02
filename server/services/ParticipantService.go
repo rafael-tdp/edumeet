@@ -68,13 +68,13 @@ func (ps *ParticipantService) ProcessParticipant(participant dtos.ParticipantDTO
 	return nil
 }
 
-func (ps *ParticipantService) GetParticipant(participantID string) (*dtos.ParticipantDTO, error) {
+func (ps *ParticipantService) GetParticipantDetail(participantID string) (*dtos.ParticipantDetailDTO, error) {
 
-	participant, err := ps.participantRepository.GetParticipant(participantID)
+	participant, err := ps.participantRepository.GetParticipantDetail(participantID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return dtos.EntToParticipantDTO(participant), nil
+	return dtos.EntToParticipantDetailDTO(participant), nil
 }

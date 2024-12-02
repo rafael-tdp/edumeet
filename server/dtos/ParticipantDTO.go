@@ -10,6 +10,15 @@ type ParticipantDTO struct {
 	Status      string    `json:"status"`
 	RequestedAt time.Time `json:"requested_at"`
 	JoinedAt    time.Time `json:"joined_at,omitempty"`
+	UserID      string    `json:"user_id"`
+	EventID     string    `json:"event_id"`
+}
+
+type ParticipantDetailDTO struct {
+	ID          string    `json:"id"`
+	Status      string    `json:"status"`
+	RequestedAt time.Time `json:"requested_at"`
+	JoinedAt    time.Time `json:"joined_at,omitempty"`
 	User        UserDTO   `json:"user"`
 	Event       EventDTO  `json:"event"`
 }
@@ -24,6 +33,17 @@ type ParticipantWithUserDTO struct {
 
 func EntToParticipantDTO(ent *ent.Participant) *ParticipantDTO {
 	return &ParticipantDTO{
+		ID:          ent.ID,
+		Status:      ent.Status,
+		RequestedAt: ent.RequestedAt,
+		JoinedAt:    ent.JoinedAt,
+		UserID:      ent.Edges.User.ID,
+		EventID:     ent.Edges.Event.ID,
+	}
+}
+
+func EntToParticipantDetailDTO(ent *ent.Participant) *ParticipantDetailDTO {
+	return &ParticipantDetailDTO{
 		ID:          ent.ID,
 		Status:      ent.Status,
 		RequestedAt: ent.RequestedAt,
