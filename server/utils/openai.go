@@ -13,13 +13,17 @@ Si la demande est autre tu dois répondre une chaine de caractère vide.`
 
 const exercisePrompt = `Commence par "Énoncé: " suivi d'une consigne explicite pour les exercices.
 Ne génère que l'exercice sans aucune correction ou explication complémentaire.
-Si plusieurs exercices sont demandés, sépare-les par des points-virgules.
+Si plusieurs exercices sont demandés, sépare-les par des saut de ligne.
 Voici le thème de l'exercice :`
 
-const correctionPrompt = `On te fournit un énoncé d'exercice, et ta mission est de générer uniquement la correction de cet exercice.
-Ne répète pas l'énoncé. Fournis une réponse claire et précise en commençant par "Correction: ".
-La correction doit être concise, structurée et adaptée pour un éditeur WYSIWYG.
-Voici l'énoncé de l'exercice à corriger :`
+const correctionPrompt = `
+Voici une version corrigée et optimisée de votre prompt pour générer des corrections :
+
+On te fournit un ou plusieurs énoncés d'exercices. Ta mission est de fournir une correction pour chaque énoncé.
+Pour chaque énoncé : Écris une correction en commençant par "Correction :".
+Assure-toi que la correction soit concise et clairement structurée, en respectant le format et le contexte de l'énoncé.
+Place chaque correction immédiatement après l'énoncé correspondant.
+Voici les énoncés d'exercices à corriger :`
 
 func InitOpenAI(prompt string) (string, error) {
 	client := openai.NewClient(os.Getenv("OPENAI_API_KEY"))

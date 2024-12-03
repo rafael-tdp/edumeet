@@ -5,9 +5,8 @@ import (
 	"edumeet/dtos"
 	"edumeet/repositories"
 	"edumeet/utils"
+	"os"
 	"path"
-
-	"github.com/gomutex/godocx"
 )
 
 type AIService struct {
@@ -41,16 +40,16 @@ func (ai *AIService) GenerateCorrection(exercice string) (string, error) {
 }
 
 func (ai *AIService) SaveGenerateDocument(ctx context.Context, aiDocumentDTO dtos.AIDocumentSaveDTO) error {
-	doc, err := godocx.NewDocument()
+	ulid := utils.ULID{}
+	filename := ulid.GenerateUlid()() + "-" + aiDocumentDTO.DocType + ".txt"
+	path := path.Join("documentUpload", filename)
+	file, err := os.Create(path)
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 
-	doc.AddParagraph(aiDocumentDTO.Content)
-	ulid := utils.ULID{}
-	filename := ulid.GenerateUlid()() + "-" + aiDocumentDTO.DocType + ".docx"
-	path := path.Join("documentUpload", filename)
-	err = doc.SaveTo(path)
+	_, err = file.WriteString(aiDocumentDTO.Content)
 	if err != nil {
 		return err
 	}
