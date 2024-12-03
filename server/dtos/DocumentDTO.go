@@ -21,39 +21,10 @@ type DocumentResponseDTO struct {
 	Name string `json:"name,omitempty"`
 }
 
-// type EventDocumentDTO struct {
-// 	ID       string              `json:"id,omitempty"`
-// 	Type     string              `json:"type,omitempty"`
-// 	Document DocumentResponseDTO `json:"document,omitempty"`
-// }
-
 func DocumentEntToDTO(document *ent.Document) DocumentDTO {
 	return DocumentDTO{
 		ID:   document.ID,
 		Path: document.Path,
 		Name: document.Name,
-		// Type:    document.Edges.EventDocuments[0].Type,
-		// EventID: document.Edges.EventDocuments[0].ID,
-		//MessageID: document.Edges.Message.ID,
 	}
 }
-
-// func EventDocumentEntToDTO(eventDocument *ent.EventDocument) EventDocumentDTO {
-// 	return EventDocumentDTO{
-// 		ID:   eventDocument.ID,
-// 		Type: eventDocument.Type,
-// 		Document: DocumentResponseDTO{
-// 			ID:   eventDocument.Edges.Document.ID,
-// 			Path: eventDocument.Edges.Document.Path,
-// 			Name: eventDocument.Edges.Document.Name,
-// 		},
-// 	}
-// }
-
-// func ConvertEventDocuments(eventDocuments []*ent.EventDocument) []EventDocumentDTO {
-// 	var eventDocumentDTOs []EventDocumentDTO
-// 	for _, eventDocument := range eventDocuments {
-// 		eventDocumentDTOs = append(eventDocumentDTOs, EventDocumentEntToDTO(eventDocument))
-// 	}
-// 	return eventDocumentDTOs
-// }

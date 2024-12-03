@@ -46,8 +46,7 @@ func (r *DocumentRepository) DeleteDocument(documentID string) error {
 }
 
 func (r *DocumentRepository) CreateDocument(ctx context.Context, documentDTO dtos.DocumentDTO) (*ent.Document, error) {
-
-	documentCreated, err := r.client.Document.Create().SetPath(documentDTO.Path).Save(ctx)
+	documentCreated, err := r.client.Document.Create().SetName(documentDTO.Name).SetPath(documentDTO.Path).Save(ctx)
 	if err != nil {
 		return nil, errors.New("error creating document")
 	}
