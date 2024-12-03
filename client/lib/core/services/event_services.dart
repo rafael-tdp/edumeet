@@ -29,7 +29,7 @@ class EventServices {
       final events = jsonDecode(response.body) as List<dynamic>;
       return events.map((event) => Event.fromJson(event)).toList();
     } catch (error) {
-      log('An error occurred while retrieving recipes', error: error);
+      log('An error occurred while retrieving events', error: error);
       return [];
     }
   }
@@ -52,7 +52,7 @@ class EventServices {
       final events = jsonDecode(response.body) as List<dynamic>;
       return events.map((event) => Event.fromJson(event)).toList();
     } catch (error) {
-      log('An error occurred while retrieving recipes', error: error);
+      log('An error occurred while retrieving events', error: error);
       return [];
     }
   }

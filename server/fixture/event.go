@@ -11,8 +11,8 @@ import (
 type Event struct{}
 
 func generateRandomStartEndDate() (time.Time, time.Time) {
-	start := gofakeit.Date()                                 // Génère une date aléatoire
-	end := gofakeit.DateRange(start, start.AddDate(0, 1, 0)) // Génère une date de fin postérieure à start (jusqu'à 1 mois plus tard)
+	start := time.Now().AddDate(0, 0, gofakeit.Number(30, 60))
+	end := start.AddDate(0, 0, 2)
 	return start, end
 }
 
@@ -36,6 +36,7 @@ func (e *Event) GenerateEvent(ctx context.Context, client *ent.Client) {
 			// SetIsPrivate(gofakeit.Bool()).
 			SetImage(images[gofakeit.Number(0, len(images)-1)]).
 			SetInvitationLink(gofakeit.URL()).
+			SetCreatedBy(gofakeit.UUID()).
 			Save(ctx)
 
 		if err != nil {

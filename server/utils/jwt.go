@@ -17,7 +17,8 @@ func GenerateJWT(email string, id string, role user.Role) (string, error) {
 		return "", err
 	}
 
-	expirationTime := time.Now().Add(time.Hour * 1)
+	const ONE_MONTH = 30 * 24 * time.Hour
+	expirationTime := time.Now().Add(ONE_MONTH)
 
 	claims := &structures.Claims{
 		Email:  email,

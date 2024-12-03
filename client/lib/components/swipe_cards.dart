@@ -1,3 +1,4 @@
+import 'package:client/core/services/participant_services.dart';
 import 'package:flutter/material.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
@@ -28,7 +29,20 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
         }
 
         final events = snapshot.data!;
-        final swipeItems = events.map((event) => SwipeItem(content: event)).toList();
+        final swipeItems = events.map((event) {
+          return SwipeItem(
+            content: event,
+            likeAction: () async {
+              await ParticipantServices.joinEvent(event.id);
+              // ignore: use_build_context_synchronously
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content:
+                        Text("Vous avez rejoint l'événement ${event.title}")),
+              );
+            },
+          );
+        }).toList();
         _matchEngine = MatchEngine(swipeItems: swipeItems);
 
         return SwipeCards(
@@ -142,7 +156,7 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
           itemChanged: (SwipeItem item, int index) {
             print("Item changed: ${(item.content as Event).title}");
           },
-          upSwipeAllowed: true,
+          upSwipeAllowed: false,
           fillSpace: true,
         );
       },
@@ -191,11 +205,13 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
           child: const Icon(Icons.clear, color: Colors.red, size: 25),
         ),
         OutlinedButton(
-          onPressed: () {
+          onPressed: () async {
             _matchEngine.currentItem?.like();
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Liked $title")),
+              SnackBar(content: Text("Vous avez rejoint l'événement $title")),
             );
+            await ParticipantServices.joinEvent(
+                _matchEngine.currentItem!.content.id);
           },
           style: OutlinedButton.styleFrom(
             side: const BorderSide(color: Colors.white, width: 2.0),
