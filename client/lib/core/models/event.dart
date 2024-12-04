@@ -11,6 +11,7 @@ class Event {
   final dynamic remoteEvent;
   final List<dynamic>? participants;
   final List<dynamic>? documents;
+  final String? createdBy;
 
   Event({
     required this.id,
@@ -25,6 +26,7 @@ class Event {
     this.remoteEvent,
     this.participants,
     this.documents,
+    this.createdBy,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -41,6 +43,7 @@ class Event {
       remoteEvent: json['remote_event'],
       participants: json['participants'],
       documents: json['event_documents'],
+      createdBy: json['created_by'],
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:client/core/models/user.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Pour le format de date
 import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/utils/colors.dart';
@@ -8,8 +7,6 @@ import 'package:client/components/profile_button.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
-
-import '../fake_data.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool isCurrentUser;
@@ -52,8 +49,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, String> fakeUser = FakeData.user;
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
@@ -104,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       leading: const Icon(Icons.email, color: AppColors.purple),
                       title: const Text('Email'),
                       subtitle: Text(
-                        user.email ?? 'Email non disponible',
+                        user.email,
                       ),
                     ),
                     const Divider(),
@@ -112,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       leading: const Icon(Icons.person, color: AppColors.purple),
                       title: const Text('Nom d\'utilisateur'),
                       subtitle: Text(
-                        user.username ?? 'Nom d\'utilisateur non disponible',
+                        user.username,
                       ),
                     ),
                     const Divider(),

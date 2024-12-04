@@ -180,3 +180,19 @@ func (er *EventRepository) GetEventsByUser(userID string) ([]*ent.Event, error) 
 
 	return events, nil
 }
+
+func (er *EventRepository) GetEventsCreatedByUser(userID string) ([]*ent.Event, error) {
+	events, err := er.client.Event.Query().
+		Where(event.CreatedBy(userID)).
+		WithParticipants().
+		WithEventDocuments().
+		WithRemoteEvent().
+		WithPhysicalEvent().
+		All(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return events, nil
+}

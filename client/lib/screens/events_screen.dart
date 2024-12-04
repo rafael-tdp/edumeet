@@ -1,8 +1,12 @@
+import 'package:client/core/models/user.dart';
 import 'package:client/core/services/event_services.dart';
+import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/event_card.dart';
 import 'package:client/screens/event_details_page.dart';
+import 'package:client/screens/create_event_screen.dart';
 import 'package:client/core/models/event.dart';
+import 'package:client/core/services/user_services.dart';
 
 class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
@@ -12,6 +16,23 @@ class EventsPage extends StatefulWidget {
 }
 
 class _EventsPageState extends State<EventsPage> {
+  bool _showOnlyMyEvents = false;
+  User? _currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCurrentUser();
+  }
+
+  void _fetchCurrentUser() {
+    UserServices().getUserInfo().then((value) {
+      setState(() {
+        _currentUser = value.data;
+      });
+    });
+  }
+
   void _openEventPage(String eventId) {
     Navigator.of(context).push(
       PageRouteBuilder(
@@ -30,25 +51,76 @@ class _EventsPageState extends State<EventsPage> {
     );
   }
 
+  void _createEvent() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const CreateEventPage()),
+    );
+  }
+
+  Future<List<Event>> _fetchEvents() {
+    return _showOnlyMyEvents
+        ? EventServices.getEventsCreatedByCurrentUser()
+        : EventServices.getCurrentUserEvents();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Event>>(
-      future: EventServices.getCurrentUserEvents(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+        toolbarHeight: 30,
+        backgroundColor: Colors.transparent,
+        actions: [
+          // TextButton.icon(
+          //   icon: Icon(
+          //     _showOnlyMyEvents ? Icons.filter_list_off : Icons.filter_list,
+          //     color: AppColors.purple,
+          //   ),
+          //   label: const Text(
+          //     "Mes événements",
+          //     style: TextStyle(color: AppColors.purple),
+          //   ),
+          //   onPressed: () {
+          //     setState(() {
+          //       _showOnlyMyEvents = !_showOnlyMyEvents;
+          //     });
+          //   },
+          // ),
+          IconButton(
+            icon: Icon(
+              _showOnlyMyEvents ? Icons.filter_list_off : Icons.filter_list,
+            ),
+            color: AppColors.purple,
+            onPressed: () {
+              setState(() {
+                _showOnlyMyEvents = !_showOnlyMyEvents;
+              });
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _createEvent,
+            color: AppColors.purple,
+          ),
+        ],
+      ),
+      body: FutureBuilder<List<Event>>(
+        future: _fetchEvents(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (snapshot.hasError || !snapshot.hasData) {
-          return const Center(
-              child: Text("Erreur lors du chargement des événements"));
-        }
+          if (snapshot.hasError || !snapshot.hasData) {
+            return const Center(
+                child: Text("Erreur lors du chargement des événements"));
+          }
 
-        final events = snapshot.data!;
+          final events = snapshot.data!;
 
-        return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Padding(
+          return Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: Column(
               children: [
@@ -64,6 +136,8 @@ class _EventsPageState extends State<EventsPage> {
                           date: event.startDate,
                           imageUrl: event.image,
                           participants: event.participantsCount.toString(),
+                          isCurrentUserEvent: _currentUser != null &&
+                              event.createdBy == _currentUser!.id,
                         ),
                       );
                     },
@@ -71,9 +145,9 @@ class _EventsPageState extends State<EventsPage> {
                 ),
               ],
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

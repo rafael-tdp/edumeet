@@ -105,7 +105,7 @@ func (sc *SubjectController) Delete(c *fiber.Ctx) error {
 	errDelete := sc.subjectService.Delete(id.String())
 
 	if errDelete != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": errDelete.Error()})
 	}
 
 	return c.SendStatus(fiber.StatusNoContent)

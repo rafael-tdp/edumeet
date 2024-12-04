@@ -13,6 +13,7 @@ import (
 func setupEventRoutes(app *fiber.App, eventController *controllers.EventController) {
 	app.Get("/api/events", middlewares.JWTAuthMiddleware, eventController.GetAllEvents)
 	app.Get("/api/events/users/current", middlewares.JWTAuthMiddleware, eventController.GetCurrentUserEvents)
+	app.Get("/api/events/created-by/current", middlewares.JWTAuthMiddleware, eventController.GetEventsCreatedByCurrentUser)
 	app.Get("/api/events/:id", middlewares.JWTAuthMiddleware, eventController.GetEvent)
 	app.Get("/api/events/:id/details", middlewares.JWTAuthMiddleware, eventController.GetEventWithDetails)
 	app.Post("/api/events", middlewares.JWTAuthMiddleware, eventController.CreateEvent)

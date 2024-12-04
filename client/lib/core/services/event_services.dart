@@ -57,6 +57,29 @@ class EventServices {
     }
   }
 
+  static Future<List<Event>> getEventsCreatedByCurrentUser() async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return [];
+      }
+
+      final response = await http.get(
+        Uri.parse('${Env.BACKEND_URL}/api/events/created-by/current'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      final events = jsonDecode(response.body) as List<dynamic>;
+      return events.map((event) => Event.fromJson(event)).toList();
+    } catch (error) {
+      log('An error occurred while retrieving events', error: error);
+      return [];
+    }
+  }
+
   static Future<Event> getEventDetails(String eventId) async {
     try {
       final token = await getToken();

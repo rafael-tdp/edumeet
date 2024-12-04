@@ -119,6 +119,7 @@ func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
 				Image:             event.Image,
 				RemoteEventDTO:    dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent),
 				ParticipantsCount: len(event.Edges.Participants),
+				CreatedBy:         event.CreatedBy,
 			})
 		} else {
 			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
@@ -132,6 +133,7 @@ func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
 				Image:             event.Image,
 				PhysicalEventDTO:  dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent),
 				ParticipantsCount: len(event.Edges.Participants),
+				CreatedBy:         event.CreatedBy,
 			})
 		}
 	}
@@ -160,6 +162,7 @@ func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO,
 				Image:             event.Image,
 				RemoteEventDTO:    dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent),
 				ParticipantsCount: len(event.Edges.Participants),
+				CreatedBy:         event.CreatedBy,
 			})
 		} else {
 			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
@@ -173,6 +176,50 @@ func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO,
 				Image:             event.Image,
 				PhysicalEventDTO:  dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent),
 				ParticipantsCount: len(event.Edges.Participants),
+				CreatedBy:         event.CreatedBy,
+			})
+		}
+	}
+
+	return eventsWithType, nil
+}
+
+func (es *EventService) GetEventsCreatedByUser(userID string) ([]dtos.EventWithTypeDTO, error) {
+	events, err := es.eventRepository.GetEventsCreatedByUser(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var eventsWithType []dtos.EventWithTypeDTO
+
+	for _, event := range events {
+		if event.Edges.RemoteEvent != nil {
+			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
+				ID:                event.ID,
+				StartDate:         event.StartDate,
+				EndDate:           event.EndDate,
+				IsPrivate:         event.IsPrivate,
+				Title:             event.Title,
+				Description:       event.Description,
+				InvitationLink:    event.InvitationLink,
+				Image:             event.Image,
+				RemoteEventDTO:    dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent),
+				ParticipantsCount: len(event.Edges.Participants),
+				CreatedBy:         event.CreatedBy,
+			})
+		} else {
+			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
+				ID:                event.ID,
+				StartDate:         event.StartDate,
+				EndDate:           event.EndDate,
+				IsPrivate:         event.IsPrivate,
+				Title:             event.Title,
+				Description:       event.Description,
+				InvitationLink:    event.InvitationLink,
+				Image:             event.Image,
+				PhysicalEventDTO:  dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent),
+				ParticipantsCount: len(event.Edges.Participants),
+				CreatedBy:         event.CreatedBy,
 			})
 		}
 	}

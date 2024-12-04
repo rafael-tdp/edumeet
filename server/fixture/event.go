@@ -18,6 +18,15 @@ func generateRandomStartEndDate() (time.Time, time.Time) {
 
 func (e *Event) GenerateEvent(ctx context.Context, client *ent.Client) {
 
+	userIDs, err := client.User.Query().IDs(ctx)
+	if err != nil {
+		panic("error fetching user ids to create events : " + err.Error())
+	}
+
+	if len(userIDs) == 0 {
+		panic("No users found to create events")
+	}
+
 	images := []string{
 		"https://images.unsplash.com/photo-1653203187698-530a34a80ba5?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGNvdXJzfGVufDB8fDB8fHwy",
 		"https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y291cnN8ZW58MHx8MHx8fDI%3D",
@@ -27,6 +36,7 @@ func (e *Event) GenerateEvent(ctx context.Context, client *ent.Client) {
 
 	for i := 0; i < 10; i++ {
 		start, end := generateRandomStartEndDate()
+		createdBy := userIDs[gofakeit.Number(0, len(userIDs)-1)]
 
 		event, err := client.Event.Create().
 			SetTitle(gofakeit.Name()).
@@ -36,7 +46,7 @@ func (e *Event) GenerateEvent(ctx context.Context, client *ent.Client) {
 			// SetIsPrivate(gofakeit.Bool()).
 			SetImage(images[gofakeit.Number(0, len(images)-1)]).
 			SetInvitationLink(gofakeit.URL()).
-			SetCreatedBy(gofakeit.UUID()).
+			SetCreatedBy(createdBy).
 			Save(ctx)
 
 		if err != nil {

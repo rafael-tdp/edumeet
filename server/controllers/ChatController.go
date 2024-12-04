@@ -114,8 +114,12 @@ func (cc *ChatController) SendMessage(c *fiber.Ctx) error {
 	errValidations := validations.Struct(messageDTO)
 	if errValidations != nil {
 		errors := make([]string, 0)
-		for _, err := range err.(validator.ValidationErrors) {
-			errors = append(errors, err.Error())
+		if validationErrors, ok := errValidations.(validator.ValidationErrors); ok {
+			for _, err := range validationErrors {
+				errors = append(errors, err.Error())
+			}
+		} else {
+			errors = append(errors, errValidations.Error())
 		}
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
 	}

@@ -181,6 +181,16 @@ func (ec *EventController) GetCurrentUserEvents(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(events)
 }
 
+func (ec *EventController) GetEventsCreatedByCurrentUser(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+
+	events, err := ec.eventservice.GetEventsCreatedByUser(currentUser.ID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(events)
+}
+
 func (ec *EventController) GetEventWithDetails(c *fiber.Ctx) error {
 	eventID, err := ulid.Parse(c.Params("id"))
 	if err != nil {
