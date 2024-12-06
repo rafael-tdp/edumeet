@@ -154,23 +154,8 @@ func init() {
 	reportingDescID := reportingFields[0].Descriptor()
 	// reporting.DefaultID holds the default value on creation for the id field.
 	reporting.DefaultID = reportingDescID.Default.(func() string)
-	subjectMixin := schema.Subject{}.Mixin()
-	subjectMixinHooks0 := subjectMixin[0].Hooks()
-	subject.Hooks[0] = subjectMixinHooks0[0]
-	subjectMixinFields0 := subjectMixin[0].Fields()
-	_ = subjectMixinFields0
 	subjectFields := schema.Subject{}.Fields()
 	_ = subjectFields
-	// subjectDescCreatedAt is the schema descriptor for created_at field.
-	subjectDescCreatedAt := subjectMixinFields0[0].Descriptor()
-	// subject.DefaultCreatedAt holds the default value on creation for the created_at field.
-	subject.DefaultCreatedAt = subjectDescCreatedAt.Default.(func() time.Time)
-	// subjectDescUpdatedAt is the schema descriptor for updated_at field.
-	subjectDescUpdatedAt := subjectMixinFields0[1].Descriptor()
-	// subject.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	subject.DefaultUpdatedAt = subjectDescUpdatedAt.Default.(func() time.Time)
-	// subject.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	subject.UpdateDefaultUpdatedAt = subjectDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// subjectDescName is the schema descriptor for name field.
 	subjectDescName := subjectFields[1].Descriptor()
 	// subject.NameValidator is a validator for the "name" field. It is called by the builders before save.

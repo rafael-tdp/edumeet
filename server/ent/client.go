@@ -1951,8 +1951,7 @@ func (c *SubjectClient) QueryEvents(s *Subject) *EventQuery {
 
 // Hooks returns the client hooks.
 func (c *SubjectClient) Hooks() []Hook {
-	hooks := c.hooks.Subject
-	return append(hooks[:len(hooks):len(hooks)], subject.Hooks[:]...)
+	return c.hooks.Subject
 }
 
 // Interceptors returns the client interceptors.
