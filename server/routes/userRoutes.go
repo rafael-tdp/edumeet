@@ -14,8 +14,9 @@ func setupRoutesUser(app *fiber.App, userController *controllers.UserController)
 	app.Get("/me", middlewares.JWTAuthMiddleware, userController.Me)
 	app.Post("/user/verify", userController.Verify)
 	app.Post("/user/validate-user", userController.ValidateUser)
-	app.Get("/user/:id", middlewares.JWTAuthMiddleware, userController.GetUser)
+	app.Get("/user/information/:id", middlewares.JWTAuthMiddleware, userController.GetUser)
 	app.Put("/user/:id", middlewares.JWTAuthMiddleware, userController.UpdateUser)
+	app.Get("/user/subjects", middlewares.JWTAuthMiddleware, userController.GetUserSubjects)
 }
 
 func initUserController(client *ent.Client) *controllers.UserController {

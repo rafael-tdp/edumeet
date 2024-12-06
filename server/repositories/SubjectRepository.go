@@ -74,8 +74,6 @@ func (sr *SubjectRepository) AddUserToSubject(subjectID string, userID string) (
 	// Ajouter l'utilisateur au subject
 	updatedSubject, err := subject.Update().AddUserIDs(userID).Save(context.Background())
 	if err != nil {
-		fmt.Print(userID)
-		fmt.Print(err)
 		return nil, errors.New("error adding user to subject")
 	}
 

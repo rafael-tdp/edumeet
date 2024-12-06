@@ -5,6 +5,7 @@ import (
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/services"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/oklog/ulid/v2"
@@ -110,4 +111,13 @@ func (uc *UserController) UpdateUser(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(updatedUser)
+}
+
+func (uc *UserController) GetUserSubjects(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+	subjects, err := uc.userService.GetUserSubjects(currentUser.ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(subjects)
 }
