@@ -109,3 +109,19 @@ func (us *UserService) UpdateUser(ctx context.Context, userID string, updateUser
 
 	return updatedUser, nil
 }
+
+func (us *UserService) GetUserSubjects(userID string) ([]dtos.SubjectDTO, error) {
+	subjects, err := us.userRepo.GetUserSubjecs(userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	subjectsDTO := make([]dtos.SubjectDTO, 0)
+	for _, subject := range subjects {
+		subjectDTO := dtos.SubjectEntToDTO(subject)
+		subjectsDTO = append(subjectsDTO, *subjectDTO)
+	}
+
+	return subjectsDTO, nil
+}

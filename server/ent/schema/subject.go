@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"edumeet/ent/schema/trait"
 	"edumeet/utils"
 
 	"entgo.io/ent"
@@ -11,12 +10,6 @@ import (
 
 type Subject struct {
 	ent.Schema
-}
-
-func (Subject) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		trait.Blamable{},
-	}
 }
 
 func (Subject) Fields() []ent.Field {
