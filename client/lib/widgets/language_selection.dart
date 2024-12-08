@@ -1,3 +1,4 @@
+import 'package:client/core/services/cache_service.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/providers/locale_provider.dart';
 import 'package:client/utils/colors.dart';
@@ -25,8 +26,7 @@ class _LanguageSelectionState extends State<LanguageSelection> {
     'pl': 'Polski',
     'pt': 'Português',
     'ro': 'Română',
-    'ru': 'Русский',
-    'uk': 'Українська',
+    'sv': 'Svenska',
   };
 
   List<String> _filteredLanguages = [];
@@ -38,8 +38,7 @@ class _LanguageSelectionState extends State<LanguageSelection> {
   @override
   void initState() {
     super.initState();
-    _filteredLanguages = List.from(
-        AppLocaleUtils.supportedLocales.map((locale) => locale.languageCode));
+    _filteredLanguages = List.from(languageNames.keys);
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -54,7 +53,7 @@ class _LanguageSelectionState extends State<LanguageSelection> {
 
   @override
   Widget build(BuildContext context) {
-    final localeProvider = Provider.of<LocaleProvider>(context);
+    final localeProvider = Provider.of<LocaleProvider>(widget.parentContext);
     final supportedLocales = AppLocaleUtils.supportedLocales;
 
     return Container(
@@ -64,7 +63,7 @@ class _LanguageSelectionState extends State<LanguageSelection> {
           TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              labelText: 'Search for a language',
+              labelText: t.app.searchLanguage,
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -74,38 +73,48 @@ class _LanguageSelectionState extends State<LanguageSelection> {
           const SizedBox(height: 16),
           Column(
             children: [
-              ListView.builder(
+              GridView.builder(
                 shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 3,
+                ),
                 itemCount: _filteredLanguages.length,
                 itemBuilder: (context, index) {
                   String languageCode = _filteredLanguages[index];
-                  bool isSelected = _selectedLanguageCode == languageCode;
+                  bool isSelected = _selectedLanguageCode == languageCode ||
+                      localeProvider.currentLocale.languageCode == languageCode;
                   return Container(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: ListTile(
-                      leading: Flag.fromString(
-                        languageCode == "en"
-                            ? "gb"
-                            : languageCode == "uk"
-                                ? "ua"
-                                : languageCode,
-                        height: 25,
-                        width: 50,
-                        fit: BoxFit.fill,
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.purple.withOpacity(0.5)
+                            : AppColors.purple.withOpacity(0.1),
                       ),
-                      title: Text(
-                          "$languageCode - ${languageNames[languageCode]!}"),
-                      onTap: () {
-                        final locale = AppLocale.values.firstWhere(
-                            (locale) => locale.languageCode == languageCode);
-                        localeProvider.setLocale(locale);
-                      },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        side: const BorderSide(color: AppColors.purple),
-                      ),
-                    ),
-                  );
+                      child: Center(
+                        child: ListTile(
+                          leading: Flag.fromString(
+                            languageCode == "en"
+                                ? "gb"
+                                : languageCode == "uk"
+                                    ? "ua"
+                                    : languageCode,
+                            height: 25,
+                            width: 50,
+                            fit: BoxFit.fill,
+                          ),
+                          title: Text(languageNames[languageCode]!),
+                          onTap: () {
+                            final locale = AppLocale.values.firstWhere(
+                                (locale) =>
+                                    locale.languageCode == languageCode);
+                            localeProvider.setLocale(locale);
+                            _selectedLanguageCode = languageCode;
+                            CacheService.saveDataToCache('locale', languageCode);
+                          },
+                        ),
+                      ));
                 },
               ),
             ],
