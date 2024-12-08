@@ -1,5 +1,6 @@
 import 'package:client/core/models/user.dart';
 import 'package:client/core/services/event_services.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/event_card.dart';
@@ -114,8 +115,7 @@ class _EventsPageState extends State<EventsPage> {
           }
 
           if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(
-                child: Text("Erreur lors du chargement des événements"));
+            return Center(child: Text(t.error.loadingEvents));
           }
 
           final events = snapshot.data!;

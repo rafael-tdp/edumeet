@@ -1,3 +1,4 @@
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,7 @@ class MessagesPreview extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
-            "Derniers messages",
+            t.messages.latestMessages,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -49,55 +50,69 @@ class MessagesPreview extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ...messages.take(3).map((message) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundImage: NetworkImage(
-                              message['sender']['image'] ?? '',
+                  if (messages.isEmpty)
+                    Center(
+                      child: Text(
+                        t.messages.noMessages,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    )
+                  else
+                    ...messages.take(3).map((message) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: NetworkImage(
+                                message['sender']['image'] ?? '',
+                              ),
+                              child: message['sender']['image'] == null ||
+                                      message['sender']['image']!.isEmpty
+                                  ? Text(
+                                      message['sender']['name']![0],
+                                      style: const TextStyle(fontSize: 16),
+                                    )
+                                  : null,
                             ),
-                            child: message['sender']['image'] == null ||
-                                    message['sender']['image']!.isEmpty
-                                ? Text(
-                                    message['sender']['name']![0],
-                                    style: const TextStyle(fontSize: 16),
-                                  )
-                                : null,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: "${message['sender']['name']}: ",
-                                    style: const TextStyle(
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: "${message['sender']['name']}: ",
+                                      style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black),
-                                  ),
-                                  TextSpan(
-                                    text: message['message'],
-                                    style: const TextStyle(
-                                        fontSize: 15, color: Colors.black),
-                                  ),
-                                ],
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: message['message'],
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
+                          ],
+                        ),
+                      );
+                    }),
                   const SizedBox(height: 10),
-                  const Align(
+                  Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      "Voir tous les messages",
-                      style: TextStyle(
+                      t.messages.seeAllMessages,
+                      style: const TextStyle(
                         color: AppColors.blue,
                         fontWeight: FontWeight.bold,
                       ),

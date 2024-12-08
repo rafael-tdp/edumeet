@@ -1,7 +1,10 @@
+import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/register_screen.dart';
+import 'package:client/widgets/language_selection.dart';
 import 'package:flutter/material.dart';
 
 import 'on_boarding_screen.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -35,33 +38,67 @@ class _OnboardingPagerState extends State<OnboardingPager> {
     }
   }
 
+  void _previousPage() {
+    if (_pageController.hasClients) {
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void _skip() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PageView(
       controller: _pageController,
       children: [
         OnboardingPage(
-          imagePath: 'assets/images/welcome/welcome2.png',
-          title: 'Retrouve tes fiches de révision',
-          description: 'Accède gratuitement à des milliers de \nfiches de révision créées par des étudiants',
+          imagePath: 'assets/images/welcome/welcome.png',
+          title: t.welcome.welcome,
+          description: t.welcome.setup,
           onNext: _nextPage,
+        ),
+        OnboardingPage(
+          title: t.welcome.chooseLanguage,
+          additionalWidget: LanguageSelection(parentContext: context),
+          onNext: _nextPage,
+          onPrevious: _previousPage,
+        ),
+        OnboardingPage(
+          imagePath: 'assets/images/welcome/welcome2.png',
+          title: t.welcome.title1,
+          description: t.welcome.description1,
+          onNext: _nextPage,
+          onPrevious: _previousPage,
+          onSkip: _skip,
         ),
         OnboardingPage(
           imagePath: 'assets/images/welcome/welcome3.png',
-          title: 'Organise tes révisions',
-          description: 'Classe et organise tes fiches pour une \nmémoire efficace',
+          title: t.welcome.title2,
+          description: t.welcome.description2,
           onNext: _nextPage,
+          onPrevious: _previousPage,
+          onSkip: _skip,
         ),
         OnboardingPage(
           imagePath: 'assets/images/welcome/welcome5.png',
-          title: 'Reste motivé',
-          description: 'Atteins tes objectifs grâce à des conseils \npratiques',
+          title: t.welcome.title3,
+          description: t.welcome.description3,
           onNext: _nextPage,
+          onPrevious: _previousPage,
+          onSkip: _skip,
         ),
         OnboardingPage(
           imagePath: 'assets/images/welcome/welcome1.png',
-          title: 'Rejoins notre communauté',
-          description: 'Partage tes fiches de révision et \nreçois des conseils personnalisés',
+          title: t.welcome.title4,
+          description: t.welcome.description4,
           onNext: () {
             Navigator.push(
               context,

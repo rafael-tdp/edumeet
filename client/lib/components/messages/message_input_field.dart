@@ -1,3 +1,4 @@
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/colors.dart';
 
@@ -19,7 +20,8 @@ class MessageInputField extends StatelessWidget {
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.grey[200],
-        hintText: 'Ecrivez un message...',
+        hintText: t.messages
+            .writeMessageHint, // Utilisation de la traduction pour l'indice
         hintStyle: const TextStyle(
           color: Colors.grey,
           fontSize: 16,

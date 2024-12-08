@@ -1,8 +1,8 @@
-import 'package:client/screens/register_screen.dart';
-import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
-
-import '../login_screen.dart';
+import 'package:client/utils/colors.dart';
+import 'package:client/screens/register_screen.dart';
+import 'package:client/screens/login_screen.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 
 class OnboardingPage extends StatelessWidget {
   final String imagePath;
@@ -10,14 +10,21 @@ class OnboardingPage extends StatelessWidget {
   final String description;
   final bool isLastPage;
   final VoidCallback onNext;
+  final VoidCallback onPrevious;
+  final VoidCallback onSkip;
+  final Widget? additionalWidget;
+  static void _emptyCallback() {}
 
   const OnboardingPage({
     super.key,
-    required this.imagePath,
     required this.title,
     required this.onNext,
+    this.onPrevious = _emptyCallback,
+    this.onSkip = _emptyCallback,
+    this.imagePath = '',
     this.description = '',
     this.isLastPage = false,
+    this.additionalWidget,
   });
 
   @override
@@ -27,10 +34,11 @@ class OnboardingPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 50),
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: Image.asset(imagePath),
-          ),
+          if (imagePath.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.all(20),
+              child: Image.asset(imagePath),
+            ),
           const SizedBox(height: 30),
           Text(
             title,
@@ -40,16 +48,23 @@ class OnboardingPage extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          if(description.isNotEmpty)
+          if (description.isNotEmpty)
             Column(
               children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    description,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
+                const SizedBox(height: 20),
+                Text(
+                  description,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+          if (additionalWidget != null)
+            Column(
+              children: [
+                const SizedBox(height: 20),
+                additionalWidget!,
+              ],
             ),
           const SizedBox(height: 50),
           if (isLastPage)
@@ -61,7 +76,8 @@ class OnboardingPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     fixedSize: const Size(200, 50),
                     backgroundColor: AppColors.purple,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -70,12 +86,13 @@ class OnboardingPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const RegisterPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterPage()),
                       );
                     },
-                    child: const Text(
-                      'S\'inscrire',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    child: Text(
+                      t.app.signup,
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
                 ),
@@ -84,21 +101,55 @@ class OnboardingPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
                     );
                   },
-                  child: const Text(
-                    'Se connecter',
-                    style: TextStyle(color: AppColors.purple, fontSize: 20),
+                  child: Text(
+                    t.app.login,
+                    style: const TextStyle(color: AppColors.purple, fontSize: 20),
                   ),
                 ),
               ],
             )
           else
-            FloatingActionButton(
-                onPressed: onNext,
-                backgroundColor: AppColors.purple,
-                child: const Icon(Icons.arrow_forward, color: Colors.white),
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (onPrevious != _emptyCallback)
+                      FloatingActionButton(
+                        onPressed: onPrevious,
+                        backgroundColor: AppColors.purple,
+                        child:
+                            const Icon(Icons.arrow_back, color: Colors.white),
+                      ),
+                    const SizedBox(width: 20),
+                    FloatingActionButton(
+                      onPressed: onNext,
+                      backgroundColor: AppColors.purple,
+                      child:
+                          const Icon(Icons.arrow_forward, color: Colors.white),
+                    ),
+                  ],
+                ),
+                if (onSkip != _emptyCallback)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 50),
+                      TextButton(
+                        onPressed: onSkip,
+                        child: Text(
+                          t.app.skip,
+                          style:
+                              const TextStyle(color: AppColors.purple, fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
             ),
         ],
       ),

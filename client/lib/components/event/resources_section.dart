@@ -1,3 +1,4 @@
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class ResourcesSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Ressources disponibles",
+            t.resources.availableResources,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -28,12 +29,12 @@ class ResourcesSection extends StatelessWidget {
               elevation: 2,
               margin: const EdgeInsets.symmetric(vertical: 5.0),
               child: ListTile(
-                title: Text(resource['name']!),
-                subtitle: Text(resource['type']!),
+                title: Text(resource['name'] ?? t.resources.name),
+                subtitle: Text(resource['type'] ?? t.resources.type),
                 trailing: const Icon(Icons.arrow_forward),
                 onTap: () {
                   // Action à effectuer lors du tap sur une ressource
-                  // Par exemple, naviguer vers une page de détails
+                  // Exemple : naviguer vers une page de détails
                 },
               ),
             );

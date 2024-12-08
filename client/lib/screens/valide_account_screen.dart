@@ -1,6 +1,7 @@
 import 'package:client/core/models/auth/verifyCodeRequest.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/core/services/auth_services.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import '../utils/colors.dart';
@@ -10,7 +11,8 @@ class ValidateAccountPage extends StatefulWidget {
   final bool isResetPassword;
   final String email;
 
-  const ValidateAccountPage({super.key, required this.isResetPassword, required this.email});
+  const ValidateAccountPage(
+      {super.key, required this.isResetPassword, required this.email});
 
   @override
   _ValidateAccountPageState createState() => _ValidateAccountPageState();
@@ -42,14 +44,14 @@ class _ValidateAccountPageState extends State<ValidateAccountPage> {
     });
 
     try {
-
       ValidateAccountRequest verifyCodeRequest = ValidateAccountRequest(
         code: _codeController.text,
         email: widget.email,
       );
       if (widget.isResetPassword) {
-        ResponseRequest response = await _authServices.verify(verifyCodeRequest);
-        if(!response.success) {
+        ResponseRequest response =
+            await _authServices.verify(verifyCodeRequest);
+        if (!response.success) {
           setState(() {
             _errorMessage = response.message;
           });
@@ -60,15 +62,16 @@ class _ValidateAccountPageState extends State<ValidateAccountPage> {
           curve: Curves.easeInOut,
         );
       } else {
-        ResponseRequest response = await _authServices.validateAccount(verifyCodeRequest);
-        if(!response.success) {
+        ResponseRequest response =
+            await _authServices.validateAccount(verifyCodeRequest);
+        if (!response.success) {
           setState(() {
             _errorMessage = response.message;
           });
           return;
         }
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Inscription confirmée avec succès')),
+          SnackBar(content: Text(t.register.registerConfirm)),
         );
         Navigator.pushAndRemoveUntil(
           context,
@@ -98,7 +101,9 @@ class _ValidateAccountPageState extends State<ValidateAccountPage> {
             physics: const NeverScrollableScrollPhysics(),
             children: [
               _buildVerifyCodeForm(),
-              if (widget.isResetPassword) ResetPasswordPage(email: widget.email, code: _codeController.text)
+              if (widget.isResetPassword)
+                ResetPasswordPage(
+                    email: widget.email, code: _codeController.text)
             ],
           ),
         ),
@@ -112,9 +117,9 @@ class _ValidateAccountPageState extends State<ValidateAccountPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            'Vérification du code',
-            style: TextStyle(
+          Text(
+            t.verify.title,
+            style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -122,7 +127,7 @@ class _ValidateAccountPageState extends State<ValidateAccountPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Entrez le code de vérification envoyé à votre e-mail',
+            t.verify.description,
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey[600],
@@ -134,7 +139,7 @@ class _ValidateAccountPageState extends State<ValidateAccountPage> {
             controller: _codeController,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              labelText: 'Code de vérification',
+              labelText: t.verify.inputLabel,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
               ),
@@ -142,7 +147,7 @@ class _ValidateAccountPageState extends State<ValidateAccountPage> {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Veuillez entrer le code de vérification';
+                return t.verify.error;
               }
               return null;
             },
@@ -167,9 +172,9 @@ class _ValidateAccountPageState extends State<ValidateAccountPage> {
                   ? const CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     )
-                  : const Text(
-                      'Vérifier',
-                      style: TextStyle(
+                  : Text(
+                      t.verify.button,
+                      style: const TextStyle(
                         fontSize: 16,
                         color: Colors.white,
                       ),

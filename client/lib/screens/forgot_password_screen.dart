@@ -1,4 +1,5 @@
 import 'package:client/core/models/response.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/valide_account_screen.dart';
 import 'package:flutter/material.dart';
 import '../core/exceptions/app_exception.dart';
@@ -47,7 +48,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       await _authServices.forgotPassword(forgotPasswordRequest);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Instructions de réinitialisation envoyées à votre e-mail')),
+        SnackBar(content: Text(t.auth.resetInstructionsSent)),
       );
       Navigator.push(
         context,
@@ -76,18 +77,18 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Mot de passe oublié',
-                    style: TextStyle(
+                  Text(
+                    t.auth.forgotPassword,
+                    style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Entrez votre adresse e-mail pour recevoir les instructions de réinitialisation',
-                    style: TextStyle(
+                  Text(
+                    t.auth.enterEmail,
+                    style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.gray,
                     ),
@@ -98,7 +99,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      labelText: 'Email',
+                      labelText: t.user.email,
                       hintText: 'exemple@mail.com',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -107,10 +108,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre adresse e-mail';
+                        return t.form.emptyEmail;
                       }
                       if (!_isEmailValid) {
-                        return 'Veuillez entrer une adresse e-mail valide';
+                        return t.form.invalidEmail;
                       }
                       return null;
                     },
@@ -135,9 +136,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           ? const CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       )
-                          : const Text(
-                        'Réinitialiser le mot de passe',
-                        style: TextStyle(
+                          : Text(
+                        t.auth.resetPassword,
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Colors.white,
                         ),
@@ -159,9 +160,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'Retourner à ',
-                        style: TextStyle(color: AppColors.gray),
+                      Text(
+                        t.app.backTo,
+                        style: const TextStyle(color: AppColors.gray),
                       ),
                       TextButton(
                         onPressed: () {
@@ -170,9 +171,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             MaterialPageRoute(builder: (context) => const LoginPage()),
                           );
                         },
-                        child: const Text(
-                          'Connexion',
-                          style: TextStyle(
+                        child: Text(
+                          t.app.login,
+                          style: const TextStyle(
                             color: AppColors.purple,
                             decoration: TextDecoration.underline,
                             fontWeight: FontWeight.bold,

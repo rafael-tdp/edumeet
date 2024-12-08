@@ -1,4 +1,5 @@
 import 'package:client/core/models/event.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/event_services.dart';
 import 'package:client/components/event/event_header.dart';
@@ -60,9 +61,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
+            return Center(child: Text(t.error.details(error: snapshot.error.toString())));
           } else if (!snapshot.hasData) {
-            return const Center(child: Text("Event not found"));
+            return Center(child: Text(t.error.no_events_found));
           }
 
           final event = snapshot.data;

@@ -1,4 +1,5 @@
 import 'package:client/core/services/participant_services.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
@@ -25,7 +26,7 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
         }
 
         if (snapshot.hasError || !snapshot.hasData) {
-          return const Center(child: Text("Error loading events"));
+          return Center(child: Text(t.error.loadingEvents));
         }
 
         final events = snapshot.data!;
@@ -36,9 +37,7 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
               await ParticipantServices.joinEvent(event.id);
               // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content:
-                        Text("Vous avez rejoint l'événement ${event.title}")),
+                SnackBar(content: Text(t.event.hasJoinEvent(event_title: event.title))),
               );
             },
           );
@@ -122,8 +121,8 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                                       ? Icons.wifi
                                       : Icons.location_on,
                                   label: event.remoteEvent != null
-                                      ? 'En ligne'
-                                      : 'Physique',
+                                      ? t.event.online
+                                      : t.event.physical,
                                 ),
                               ],
                             ),
@@ -149,12 +148,12 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
           },
           onStackFinished: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text("You've reached the end of the list!")),
+              SnackBar(
+                  content: Text(t.swipe_cards.end_of_list)),
             );
           },
           itemChanged: (SwipeItem item, int index) {
-            print("Item changed: ${(item.content as Event).title}");
+            print(t.swipe_cards.item_changed(title: (item.content as Event).title));
           },
           upSwipeAllowed: false,
           fillSpace: true,
@@ -208,7 +207,7 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
           onPressed: () async {
             _matchEngine.currentItem?.like();
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Vous avez rejoint l'événement $title")),
+              SnackBar(content: Text(t.swipe_cards.joined_event(title: title))),
             );
             await ParticipantServices.joinEvent(
                 _matchEngine.currentItem!.content.id);
