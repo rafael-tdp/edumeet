@@ -9,6 +9,7 @@ import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:client/widgets/language_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
@@ -90,9 +91,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          LanguageDropdown(parentContext: context),
-        ],
         surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.transparent,
         leadingWidth: 150,
@@ -148,8 +146,8 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Settings Page'),
+    return Center(
+      child: Text(t.page.settingsPage),
     );
   }
 }

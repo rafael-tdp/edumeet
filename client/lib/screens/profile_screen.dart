@@ -1,7 +1,5 @@
 import 'package:client/core/models/user.dart';
-import 'package:client/generated/locale_keys.g.dart';
-import 'package:client/main.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:client/widgets/language_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/login_screen.dart';
@@ -11,8 +9,6 @@ import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:client/i18n/generated/translations.g.dart';
-
-import '../widgets/language_dropdown_button.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool isCurrentUser;
@@ -74,8 +70,8 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 20),
               Text(
                 (user.firstname.isNotEmpty && user.lastname.isNotEmpty)
-                  ? '${user.firstname.substring(0, 1).toUpperCase()}${user.firstname.substring(1)} ${user.lastname.substring(0, 1).toUpperCase()}${user.lastname.substring(1)} !'
-                  : 'Anonyme',
+                    ? '${user.firstname.substring(0, 1).toUpperCase()}${user.firstname.substring(1)} ${user.lastname.substring(0, 1).toUpperCase()}${user.lastname.substring(1)} !'
+                    : t.user.anonymous,
                 style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -84,7 +80,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 10),
               Text(
-                user.bio != null && user.bio!.isNotEmpty ? user.bio! : "Aucune description",
+                user.bio != null && user.bio!.isNotEmpty
+                    ? user.bio!
+                    : t.user.noDescription,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 16,
@@ -92,7 +90,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               const SizedBox(height: 20),
-              LanguageDropdownButton(appContext: context),
+              LanguageDropdown(parentContext: context),
               const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(20),
@@ -105,15 +103,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.email, color: AppColors.purple),
-                      title: Text(LocaleKeys.user_email.tr()),
+                      title: Text(t.user.email),
                       subtitle: Text(
                         user.email,
                       ),
                     ),
                     const Divider(),
                     ListTile(
-                      leading: const Icon(Icons.person, color: AppColors.purple),
-                      title: Text(LocaleKeys.user_username.tr()),
+                      leading:
+                          const Icon(Icons.person, color: AppColors.purple),
+                      title: Text(t.user.username),
                       subtitle: Text(
                         user.username,
                       ),
@@ -121,23 +120,28 @@ class _ProfilePageState extends State<ProfilePage> {
                     const Divider(),
                     ListTile(
                       leading: const Icon(Icons.phone, color: AppColors.purple),
-                      title: Text(LocaleKeys.user_birthdate.tr()),
-                      subtitle: Text(custom_date_utils.DateUtils.isoToFormattedDate(user.birthDate.toString())),
+                      title: Text(t.user.birthdate),
+                      subtitle: Text(
+                          custom_date_utils.DateUtils.isoToFormattedDate(
+                              user.birthDate.toString())),
                     ),
                     const Divider(),
                     ListTile(
-                      leading: const Icon(Icons.location_on, color: AppColors.purple),
-                      title: Text(LocaleKeys.user_location.tr()),
+                      leading: const Icon(Icons.location_on,
+                          color: AppColors.purple),
+                      title: Text(t.user.location),
                       subtitle: Text(
-                        user.address ?? 'Adresse non disponible',
+                        user.address ?? t.user.noAddress,
                       ),
                     ),
                     const Divider(),
                     ListTile(
-                      leading: const Icon(Icons.report, color: AppColors.purple),
-                      title: Text(LocaleKeys.user_nbReports.tr()),
+                      leading:
+                          const Icon(Icons.report, color: AppColors.purple),
+                      title: Text(t.user.nbReports),
                       subtitle: Text(
-                        user.reportNumber?.toString() ?? 'Nombre de signalements non disponible',
+                        user.reportNumber?.toString() ??
+                            t.user.noReportsAvailable,
                       ),
                     ),
                   ],
@@ -148,7 +152,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ProfileButton(
-                    text: 'Modifier le profil',
+                    text: t.profile.editProfile,
                     backgroundColor: AppColors.purple,
                     onPressed: () async {
                       final updatedUser = await Navigator.push(
@@ -166,13 +170,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(width: 10),
                   ProfileButton(
-                    text: 'Se déconnecter',
+                    text: t.profile.logout,
                     backgroundColor: Colors.redAccent,
                     onPressed: () async {
                       await _authServices.logout();
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
                       );
                     },
                   ),

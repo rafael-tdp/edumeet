@@ -1,8 +1,8 @@
-import 'package:flag/flag_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/colors.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:client/screens/login_screen.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 
 class OnboardingPage extends StatelessWidget {
   final String imagePath;
@@ -10,12 +10,17 @@ class OnboardingPage extends StatelessWidget {
   final String description;
   final bool isLastPage;
   final VoidCallback onNext;
+  final VoidCallback onPrevious;
+  final VoidCallback onSkip;
   final Widget? additionalWidget;
+  static void _emptyCallback() {}
 
   const OnboardingPage({
     super.key,
     required this.title,
     required this.onNext,
+    this.onPrevious = _emptyCallback,
+    this.onSkip = _emptyCallback,
     this.imagePath = '',
     this.description = '',
     this.isLastPage = false,
@@ -85,9 +90,9 @@ class OnboardingPage extends StatelessWidget {
                             builder: (context) => const RegisterPage()),
                       );
                     },
-                    child: const Text(
-                      'S\'inscrire',
-                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    child: Text(
+                      t.app.signup,
+                      style: const TextStyle(color: Colors.white, fontSize: 20),
                     ),
                   ),
                 ),
@@ -100,18 +105,51 @@ class OnboardingPage extends StatelessWidget {
                           builder: (context) => const LoginPage()),
                     );
                   },
-                  child: const Text(
-                    'Se connecter',
-                    style: TextStyle(color: AppColors.purple, fontSize: 20),
+                  child: Text(
+                    t.app.login,
+                    style: const TextStyle(color: AppColors.purple, fontSize: 20),
                   ),
                 ),
               ],
             )
           else
-            FloatingActionButton(
-              onPressed: onNext,
-              backgroundColor: AppColors.purple,
-              child: const Icon(Icons.arrow_forward, color: Colors.white),
+            Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (onPrevious != _emptyCallback)
+                      FloatingActionButton(
+                        onPressed: onPrevious,
+                        backgroundColor: AppColors.purple,
+                        child:
+                            const Icon(Icons.arrow_back, color: Colors.white),
+                      ),
+                    const SizedBox(width: 20),
+                    FloatingActionButton(
+                      onPressed: onNext,
+                      backgroundColor: AppColors.purple,
+                      child:
+                          const Icon(Icons.arrow_forward, color: Colors.white),
+                    ),
+                  ],
+                ),
+                if (onSkip != _emptyCallback)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 50),
+                      TextButton(
+                        onPressed: onSkip,
+                        child: Text(
+                          t.app.skip,
+                          style:
+                              const TextStyle(color: AppColors.purple, fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
             ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:client/core/models/auth/resetPasswordRequest.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 import '../core/services/auth_services.dart';
 import '../utils/colors.dart';
@@ -58,7 +59,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       final response = await _authServices.resetPassword(resetPasswordRequest);
       if (response.success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Mot de passe réinitialisé avec succès')),
+          SnackBar(content: Text(t.auth.passwordResertSuccess)),
         );
         Navigator.push(
             context,
@@ -66,7 +67,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         );
       } else {
         setState(() {
-          _errorMessage = 'La réinitialisation a échoué';
+          _errorMessage = t.error.failedToResetPassword;
         });
       }
     } catch (error) {
@@ -92,18 +93,18 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Réinitialiser le mot de passe',
-                    style: TextStyle(
+                  Text(
+                    t.auth.resetPassword,
+                    style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Entrez votre nouveau mot de passe',
-                    style: TextStyle(
+                  Text(
+                    t.auth.enterNewPassword,
+                    style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.gray,
                     ),
@@ -113,7 +114,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   TextFormField(
                     controller: _passwordController,
                     decoration: InputDecoration(
-                      labelText: 'Nouveau mot de passe',
+                      labelText: t.user.newPassword,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -121,19 +122,19 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre mot de passe';
+                        return t.form.emptyPassword;
                       }
                       if (!_hasMinLength) {
-                        return 'Le mot de passe doit comporter au moins 8 caractères';
+                        return t.form.shortPassword;
                       }
                       if (!_hasUpperCase) {
-                        return 'Le mot de passe doit comporter au moins une lettre majuscule';
+                        return t.form.passwordUpperCase;
                       }
                       if (!_hasDigit) {
-                        return 'Le mot de passe doit comporter au moins un chiffre';
+                        return t.form.passwordDigit;
                       }
                       if (!_hasSpecialChar) {
-                        return 'Le mot de passe doit comporter au moins un caractère spécial';
+                        return t.form.passwordSpecialChar;
                       }
                       return null;
                     },
@@ -142,7 +143,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   TextFormField(
                     controller: _confirmPasswordController,
                     decoration: InputDecoration(
-                      labelText: 'Confirmer le nouveau mot de passe',
+                      labelText: t.form.confirmPassword,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -150,10 +151,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Veuillez confirmer votre mot de passe';
+                        return t.form.pleaseConfirmPassword;
                       }
                       if (value != _passwordController.text) {
-                        return 'Les mots de passe ne correspondent pas';
+                        return t.form.passwordNotMatch;
                       }
                       return null;
                     },
@@ -162,10 +163,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      PasswordConditionWidget(text: "Au moins 8 caractères", isValid: _hasMinLength),
-                      PasswordConditionWidget(text: "Au moins une lettre majuscule", isValid: _hasUpperCase),
-                      PasswordConditionWidget(text: "Au moins un chiffre", isValid: _hasDigit),
-                      PasswordConditionWidget(text: "Au moins un caractère spécial", isValid: _hasSpecialChar),
+                      PasswordConditionWidget(text: t.form.shortPassword, isValid: _hasMinLength),
+                      PasswordConditionWidget(text: t.form.passwordUpperCase, isValid: _hasUpperCase),
+                      PasswordConditionWidget(text: t.form.passwordDigit, isValid: _hasDigit),
+                      PasswordConditionWidget(text: t.form.passwordSpecialChar, isValid: _hasSpecialChar),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -188,9 +189,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           ? const CircularProgressIndicator(
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       )
-                          : const Text(
-                        'Réinitialiser le mot de passe',
-                        style: TextStyle(
+                          : Text(
+                        t.auth.resetPassword,
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Colors.white,
                         ),

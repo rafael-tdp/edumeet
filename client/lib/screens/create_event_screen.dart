@@ -1,3 +1,4 @@
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class CreateEventPage extends StatefulWidget {
@@ -23,7 +24,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       return;
     }
 
-    // todo: create event
+    // TODO: Ajouter la logique pour créer un événement
   }
 
   @override
@@ -31,12 +32,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Créer un événement',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            )),
+        title: Text(
+          t.event.createEvent,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.transparent,
       ),
       body: Padding(
@@ -47,96 +50,96 @@ class _CreateEventPageState extends State<CreateEventPage> {
             children: [
               _buildTextFormField(
                 controller: _nameController,
-                label: 'Nom',
+                label: t.event.name,
                 icon: Icons.event,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un nom';
+                    return t.event.enterName;
                   }
                   return null;
                 },
               ),
               _buildTextFormField(
                 controller: _descriptionController,
-                label: 'Description',
+                label: t.event.description,
                 icon: Icons.description,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une description';
+                    return t.event.enterDescription;
                   }
                   return null;
                 },
               ),
               _buildTextFormField(
                 controller: _dateController,
-                label: 'Date',
+                label: t.event.date,
                 icon: Icons.calendar_today,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une date';
+                    return t.event.enterDate;
                   }
                   return null;
                 },
               ),
               _buildTextFormField(
                 controller: _timeController,
-                label: 'Heure',
+                label: t.event.time,
                 icon: Icons.access_time,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une heure';
+                    return t.event.enterTime;
                   }
                   return null;
                 },
               ),
               _buildTextFormField(
                 controller: _locationController,
-                label: 'Lieu',
+                label: t.event.location,
                 icon: Icons.location_on,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un lieu';
+                    return t.event.enterLocation;
                   }
                   return null;
                 },
               ),
               _buildTextFormField(
                 controller: _maxParticipantsController,
-                label: 'Nombre de participants',
+                label: t.event.maxParticipants,
                 icon: Icons.people,
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un nombre de participants';
+                    return t.event.enterMaxParticipants;
                   }
                   if (int.tryParse(value) == null) {
-                    return 'Veuillez entrer un nombre valide';
+                    return t.event.invalidMaxParticipants;
                   }
                   return null;
                 },
               ),
               _buildTextFormField(
                 controller: _priceController,
-                label: 'Prix',
+                label: t.event.price,
                 icon: Icons.attach_money,
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un prix';
+                    return t.event.enterPrice;
                   }
                   if (double.tryParse(value) == null) {
-                    return 'Veuillez entrer un prix valide';
+                    return t.event.invalidPrice;
                   }
                   return null;
                 },
               ),
               _buildTextFormField(
                 controller: _imageController,
-                label: 'Image',
+                label: t.event.image,
                 icon: Icons.image,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer une URL d\'image';
+                    return t.event.enterImage;
                   }
                   return null;
                 },
@@ -144,7 +147,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _createEvent,
-                child: const Text('Créer'),
+                child: Text(t.event.create),
               ),
             ],
           ),

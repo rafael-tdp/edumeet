@@ -1,5 +1,6 @@
 import 'package:client/core/models/response.dart';
 import 'package:client/core/services/user_services.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/colors.dart';
@@ -10,7 +11,8 @@ import '../core/models/user.dart';
 
 class EditProfilePage extends StatefulWidget {
   static const String routeName = '/edit-profile';
-  static navigateTo(BuildContext context, {required Map<String, dynamic> user}) {
+  static navigateTo(BuildContext context,
+      {required Map<String, dynamic> user}) {
     Navigator.pushNamed(context, routeName, arguments: user);
   }
 
@@ -38,7 +40,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _lastnameController = TextEditingController(text: widget.user.lastname);
     _bioController = TextEditingController(text: widget.user.bio);
     _emailController = TextEditingController(text: widget.user.email);
-    _birthDateController =TextEditingController(text: custom_date_utils.DateUtils.isoToFormattedDate(widget.user.birthDate.toString()));
+    _birthDateController = TextEditingController(
+        text: custom_date_utils.DateUtils.isoToFormattedDate(
+            widget.user.birthDate.toString()));
     _addressController = TextEditingController(text: widget.user.address);
   }
 
@@ -61,12 +65,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
         username: widget.user.username,
         lastname: _lastnameController.text,
         firstname: _firstnameController.text,
-        birthDate: custom_date_utils.DateUtils.stringToFomattedDateTime(_birthDateController.text),
+        birthDate: custom_date_utils.DateUtils.stringToFomattedDateTime(
+            _birthDateController.text),
         bio: _bioController.text,
         picture: widget.user.picture,
         address: _addressController.text,
       );
-      ResponseRequest response = await UserServices().updateUserInfo(updatedUser);
+      ResponseRequest response =
+          await UserServices().updateUserInfo(updatedUser);
       if (response.success) {
         Navigator.push(
           context,
@@ -83,8 +89,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         );
       }
-
-
     }
   }
 
@@ -94,9 +98,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text(
-          'Modifier mon profil',
-          style: TextStyle(
+        title: Text(
+          t.profile.editProfile,
+          style: const TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -117,16 +121,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _firstnameController,
-                decoration: const InputDecoration(
-                  labelText: 'Prénom',
-                  border: OutlineInputBorder(
+                decoration: InputDecoration(
+                  labelText: t.profile.firstname,
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  prefixIcon: Icon(Icons.person),
+                  prefixIcon: const Icon(Icons.person),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre prénom';
+                    return t.profile.enterFirstname;
                   }
                   return null;
                 },
@@ -134,16 +138,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _lastnameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nom',
-                  border: OutlineInputBorder(
+                decoration: InputDecoration(
+                  labelText: t.profile.lastname,
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  prefixIcon: Icon(Icons.person),
+                  prefixIcon: const Icon(Icons.person),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre nom';
+                    return t.profile.enterLastname;
                   }
                   return null;
                 },
@@ -151,31 +155,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _bioController,
-                decoration: const InputDecoration(
-                  labelText: 'Bio',
-                  border: OutlineInputBorder(
+                decoration: InputDecoration(
+                  labelText: t.profile.bio,
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  prefixIcon: Icon(Icons.info),
+                  prefixIcon: const Icon(Icons.info),
                 ),
                 maxLines: 5,
               ),
               const SizedBox(height: 20),
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(
+                decoration: InputDecoration(
+                  labelText: t.profile.email,
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  prefixIcon: Icon(Icons.email),
+                  prefixIcon: const Icon(Icons.email),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre adresse e-mail';
+                    return t.profile.enterEmail;
                   }
                   if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'Veuillez entrer une adresse e-mail valide';
+                    return t.profile.invalidEmail;
                   }
                   return null;
                 },
@@ -183,25 +187,26 @@ class _EditProfilePageState extends State<EditProfilePage> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: _birthDateController,
-                decoration: const InputDecoration(
-                  labelText: 'Date de naissance',
-                  border: OutlineInputBorder(
+                decoration: InputDecoration(
+                  labelText: t.profile.birthdate,
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  prefixIcon: Icon(Icons.calendar_today),
+                  prefixIcon: const Icon(Icons.calendar_today),
                 ),
                 readOnly: true,
-                onTap: () => custom_date_utils.DateUtils.selectDate(context, _birthDateController),
+                onTap: () => custom_date_utils.DateUtils.selectDate(
+                    context, _birthDateController),
               ),
               const SizedBox(height: 20),
               TextFormField(
                 controller: _addressController,
-                decoration: const InputDecoration(
-                  labelText: 'Adresse',
-                  border: OutlineInputBorder(
+                decoration: InputDecoration(
+                  labelText: t.profile.address,
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  prefixIcon: Icon(Icons.location_on),
+                  prefixIcon: const Icon(Icons.location_on),
                 ),
               ),
               const SizedBox(height: 20),
@@ -209,7 +214,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ProfileButton(
-                    text: 'Enregistrer',
+                    text: t.profile.save,
                     backgroundColor: AppColors.purple,
                     onPressed: () async {
                       await _saveProfile();
@@ -217,7 +222,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   const SizedBox(width: 10),
                   ProfileButton(
-                    text: 'Annuler',
+                    text: t.profile.cancel,
                     backgroundColor: Colors.redAccent,
                     onPressed: () {
                       Navigator.push(

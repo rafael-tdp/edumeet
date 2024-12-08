@@ -1,3 +1,4 @@
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:client/screens/profile_screen.dart';
 
@@ -14,7 +15,7 @@ class ParticipantsList extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
-            "Participants",
+            t.event.participants,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,

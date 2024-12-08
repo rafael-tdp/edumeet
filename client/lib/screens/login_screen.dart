@@ -1,3 +1,4 @@
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/core/models/auth/loginRequest.dart';
@@ -72,9 +73,9 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Connexion',
-                    style: TextStyle(
+                  Text(
+                    t.login.title,
+                    style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -82,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Entrez vos informations ci-dessous pour vous connecter',
+                    t.login.description,
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
@@ -93,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                      labelText: 'Votre Email',
+                      labelText: t.user.email,
                       hintText: 'exemple@mail.com',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -106,14 +107,16 @@ class _LoginPageState extends State<LoginPage> {
                     controller: _passwordController,
                     obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
-                      labelText: 'Mot de passe',
+                      labelText: t.user.password,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       prefixIcon: const Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
                         onPressed: () {
                           setState(() {
@@ -124,10 +127,10 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Veuillez entrer votre mot de passe';
+                        return t.form.emptyPassword;
                       }
                       if (value.length < 6) {
-                        return 'Le mot de passe doit comporter au moins 6 caractères';
+                        return t.form.shortPassword;
                       }
                       return null;
                     },
@@ -139,12 +142,13 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
+                          MaterialPageRoute(
+                              builder: (context) => const ForgotPasswordPage()),
                         );
                       },
-                      child: const Text(
-                        'Mot de passe oublié ?',
-                        style: TextStyle(color: AppColors.purple),
+                      child: Text(
+                        t.login.forgotPassword,
+                        style: const TextStyle(color: AppColors.purple),
                       ),
                     ),
                   ),
@@ -166,12 +170,14 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       child: _isLoading
                           ? const CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      )
-                          : const Text(
-                        'Se connecter',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            )
+                          : Text(
+                              t.app.login,
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.white),
+                            ),
                     ),
                   ),
                   if (_errorMessage != null)
@@ -186,17 +192,18 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Vous n'avez pas de compte ?"),
+                      Text(t.login.noAccount),
                       TextButton(
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const RegisterPage()),
+                            MaterialPageRoute(
+                                builder: (context) => const RegisterPage()),
                           );
                         },
-                        child: const Text(
-                          'Créer un compte',
-                          style: TextStyle(color: AppColors.purple),
+                        child: Text(
+                          t.login.createAccount,
+                          style: const TextStyle(color: AppColors.purple),
                         ),
                       ),
                     ],
