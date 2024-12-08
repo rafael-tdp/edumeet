@@ -11,7 +11,7 @@ dart run build_runner build
 - Générer les fichiers de traduction (pas indispensable)
 
 ```sh
-dart run slang_gpt --target=eu-5 --api-key=xxxx
+dart run slang_gpt --api-key=xxx
 ```
 
 - Compiler les fichiers de traduction
