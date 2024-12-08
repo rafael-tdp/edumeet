@@ -1,0 +1,19 @@
+{
+  "hello": "Hola",
+  "save": "Guardar",
+  "login": {
+    "success": "Inicio de sesión exitoso",
+    "fail": "Fallo en el inicio de sesión"
+  },
+  "welcome": {
+    "chooseLanguage": "Elige tu idioma",
+    "title1": "Encuentra tus apuntes de revisión",
+    "description1": "Accede gratis a miles de \n apuntes de revisión creados por estudiantes",
+    "title2": "Organiza tus revisiones",
+    "description2": "Ordena y organiza tus apuntes para una \n memoria eficaz",
+    "title3": "Mantente motivado",
+    "description3": "Alcanza tus objetivos gracias a consejos \n prácticos",
+    "title4": "Únete a nuestra comunidad",
+    "description4": "Comparte tus apuntes de revisión y \n recibe consejos personalizados"
+  }
+}

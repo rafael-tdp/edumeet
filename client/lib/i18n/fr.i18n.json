@@ -1,0 +1,19 @@
+{
+  "hello": "Bonjour",
+  "save": "Enregistrer",
+  "login": {
+    "success": "Connexion réussie",
+    "fail": "Échec de la connexion"
+  },
+  "welcome": {
+    "chooseLanguage": "Choisissez votre langue",
+    "title1": "Retrouve tes fiches de révision",
+    "description1": "Accède gratuitement à des milliers de \nfiches de révision créées par des étudiants",
+    "title2": "Organise tes révisions",
+    "description2": "Classe et organise tes fiches pour une \nmémoire efficace",
+    "title3": "Reste motivé",
+    "description3": "Atteins tes objectifs grâce à des conseils \npratiques",
+    "title4": "Rejoins notre communauté",
+    "description4": "Partage tes fiches de révision et \nreçois des conseils personnalisés"
+  }
+}

@@ -7,6 +7,7 @@ import 'package:client/components/profile_button.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
+import 'package:client/i18n/generated/translations.g.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool isCurrentUser;

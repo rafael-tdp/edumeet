@@ -1,0 +1,19 @@
+{
+  "hello": "Cześć",
+  "save": "Zapisz",
+  "login": {
+    "success": "Logowanie udane",
+    "fail": "Logowanie nieudane"
+  },
+  "welcome": {
+    "chooseLanguage": "Wybierz swój język",
+    "title1": "Odnajdź swoje karty do nauki",
+    "description1": "Dostęp do setek tysięcy \nkart do nauki utworzonych przez studentów za darmo",
+    "title2": "Organizuj swoją naukę",
+    "description2": "Sortuj i organizuj swoje karty dla skutecznej \npamięci",
+    "title3": "Pozostań zmotywowany",
+    "description3": "Osiągnij swoje cele dzięki praktycznym \nporadom",
+    "title4": "Dołącz do naszej społeczności",
+    "description4": "Podziel się swoimi kartami do nauki i \notrzymuj spersonalizowane porady"
+  }
+}

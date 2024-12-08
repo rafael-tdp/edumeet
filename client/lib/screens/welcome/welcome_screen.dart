@@ -1,7 +1,9 @@
 import 'package:client/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 
+import '../../widgets/language_dropdown.dart';
 import 'on_boarding_screen.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -40,6 +42,12 @@ class _OnboardingPagerState extends State<OnboardingPager> {
     return PageView(
       controller: _pageController,
       children: [
+        OnboardingPage(
+          imagePath: 'assets/images/welcome/welcome2.png',
+          title: t.welcome.chooseLanguage,
+          additionalWidget: const LanguageDropdown(),
+          onNext: _nextPage,
+        ),
         OnboardingPage(
           imagePath: 'assets/images/welcome/welcome2.png',
           title: 'Retrouve tes fiches de révision',

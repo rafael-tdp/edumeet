@@ -1,0 +1,19 @@
+{
+  "hello": "Hallo",
+  "save": "Speichern",
+  "login": {
+    "success": "Anmeldung erfolgreich",
+    "fail": "Anmeldung fehlgeschlagen"
+  },
+  "welcome": {
+    "chooseLanguage": "Wählen Sie Ihre Sprache",
+    "title1": "Finde deine Lernkarten",
+    "description1": "Greife kostenlos auf Tausende von Lernkarten zu, die von Studenten erstellt wurden",
+    "title2": "Organisiere deine Lernkarten",
+    "description2": "Sortiere und organisiere deine Karten für ein besseres Gedächtnis",
+    "title3": "Bleib motiviert",
+    "description3": "Erreiche deine Ziele mit praktischen Tipps",
+    "title4": "Tritt unserer Gemeinschaft bei",
+    "description4": "Teile deine Lernkarten und erhalte personalisierte Ratschläge"
+  }
+}

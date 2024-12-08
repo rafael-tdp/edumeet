@@ -1,0 +1,13 @@
+base_locale: fr
+input_directory: lib/i18n
+input_file_pattern: .i18n.json
+output_directory: lib/i18n/generated
+output_file_name: translations.g.dart
+output_format: single_file
+lazy: true
+translate_var: t
+string_interpolation: double_braces
+
+gpt:
+  model: gpt-4o-mini
+  description: Edumeet est une application dédiée à l'entraide entre étudiants. Elle permet aux utilisateurs de trouver des étudiants capables de les aider dans leurs études ou d’apporter eux-mêmes leur aide à d’autres. Elle offre des fonctionnalités de discussion pour faciliter la collaboration et le partage de ressources telles que des fichiers, des liens, des notes, des cours, des exercices, des examens, des quiz, des devoirs maison, surveillés et corrigés. Les étudiants peuvent également organiser des événements d'entraide, créer des groupes de révision et planifier des réunions de travail, à distance ou en présentiel, afin de renforcer la collaboration et l’apprentissage collectif.

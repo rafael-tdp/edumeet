@@ -1,0 +1,19 @@
+{
+  "hello": "Ciao",
+  "save": "Salva",
+  "login": {
+    "success": "Accesso riuscito",
+    "fail": "Accesso fallito"
+  },
+  "welcome": {
+    "chooseLanguage": "Scegli la tua lingua",
+    "title1": "Trova le tue schede di revisione",
+    "description1": "Accedi gratuitamente a migliaia di \nschede di revisione create da studenti",
+    "title2": "Organizza le tue revisioni",
+    "description2": "Classifica e organizza le tue schede per una \nmigliore memoria",
+    "title3": "Rimani motivato",
+    "description3": "Raggiungi i tuoi obiettivi con consigli \npratici",
+    "title4": "Unisciti alla nostra comunità",
+    "description4": "Condividi le tue schede di revisione e \nricevi consigli personalizzati"
+  }
+}

@@ -10,6 +10,7 @@ class OnboardingPage extends StatelessWidget {
   final String description;
   final bool isLastPage;
   final VoidCallback onNext;
+  final Widget? additionalWidget;
 
   const OnboardingPage({
     super.key,
@@ -18,6 +19,7 @@ class OnboardingPage extends StatelessWidget {
     required this.onNext,
     this.description = '',
     this.isLastPage = false,
+    this.additionalWidget,
   });
 
   @override
@@ -40,16 +42,23 @@ class OnboardingPage extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          if(description.isNotEmpty)
+          if (description.isNotEmpty)
             Column(
               children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    description,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
+                const SizedBox(height: 20),
+                Text(
+                  description,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+          if (additionalWidget != null)
+            Column(
+              children: [
+                const SizedBox(height: 20),
+                additionalWidget!,
+              ],
             ),
           const SizedBox(height: 50),
           if (isLastPage)
@@ -96,9 +105,9 @@ class OnboardingPage extends StatelessWidget {
             )
           else
             FloatingActionButton(
-                onPressed: onNext,
-                backgroundColor: AppColors.purple,
-                child: const Icon(Icons.arrow_forward, color: Colors.white),
+              onPressed: onNext,
+              backgroundColor: AppColors.purple,
+              child: const Icon(Icons.arrow_forward, color: Colors.white),
             ),
         ],
       ),
