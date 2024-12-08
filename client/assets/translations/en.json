@@ -1,0 +1,43 @@
+{
+  "app": {
+    "login": "Log in",
+    "signup": "Sign up",
+    "logout": "Log out",
+    "search": "Search",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "error": "Error",
+    "loading": "Loading...",
+    "noResults": "No results",
+    "noResultsFound": "No results found"
+  },
+  "user": {
+    "email": "Email",
+    "birthdate": "Birthdate",
+    "location": "Location",
+    "bio": "Bio",
+    "nbReports": "Number of reports",
+    "username": "Username",
+    "password": "Password"
+  },
+  "welcome": {
+    "welcome": "Welcome to Edumeet, the collaborative revision platform",
+    "setup": "Let's start by choosing a language",
+    "whatLanguage": "What language do you speak?",
+    "chooseLanguage": "Choose a language so we can communicate together",
+    "title1": "Find your revision sheets",
+    "description1": "Access thousands of revision sheets created by students for free",
+    "title2": "Organize your revisions",
+    "description2": "Classify and organize your sheets for effective memory",
+    "title3": "Stay motivated",
+    "description3": "Achieve your goals with practical advice",
+    "title4": "Join our community",
+    "description4": "Share your revision sheets and receive personalized advice"
+  }
+}

@@ -6,7 +6,6 @@ import (
 	"edumeet/ent/subject"
 	"fmt"
 	"strings"
-	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -17,14 +16,6 @@ type Subject struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// CreatedBy holds the value of the "created_by" field.
-	CreatedBy *string `json:"created_by,omitempty"`
-	// UpdatedBy holds the value of the "updated_by" field.
-	UpdatedBy *string `json:"updated_by,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -67,10 +58,8 @@ func (*Subject) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case subject.FieldID, subject.FieldCreatedBy, subject.FieldUpdatedBy, subject.FieldName:
+		case subject.FieldID, subject.FieldName:
 			values[i] = new(sql.NullString)
-		case subject.FieldCreatedAt, subject.FieldUpdatedAt:
-			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -91,32 +80,6 @@ func (s *Subject) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				s.ID = value.String
-			}
-		case subject.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				s.CreatedAt = value.Time
-			}
-		case subject.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				s.UpdatedAt = value.Time
-			}
-		case subject.FieldCreatedBy:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field created_by", values[i])
-			} else if value.Valid {
-				s.CreatedBy = new(string)
-				*s.CreatedBy = value.String
-			}
-		case subject.FieldUpdatedBy:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
-			} else if value.Valid {
-				s.UpdatedBy = new(string)
-				*s.UpdatedBy = value.String
 			}
 		case subject.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -170,22 +133,6 @@ func (s *Subject) String() string {
 	var builder strings.Builder
 	builder.WriteString("Subject(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", s.ID))
-	builder.WriteString("created_at=")
-	builder.WriteString(s.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(s.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := s.CreatedBy; v != nil {
-		builder.WriteString("created_by=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
-	if v := s.UpdatedBy; v != nil {
-		builder.WriteString("updated_by=")
-		builder.WriteString(*v)
-	}
-	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(s.Name)
 	builder.WriteByte(')')

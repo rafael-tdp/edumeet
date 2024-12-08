@@ -1,0 +1,43 @@
+{
+  "app": {
+    "login": "Zaloguj się",
+    "signup": "Zarejestruj się",
+    "logout": "Wyloguj się",
+    "search": "Szukaj",
+    "add": "Dodaj",
+    "edit": "Edytuj",
+    "delete": "Usuń",
+    "cancel": "Anuluj",
+    "save": "Zapisz",
+    "yes": "Tak",
+    "no": "Nie",
+    "confirm": "Potwierdź",
+    "error": "Błąd",
+    "loading": "Ładowanie...",
+    "noResults": "Brak wyników",
+    "noResultsFound": "Nie znaleziono wyników"
+  },
+  "user": {
+    "email": "Email",
+    "birthdate": "Data urodzenia",
+    "location": "Miejsce",
+    "bio": "Bio",
+    "nbReports": "Liczba zgłoszeń",
+    "username": "Nazwa użytkownika",
+    "password": "Hasło"
+  },
+  "welcome": {
+    "welcome": "Witamy w Edumeet, platformie do wspólnej nauki",
+    "setup": "Zacznijmy od wyboru języka",
+    "whatLanguage": "Jakim językiem mówisz?",
+    "chooseLanguage": "Wybierz język, abyśmy mogli się komunikować",
+    "title1": "Znajdź swoje notatki do nauki",
+    "description1": "Uzyskaj bezpłatny dostęp do tysięcy notatek stworzonych przez studentów",
+    "title2": "Organizuj swoją naukę",
+    "description2": "Sortuj i organizuj swoje notatki dla efektywnej nauki",
+    "title3": "Pozostań zmotywowany",
+    "description3": "Osiągaj cele dzięki praktycznym wskazówkom",
+    "title4": "Dołącz do naszej społeczności",
+    "description4": "Udostępniaj swoje notatki i otrzymuj spersonalizowane porady"
+  }
+}

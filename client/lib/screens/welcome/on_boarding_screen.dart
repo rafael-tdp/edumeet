@@ -1,8 +1,8 @@
-import 'package:client/screens/register_screen.dart';
-import 'package:client/utils/colors.dart';
+import 'package:flag/flag_widget.dart';
 import 'package:flutter/material.dart';
-
-import '../login_screen.dart';
+import 'package:client/utils/colors.dart';
+import 'package:client/screens/register_screen.dart';
+import 'package:client/screens/login_screen.dart';
 
 class OnboardingPage extends StatelessWidget {
   final String imagePath;

@@ -121,3 +121,11 @@ func (ur *UserRepository) UpdateUser(ctx context.Context, userID string, updateU
 
 	return user, nil
 }
+
+func (ur *UserRepository) GetUserSubjecs(userID string) ([]*ent.Subject, error) {
+	user, err := ur.client.User.Query().Where(user.IDEQ(userID)).WithSubjects().Only(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return user.Edges.Subjects, nil
+}

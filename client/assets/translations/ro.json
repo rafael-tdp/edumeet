@@ -1,0 +1,43 @@
+{
+  "app": {
+    "login": "Autentificare",
+    "signup": "Înregistrare",
+    "logout": "Deconectare",
+    "search": "Caută",
+    "add": "Adaugă",
+    "edit": "Editează",
+    "delete": "Șterge",
+    "cancel": "Anulează",
+    "save": "Salvează",
+    "yes": "Da",
+    "no": "Nu",
+    "confirm": "Confirmă",
+    "error": "Eroare",
+    "loading": "Se încarcă...",
+    "noResults": "Niciun rezultat",
+    "noResultsFound": "Nu s-au găsit rezultate"
+  },
+  "user": {
+    "email": "Email",
+    "birthdate": "Data nașterii",
+    "location": "Locație",
+    "bio": "Biografie",
+    "nbReports": "Număr de raportări",
+    "username": "Nume utilizator",
+    "password": "Parolă"
+  },
+  "welcome": {
+    "welcome": "Bine ai venit la Edumeet, platforma de învățare colaborativă",
+    "setup": "Să începem prin a alege o limbă",
+    "whatLanguage": "Ce limbă vorbești?",
+    "chooseLanguage": "Alege o limbă pentru a putea comunica împreună",
+    "title1": "Găsește fișele tale de învățare",
+    "description1": "Accesează gratuit mii de fișe de învățare create de studenți",
+    "title2": "Organizează-ți învățarea",
+    "description2": "Sortează și organizează fișele pentru o învățare eficientă",
+    "title3": "Rămâi motivat",
+    "description3": "Atige-ți obiectivele cu ajutorul unor sfaturi practice",
+    "title4": "Alătură-te comunității noastre",
+    "description4": "Împarte fișele tale și primește sfaturi personalizate"
+  }
+}

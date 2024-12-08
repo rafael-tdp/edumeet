@@ -44,6 +44,17 @@ class _OnboardingPagerState extends State<OnboardingPager> {
       controller: _pageController,
       children: [
         OnboardingPage(
+          title: t.welcome.chooseLanguage,
+          additionalWidget: LanguageSelection(parentContext: context),
+          onNext: _nextPage,
+        ),
+        OnboardingPage(
+          imagePath: 'assets/images/welcome/welcome.png',
+          title: t.welcome.welcome,
+          description: t.welcome.setup,
+          onNext: _nextPage,
+        ),
+        OnboardingPage(
           imagePath: 'assets/images/welcome/welcome2.png',
           title: t.welcome.chooseLanguage,
           onNext: _nextPage,
@@ -61,20 +72,20 @@ class _OnboardingPagerState extends State<OnboardingPager> {
         ),
         OnboardingPage(
           imagePath: 'assets/images/welcome/welcome3.png',
-          title: 'Organise tes révisions',
-          description: 'Classe et organise tes fiches pour une \nmémoire efficace',
+          title: t.welcome.title2,
+          description: t.welcome.description2,
           onNext: _nextPage,
         ),
         OnboardingPage(
           imagePath: 'assets/images/welcome/welcome5.png',
-          title: 'Reste motivé',
-          description: 'Atteins tes objectifs grâce à des conseils \npratiques',
+          title: t.welcome.title3,
+          description: t.welcome.description3,
           onNext: _nextPage,
         ),
         OnboardingPage(
           imagePath: 'assets/images/welcome/welcome1.png',
-          title: 'Rejoins notre communauté',
-          description: 'Partage tes fiches de révision et \nreçois des conseils personnalisés',
+          title: t.welcome.title4,
+          description: t.welcome.description4,
           onNext: () {
             Navigator.push(
               context,

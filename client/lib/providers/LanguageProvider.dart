@@ -10,8 +10,8 @@ class LanguageProvider extends ChangeNotifier {
   Future<void> changeLanguage(AppLocale newLocale) async {
     if (_currentLocale != newLocale) {
       _currentLocale = newLocale;
-      await LocaleSettings.setLocale(newLocale); // Met à jour la langue via LocaleSettings
-      notifyListeners(); // Notifie les listeners pour qu'ils se reconstruisent
+      await LocaleSettings.setLocale(newLocale);
+      notifyListeners();
     }
   }
 }

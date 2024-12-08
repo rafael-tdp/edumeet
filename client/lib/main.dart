@@ -14,7 +14,6 @@ import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
 import 'utils/colors.dart';
 import 'screens/conversations_screen.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() => runApp(TranslationProvider(child: const MyApp()));
 
