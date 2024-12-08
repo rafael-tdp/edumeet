@@ -1,4 +1,7 @@
 import 'package:client/core/models/user.dart';
+import 'package:client/generated/locale_keys.g.dart';
+import 'package:client/main.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/login_screen.dart';
@@ -7,6 +10,8 @@ import 'package:client/components/profile_button.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
+
+import '../widgets/language_dropdown_button.dart';
 
 class ProfilePage extends StatefulWidget {
   final bool isCurrentUser;
@@ -85,7 +90,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Colors.grey,
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
+              LanguageDropdownButton(appContext: context),
+              const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -97,7 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.email, color: AppColors.purple),
-                      title: const Text('Email'),
+                      title: Text(LocaleKeys.user_email.tr()),
                       subtitle: Text(
                         user.email,
                       ),
@@ -105,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     const Divider(),
                     ListTile(
                       leading: const Icon(Icons.person, color: AppColors.purple),
-                      title: const Text('Nom d\'utilisateur'),
+                      title: Text(LocaleKeys.user_username.tr()),
                       subtitle: Text(
                         user.username,
                       ),
@@ -113,13 +120,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     const Divider(),
                     ListTile(
                       leading: const Icon(Icons.phone, color: AppColors.purple),
-                      title: const Text('Date de naissance'),
+                      title: Text(LocaleKeys.user_birthdate.tr()),
                       subtitle: Text(custom_date_utils.DateUtils.isoToFormattedDate(user.birthDate.toString())),
                     ),
                     const Divider(),
                     ListTile(
                       leading: const Icon(Icons.location_on, color: AppColors.purple),
-                      title: const Text('Localisation'),
+                      title: Text(LocaleKeys.user_location.tr()),
                       subtitle: Text(
                         user.address ?? 'Adresse non disponible',
                       ),
@@ -127,7 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     const Divider(),
                     ListTile(
                       leading: const Icon(Icons.report, color: AppColors.purple),
-                      title: const Text('Nombre de signalements'),
+                      title: Text(LocaleKeys.user_nbReports.tr()),
                       subtitle: Text(
                         user.reportNumber?.toString() ?? 'Nombre de signalements non disponible',
                       ),

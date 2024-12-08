@@ -1,0 +1,43 @@
+{
+  "app": {
+    "login": "Anmelden",
+    "signup": "Registrieren",
+    "logout": "Abmelden",
+    "search": "Suchen",
+    "add": "Hinzufügen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "yes": "Ja",
+    "no": "Nein",
+    "confirm": "Bestätigen",
+    "error": "Fehler",
+    "loading": "Laden...",
+    "noResults": "Keine Ergebnisse",
+    "noResultsFound": "Keine Ergebnisse gefunden"
+  },
+  "user": {
+    "email": "Email",
+    "birthdate": "Geburtsdatum",
+    "location": "Ort",
+    "bio": "Bio",
+    "nbReports": "Anzahl der Berichte",
+    "username": "Benutzername",
+    "password": "Passwort"
+  },
+  "welcome": {
+    "welcome": "Willkommen bei Edumeet, der kollaborativen Überarbeitungsplattform",
+    "setup": "Beginnen wir mit der Auswahl einer Sprache",
+    "whatLanguage": "Welche Sprache sprichst du?",
+    "chooseLanguage": "Wähle eine Sprache, damit wir zusammen kommunizieren können",
+    "title1": "Finde deine Lernkarten",
+    "description1": "Greife kostenlos auf Tausende von Lernkarten zu, die von Studenten erstellt wurden",
+    "title2": "Organisiere deine Lernkarten",
+    "description2": "Sortiere und organisiere deine Karten für ein besseres Gedächtnis",
+    "title3": "Bleib motiviert",
+    "description3": "Erreiche deine Ziele mit praktischen Tipps",
+    "title4": "Tritt unserer Gemeinschaft bei",
+    "description4": "Teile deine Lernkarten und erhalte personalisierte Ratschläge"
+  }
+}

@@ -5,14 +5,41 @@ import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/register_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'generated/codegen_loader.g.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
 import 'utils/colors.dart';
 import 'screens/conversations_screen.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main() => runApp(const MyApp());
+// void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(
+    EasyLocalization(
+        supportedLocales: const [
+          Locale('de'),
+          Locale('en'),
+          Locale('es'),
+          Locale('fr'),
+          Locale('it'),
+          Locale('nl'),
+          Locale('pl'),
+          Locale('pt'),
+          Locale('ro'),
+          Locale('ru'),
+          Locale('uk'),
+        ],
+        path: 'assets/translations',
+        fallbackLocale: const Locale('fr'),
+        assetLoader: const CodegenLoader(),
+        child: const MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -37,16 +64,9 @@ class MyApp extends StatelessWidget {
           }
           return null;
       },
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      locale: const Locale('fr', 'FR'),
-      supportedLocales: const [
-        Locale('fr', ''),
-        Locale('en', ''),
-      ],
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
     );
   }
 }
