@@ -1,0 +1,43 @@
+{
+  "app": {
+    "login": "Přihlásit se",
+    "signup": "Zaregistrovat se",
+    "logout": "Odhlásit se",
+    "search": "Hledat",
+    "add": "Přidat",
+    "edit": "Upravit",
+    "delete": "Smazat",
+    "cancel": "Zrušit",
+    "save": "Uložit",
+    "yes": "Ano",
+    "no": "Ne",
+    "confirm": "Potvrdit",
+    "error": "Chyba",
+    "loading": "Načítání...",
+    "noResults": "Žádné výsledky",
+    "noResultsFound": "Žádné výsledky nebyly nalezeny"
+  },
+  "user": {
+    "email": "Email",
+    "birthdate": "Datum narození",
+    "location": "Místo",
+    "bio": "Bio",
+    "nbReports": "Počet hlášení",
+    "username": "Uživatelské jméno",
+    "password": "Heslo"
+  },
+  "welcome": {
+    "welcome": "Vítejte na Edumeet, platformě pro spolupráci při učení",
+    "setup": "Začněme výběrem jazyka",
+    "whatLanguage": "Jaký jazyk mluvíš?",
+    "chooseLanguage": "Vyber jazyk, abychom mohli spolu komunikovat",
+    "title1": "Najdi své studijní materiály",
+    "description1": "Získejte zdarma přístup k tisícům \nstudijních materiálů vytvořených studenty",
+    "title2": "Organizuj své učení",
+    "description2": "Tříděte a organizujte své materiály pro efektivní \nzapamatování",
+    "title3": "Zůstaň motivovaný",
+    "description3": "Dosahujte svých cílů díky praktickým \nradám",
+    "title4": "Připojte se k naší komunitě",
+    "description4": "Sdílejte své studijní materiály a \nzískejte personalizované rady"
+  }
+}

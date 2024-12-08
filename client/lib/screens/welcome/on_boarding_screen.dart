@@ -14,9 +14,9 @@ class OnboardingPage extends StatelessWidget {
 
   const OnboardingPage({
     super.key,
-    required this.imagePath,
     required this.title,
     required this.onNext,
+    this.imagePath = '',
     this.description = '',
     this.isLastPage = false,
     this.additionalWidget,
@@ -29,10 +29,11 @@ class OnboardingPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 50),
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: Image.asset(imagePath),
-          ),
+          if (imagePath.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.all(20),
+              child: Image.asset(imagePath),
+            ),
           const SizedBox(height: 30),
           Text(
             title,
@@ -70,7 +71,8 @@ class OnboardingPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     fixedSize: const Size(200, 50),
                     backgroundColor: AppColors.purple,
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -79,7 +81,8 @@ class OnboardingPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const RegisterPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterPage()),
                       );
                     },
                     child: const Text(
@@ -93,7 +96,8 @@ class OnboardingPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
                     );
                   },
                   child: const Text(

@@ -4,7 +4,9 @@ import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/providers/locale_provider.dart';
 
 class LanguageDropdown extends StatelessWidget {
-  const LanguageDropdown({Key? key}) : super(key: key);
+  final BuildContext parentContext;
+  const LanguageDropdown({Key? key, required this.parentContext})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

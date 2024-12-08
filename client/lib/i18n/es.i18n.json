@@ -1,19 +1,43 @@
 {
-  "hello": "Hola",
-  "save": "Guardar",
-  "login": {
-    "success": "Inicio de sesión exitoso",
-    "fail": "Fallo en el inicio de sesión"
+  "app": {
+    "login": "Iniciar sesión",
+    "signup": "Registrarse",
+    "logout": "Cerrar sesión",
+    "search": "Buscar",
+    "add": "Añadir",
+    "edit": "Modificar",
+    "delete": "Eliminar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "yes": "Sí",
+    "no": "No",
+    "confirm": "Confirmar",
+    "error": "Error",
+    "loading": "Cargando...",
+    "noResults": "Sin resultados",
+    "noResultsFound": "No se encontraron resultados"
+  },
+  "user": {
+    "email": "Correo electrónico",
+    "birthdate": "Fecha de nacimiento",
+    "location": "Ubicación",
+    "bio": "Biografía",
+    "nbReports": "Número de informes",
+    "username": "Nombre de usuario",
+    "password": "Contraseña"
   },
   "welcome": {
-    "chooseLanguage": "Elige tu idioma",
-    "title1": "Encuentra tus apuntes de revisión",
-    "description1": "Accede gratis a miles de \n apuntes de revisión creados por estudiantes",
+    "welcome": "Bienvenido a Edumeet, la plataforma de revisión colaborativa",
+    "setup": "Empecemos por elegir un idioma",
+    "whatLanguage": "¿Qué idioma hablas?",
+    "chooseLanguage": "Elige un idioma para que podamos comunicarnos juntos",
+    "title1": "Encuentra tus fichas de revisión",
+    "description1": "Accede gratuitamente a miles de \nfichas de revisión creadas por estudiantes",
     "title2": "Organiza tus revisiones",
-    "description2": "Ordena y organiza tus apuntes para una \n memoria eficaz",
+    "description2": "Clasifica y organiza tus fichas para una \nmás efectiva memoria",
     "title3": "Mantente motivado",
-    "description3": "Alcanza tus objetivos gracias a consejos \n prácticos",
+    "description3": "Alcanza tus objetivos gracias a consejos \nprácticos",
     "title4": "Únete a nuestra comunidad",
-    "description4": "Comparte tus apuntes de revisión y \n recibe consejos personalizados"
+    "description4": "Comparte tus fichas de revisión y \nrecibe consejos personalizados"
   }
 }

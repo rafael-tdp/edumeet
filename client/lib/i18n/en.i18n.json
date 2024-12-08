@@ -1,19 +1,37 @@
 {
-  "hello": "Hello",
-  "save": "Save",
-  "login": {
-    "success": "Login successful",
-    "fail": "Login failed"
+  "app": {
+    "login": "Log in",
+    "signup": "Sign up",
+    "logout": "Log out",
+    "search": "Search",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "error": "Error",
+    "loading": "Loading...",
+    "noResults": "No results",
+    "noResultsFound": "No results found"
+  },
+  "user": {
+    "email": "Email",
+    "birthdate": "Birthdate",
+    "location": "Location",
+    "bio": "Bio",
+    "nbReports": "Number of reports",
+    "username": "Username",
+    "password": "Password"
   },
   "welcome": {
-    "chooseLanguage": "Choose your language",
-    "title1": "Find your review sheets",
-    "description1": "Access thousands of review sheets created by students for free",
-    "title2": "Organize your reviews",
-    "description2": "Sort and organize your sheets for better memory",
-    "title3": "Stay motivated",
-    "description3": "Achieve your goals with practical tips",
-    "title4": "Join our community",
-    "description4": "Share your review sheets and receive personalized advice"
+    "welcome": "Welcome to Edumeet, the collaborative revision platform",
+    "setup": "Let's start by choosing a language",
+    "whatLanguage": "What language do you speak?",
+    "chooseLanguage": "Choose a language so we can communicate together",
+    "title1": "Find your revision sheets",
+    "description1": "Access thousands of revision sheets created by students for free"
   }
 }

@@ -7,7 +7,7 @@ import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/register_screen.dart';
-import 'package:client/screens/welcome/welcome_screen.dart';
+import 'package:client/widgets/language_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/swipe_cards_screen.dart';
@@ -16,41 +16,42 @@ import 'utils/colors.dart';
 import 'screens/conversations_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(TranslationProvider(child: const MyApp()));
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider(
-    create: (context) => LocaleProvider(),
-    builder: (context, build) {
-      final provider = Provider.of<LocaleProvider>(context);
+        create: (context) => LocaleProvider(),
+        builder: (context, build) {
+          final provider = Provider.of<LocaleProvider>(context);
 
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        routes: {
-          '/': (context) => const HomePage(),
-          LoginPage.routeName: (context) => const LoginPage(),
-          RegisterPage.routeName: (context) => const RegisterPage(),
-          HomePage.routeName: (context) => const HomePage(),
-          ForgotPasswordPage.routeName: (context) => const ForgotPasswordPage(),
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            routes: {
+              '/': (context) => const AuthGuard(child: HomePage()),
+              LoginPage.routeName: (context) => const LoginPage(),
+              RegisterPage.routeName: (context) => const RegisterPage(),
+              HomePage.routeName: (context) => const HomePage(),
+              ForgotPasswordPage.routeName: (context) =>
+                  const ForgotPasswordPage(),
+            },
+            onGenerateRoute: (routeSettings) {
+              switch (routeSettings.name) {
+                case EditProfilePage.routeName:
+                  return MaterialPageRoute(
+                      builder: (context) => EditProfilePage(
+                          user: routeSettings.arguments as User));
+              }
+              return null;
+            },
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            locale: provider.currentLocale.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+          );
         },
-        onGenerateRoute: (routeSettings) {
-            switch(routeSettings.name) {
-              case EditProfilePage.routeName:
-                return MaterialPageRoute(
-                  builder: (context) => EditProfilePage(user: routeSettings.arguments as User)
-                );
-            }
-            return null;
-        },
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        locale: provider.currentLocale.flutterLocale,
-        supportedLocales: AppLocaleUtils.supportedLocales,
       );
-    },
-  );
 }
 
 class HomePage extends StatefulWidget {
@@ -58,6 +59,7 @@ class HomePage extends StatefulWidget {
   static navigateTo(BuildContext context) {
     Navigator.pushNamed(context, routeName);
   }
+
   const HomePage({super.key});
 
   @override
@@ -69,7 +71,6 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const WelcomeScreen(),
     const SwipeCardsPage(),
     const EventsPage(),
     const ConversationsPage(),
@@ -91,7 +92,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          LanguageDropdown(),
+          LanguageDropdown(parentContext: context),
         ],
         surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.transparent,

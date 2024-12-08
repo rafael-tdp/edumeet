@@ -1,0 +1,43 @@
+{
+  "app": {
+    "login": "Inloggen",
+    "signup": "Aanmelden",
+    "logout": "Afmelden",
+    "search": "Zoeken",
+    "add": "Toevoegen",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "cancel": "Annuleren",
+    "save": "Opslaan",
+    "yes": "Ja",
+    "no": "Nee",
+    "confirm": "Bevestigen",
+    "error": "Fout",
+    "loading": "Laden...",
+    "noResults": "Geen resultaten",
+    "noResultsFound": "Geen resultaten gevonden"
+  },
+  "user": {
+    "email": "Email",
+    "birthdate": "Geboortedatum",
+    "location": "Locatie",
+    "bio": "Bio",
+    "nbReports": "Aantal meldingen",
+    "username": "Gebruikersnaam",
+    "password": "Wachtwoord"
+  },
+  "welcome": {
+    "welcome": "Welkom bij Edumeet, het samenwerkende studieplatform",
+    "setup": "Laten we beginnen met het kiezen van een taal",
+    "whatLanguage": "Welke taal spreek je?",
+    "chooseLanguage": "Kies een taal zodat we samen kunnen communiceren",
+    "title1": "Vind je studiematerialen",
+    "description1": "Toegang tot duizenden \ngestudeerde materialen gemaakt door studenten, gratis",
+    "title2": "Organiseer je studie",
+    "description2": "Sorteer en organiseer je materialen voor een \neffectief geheugen",
+    "title3": "Blijf gemotiveerd",
+    "description3": "Bereik je doelen met praktische \ntips",
+    "title4": "Word lid van onze gemeenschap",
+    "description4": "Deel je studiematerialen en \nontvang persoonlijke tips"
+  }
+}

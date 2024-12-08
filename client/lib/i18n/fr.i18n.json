@@ -1,12 +1,36 @@
 {
-  "hello": "Bonjour",
-  "save": "Enregistrer",
-  "login": {
-    "success": "Connexion réussie",
-    "fail": "Échec de la connexion"
+  "app": {
+    "login": "Se connecter",
+    "signup": "S'inscrire",
+    "logout": "Se déconnecter",
+    "search": "Rechercher",
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "yes": "Oui",
+    "no": "Non",
+    "confirm": "Confirmer",
+    "error": "Erreur",
+    "loading": "Chargement...",
+    "noResults": "Aucun résultat",
+    "noResultsFound": "Aucun résultat trouvé"
+  },
+  "user": {
+    "email": "Email",
+    "birthdate": "Date de naissance",
+    "location": "Lieu",
+    "bio": "Bio",
+    "nbReports": "Nombre de signalements",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe"
   },
   "welcome": {
-    "chooseLanguage": "Choisissez votre langue",
+    "welcome": "Bienvenue sur Edumeet, la plateforme de révision collaborative",
+    "setup": "Commençons par choisir une langue",
+    "whatLanguage": "Quelle langue parles-tu ?",
+    "chooseLanguage": "Choisis une langue pour que nous puissions communiquer ensemble",
     "title1": "Retrouve tes fiches de révision",
     "description1": "Accède gratuitement à des milliers de \nfiches de révision créées par des étudiants",
     "title2": "Organise tes révisions",

@@ -1,0 +1,43 @@
+{
+  "app": {
+    "login": "Conectare",
+    "signup": "Înscriere",
+    "logout": "Deconectare",
+    "search": "Căutare",
+    "add": "Adăuga",
+    "edit": "Edita",
+    "delete": "Șterge",
+    "cancel": "Anulează",
+    "save": "Salvează",
+    "yes": "Da",
+    "no": "Nu",
+    "confirm": "Confirmă",
+    "error": "Eroare",
+    "loading": "Se încarcă...",
+    "noResults": "Nu există rezultate",
+    "noResultsFound": "Nu s-au găsit rezultate"
+  },
+  "user": {
+    "email": "Email",
+    "birthdate": "Data nașterii",
+    "location": "Locație",
+    "bio": "Biografie",
+    "nbReports": "Număr de raportări",
+    "username": "Nume de utilizator",
+    "password": "Parolă"
+  },
+  "welcome": {
+    "welcome": "Bun venit pe Edumeet, platforma de revizuire colaborativă",
+    "setup": "Să începem prin a alege o limbă",
+    "whatLanguage": "Ce limbă vorbești?",
+    "chooseLanguage": "Alege o limbă pentru a putea comunica împreună",
+    "title1": "Găsește-ți fișele de revizuire",
+    "description1": "Accesează gratuit mii de \nfișe de revizuire create de studenți",
+    "title2": "Organizează-ți revizuirile",
+    "description2": "Clasează și organizează-ți fișele pentru o \nmemoare eficientă",
+    "title3": "Rămâi motivat",
+    "description3": "Atinge-ți obiectivele cu ajutorul unor sfaturi \npractice",
+    "title4": "Alătură-te comunității noastre",
+    "description4": "Împărtășește-ți fișele de revizuire și \nprimește sfaturi personalizate"
+  }
+}

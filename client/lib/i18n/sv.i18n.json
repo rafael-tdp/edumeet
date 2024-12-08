@@ -1,0 +1,43 @@
+{
+  "app": {
+    "login": "Logga in",
+    "signup": "Registrera sig",
+    "logout": "Logga ut",
+    "search": "Sök",
+    "add": "Lägg till",
+    "edit": "Redigera",
+    "delete": "Ta bort",
+    "cancel": "Avbryt",
+    "save": "Spara",
+    "yes": "Ja",
+    "no": "Nej",
+    "confirm": "Bekräfta",
+    "error": "Fel",
+    "loading": "Laddar...",
+    "noResults": "Inga resultat",
+    "noResultsFound": "Inga resultat funna"
+  },
+  "user": {
+    "email": "E-post",
+    "birthdate": "Födelsedatum",
+    "location": "Plats",
+    "bio": "Biografi",
+    "nbReports": "Antal rapporter",
+    "username": "Användarnamn",
+    "password": "Lösenord"
+  },
+  "welcome": {
+    "welcome": "Välkommen till Edumeet, plattformen för samarbetsinriktad studiehjälp",
+    "setup": "Låt oss börja med att välja ett språk",
+    "whatLanguage": "Vilket språk talar du?",
+    "chooseLanguage": "Välj ett språk så att vi kan kommunicera tillsammans",
+    "title1": "Hitta dina studiehandouts",
+    "description1": "Få gratis tillgång till tusentals \nstudiehandouts skapade av studenter",
+    "title2": "Organisera dina studier",
+    "description2": "Klassificera och organisera dina handouts för en \neffektiv inlärning",
+    "title3": "Håll dig motiverad",
+    "description3": "Uppnå dina mål med praktiska \nråd",
+    "title4": "Gå med i vårt community",
+    "description4": "Dela dina studiehandouts och \n få personliga råd"
+  }
+}

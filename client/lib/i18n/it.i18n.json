@@ -1,19 +1,43 @@
 {
-  "hello": "Ciao",
-  "save": "Salva",
-  "login": {
-    "success": "Accesso riuscito",
-    "fail": "Accesso fallito"
+  "app": {
+    "login": "Accedi",
+    "signup": "Registrati",
+    "logout": "Disconnetti",
+    "search": "Cerca",
+    "add": "Aggiungi",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "yes": "Sì",
+    "no": "No",
+    "confirm": "Conferma",
+    "error": "Errore",
+    "loading": "Caricamento...",
+    "noResults": "Nessun risultato",
+    "noResultsFound": "Nessun risultato trovato"
+  },
+  "user": {
+    "email": "Email",
+    "birthdate": "Data di nascita",
+    "location": "Luogo",
+    "bio": "Bio",
+    "nbReports": "Numero di segnalazioni",
+    "username": "Nome utente",
+    "password": "Password"
   },
   "welcome": {
-    "chooseLanguage": "Scegli la tua lingua",
-    "title1": "Trova le tue schede di revisione",
-    "description1": "Accedi gratuitamente a migliaia di \nschede di revisione create da studenti",
+    "welcome": "Benvenuto su Edumeet, la piattaforma di revisione collaborativa",
+    "setup": "Iniziamo scegliendo una lingua",
+    "whatLanguage": "Quale lingua parli?",
+    "chooseLanguage": "Scegli una lingua affinché possiamo comunicare insieme",
+    "title1": "Trova i tuoi appunti di revisione",
+    "description1": "Accedi gratuitamente a migliaia di \nappunti di revisione creati da studenti",
     "title2": "Organizza le tue revisioni",
-    "description2": "Classifica e organizza le tue schede per una \nmigliore memoria",
+    "description2": "Classifica e organizza i tuoi appunti per una \nmemoria efficace",
     "title3": "Rimani motivato",
-    "description3": "Raggiungi i tuoi obiettivi con consigli \npratici",
+    "description3": "Raggiungi i tuoi obiettivi grazie a consigli \npratici",
     "title4": "Unisciti alla nostra comunità",
-    "description4": "Condividi le tue schede di revisione e \nricevi consigli personalizzati"
+    "description4": "Condividi i tuoi appunti di revisione e \nricevi consigli personalizzati"
   }
 }

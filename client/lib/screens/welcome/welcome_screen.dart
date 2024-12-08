@@ -1,4 +1,5 @@
 import 'package:client/screens/register_screen.dart';
+import 'package:client/widgets/language_selection.dart';
 import 'package:flutter/material.dart';
 
 import '../../widgets/language_dropdown.dart';
@@ -45,7 +46,11 @@ class _OnboardingPagerState extends State<OnboardingPager> {
         OnboardingPage(
           imagePath: 'assets/images/welcome/welcome2.png',
           title: t.welcome.chooseLanguage,
-          additionalWidget: const LanguageDropdown(),
+          onNext: _nextPage,
+        ),
+        OnboardingPage(
+          title: t.welcome.chooseLanguage,
+          additionalWidget: LanguageSelection(parentContext: context),
           onNext: _nextPage,
         ),
         OnboardingPage(
