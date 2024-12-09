@@ -7,7 +7,6 @@ import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/register_screen.dart';
-import 'package:client/widgets/language_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -77,8 +76,6 @@ class _HomePageState extends State<HomePage> {
     const ProfilePage(
       isCurrentUser: true,
     ),
-    // LoginPage(),
-    // const SettingsPage(),
   ];
 
   void _onTabTapped(int index) {
@@ -90,22 +87,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        surfaceTintColor: Colors.transparent,
-        backgroundColor: Colors.transparent,
-        leadingWidth: 150,
-        leading: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Container(
-            alignment: Alignment.bottomLeft,
-            child: Image.asset(
-              'images/logo-bold.png',
-              fit: BoxFit.cover,
-              width: 100,
-            ),
-          ),
-        ),
-      ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.transparent,
