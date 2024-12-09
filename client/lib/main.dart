@@ -1,5 +1,6 @@
 import 'package:client/core/guard/auth_gard.dart';
 import 'package:client/core/models/user.dart';
+import 'package:client/core/services/message_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/providers/locale_provider.dart';
 import 'package:client/screens/edit_profile_page.dart';
@@ -16,12 +17,14 @@ import 'utils/colors.dart';
 import 'screens/conversations_screen.dart';
 import 'package:device_preview/device_preview.dart';
 
-void main() => runApp(
-  DevicePreview(
-    enabled: true,
-    builder: (context) => TranslationProvider(child: const MyApp()),
-  ),
-);
+void main() {
+  runApp(
+    DevicePreview(
+      enabled: true,
+      builder: (context) => TranslationProvider(child: const MyApp()),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
