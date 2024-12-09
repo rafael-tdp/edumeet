@@ -71,24 +71,9 @@ class _EventsPageState extends State<EventsPage> {
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         automaticallyImplyLeading: false,
-        toolbarHeight: 30,
+        // toolbarHeight: 30,
         backgroundColor: Colors.transparent,
         actions: [
-          // TextButton.icon(
-          //   icon: Icon(
-          //     _showOnlyMyEvents ? Icons.filter_list_off : Icons.filter_list,
-          //     color: AppColors.purple,
-          //   ),
-          //   label: const Text(
-          //     "Mes événements",
-          //     style: TextStyle(color: AppColors.purple),
-          //   ),
-          //   onPressed: () {
-          //     setState(() {
-          //       _showOnlyMyEvents = !_showOnlyMyEvents;
-          //     });
-          //   },
-          // ),
           IconButton(
             icon: Icon(
               _showOnlyMyEvents ? Icons.filter_list_off : Icons.filter_list,
@@ -120,31 +105,28 @@ class _EventsPageState extends State<EventsPage> {
 
           final events = snapshot.data!;
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: events.length,
-                    itemBuilder: (context, index) {
-                      final event = events[index];
-                      return GestureDetector(
-                        onTap: () => _openEventPage(event.id),
-                        child: EventCard(
-                          title: event.title,
-                          date: event.startDate,
-                          imageUrl: event.image,
-                          participants: event.participantsCount.toString(),
-                          isCurrentUserEvent: _currentUser != null &&
-                              event.createdBy == _currentUser!.id,
-                        ),
-                      );
-                    },
-                  ),
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: events.length,
+                  itemBuilder: (context, index) {
+                    final event = events[index];
+                    return GestureDetector(
+                      onTap: () => _openEventPage(event.id),
+                      child: EventCard(
+                        title: event.title,
+                        date: event.startDate,
+                        imageUrl: event.image,
+                        participants: event.participantsCount.toString(),
+                        isCurrentUserEvent: _currentUser != null &&
+                            event.createdBy == _currentUser!.id,
+                      ),
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),

@@ -82,8 +82,6 @@ class _HomePageState extends State<HomePage> {
     const ProfilePage(
       isCurrentUser: true,
     ),
-    // LoginPage(),
-    // const SettingsPage(),
   ];
 
   void _onTabTapped(int index) {
@@ -95,22 +93,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        surfaceTintColor: Colors.transparent,
-        backgroundColor: Colors.transparent,
-        leadingWidth: 150,
-        leading: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Container(
-            alignment: Alignment.bottomLeft,
-            child: Image.asset(
-              'images/logo-bold.png',
-              fit: BoxFit.cover,
-              width: 100,
-            ),
-          ),
-        ),
-      ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.transparent,
