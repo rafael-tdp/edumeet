@@ -149,37 +149,42 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 20),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ProfileButton(
-                    text: t.profile.editProfile,
-                    backgroundColor: AppColors.purple,
-                    onPressed: () async {
-                      final updatedUser = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditProfilePage(user: user),
-                        ),
-                      );
-                      if (updatedUser != null) {
-                        setState(() {
-                          user = updatedUser;
-                        });
-                      }
-                    },
+                  Expanded(
+                    child: ProfileButton(
+                      text: t.profile.editProfile,
+                      backgroundColor: AppColors.purple,
+                      onPressed: () async {
+                        final updatedUser = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfilePage(user: user),
+                          ),
+                        );
+                        if (updatedUser != null) {
+                          setState(() {
+                            user = updatedUser;
+                          });
+                        }
+                      },
+                    ),
                   ),
-                  const SizedBox(width: 10),
-                  ProfileButton(
-                    text: t.profile.logout,
-                    backgroundColor: Colors.redAccent,
-                    onPressed: () async {
-                      await _authServices.logout();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()),
-                      );
-                    },
+                  const SizedBox(
+                      width: 10), // Espacement entre les deux boutons
+                  Expanded(
+                    child: ProfileButton(
+                      text: t.profile.logout,
+                      backgroundColor: Colors.redAccent,
+                      onPressed: () async {
+                        await _authServices.logout();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const LoginPage()),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

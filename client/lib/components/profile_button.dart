@@ -25,7 +25,7 @@ class ProfileButton extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Text(
           text,
           style: const TextStyle(color: Colors.white),
