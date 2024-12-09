@@ -21,9 +21,7 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      clipBehavior: Clip.none, // Permet aux widgets de dépasser la zone
       children: [
-        // Card principale
         Card(
           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
           elevation: 3,
@@ -128,14 +126,21 @@ class EventCard extends StatelessWidget {
         ),
         if (isCurrentUserEvent)
           Positioned(
-            top: -15,
-            left: 7,
-            child: Transform.rotate(
-              angle: -0.4,
+            top: 5,
+            right: 10,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(25),
+                  bottomLeft: Radius.circular(25),
+                ),
+              ),
               child: SvgPicture.asset(
                 'icons/crown.svg',
-                width: 40,
-                height: 40,
+                width: 30,
+                height: 30,
               ),
             ),
           ),
