@@ -64,7 +64,7 @@ class _TranslationsAppPt implements TranslationsAppFr {
 	@override String get search => 'Pesquisar';
 	@override String get searchLanguage => 'Pesquisar um idioma';
 	@override String get add => 'Adicionar';
-	@override String get edit => 'Editar';
+	@override String get edit => 'Modificar';
 	@override String get delete => 'Excluir';
 	@override String get cancel => 'Cancelar';
 	@override String get save => 'Salvar';
@@ -75,7 +75,7 @@ class _TranslationsAppPt implements TranslationsAppFr {
 	@override String get loading => 'Carregando...';
 	@override String get noResults => 'Nenhum resultado';
 	@override String get noResultsFound => 'Nenhum resultado encontrado';
-	@override String get skip => 'Pular';
+	@override String get skip => 'Saltar';
 	@override String get next => 'Próximo';
 	@override String get previous => 'Anterior';
 	@override String get finish => 'Terminar';
@@ -88,7 +88,7 @@ class _TranslationsAppPt implements TranslationsAppFr {
 	@override String get alreadyHaveAccount => 'Você já tem uma conta?';
 	@override String get loadingIndicator => 'Carregando...';
 	@override String get errorOccurred => 'Ocorreu um erro';
-	@override String get backTo => 'Voltar a ';
+	@override String get backTo => 'Retornar a ';
 }
 
 // Path: user
@@ -98,21 +98,21 @@ class _TranslationsUserPt implements TranslationsUserFr {
 	final TranslationsPt _root; // ignore: unused_field
 
 	// Translations
-	@override String get email => 'E-mail';
+	@override String get email => 'Email';
 	@override String get username => 'Nome de usuário';
 	@override String get name => 'Nome';
 	@override String get firstname => 'Sobrenome';
 	@override String get birthdate => 'Data de nascimento';
 	@override String get location => 'Localização';
-	@override String get bio => 'Biografia';
-	@override String get nbReports => 'Número de relatórios';
+	@override String get bio => 'Bio';
+	@override String get nbReports => 'Número de denúncias';
 	@override String get address => 'Endereço';
 	@override String get password => 'Senha';
 	@override String get newPassword => 'Nova senha';
-	@override String get anonymous => 'Anónimo';
+	@override String get anonymous => 'Anônimo';
 	@override String get noDescription => 'Nenhuma descrição';
 	@override String get noAddress => 'Endereço não disponível';
-	@override String get noReportsAvailable => 'Número de relatórios não disponível';
+	@override String get noReportsAvailable => 'Número de denúncias não disponível';
 }
 
 // Path: welcome
@@ -124,16 +124,16 @@ class _TranslationsWelcomePt implements TranslationsWelcomeFr {
 	// Translations
 	@override String get welcome => 'Bem-vindo ao Edumeet, a plataforma de revisão colaborativa';
 	@override String get setup => 'Vamos começar escolhendo um idioma';
-	@override String get whatLanguage => 'Que idioma você fala?';
+	@override String get whatLanguage => 'Qual idioma você fala?';
 	@override String get chooseLanguage => 'Escolha um idioma para que possamos nos comunicar juntos';
-	@override String get title1 => 'Encontre seus cartões de estudo';
-	@override String get description1 => 'Acesse milhares de cartões de estudo criados por estudantes gratuitamente';
-	@override String get title2 => 'Organize seus cartões de estudo';
-	@override String get description2 => 'Classifique e organize seus cartões para uma memória eficaz';
+	@override String get title1 => 'Encontre suas fichas de revisão';
+	@override String get description1 => 'Acesse gratuitamente milhares de \nfichas de revisão criadas por estudantes';
+	@override String get title2 => 'Organize suas revisões';
+	@override String get description2 => 'Classifique e organize suas fichas para uma \nmemória eficaz';
 	@override String get title3 => 'Mantenha-se motivado';
-	@override String get description3 => 'Alcance seus objetivos com conselhos práticos';
+	@override String get description3 => 'Alcance seus objetivos com conselhos \npráticos';
 	@override String get title4 => 'Junte-se à nossa comunidade';
-	@override String get description4 => 'Compartilhe seus cartões de estudo e receba conselhos personalizados';
+	@override String get description4 => 'Compartilhe suas fichas de revisão e \nreceba conselhos personalizados';
 }
 
 // Path: login
@@ -144,7 +144,7 @@ class _TranslationsLoginPt implements TranslationsLoginFr {
 
 	// Translations
 	@override String get title => 'Conexão';
-	@override String get description => 'Insira suas informações abaixo para se conectar';
+	@override String get description => 'Insira suas informações abaixo para fazer login';
 	@override String get forgotPassword => 'Esqueceu a senha?';
 	@override String get noAccount => 'Você não tem uma conta?';
 	@override String get createAccount => 'Criar uma conta';
@@ -197,7 +197,7 @@ class _TranslationsSwipeCardsPt implements TranslationsSwipeCardsFr {
 
 	// Translations
 	@override String get loading_error => 'Erro ao carregar os eventos';
-	@override String get end_of_list => 'Você atingiu o fim da lista!';
+	@override String get end_of_list => 'Você chegou ao final da lista!';
 	@override String nope({required Object title}) => 'Não para ${title}';
 	@override String joined_event({required Object title}) => 'Você se juntou ao evento ${title}';
 	@override String item_changed({required Object title}) => 'Item modificado: ${title}';
@@ -213,14 +213,14 @@ class _TranslationsEventPt implements TranslationsEventFr {
 	@override String get online => 'Online';
 	@override String get physical => 'Presencial';
 	@override String get participants => 'Participantes';
-	@override String hasJoinEvent({required Object event_title}) => 'Você entrou no evento ${event_title}';
+	@override String hasJoinEvent({required Object event_title}) => 'Você se juntou ao evento ${event_title}';
 	@override String get address_copied => 'Endereço copiado para a área de transferência';
 	@override String get createEvent => 'Criar um evento';
 	@override String get name => 'Nome';
 	@override String get description => 'Descrição';
 	@override String get date => 'Data';
 	@override String get time => 'Hora';
-	@override String get location => 'Local';
+	@override String get location => 'Localização';
 	@override String get maxParticipants => 'Número de participantes';
 	@override String get price => 'Preço';
 	@override String get image => 'Imagem';
@@ -235,7 +235,7 @@ class _TranslationsEventPt implements TranslationsEventFr {
 	@override String get enterPrice => 'Por favor, insira um preço';
 	@override String get invalidPrice => 'Por favor, insira um preço válido';
 	@override String get enterImage => 'Por favor, insira uma URL de imagem';
-	@override String get joinEvent => 'Juntar-se ao evento';
+	@override String get joinEvent => 'Participar do evento';
 	@override String get eventNotStarted => 'O link de conexão estará disponível aqui quando o evento começar.';
 }
 
@@ -247,8 +247,9 @@ class _TranslationsErrorPt implements TranslationsErrorFr {
 
 	// Translations
 	@override String details({required Object error}) => 'Erro: ${error}';
-	@override String get no_internet => 'Sem conexão com a internet';
-	@override String get no_internet_description => 'Por favor, verifique sua conexão com a internet e tente novamente';
+	@override String get general => 'Ocorreu um erro';
+	@override String get no_internet => 'Sem conexão com a Internet';
+	@override String get no_internet_description => 'Por favor, verifique sua conexão com a Internet e tente novamente';
 	@override String get no_events => 'Nenhum evento encontrado';
 	@override String get no_events_description => 'Nenhum evento foi encontrado no momento. Por favor, tente novamente mais tarde';
 	@override String get no_events_found => 'Nenhum evento encontrado';
@@ -268,9 +269,9 @@ class _TranslationsAuthPt implements TranslationsAuthFr {
 
 	// Translations
 	@override String get forgotPassword => 'Esqueceu a senha?';
-	@override String get enterEmail => 'Digite seu e-mail para receber as instruções de redefinição';
+	@override String get enterEmail => 'Insira seu endereço de e-mail para receber as instruções de redefinição';
 	@override String get resetPassword => 'Redefinir a senha';
-	@override String get enterNewPassword => 'Digite sua nova senha';
+	@override String get enterNewPassword => 'Insira sua nova senha';
 	@override String get resetInstructionsSent => 'Instruções de redefinição enviadas para seu e-mail';
 	@override String get passwordResertSuccess => 'Sua senha foi redefinida com sucesso';
 }
@@ -283,7 +284,7 @@ class _TranslationsVerifyPt implements TranslationsVerifyFr {
 
 	// Translations
 	@override String get title => 'Verificação do código';
-	@override String get description => 'Insira o código de verificação enviado para o seu e-mail';
+	@override String get description => 'Insira o código de verificação enviado para seu e-mail';
 	@override String get inputLabel => 'Código de verificação';
 	@override String get button => 'Verificar';
 	@override String get error => 'Por favor, insira o código de verificação';
@@ -296,17 +297,17 @@ class _TranslationsProfilePt implements TranslationsProfileFr {
 	final TranslationsPt _root; // ignore: unused_field
 
 	// Translations
-	@override String get editProfile => 'Editar meu perfil';
-	@override String get firstname => 'Primeiro nome';
-	@override String get lastname => 'Sobrenome';
+	@override String get editProfile => 'Modificar meu perfil';
+	@override String get firstname => 'Sobrenome';
+	@override String get lastname => 'Nome';
 	@override String get bio => 'Bio';
-	@override String get email => 'E-mail';
+	@override String get email => 'Email';
 	@override String get birthdate => 'Data de nascimento';
 	@override String get address => 'Endereço';
 	@override String get save => 'Salvar';
 	@override String get cancel => 'Cancelar';
-	@override String get enterFirstname => 'Por favor, insira seu primeiro nome';
-	@override String get enterLastname => 'Por favor, insira seu sobrenome';
+	@override String get enterFirstname => 'Por favor, insira seu sobrenome';
+	@override String get enterLastname => 'Por favor, insira seu nome';
 	@override String get enterEmail => 'Por favor, insira seu endereço de e-mail';
 	@override String get invalidEmail => 'Por favor, insira um endereço de e-mail válido';
 	@override String get logout => 'Sair';
@@ -364,12 +365,12 @@ class _TranslationsPagePt implements TranslationsPageFr {
 	@override String get settingsPage => 'Página de configurações';
 	@override String get search => 'Pesquisa';
 	@override String get searchPage => 'Página de pesquisa';
-	@override String get sheet => 'Fichas';
-	@override String get sheetPage => 'Página das fichas';
-	@override String get subject => 'Disciplina';
-	@override String get subjectPage => 'Página da disciplina';
-	@override String get topic => 'Tópico';
-	@override String get topicPage => 'Página do tópico';
+	@override String get sheet => 'Ficha';
+	@override String get sheetPage => 'Página da ficha';
+	@override String get subject => 'Matéria';
+	@override String get subjectPage => 'Página da matéria';
+	@override String get topic => 'Tema';
+	@override String get topicPage => 'Página do tema';
 	@override String get event => 'Evento';
 	@override String get eventPage => 'Página do evento';
 	@override String get user => 'Usuário';
@@ -385,8 +386,8 @@ class _TranslationsPagePt implements TranslationsPageFr {
 	@override String get notifications => 'Notificações';
 	@override String get events => 'Eventos';
 	@override String get sheets => 'Fichas';
-	@override String get subjects => 'Disciplinas';
-	@override String get topics => 'Tópicos';
+	@override String get subjects => 'Matérias';
+	@override String get topics => 'Temas';
 	@override String get users => 'Usuários';
 	@override String get help => 'Ajuda';
 	@override String get helpPage => 'Página de ajuda';
@@ -403,7 +404,7 @@ extension on TranslationsPt {
 			case 'app.search': return 'Pesquisar';
 			case 'app.searchLanguage': return 'Pesquisar um idioma';
 			case 'app.add': return 'Adicionar';
-			case 'app.edit': return 'Editar';
+			case 'app.edit': return 'Modificar';
 			case 'app.delete': return 'Excluir';
 			case 'app.cancel': return 'Cancelar';
 			case 'app.save': return 'Salvar';
@@ -414,7 +415,7 @@ extension on TranslationsPt {
 			case 'app.loading': return 'Carregando...';
 			case 'app.noResults': return 'Nenhum resultado';
 			case 'app.noResultsFound': return 'Nenhum resultado encontrado';
-			case 'app.skip': return 'Pular';
+			case 'app.skip': return 'Saltar';
 			case 'app.next': return 'Próximo';
 			case 'app.previous': return 'Anterior';
 			case 'app.finish': return 'Terminar';
@@ -427,36 +428,36 @@ extension on TranslationsPt {
 			case 'app.alreadyHaveAccount': return 'Você já tem uma conta?';
 			case 'app.loadingIndicator': return 'Carregando...';
 			case 'app.errorOccurred': return 'Ocorreu um erro';
-			case 'app.backTo': return 'Voltar a ';
-			case 'user.email': return 'E-mail';
+			case 'app.backTo': return 'Retornar a ';
+			case 'user.email': return 'Email';
 			case 'user.username': return 'Nome de usuário';
 			case 'user.name': return 'Nome';
 			case 'user.firstname': return 'Sobrenome';
 			case 'user.birthdate': return 'Data de nascimento';
 			case 'user.location': return 'Localização';
-			case 'user.bio': return 'Biografia';
-			case 'user.nbReports': return 'Número de relatórios';
+			case 'user.bio': return 'Bio';
+			case 'user.nbReports': return 'Número de denúncias';
 			case 'user.address': return 'Endereço';
 			case 'user.password': return 'Senha';
 			case 'user.newPassword': return 'Nova senha';
-			case 'user.anonymous': return 'Anónimo';
+			case 'user.anonymous': return 'Anônimo';
 			case 'user.noDescription': return 'Nenhuma descrição';
 			case 'user.noAddress': return 'Endereço não disponível';
-			case 'user.noReportsAvailable': return 'Número de relatórios não disponível';
+			case 'user.noReportsAvailable': return 'Número de denúncias não disponível';
 			case 'welcome.welcome': return 'Bem-vindo ao Edumeet, a plataforma de revisão colaborativa';
 			case 'welcome.setup': return 'Vamos começar escolhendo um idioma';
-			case 'welcome.whatLanguage': return 'Que idioma você fala?';
+			case 'welcome.whatLanguage': return 'Qual idioma você fala?';
 			case 'welcome.chooseLanguage': return 'Escolha um idioma para que possamos nos comunicar juntos';
-			case 'welcome.title1': return 'Encontre seus cartões de estudo';
-			case 'welcome.description1': return 'Acesse milhares de cartões de estudo criados por estudantes gratuitamente';
-			case 'welcome.title2': return 'Organize seus cartões de estudo';
-			case 'welcome.description2': return 'Classifique e organize seus cartões para uma memória eficaz';
+			case 'welcome.title1': return 'Encontre suas fichas de revisão';
+			case 'welcome.description1': return 'Acesse gratuitamente milhares de \nfichas de revisão criadas por estudantes';
+			case 'welcome.title2': return 'Organize suas revisões';
+			case 'welcome.description2': return 'Classifique e organize suas fichas para uma \nmemória eficaz';
 			case 'welcome.title3': return 'Mantenha-se motivado';
-			case 'welcome.description3': return 'Alcance seus objetivos com conselhos práticos';
+			case 'welcome.description3': return 'Alcance seus objetivos com conselhos \npráticos';
 			case 'welcome.title4': return 'Junte-se à nossa comunidade';
-			case 'welcome.description4': return 'Compartilhe seus cartões de estudo e receba conselhos personalizados';
+			case 'welcome.description4': return 'Compartilhe suas fichas de revisão e \nreceba conselhos personalizados';
 			case 'login.title': return 'Conexão';
-			case 'login.description': return 'Insira suas informações abaixo para se conectar';
+			case 'login.description': return 'Insira suas informações abaixo para fazer login';
 			case 'login.forgotPassword': return 'Esqueceu a senha?';
 			case 'login.noAccount': return 'Você não tem uma conta?';
 			case 'login.createAccount': return 'Criar uma conta';
@@ -482,21 +483,21 @@ extension on TranslationsPt {
 			case 'form.pleaseConfirmPassword': return 'Por favor, confirme sua senha';
 			case 'form.passwordNotMatch': return 'As senhas não correspondem';
 			case 'swipe_cards.loading_error': return 'Erro ao carregar os eventos';
-			case 'swipe_cards.end_of_list': return 'Você atingiu o fim da lista!';
+			case 'swipe_cards.end_of_list': return 'Você chegou ao final da lista!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'Não para ${title}';
 			case 'swipe_cards.joined_event': return ({required Object title}) => 'Você se juntou ao evento ${title}';
 			case 'swipe_cards.item_changed': return ({required Object title}) => 'Item modificado: ${title}';
 			case 'event.online': return 'Online';
 			case 'event.physical': return 'Presencial';
 			case 'event.participants': return 'Participantes';
-			case 'event.hasJoinEvent': return ({required Object event_title}) => 'Você entrou no evento ${event_title}';
+			case 'event.hasJoinEvent': return ({required Object event_title}) => 'Você se juntou ao evento ${event_title}';
 			case 'event.address_copied': return 'Endereço copiado para a área de transferência';
 			case 'event.createEvent': return 'Criar um evento';
 			case 'event.name': return 'Nome';
 			case 'event.description': return 'Descrição';
 			case 'event.date': return 'Data';
 			case 'event.time': return 'Hora';
-			case 'event.location': return 'Local';
+			case 'event.location': return 'Localização';
 			case 'event.maxParticipants': return 'Número de participantes';
 			case 'event.price': return 'Preço';
 			case 'event.image': return 'Imagem';
@@ -511,11 +512,12 @@ extension on TranslationsPt {
 			case 'event.enterPrice': return 'Por favor, insira um preço';
 			case 'event.invalidPrice': return 'Por favor, insira um preço válido';
 			case 'event.enterImage': return 'Por favor, insira uma URL de imagem';
-			case 'event.joinEvent': return 'Juntar-se ao evento';
+			case 'event.joinEvent': return 'Participar do evento';
 			case 'event.eventNotStarted': return 'O link de conexão estará disponível aqui quando o evento começar.';
 			case 'error.details': return ({required Object error}) => 'Erro: ${error}';
-			case 'error.no_internet': return 'Sem conexão com a internet';
-			case 'error.no_internet_description': return 'Por favor, verifique sua conexão com a internet e tente novamente';
+			case 'error.general': return 'Ocorreu um erro';
+			case 'error.no_internet': return 'Sem conexão com a Internet';
+			case 'error.no_internet_description': return 'Por favor, verifique sua conexão com a Internet e tente novamente';
 			case 'error.no_events': return 'Nenhum evento encontrado';
 			case 'error.no_events_description': return 'Nenhum evento foi encontrado no momento. Por favor, tente novamente mais tarde';
 			case 'error.no_events_found': return 'Nenhum evento encontrado';
@@ -526,27 +528,27 @@ extension on TranslationsPt {
 			case 'error.loadingEvents': return 'Ocorreu um erro ao carregar os eventos';
 			case 'error.failedToResetPassword': return 'Falha ao redefinir a senha';
 			case 'auth.forgotPassword': return 'Esqueceu a senha?';
-			case 'auth.enterEmail': return 'Digite seu e-mail para receber as instruções de redefinição';
+			case 'auth.enterEmail': return 'Insira seu endereço de e-mail para receber as instruções de redefinição';
 			case 'auth.resetPassword': return 'Redefinir a senha';
-			case 'auth.enterNewPassword': return 'Digite sua nova senha';
+			case 'auth.enterNewPassword': return 'Insira sua nova senha';
 			case 'auth.resetInstructionsSent': return 'Instruções de redefinição enviadas para seu e-mail';
 			case 'auth.passwordResertSuccess': return 'Sua senha foi redefinida com sucesso';
 			case 'verify.title': return 'Verificação do código';
-			case 'verify.description': return 'Insira o código de verificação enviado para o seu e-mail';
+			case 'verify.description': return 'Insira o código de verificação enviado para seu e-mail';
 			case 'verify.inputLabel': return 'Código de verificação';
 			case 'verify.button': return 'Verificar';
 			case 'verify.error': return 'Por favor, insira o código de verificação';
-			case 'profile.editProfile': return 'Editar meu perfil';
-			case 'profile.firstname': return 'Primeiro nome';
-			case 'profile.lastname': return 'Sobrenome';
+			case 'profile.editProfile': return 'Modificar meu perfil';
+			case 'profile.firstname': return 'Sobrenome';
+			case 'profile.lastname': return 'Nome';
 			case 'profile.bio': return 'Bio';
-			case 'profile.email': return 'E-mail';
+			case 'profile.email': return 'Email';
 			case 'profile.birthdate': return 'Data de nascimento';
 			case 'profile.address': return 'Endereço';
 			case 'profile.save': return 'Salvar';
 			case 'profile.cancel': return 'Cancelar';
-			case 'profile.enterFirstname': return 'Por favor, insira seu primeiro nome';
-			case 'profile.enterLastname': return 'Por favor, insira seu sobrenome';
+			case 'profile.enterFirstname': return 'Por favor, insira seu sobrenome';
+			case 'profile.enterLastname': return 'Por favor, insira seu nome';
 			case 'profile.enterEmail': return 'Por favor, insira seu endereço de e-mail';
 			case 'profile.invalidEmail': return 'Por favor, insira um endereço de e-mail válido';
 			case 'profile.logout': return 'Sair';
@@ -568,12 +570,12 @@ extension on TranslationsPt {
 			case 'page.settingsPage': return 'Página de configurações';
 			case 'page.search': return 'Pesquisa';
 			case 'page.searchPage': return 'Página de pesquisa';
-			case 'page.sheet': return 'Fichas';
-			case 'page.sheetPage': return 'Página das fichas';
-			case 'page.subject': return 'Disciplina';
-			case 'page.subjectPage': return 'Página da disciplina';
-			case 'page.topic': return 'Tópico';
-			case 'page.topicPage': return 'Página do tópico';
+			case 'page.sheet': return 'Ficha';
+			case 'page.sheetPage': return 'Página da ficha';
+			case 'page.subject': return 'Matéria';
+			case 'page.subjectPage': return 'Página da matéria';
+			case 'page.topic': return 'Tema';
+			case 'page.topicPage': return 'Página do tema';
 			case 'page.event': return 'Evento';
 			case 'page.eventPage': return 'Página do evento';
 			case 'page.user': return 'Usuário';
@@ -589,8 +591,8 @@ extension on TranslationsPt {
 			case 'page.notifications': return 'Notificações';
 			case 'page.events': return 'Eventos';
 			case 'page.sheets': return 'Fichas';
-			case 'page.subjects': return 'Disciplinas';
-			case 'page.topics': return 'Tópicos';
+			case 'page.subjects': return 'Matérias';
+			case 'page.topics': return 'Temas';
 			case 'page.users': return 'Usuários';
 			case 'page.help': return 'Ajuda';
 			case 'page.helpPage': return 'Página de ajuda';

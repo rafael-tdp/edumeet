@@ -81,10 +81,10 @@ class _TranslationsAppEn implements TranslationsAppFr {
 	@override String get finish => 'Finish';
 	@override String get back => 'Back';
 	@override String get submit => 'Submit';
-	@override String get searchUser => 'Search for a user';
-	@override String get searchSubject => 'Search for a subject';
-	@override String get searchTopic => 'Search for a topic';
-	@override String get searchSheet => 'Search for a sheet';
+	@override String get searchUser => 'Search a user';
+	@override String get searchSubject => 'Search a subject';
+	@override String get searchTopic => 'Search a topic';
+	@override String get searchSheet => 'Search a sheet';
 	@override String get alreadyHaveAccount => 'Already have an account?';
 	@override String get loadingIndicator => 'Loading...';
 	@override String get errorOccurred => 'An error occurred';
@@ -101,8 +101,8 @@ class _TranslationsUserEn implements TranslationsUserFr {
 	@override String get email => 'Email';
 	@override String get username => 'Username';
 	@override String get name => 'Name';
-	@override String get firstname => 'First Name';
-	@override String get birthdate => 'Birthdate';
+	@override String get firstname => 'First name';
+	@override String get birthdate => 'Date of birth';
 	@override String get location => 'Location';
 	@override String get bio => 'Bio';
 	@override String get nbReports => 'Number of reports';
@@ -129,7 +129,7 @@ class _TranslationsWelcomeEn implements TranslationsWelcomeFr {
 	@override String get title1 => 'Find your revision sheets';
 	@override String get description1 => 'Access thousands of revision sheets created by students for free';
 	@override String get title2 => 'Organize your revisions';
-	@override String get description2 => 'Classify and organize your sheets for effective memory';
+	@override String get description2 => 'Sort and organize your sheets for effective memory';
 	@override String get title3 => 'Stay motivated';
 	@override String get description3 => 'Achieve your goals with practical advice';
 	@override String get title4 => 'Join our community';
@@ -158,8 +158,8 @@ class _TranslationsRegisterEn implements TranslationsRegisterFr {
 
 	// Translations
 	@override String get title => 'Create an account';
-	@override String get description => 'Join us to take advantage of our services';
-	@override String get conditions => 'By creating an account, you agree to our Terms of Service and Privacy Policy';
+	@override String get description => 'Join us to benefit from our services';
+	@override String get conditions => 'By creating an account, you agree to our Terms of use and Privacy policy';
 	@override String get registerConfirm => 'Registration confirmed';
 }
 
@@ -179,10 +179,10 @@ class _TranslationsFormEn implements TranslationsFormFr {
 	@override String get passwordMismatch => 'Passwords do not match';
 	@override String get invalidEmail => 'Please enter a valid email address';
 	@override String get invalidAddress => 'Please enter a valid address';
-	@override String get shortPassword => 'The password must be at least 8 characters long';
-	@override String get passwordUpperCase => 'The password must contain at least one uppercase letter';
-	@override String get passwordDigit => 'The password must contain at least one digit';
-	@override String get passwordSpecialChar => 'The password must contain at least one special character';
+	@override String get shortPassword => 'Password must be at least 8 characters long';
+	@override String get passwordUpperCase => 'Password must contain at least one uppercase letter';
+	@override String get passwordDigit => 'Password must contain at least one digit';
+	@override String get passwordSpecialChar => 'Password must contain at least one special character';
 	@override String get haveToAcceptConditions => 'You must accept the terms of use and privacy policy';
 	@override String get confirmPassword => 'Confirm password';
 	@override String get pleaseConfirmPassword => 'Please confirm your password';
@@ -197,10 +197,10 @@ class _TranslationsSwipeCardsEn implements TranslationsSwipeCardsFr {
 
 	// Translations
 	@override String get loading_error => 'Error loading events';
-	@override String get end_of_list => 'You\'ve reached the end of the list!';
+	@override String get end_of_list => 'You have reached the end of the list!';
 	@override String nope({required Object title}) => 'No to ${title}';
 	@override String joined_event({required Object title}) => 'You have joined the event ${title}';
-	@override String item_changed({required Object title}) => 'Item modified: ${title}';
+	@override String item_changed({required Object title}) => 'Item changed: ${title}';
 }
 
 // Path: event
@@ -247,17 +247,18 @@ class _TranslationsErrorEn implements TranslationsErrorFr {
 
 	// Translations
 	@override String details({required Object error}) => 'Error: ${error}';
-	@override String get no_internet => 'No Internet connection';
-	@override String get no_internet_description => 'Please check your Internet connection and try again';
+	@override String get general => 'An error occurred';
+	@override String get no_internet => 'No internet connection';
+	@override String get no_internet_description => 'Please check your internet connection and try again';
 	@override String get no_events => 'No events found';
 	@override String get no_events_description => 'No events were found at this time. Please try again later';
 	@override String get no_events_found => 'No events found';
 	@override String get no_events_found_description => 'No events were found at this time. Please try again later';
 	@override String get no_events_found_title => 'No events found';
 	@override String get no_events_found_description_title => 'No events were found at this time. Please try again later';
-	@override String get no_events_found_description_title_search => 'No events were found for the search performed. Please try again with a different term';
-	@override String get loadingEvents => 'An error occurred while loading the events';
-	@override String get failedToResetPassword => 'Failed to reset the password';
+	@override String get no_events_found_description_title_search => 'No events were found for the search made. Please try again with another term';
+	@override String get loadingEvents => 'An error occurred while loading events';
+	@override String get failedToResetPassword => 'Failed to reset password';
 }
 
 // Path: auth
@@ -267,12 +268,12 @@ class _TranslationsAuthEn implements TranslationsAuthFr {
 	final TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	@override String get forgotPassword => 'Forgot your password?';
+	@override String get forgotPassword => 'Forgot password?';
 	@override String get enterEmail => 'Enter your email address to receive reset instructions';
-	@override String get resetPassword => 'Reset Password';
+	@override String get resetPassword => 'Reset password';
 	@override String get enterNewPassword => 'Enter your new password';
 	@override String get resetInstructionsSent => 'Reset instructions sent to your email';
-	@override String get passwordResertSuccess => 'Your password has been successfully reset';
+	@override String get passwordResertSuccess => 'Your password has been reset successfully';
 }
 
 // Path: verify
@@ -282,7 +283,7 @@ class _TranslationsVerifyEn implements TranslationsVerifyFr {
 	final TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Verification Code';
+	@override String get title => 'Code verification';
 	@override String get description => 'Enter the verification code sent to your email';
 	@override String get inputLabel => 'Verification code';
 	@override String get button => 'Verify';
@@ -301,7 +302,7 @@ class _TranslationsProfileEn implements TranslationsProfileFr {
 	@override String get lastname => 'Last name';
 	@override String get bio => 'Bio';
 	@override String get email => 'Email';
-	@override String get birthdate => 'Birthdate';
+	@override String get birthdate => 'Date of birth';
 	@override String get address => 'Address';
 	@override String get save => 'Save';
 	@override String get cancel => 'Cancel';
@@ -420,10 +421,10 @@ extension on TranslationsEn {
 			case 'app.finish': return 'Finish';
 			case 'app.back': return 'Back';
 			case 'app.submit': return 'Submit';
-			case 'app.searchUser': return 'Search for a user';
-			case 'app.searchSubject': return 'Search for a subject';
-			case 'app.searchTopic': return 'Search for a topic';
-			case 'app.searchSheet': return 'Search for a sheet';
+			case 'app.searchUser': return 'Search a user';
+			case 'app.searchSubject': return 'Search a subject';
+			case 'app.searchTopic': return 'Search a topic';
+			case 'app.searchSheet': return 'Search a sheet';
 			case 'app.alreadyHaveAccount': return 'Already have an account?';
 			case 'app.loadingIndicator': return 'Loading...';
 			case 'app.errorOccurred': return 'An error occurred';
@@ -431,8 +432,8 @@ extension on TranslationsEn {
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Username';
 			case 'user.name': return 'Name';
-			case 'user.firstname': return 'First Name';
-			case 'user.birthdate': return 'Birthdate';
+			case 'user.firstname': return 'First name';
+			case 'user.birthdate': return 'Date of birth';
 			case 'user.location': return 'Location';
 			case 'user.bio': return 'Bio';
 			case 'user.nbReports': return 'Number of reports';
@@ -450,7 +451,7 @@ extension on TranslationsEn {
 			case 'welcome.title1': return 'Find your revision sheets';
 			case 'welcome.description1': return 'Access thousands of revision sheets created by students for free';
 			case 'welcome.title2': return 'Organize your revisions';
-			case 'welcome.description2': return 'Classify and organize your sheets for effective memory';
+			case 'welcome.description2': return 'Sort and organize your sheets for effective memory';
 			case 'welcome.title3': return 'Stay motivated';
 			case 'welcome.description3': return 'Achieve your goals with practical advice';
 			case 'welcome.title4': return 'Join our community';
@@ -461,8 +462,8 @@ extension on TranslationsEn {
 			case 'login.noAccount': return 'Don\'t have an account?';
 			case 'login.createAccount': return 'Create an account';
 			case 'register.title': return 'Create an account';
-			case 'register.description': return 'Join us to take advantage of our services';
-			case 'register.conditions': return 'By creating an account, you agree to our Terms of Service and Privacy Policy';
+			case 'register.description': return 'Join us to benefit from our services';
+			case 'register.conditions': return 'By creating an account, you agree to our Terms of use and Privacy policy';
 			case 'register.registerConfirm': return 'Registration confirmed';
 			case 'form.emptyUsername': return 'Please enter a username';
 			case 'form.emptyFirstname': return 'Please enter your first name';
@@ -473,19 +474,19 @@ extension on TranslationsEn {
 			case 'form.passwordMismatch': return 'Passwords do not match';
 			case 'form.invalidEmail': return 'Please enter a valid email address';
 			case 'form.invalidAddress': return 'Please enter a valid address';
-			case 'form.shortPassword': return 'The password must be at least 8 characters long';
-			case 'form.passwordUpperCase': return 'The password must contain at least one uppercase letter';
-			case 'form.passwordDigit': return 'The password must contain at least one digit';
-			case 'form.passwordSpecialChar': return 'The password must contain at least one special character';
+			case 'form.shortPassword': return 'Password must be at least 8 characters long';
+			case 'form.passwordUpperCase': return 'Password must contain at least one uppercase letter';
+			case 'form.passwordDigit': return 'Password must contain at least one digit';
+			case 'form.passwordSpecialChar': return 'Password must contain at least one special character';
 			case 'form.haveToAcceptConditions': return 'You must accept the terms of use and privacy policy';
 			case 'form.confirmPassword': return 'Confirm password';
 			case 'form.pleaseConfirmPassword': return 'Please confirm your password';
 			case 'form.passwordNotMatch': return 'Passwords do not match';
 			case 'swipe_cards.loading_error': return 'Error loading events';
-			case 'swipe_cards.end_of_list': return 'You\'ve reached the end of the list!';
+			case 'swipe_cards.end_of_list': return 'You have reached the end of the list!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'No to ${title}';
 			case 'swipe_cards.joined_event': return ({required Object title}) => 'You have joined the event ${title}';
-			case 'swipe_cards.item_changed': return ({required Object title}) => 'Item modified: ${title}';
+			case 'swipe_cards.item_changed': return ({required Object title}) => 'Item changed: ${title}';
 			case 'event.online': return 'Online';
 			case 'event.physical': return 'Physical';
 			case 'event.participants': return 'Participants';
@@ -514,24 +515,25 @@ extension on TranslationsEn {
 			case 'event.joinEvent': return 'Join the event';
 			case 'event.eventNotStarted': return 'The connection link will be available here when the event starts.';
 			case 'error.details': return ({required Object error}) => 'Error: ${error}';
-			case 'error.no_internet': return 'No Internet connection';
-			case 'error.no_internet_description': return 'Please check your Internet connection and try again';
+			case 'error.general': return 'An error occurred';
+			case 'error.no_internet': return 'No internet connection';
+			case 'error.no_internet_description': return 'Please check your internet connection and try again';
 			case 'error.no_events': return 'No events found';
 			case 'error.no_events_description': return 'No events were found at this time. Please try again later';
 			case 'error.no_events_found': return 'No events found';
 			case 'error.no_events_found_description': return 'No events were found at this time. Please try again later';
 			case 'error.no_events_found_title': return 'No events found';
 			case 'error.no_events_found_description_title': return 'No events were found at this time. Please try again later';
-			case 'error.no_events_found_description_title_search': return 'No events were found for the search performed. Please try again with a different term';
-			case 'error.loadingEvents': return 'An error occurred while loading the events';
-			case 'error.failedToResetPassword': return 'Failed to reset the password';
-			case 'auth.forgotPassword': return 'Forgot your password?';
+			case 'error.no_events_found_description_title_search': return 'No events were found for the search made. Please try again with another term';
+			case 'error.loadingEvents': return 'An error occurred while loading events';
+			case 'error.failedToResetPassword': return 'Failed to reset password';
+			case 'auth.forgotPassword': return 'Forgot password?';
 			case 'auth.enterEmail': return 'Enter your email address to receive reset instructions';
-			case 'auth.resetPassword': return 'Reset Password';
+			case 'auth.resetPassword': return 'Reset password';
 			case 'auth.enterNewPassword': return 'Enter your new password';
 			case 'auth.resetInstructionsSent': return 'Reset instructions sent to your email';
-			case 'auth.passwordResertSuccess': return 'Your password has been successfully reset';
-			case 'verify.title': return 'Verification Code';
+			case 'auth.passwordResertSuccess': return 'Your password has been reset successfully';
+			case 'verify.title': return 'Code verification';
 			case 'verify.description': return 'Enter the verification code sent to your email';
 			case 'verify.inputLabel': return 'Verification code';
 			case 'verify.button': return 'Verify';
@@ -541,7 +543,7 @@ extension on TranslationsEn {
 			case 'profile.lastname': return 'Last name';
 			case 'profile.bio': return 'Bio';
 			case 'profile.email': return 'Email';
-			case 'profile.birthdate': return 'Birthdate';
+			case 'profile.birthdate': return 'Date of birth';
 			case 'profile.address': return 'Address';
 			case 'profile.save': return 'Save';
 			case 'profile.cancel': return 'Cancel';

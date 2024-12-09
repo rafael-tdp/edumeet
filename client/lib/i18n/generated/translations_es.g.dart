@@ -63,7 +63,7 @@ class _TranslationsAppEs implements TranslationsAppFr {
 	@override String get logout => 'Cerrar sesión';
 	@override String get search => 'Buscar';
 	@override String get searchLanguage => 'Buscar un idioma';
-	@override String get add => 'Añadir';
+	@override String get add => 'Agregar';
 	@override String get edit => 'Modificar';
 	@override String get delete => 'Eliminar';
 	@override String get cancel => 'Cancelar';
@@ -75,11 +75,11 @@ class _TranslationsAppEs implements TranslationsAppFr {
 	@override String get loading => 'Cargando...';
 	@override String get noResults => 'Sin resultados';
 	@override String get noResultsFound => 'No se encontraron resultados';
-	@override String get skip => 'Saltar';
+	@override String get skip => 'Omitir';
 	@override String get next => 'Siguiente';
 	@override String get previous => 'Anterior';
 	@override String get finish => 'Terminar';
-	@override String get back => 'Volver';
+	@override String get back => 'Regresar';
 	@override String get submit => 'Enviar';
 	@override String get searchUser => 'Buscar un usuario';
 	@override String get searchSubject => 'Buscar una materia';
@@ -87,8 +87,8 @@ class _TranslationsAppEs implements TranslationsAppFr {
 	@override String get searchSheet => 'Buscar una ficha';
 	@override String get alreadyHaveAccount => '¿Ya tienes una cuenta?';
 	@override String get loadingIndicator => 'Cargando...';
-	@override String get errorOccurred => 'Ha ocurrido un error';
-	@override String get backTo => 'Volver a ';
+	@override String get errorOccurred => 'Ocurrió un error';
+	@override String get backTo => 'Regresar a ';
 }
 
 // Path: user
@@ -101,16 +101,16 @@ class _TranslationsUserEs implements TranslationsUserFr {
 	@override String get email => 'Correo electrónico';
 	@override String get username => 'Nombre de usuario';
 	@override String get name => 'Nombre';
-	@override String get firstname => 'Apellido';
+	@override String get firstname => 'Nombre';
 	@override String get birthdate => 'Fecha de nacimiento';
 	@override String get location => 'Ubicación';
 	@override String get bio => 'Biografía';
-	@override String get nbReports => 'Número de informes';
+	@override String get nbReports => 'Número de reportes';
 	@override String get address => 'Dirección';
 	@override String get password => 'Contraseña';
 	@override String get newPassword => 'Nueva contraseña';
 	@override String get anonymous => 'Anónimo';
-	@override String get noDescription => 'Ninguna descripción';
+	@override String get noDescription => 'Sin descripción';
 	@override String get noAddress => 'Dirección no disponible';
 	@override String get noReportsAvailable => 'Número de reportes no disponible';
 }
@@ -123,15 +123,15 @@ class _TranslationsWelcomeEs implements TranslationsWelcomeFr {
 
 	// Translations
 	@override String get welcome => 'Bienvenido a Edumeet, la plataforma de revisión colaborativa';
-	@override String get setup => 'Empecemos por elegir un idioma';
+	@override String get setup => 'Comencemos eligiendo un idioma';
 	@override String get whatLanguage => '¿Qué idioma hablas?';
 	@override String get chooseLanguage => 'Elige un idioma para que podamos comunicarnos juntos';
 	@override String get title1 => 'Encuentra tus fichas de revisión';
 	@override String get description1 => 'Accede gratuitamente a miles de \nfichas de revisión creadas por estudiantes';
 	@override String get title2 => 'Organiza tus revisiones';
-	@override String get description2 => 'Clasifica y organiza tus fichas para una \nmás efectiva memoria';
+	@override String get description2 => 'Clasifica y organiza tus fichas para una \nmneoria eficaz';
 	@override String get title3 => 'Mantente motivado';
-	@override String get description3 => 'Alcanza tus objetivos gracias a consejos \nprácticos';
+	@override String get description3 => 'Alcanza tus objetivos con consejos \nprácticos';
 	@override String get title4 => 'Únete a nuestra comunidad';
 	@override String get description4 => 'Comparte tus fichas de revisión y \nrecibe consejos personalizados';
 }
@@ -144,7 +144,7 @@ class _TranslationsLoginEs implements TranslationsLoginFr {
 
 	// Translations
 	@override String get title => 'Conexión';
-	@override String get description => 'Ingresa tu información a continuación para iniciar sesión';
+	@override String get description => 'Ingrese su información a continuación para iniciar sesión';
 	@override String get forgotPassword => '¿Olvidaste tu contraseña?';
 	@override String get noAccount => '¿No tienes una cuenta?';
 	@override String get createAccount => 'Crear una cuenta';
@@ -158,8 +158,8 @@ class _TranslationsRegisterEs implements TranslationsRegisterFr {
 
 	// Translations
 	@override String get title => 'Crear una cuenta';
-	@override String get description => 'Únete a nosotros para beneficiarte de nuestros servicios';
-	@override String get conditions => 'Al crear una cuenta, aceptas nuestros Términos de uso y Política de privacidad';
+	@override String get description => 'Únete a nosotros para obtener nuestros servicios';
+	@override String get conditions => 'Al crear una cuenta, aceptas nuestras Condiciones de uso y Política de privacidad';
 	@override String get registerConfirm => 'Registro confirmado';
 }
 
@@ -170,22 +170,22 @@ class _TranslationsFormEs implements TranslationsFormFr {
 	final TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String get emptyUsername => 'Por favor, introduce un nombre de usuario';
-	@override String get emptyFirstname => 'Por favor, introduce tu apellido';
-	@override String get emptyEmail => 'Por favor, introduce tu dirección de correo electrónico';
-	@override String get emptyLastname => 'Por favor, introduce tu nombre';
-	@override String get emptyPassword => 'Por favor, introduce tu contraseña';
-	@override String get emptyConfirmPassword => 'Por favor, confirma tu contraseña';
+	@override String get emptyUsername => 'Por favor ingresa un nombre de usuario';
+	@override String get emptyFirstname => 'Por favor ingresa tu nombre';
+	@override String get emptyEmail => 'Por favor ingresa tu dirección de correo electrónico';
+	@override String get emptyLastname => 'Por favor ingresa tu apellido';
+	@override String get emptyPassword => 'Por favor ingresa tu contraseña';
+	@override String get emptyConfirmPassword => 'Por favor confirma tu contraseña';
 	@override String get passwordMismatch => 'Las contraseñas no coinciden';
-	@override String get invalidEmail => 'Por favor, introduce una dirección de correo electrónico válida';
-	@override String get invalidAddress => 'Por favor, introduce una dirección válida';
+	@override String get invalidEmail => 'Por favor ingresa una dirección de correo electrónico válida';
+	@override String get invalidAddress => 'Por favor ingresa una dirección válida';
 	@override String get shortPassword => 'La contraseña debe tener al menos 8 caracteres';
 	@override String get passwordUpperCase => 'La contraseña debe contener al menos una letra mayúscula';
 	@override String get passwordDigit => 'La contraseña debe contener al menos un número';
 	@override String get passwordSpecialChar => 'La contraseña debe contener al menos un carácter especial';
-	@override String get haveToAcceptConditions => 'Debes aceptar los términos de uso y la política de privacidad';
+	@override String get haveToAcceptConditions => 'Debes aceptar las condiciones de uso y la política de privacidad';
 	@override String get confirmPassword => 'Confirmar contraseña';
-	@override String get pleaseConfirmPassword => 'Por favor, confirme su contraseña';
+	@override String get pleaseConfirmPassword => 'Por favor confirma tu contraseña';
 	@override String get passwordNotMatch => 'Las contraseñas no coinciden';
 }
 
@@ -197,7 +197,7 @@ class _TranslationsSwipeCardsEs implements TranslationsSwipeCardsFr {
 
 	// Translations
 	@override String get loading_error => 'Error al cargar los eventos';
-	@override String get end_of_list => '¡Has alcanzado el final de la lista!';
+	@override String get end_of_list => '¡Has llegado al final de la lista!';
 	@override String nope({required Object title}) => 'No a ${title}';
 	@override String joined_event({required Object title}) => 'Te has unido al evento ${title}';
 	@override String item_changed({required Object title}) => 'Elemento modificado: ${title}';
@@ -213,30 +213,30 @@ class _TranslationsEventEs implements TranslationsEventFr {
 	@override String get online => 'En línea';
 	@override String get physical => 'Físico';
 	@override String get participants => 'Participantes';
-	@override String hasJoinEvent({required Object event_title}) => 'Has unido el evento ${event_title}';
-	@override String get address_copied => 'Dirección copiada en el portapapeles';
+	@override String hasJoinEvent({required Object event_title}) => 'Te has unido al evento ${event_title}';
+	@override String get address_copied => 'Dirección copiada al portapapeles';
 	@override String get createEvent => 'Crear un evento';
 	@override String get name => 'Nombre';
 	@override String get description => 'Descripción';
 	@override String get date => 'Fecha';
 	@override String get time => 'Hora';
-	@override String get location => 'Lugar';
+	@override String get location => 'Ubicación';
 	@override String get maxParticipants => 'Número de participantes';
 	@override String get price => 'Precio';
 	@override String get image => 'Imagen';
 	@override String get create => 'Crear';
-	@override String get enterName => 'Por favor, introduzca un nombre';
-	@override String get enterDescription => 'Por favor, introduzca una descripción';
-	@override String get enterDate => 'Por favor, introduzca una fecha';
-	@override String get enterTime => 'Por favor, introduzca una hora';
-	@override String get enterLocation => 'Por favor, introduzca un lugar';
-	@override String get enterMaxParticipants => 'Por favor, introduzca un número de participantes';
-	@override String get invalidMaxParticipants => 'Por favor, introduzca un número válido';
-	@override String get enterPrice => 'Por favor, introduzca un precio';
-	@override String get invalidPrice => 'Por favor, introduzca un precio válido';
-	@override String get enterImage => 'Por favor, introduzca una URL de imagen';
+	@override String get enterName => 'Por favor ingresa un nombre';
+	@override String get enterDescription => 'Por favor ingresa una descripción';
+	@override String get enterDate => 'Por favor ingresa una fecha';
+	@override String get enterTime => 'Por favor ingresa una hora';
+	@override String get enterLocation => 'Por favor ingresa un lugar';
+	@override String get enterMaxParticipants => 'Por favor ingresa un número de participantes';
+	@override String get invalidMaxParticipants => 'Por favor ingresa un número válido';
+	@override String get enterPrice => 'Por favor ingresa un precio';
+	@override String get invalidPrice => 'Por favor ingresa un precio válido';
+	@override String get enterImage => 'Por favor ingresa una URL de imagen';
 	@override String get joinEvent => 'Unirse al evento';
-	@override String get eventNotStarted => 'El enlace de conexión estará disponible aquí cuando comience el evento.';
+	@override String get eventNotStarted => 'El enlace para unirse estará disponible aquí cuando el evento comience.';
 }
 
 // Path: error
@@ -247,16 +247,17 @@ class _TranslationsErrorEs implements TranslationsErrorFr {
 
 	// Translations
 	@override String details({required Object error}) => 'Error: ${error}';
+	@override String get general => 'Se ha producido un error';
 	@override String get no_internet => 'Sin conexión a Internet';
-	@override String get no_internet_description => 'Por favor, verifica tu conexión a Internet y vuelve a intentarlo';
+	@override String get no_internet_description => 'Por favor verifica tu conexión a Internet y vuelve a intentarlo';
 	@override String get no_events => 'No se encontraron eventos';
-	@override String get no_events_description => 'No se han encontrado eventos por el momento. Por favor, inténtalo más tarde';
-	@override String get no_events_found => 'No se han encontrado eventos';
-	@override String get no_events_found_description => 'No se han encontrado eventos por el momento. Por favor, inténtalo más tarde';
-	@override String get no_events_found_title => 'No se han encontrado eventos';
-	@override String get no_events_found_description_title => 'No se han encontrado eventos por el momento. Por favor, inténtalo más tarde';
-	@override String get no_events_found_description_title_search => 'No se han encontrado eventos para la búsqueda realizada. Por favor, inténtalo con otro término';
-	@override String get loadingEvents => 'Ha ocurrido un error al cargar los eventos';
+	@override String get no_events_description => 'No se encontraron eventos en este momento. Por favor intenta de nuevo más tarde';
+	@override String get no_events_found => 'No se encontraron eventos';
+	@override String get no_events_found_description => 'No se encontraron eventos en este momento. Por favor intenta de nuevo más tarde';
+	@override String get no_events_found_title => 'No se encontraron eventos';
+	@override String get no_events_found_description_title => 'No se encontraron eventos en este momento. Por favor intenta de nuevo más tarde';
+	@override String get no_events_found_description_title_search => 'No se encontraron eventos para la búsqueda realizada. Por favor intenta de nuevo con otro término';
+	@override String get loadingEvents => 'Ocurrió un error al cargar los eventos';
 	@override String get failedToResetPassword => 'Error al restablecer la contraseña';
 }
 
@@ -272,7 +273,7 @@ class _TranslationsAuthEs implements TranslationsAuthFr {
 	@override String get resetPassword => 'Restablecer la contraseña';
 	@override String get enterNewPassword => 'Ingresa tu nueva contraseña';
 	@override String get resetInstructionsSent => 'Instrucciones de restablecimiento enviadas a tu correo electrónico';
-	@override String get passwordResertSuccess => 'Tu contraseña se ha restablecido con éxito';
+	@override String get passwordResertSuccess => 'Tu contraseña ha sido restablecida con éxito';
 }
 
 // Path: verify
@@ -283,10 +284,10 @@ class _TranslationsVerifyEs implements TranslationsVerifyFr {
 
 	// Translations
 	@override String get title => 'Verificación del código';
-	@override String get description => 'Introduzca el código de verificación enviado a su correo electrónico';
+	@override String get description => 'Ingresa el código de verificación enviado a tu correo electrónico';
 	@override String get inputLabel => 'Código de verificación';
 	@override String get button => 'Verificar';
-	@override String get error => 'Por favor, introduzca el código de verificación';
+	@override String get error => 'Por favor ingresa el código de verificación';
 }
 
 // Path: profile
@@ -296,7 +297,7 @@ class _TranslationsProfileEs implements TranslationsProfileFr {
 	final TranslationsEs _root; // ignore: unused_field
 
 	// Translations
-	@override String get editProfile => 'Editar mi perfil';
+	@override String get editProfile => 'Modificar mi perfil';
 	@override String get firstname => 'Nombre';
 	@override String get lastname => 'Apellido';
 	@override String get bio => 'Biografía';
@@ -305,10 +306,10 @@ class _TranslationsProfileEs implements TranslationsProfileFr {
 	@override String get address => 'Dirección';
 	@override String get save => 'Guardar';
 	@override String get cancel => 'Cancelar';
-	@override String get enterFirstname => 'Por favor, introduzca su nombre';
-	@override String get enterLastname => 'Por favor, introduzca su apellido';
-	@override String get enterEmail => 'Por favor, introduzca su dirección de correo electrónico';
-	@override String get invalidEmail => 'Por favor, introduzca una dirección de correo electrónico válida';
+	@override String get enterFirstname => 'Por favor ingresa tu nombre';
+	@override String get enterLastname => 'Por favor ingresa tu apellido';
+	@override String get enterEmail => 'Por favor ingresa tu dirección de correo electrónico';
+	@override String get invalidEmail => 'Por favor ingresa una dirección de correo electrónico válida';
 	@override String get logout => 'Cerrar sesión';
 }
 
@@ -333,8 +334,8 @@ class _TranslationsMessagesEs implements TranslationsMessagesFr {
 	// Translations
 	@override String get latestMessages => 'Últimos mensajes';
 	@override String get seeAllMessages => 'Ver todos los mensajes';
-	@override String get noMessages => 'No hay mensajes';
-	@override String get writeMessageHint => 'Escriba un mensaje...';
+	@override String get noMessages => 'Sin mensajes';
+	@override String get writeMessageHint => 'Escribe un mensaje...';
 	@override String get sendMessage => 'Enviar';
 }
 
@@ -378,10 +379,10 @@ class _TranslationsPageEs implements TranslationsPageFr {
 	@override String get aboutPage => 'Página Acerca de';
 	@override String get contact => 'Contacto';
 	@override String get contactPage => 'Página de contacto';
-	@override String get terms => 'Términos de uso';
-	@override String get termsPage => 'Página de los términos de uso';
+	@override String get terms => 'Condiciones de uso';
+	@override String get termsPage => 'Página de condiciones de uso';
 	@override String get privacy => 'Política de privacidad';
-	@override String get privacyPage => 'Página de la política de privacidad';
+	@override String get privacyPage => 'Página de políticas de privacidad';
 	@override String get notifications => 'Notificaciones';
 	@override String get events => 'Eventos';
 	@override String get sheets => 'Fichas';
@@ -402,7 +403,7 @@ extension on TranslationsEs {
 			case 'app.logout': return 'Cerrar sesión';
 			case 'app.search': return 'Buscar';
 			case 'app.searchLanguage': return 'Buscar un idioma';
-			case 'app.add': return 'Añadir';
+			case 'app.add': return 'Agregar';
 			case 'app.edit': return 'Modificar';
 			case 'app.delete': return 'Eliminar';
 			case 'app.cancel': return 'Cancelar';
@@ -414,11 +415,11 @@ extension on TranslationsEs {
 			case 'app.loading': return 'Cargando...';
 			case 'app.noResults': return 'Sin resultados';
 			case 'app.noResultsFound': return 'No se encontraron resultados';
-			case 'app.skip': return 'Saltar';
+			case 'app.skip': return 'Omitir';
 			case 'app.next': return 'Siguiente';
 			case 'app.previous': return 'Anterior';
 			case 'app.finish': return 'Terminar';
-			case 'app.back': return 'Volver';
+			case 'app.back': return 'Regresar';
 			case 'app.submit': return 'Enviar';
 			case 'app.searchUser': return 'Buscar un usuario';
 			case 'app.searchSubject': return 'Buscar una materia';
@@ -426,117 +427,118 @@ extension on TranslationsEs {
 			case 'app.searchSheet': return 'Buscar una ficha';
 			case 'app.alreadyHaveAccount': return '¿Ya tienes una cuenta?';
 			case 'app.loadingIndicator': return 'Cargando...';
-			case 'app.errorOccurred': return 'Ha ocurrido un error';
-			case 'app.backTo': return 'Volver a ';
+			case 'app.errorOccurred': return 'Ocurrió un error';
+			case 'app.backTo': return 'Regresar a ';
 			case 'user.email': return 'Correo electrónico';
 			case 'user.username': return 'Nombre de usuario';
 			case 'user.name': return 'Nombre';
-			case 'user.firstname': return 'Apellido';
+			case 'user.firstname': return 'Nombre';
 			case 'user.birthdate': return 'Fecha de nacimiento';
 			case 'user.location': return 'Ubicación';
 			case 'user.bio': return 'Biografía';
-			case 'user.nbReports': return 'Número de informes';
+			case 'user.nbReports': return 'Número de reportes';
 			case 'user.address': return 'Dirección';
 			case 'user.password': return 'Contraseña';
 			case 'user.newPassword': return 'Nueva contraseña';
 			case 'user.anonymous': return 'Anónimo';
-			case 'user.noDescription': return 'Ninguna descripción';
+			case 'user.noDescription': return 'Sin descripción';
 			case 'user.noAddress': return 'Dirección no disponible';
 			case 'user.noReportsAvailable': return 'Número de reportes no disponible';
 			case 'welcome.welcome': return 'Bienvenido a Edumeet, la plataforma de revisión colaborativa';
-			case 'welcome.setup': return 'Empecemos por elegir un idioma';
+			case 'welcome.setup': return 'Comencemos eligiendo un idioma';
 			case 'welcome.whatLanguage': return '¿Qué idioma hablas?';
 			case 'welcome.chooseLanguage': return 'Elige un idioma para que podamos comunicarnos juntos';
 			case 'welcome.title1': return 'Encuentra tus fichas de revisión';
 			case 'welcome.description1': return 'Accede gratuitamente a miles de \nfichas de revisión creadas por estudiantes';
 			case 'welcome.title2': return 'Organiza tus revisiones';
-			case 'welcome.description2': return 'Clasifica y organiza tus fichas para una \nmás efectiva memoria';
+			case 'welcome.description2': return 'Clasifica y organiza tus fichas para una \nmneoria eficaz';
 			case 'welcome.title3': return 'Mantente motivado';
-			case 'welcome.description3': return 'Alcanza tus objetivos gracias a consejos \nprácticos';
+			case 'welcome.description3': return 'Alcanza tus objetivos con consejos \nprácticos';
 			case 'welcome.title4': return 'Únete a nuestra comunidad';
 			case 'welcome.description4': return 'Comparte tus fichas de revisión y \nrecibe consejos personalizados';
 			case 'login.title': return 'Conexión';
-			case 'login.description': return 'Ingresa tu información a continuación para iniciar sesión';
+			case 'login.description': return 'Ingrese su información a continuación para iniciar sesión';
 			case 'login.forgotPassword': return '¿Olvidaste tu contraseña?';
 			case 'login.noAccount': return '¿No tienes una cuenta?';
 			case 'login.createAccount': return 'Crear una cuenta';
 			case 'register.title': return 'Crear una cuenta';
-			case 'register.description': return 'Únete a nosotros para beneficiarte de nuestros servicios';
-			case 'register.conditions': return 'Al crear una cuenta, aceptas nuestros Términos de uso y Política de privacidad';
+			case 'register.description': return 'Únete a nosotros para obtener nuestros servicios';
+			case 'register.conditions': return 'Al crear una cuenta, aceptas nuestras Condiciones de uso y Política de privacidad';
 			case 'register.registerConfirm': return 'Registro confirmado';
-			case 'form.emptyUsername': return 'Por favor, introduce un nombre de usuario';
-			case 'form.emptyFirstname': return 'Por favor, introduce tu apellido';
-			case 'form.emptyEmail': return 'Por favor, introduce tu dirección de correo electrónico';
-			case 'form.emptyLastname': return 'Por favor, introduce tu nombre';
-			case 'form.emptyPassword': return 'Por favor, introduce tu contraseña';
-			case 'form.emptyConfirmPassword': return 'Por favor, confirma tu contraseña';
+			case 'form.emptyUsername': return 'Por favor ingresa un nombre de usuario';
+			case 'form.emptyFirstname': return 'Por favor ingresa tu nombre';
+			case 'form.emptyEmail': return 'Por favor ingresa tu dirección de correo electrónico';
+			case 'form.emptyLastname': return 'Por favor ingresa tu apellido';
+			case 'form.emptyPassword': return 'Por favor ingresa tu contraseña';
+			case 'form.emptyConfirmPassword': return 'Por favor confirma tu contraseña';
 			case 'form.passwordMismatch': return 'Las contraseñas no coinciden';
-			case 'form.invalidEmail': return 'Por favor, introduce una dirección de correo electrónico válida';
-			case 'form.invalidAddress': return 'Por favor, introduce una dirección válida';
+			case 'form.invalidEmail': return 'Por favor ingresa una dirección de correo electrónico válida';
+			case 'form.invalidAddress': return 'Por favor ingresa una dirección válida';
 			case 'form.shortPassword': return 'La contraseña debe tener al menos 8 caracteres';
 			case 'form.passwordUpperCase': return 'La contraseña debe contener al menos una letra mayúscula';
 			case 'form.passwordDigit': return 'La contraseña debe contener al menos un número';
 			case 'form.passwordSpecialChar': return 'La contraseña debe contener al menos un carácter especial';
-			case 'form.haveToAcceptConditions': return 'Debes aceptar los términos de uso y la política de privacidad';
+			case 'form.haveToAcceptConditions': return 'Debes aceptar las condiciones de uso y la política de privacidad';
 			case 'form.confirmPassword': return 'Confirmar contraseña';
-			case 'form.pleaseConfirmPassword': return 'Por favor, confirme su contraseña';
+			case 'form.pleaseConfirmPassword': return 'Por favor confirma tu contraseña';
 			case 'form.passwordNotMatch': return 'Las contraseñas no coinciden';
 			case 'swipe_cards.loading_error': return 'Error al cargar los eventos';
-			case 'swipe_cards.end_of_list': return '¡Has alcanzado el final de la lista!';
+			case 'swipe_cards.end_of_list': return '¡Has llegado al final de la lista!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'No a ${title}';
 			case 'swipe_cards.joined_event': return ({required Object title}) => 'Te has unido al evento ${title}';
 			case 'swipe_cards.item_changed': return ({required Object title}) => 'Elemento modificado: ${title}';
 			case 'event.online': return 'En línea';
 			case 'event.physical': return 'Físico';
 			case 'event.participants': return 'Participantes';
-			case 'event.hasJoinEvent': return ({required Object event_title}) => 'Has unido el evento ${event_title}';
-			case 'event.address_copied': return 'Dirección copiada en el portapapeles';
+			case 'event.hasJoinEvent': return ({required Object event_title}) => 'Te has unido al evento ${event_title}';
+			case 'event.address_copied': return 'Dirección copiada al portapapeles';
 			case 'event.createEvent': return 'Crear un evento';
 			case 'event.name': return 'Nombre';
 			case 'event.description': return 'Descripción';
 			case 'event.date': return 'Fecha';
 			case 'event.time': return 'Hora';
-			case 'event.location': return 'Lugar';
+			case 'event.location': return 'Ubicación';
 			case 'event.maxParticipants': return 'Número de participantes';
 			case 'event.price': return 'Precio';
 			case 'event.image': return 'Imagen';
 			case 'event.create': return 'Crear';
-			case 'event.enterName': return 'Por favor, introduzca un nombre';
-			case 'event.enterDescription': return 'Por favor, introduzca una descripción';
-			case 'event.enterDate': return 'Por favor, introduzca una fecha';
-			case 'event.enterTime': return 'Por favor, introduzca una hora';
-			case 'event.enterLocation': return 'Por favor, introduzca un lugar';
-			case 'event.enterMaxParticipants': return 'Por favor, introduzca un número de participantes';
-			case 'event.invalidMaxParticipants': return 'Por favor, introduzca un número válido';
-			case 'event.enterPrice': return 'Por favor, introduzca un precio';
-			case 'event.invalidPrice': return 'Por favor, introduzca un precio válido';
-			case 'event.enterImage': return 'Por favor, introduzca una URL de imagen';
+			case 'event.enterName': return 'Por favor ingresa un nombre';
+			case 'event.enterDescription': return 'Por favor ingresa una descripción';
+			case 'event.enterDate': return 'Por favor ingresa una fecha';
+			case 'event.enterTime': return 'Por favor ingresa una hora';
+			case 'event.enterLocation': return 'Por favor ingresa un lugar';
+			case 'event.enterMaxParticipants': return 'Por favor ingresa un número de participantes';
+			case 'event.invalidMaxParticipants': return 'Por favor ingresa un número válido';
+			case 'event.enterPrice': return 'Por favor ingresa un precio';
+			case 'event.invalidPrice': return 'Por favor ingresa un precio válido';
+			case 'event.enterImage': return 'Por favor ingresa una URL de imagen';
 			case 'event.joinEvent': return 'Unirse al evento';
-			case 'event.eventNotStarted': return 'El enlace de conexión estará disponible aquí cuando comience el evento.';
+			case 'event.eventNotStarted': return 'El enlace para unirse estará disponible aquí cuando el evento comience.';
 			case 'error.details': return ({required Object error}) => 'Error: ${error}';
+			case 'error.general': return 'Se ha producido un error';
 			case 'error.no_internet': return 'Sin conexión a Internet';
-			case 'error.no_internet_description': return 'Por favor, verifica tu conexión a Internet y vuelve a intentarlo';
+			case 'error.no_internet_description': return 'Por favor verifica tu conexión a Internet y vuelve a intentarlo';
 			case 'error.no_events': return 'No se encontraron eventos';
-			case 'error.no_events_description': return 'No se han encontrado eventos por el momento. Por favor, inténtalo más tarde';
-			case 'error.no_events_found': return 'No se han encontrado eventos';
-			case 'error.no_events_found_description': return 'No se han encontrado eventos por el momento. Por favor, inténtalo más tarde';
-			case 'error.no_events_found_title': return 'No se han encontrado eventos';
-			case 'error.no_events_found_description_title': return 'No se han encontrado eventos por el momento. Por favor, inténtalo más tarde';
-			case 'error.no_events_found_description_title_search': return 'No se han encontrado eventos para la búsqueda realizada. Por favor, inténtalo con otro término';
-			case 'error.loadingEvents': return 'Ha ocurrido un error al cargar los eventos';
+			case 'error.no_events_description': return 'No se encontraron eventos en este momento. Por favor intenta de nuevo más tarde';
+			case 'error.no_events_found': return 'No se encontraron eventos';
+			case 'error.no_events_found_description': return 'No se encontraron eventos en este momento. Por favor intenta de nuevo más tarde';
+			case 'error.no_events_found_title': return 'No se encontraron eventos';
+			case 'error.no_events_found_description_title': return 'No se encontraron eventos en este momento. Por favor intenta de nuevo más tarde';
+			case 'error.no_events_found_description_title_search': return 'No se encontraron eventos para la búsqueda realizada. Por favor intenta de nuevo con otro término';
+			case 'error.loadingEvents': return 'Ocurrió un error al cargar los eventos';
 			case 'error.failedToResetPassword': return 'Error al restablecer la contraseña';
 			case 'auth.forgotPassword': return '¿Olvidaste tu contraseña?';
 			case 'auth.enterEmail': return 'Ingresa tu dirección de correo electrónico para recibir las instrucciones de restablecimiento';
 			case 'auth.resetPassword': return 'Restablecer la contraseña';
 			case 'auth.enterNewPassword': return 'Ingresa tu nueva contraseña';
 			case 'auth.resetInstructionsSent': return 'Instrucciones de restablecimiento enviadas a tu correo electrónico';
-			case 'auth.passwordResertSuccess': return 'Tu contraseña se ha restablecido con éxito';
+			case 'auth.passwordResertSuccess': return 'Tu contraseña ha sido restablecida con éxito';
 			case 'verify.title': return 'Verificación del código';
-			case 'verify.description': return 'Introduzca el código de verificación enviado a su correo electrónico';
+			case 'verify.description': return 'Ingresa el código de verificación enviado a tu correo electrónico';
 			case 'verify.inputLabel': return 'Código de verificación';
 			case 'verify.button': return 'Verificar';
-			case 'verify.error': return 'Por favor, introduzca el código de verificación';
-			case 'profile.editProfile': return 'Editar mi perfil';
+			case 'verify.error': return 'Por favor ingresa el código de verificación';
+			case 'profile.editProfile': return 'Modificar mi perfil';
 			case 'profile.firstname': return 'Nombre';
 			case 'profile.lastname': return 'Apellido';
 			case 'profile.bio': return 'Biografía';
@@ -545,18 +547,18 @@ extension on TranslationsEs {
 			case 'profile.address': return 'Dirección';
 			case 'profile.save': return 'Guardar';
 			case 'profile.cancel': return 'Cancelar';
-			case 'profile.enterFirstname': return 'Por favor, introduzca su nombre';
-			case 'profile.enterLastname': return 'Por favor, introduzca su apellido';
-			case 'profile.enterEmail': return 'Por favor, introduzca su dirección de correo electrónico';
-			case 'profile.invalidEmail': return 'Por favor, introduzca una dirección de correo electrónico válida';
+			case 'profile.enterFirstname': return 'Por favor ingresa tu nombre';
+			case 'profile.enterLastname': return 'Por favor ingresa tu apellido';
+			case 'profile.enterEmail': return 'Por favor ingresa tu dirección de correo electrónico';
+			case 'profile.invalidEmail': return 'Por favor ingresa una dirección de correo electrónico válida';
 			case 'profile.logout': return 'Cerrar sesión';
 			case 'resources.availableResources': return 'Recursos disponibles';
 			case 'resources.name': return 'Nombre';
 			case 'resources.type': return 'Tipo';
 			case 'messages.latestMessages': return 'Últimos mensajes';
 			case 'messages.seeAllMessages': return 'Ver todos los mensajes';
-			case 'messages.noMessages': return 'No hay mensajes';
-			case 'messages.writeMessageHint': return 'Escriba un mensaje...';
+			case 'messages.noMessages': return 'Sin mensajes';
+			case 'messages.writeMessageHint': return 'Escribe un mensaje...';
 			case 'messages.sendMessage': return 'Enviar';
 			case 'common.sender': return 'Remitente';
 			case 'common.message': return 'Mensaje';
@@ -582,10 +584,10 @@ extension on TranslationsEs {
 			case 'page.aboutPage': return 'Página Acerca de';
 			case 'page.contact': return 'Contacto';
 			case 'page.contactPage': return 'Página de contacto';
-			case 'page.terms': return 'Términos de uso';
-			case 'page.termsPage': return 'Página de los términos de uso';
+			case 'page.terms': return 'Condiciones de uso';
+			case 'page.termsPage': return 'Página de condiciones de uso';
 			case 'page.privacy': return 'Política de privacidad';
-			case 'page.privacyPage': return 'Página de la política de privacidad';
+			case 'page.privacyPage': return 'Página de políticas de privacidad';
 			case 'page.notifications': return 'Notificaciones';
 			case 'page.events': return 'Eventos';
 			case 'page.sheets': return 'Fichas';

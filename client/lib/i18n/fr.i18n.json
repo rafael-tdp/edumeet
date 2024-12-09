@@ -133,6 +133,7 @@
   },
   "error": {
     "details": "Erreur : {{error}}",
+    "general": "Une erreur est survenue",
     "no_internet": "Pas de connexion Internet",
     "no_internet_description": "Veuillez vérifier votre connexion Internet et réessayer",
     "no_events": "Aucun événement trouvé",

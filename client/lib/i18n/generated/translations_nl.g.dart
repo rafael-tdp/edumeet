@@ -60,7 +60,7 @@ class _TranslationsAppNl implements TranslationsAppFr {
 	// Translations
 	@override String get login => 'Inloggen';
 	@override String get signup => 'Aanmelden';
-	@override String get logout => 'Afmelden';
+	@override String get logout => 'Uitloggen';
 	@override String get search => 'Zoeken';
 	@override String get searchLanguage => 'Zoek een taal';
 	@override String get add => 'Toevoegen';
@@ -78,14 +78,14 @@ class _TranslationsAppNl implements TranslationsAppFr {
 	@override String get skip => 'Overslaan';
 	@override String get next => 'Volgende';
 	@override String get previous => 'Vorige';
-	@override String get finish => 'Voltooien';
+	@override String get finish => 'Voltooi';
 	@override String get back => 'Terug';
-	@override String get submit => 'Verzenden';
+	@override String get submit => 'Indienen';
 	@override String get searchUser => 'Zoek een gebruiker';
 	@override String get searchSubject => 'Zoek een vak';
 	@override String get searchTopic => 'Zoek een onderwerp';
-	@override String get searchSheet => 'Zoek een blad';
-	@override String get alreadyHaveAccount => 'Heeft u al een account?';
+	@override String get searchSheet => 'Zoek een fiche';
+	@override String get alreadyHaveAccount => 'Heb je al een account?';
 	@override String get loadingIndicator => 'Laden...';
 	@override String get errorOccurred => 'Er is een fout opgetreden';
 	@override String get backTo => 'Terug naar ';
@@ -98,7 +98,7 @@ class _TranslationsUserNl implements TranslationsUserFr {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
-	@override String get email => 'Email';
+	@override String get email => 'E-mail';
 	@override String get username => 'Gebruikersnaam';
 	@override String get name => 'Naam';
 	@override String get firstname => 'Voornaam';
@@ -122,18 +122,18 @@ class _TranslationsWelcomeNl implements TranslationsWelcomeFr {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
-	@override String get welcome => 'Welkom bij Edumeet, het samenwerkende studieplatform';
+	@override String get welcome => 'Welkom bij Edumeet, het platform voor samenwerkingsstudie';
 	@override String get setup => 'Laten we beginnen met het kiezen van een taal';
 	@override String get whatLanguage => 'Welke taal spreek je?';
 	@override String get chooseLanguage => 'Kies een taal zodat we samen kunnen communiceren';
-	@override String get title1 => 'Vind je studiematerialen';
-	@override String get description1 => 'Toegang tot duizenden \ngestudeerde materialen gemaakt door studenten, gratis';
-	@override String get title2 => 'Organiseer je studie';
-	@override String get description2 => 'Sorteer en organiseer je materialen voor een \neffectief geheugen';
+	@override String get title1 => 'Vind je studiefiches';
+	@override String get description1 => 'Toegang tot duizenden studiefiches die door studenten zijn gemaakt';
+	@override String get title2 => 'Organiseer je studies';
+	@override String get description2 => 'Categoriseer en organiseer je fiches voor effectieve onthouding';
 	@override String get title3 => 'Blijf gemotiveerd';
-	@override String get description3 => 'Bereik je doelen met praktische \ntips';
+	@override String get description3 => 'Bereik je doelen met praktische tips';
 	@override String get title4 => 'Word lid van onze gemeenschap';
-	@override String get description4 => 'Deel je studiematerialen en \nontvang persoonlijke tips';
+	@override String get description4 => 'Deel je studiefiches en ontvang persoonlijke adviezen';
 }
 
 // Path: login
@@ -143,10 +143,10 @@ class _TranslationsLoginNl implements TranslationsLoginFr {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Inloggen';
-	@override String get description => 'Voer onderstaande informatie in om in te loggen';
+	@override String get title => 'Aanmelding';
+	@override String get description => 'Voer hieronder je gegevens in om in te loggen';
 	@override String get forgotPassword => 'Wachtwoord vergeten?';
-	@override String get noAccount => 'Heeft u geen account?';
+	@override String get noAccount => 'Heb je geen account?';
 	@override String get createAccount => 'Maak een account aan';
 }
 
@@ -158,9 +158,9 @@ class _TranslationsRegisterNl implements TranslationsRegisterFr {
 
 	// Translations
 	@override String get title => 'Account aanmaken';
-	@override String get description => 'Sluit je bij ons aan om van onze diensten te profiteren';
-	@override String get conditions => 'Door een account aan te maken, accepteert u onze Gebruiksvoorwaarden en Privacybeleid';
-	@override String get registerConfirm => 'Registratie bevestigd';
+	@override String get description => 'Sluit je bij ons aan om gebruik te maken van onze diensten';
+	@override String get conditions => 'Door een account aan te maken, ga je akkoord met onze Gebruiksvoorwaarden en Privacybeleid';
+	@override String get registerConfirm => 'Aanmelding bevestigd';
 }
 
 // Path: form
@@ -171,22 +171,22 @@ class _TranslationsFormNl implements TranslationsFormFr {
 
 	// Translations
 	@override String get emptyUsername => 'Voer een gebruikersnaam in';
-	@override String get emptyFirstname => 'Voer uw voornaam in';
-	@override String get emptyEmail => 'Voer uw e-mailadres in';
-	@override String get emptyLastname => 'Voer uw achternaam in';
-	@override String get emptyPassword => 'Voer uw wachtwoord in';
-	@override String get emptyConfirmPassword => 'Bevestig uw wachtwoord';
-	@override String get passwordMismatch => 'De wachtwoorden komen niet overeen';
+	@override String get emptyFirstname => 'Voer je voornaam in';
+	@override String get emptyEmail => 'Voer je e-mailadres in';
+	@override String get emptyLastname => 'Voer je naam in';
+	@override String get emptyPassword => 'Voer je wachtwoord in';
+	@override String get emptyConfirmPassword => 'Bevestig je wachtwoord';
+	@override String get passwordMismatch => 'Wachtwoorden komen niet overeen';
 	@override String get invalidEmail => 'Voer een geldig e-mailadres in';
 	@override String get invalidAddress => 'Voer een geldig adres in';
-	@override String get shortPassword => 'Het wachtwoord moet minimaal 8 tekens bevatten';
+	@override String get shortPassword => 'Het wachtwoord moet minstens 8 tekens bevatten';
 	@override String get passwordUpperCase => 'Het wachtwoord moet minstens één hoofdletter bevatten';
 	@override String get passwordDigit => 'Het wachtwoord moet minstens één cijfer bevatten';
 	@override String get passwordSpecialChar => 'Het wachtwoord moet minstens één speciaal teken bevatten';
-	@override String get haveToAcceptConditions => 'U moet de gebruiksvoorwaarden en het privacybeleid accepteren';
-	@override String get confirmPassword => 'Bevestig wachtwoord';
-	@override String get pleaseConfirmPassword => 'Bevestig uw wachtwoord';
-	@override String get passwordNotMatch => 'De wachtwoorden komen niet overeen';
+	@override String get haveToAcceptConditions => 'Je moet de gebruiksvoorwaarden en het privacybeleid accepteren';
+	@override String get confirmPassword => 'Bevestig het wachtwoord';
+	@override String get pleaseConfirmPassword => 'Bevestig je wachtwoord';
+	@override String get passwordNotMatch => 'Wachtwoorden komen niet overeen';
 }
 
 // Path: swipe_cards
@@ -196,8 +196,8 @@ class _TranslationsSwipeCardsNl implements TranslationsSwipeCardsFr {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
-	@override String get loading_error => 'Fout bij het laden van evenementen';
-	@override String get end_of_list => 'U heeft het einde van de lijst bereikt!';
+	@override String get loading_error => 'Fout bij het laden van de evenementen';
+	@override String get end_of_list => 'Je hebt het einde van de lijst bereikt!';
 	@override String nope({required Object title}) => 'Nee tegen ${title}';
 	@override String joined_event({required Object title}) => 'Je hebt je bij het evenement ${title} gevoegd';
 	@override String item_changed({required Object title}) => 'Item gewijzigd: ${title}';
@@ -213,15 +213,15 @@ class _TranslationsEventNl implements TranslationsEventFr {
 	@override String get online => 'Online';
 	@override String get physical => 'Fysiek';
 	@override String get participants => 'Deelnemers';
-	@override String hasJoinEvent({required Object event_title}) => 'U heeft zich aangemeld voor het evenement ${event_title}';
+	@override String hasJoinEvent({required Object event_title}) => 'Je hebt je bij het evenement ${event_title} gevoegd';
 	@override String get address_copied => 'Adres gekopieerd naar het klembord';
-	@override String get createEvent => 'Evenement aanmaken';
+	@override String get createEvent => 'Maak een evenement';
 	@override String get name => 'Naam';
 	@override String get description => 'Beschrijving';
 	@override String get date => 'Datum';
 	@override String get time => 'Tijd';
 	@override String get location => 'Locatie';
-	@override String get maxParticipants => 'Aantal deelnemers';
+	@override String get maxParticipants => 'Maximaal aantal deelnemers';
 	@override String get price => 'Prijs';
 	@override String get image => 'Afbeelding';
 	@override String get create => 'Aanmaken';
@@ -230,13 +230,13 @@ class _TranslationsEventNl implements TranslationsEventFr {
 	@override String get enterDate => 'Voer een datum in';
 	@override String get enterTime => 'Voer een tijd in';
 	@override String get enterLocation => 'Voer een locatie in';
-	@override String get enterMaxParticipants => 'Voer een aantal deelnemers in';
+	@override String get enterMaxParticipants => 'Voer een maximaal aantal deelnemers in';
 	@override String get invalidMaxParticipants => 'Voer een geldig aantal in';
 	@override String get enterPrice => 'Voer een prijs in';
 	@override String get invalidPrice => 'Voer een geldige prijs in';
-	@override String get enterImage => 'Voer een afbeelding URL in';
-	@override String get joinEvent => 'Nodig evenement';
-	@override String get eventNotStarted => 'De verbindingslink zal hier beschikbaar zijn wanneer het evenement begint.';
+	@override String get enterImage => 'Voer een afbeelding-URL in';
+	@override String get joinEvent => 'Deelnemen aan het evenement';
+	@override String get eventNotStarted => 'De inloglink zal hier beschikbaar zijn wanneer het evenement begint.';
 }
 
 // Path: error
@@ -247,6 +247,7 @@ class _TranslationsErrorNl implements TranslationsErrorFr {
 
 	// Translations
 	@override String details({required Object error}) => 'Fout: ${error}';
+	@override String get general => 'Er is een fout opgetreden';
 	@override String get no_internet => 'Geen internetverbinding';
 	@override String get no_internet_description => 'Controleer je internetverbinding en probeer het opnieuw';
 	@override String get no_events => 'Geen evenementen gevonden';
@@ -255,9 +256,9 @@ class _TranslationsErrorNl implements TranslationsErrorFr {
 	@override String get no_events_found_description => 'Er zijn momenteel geen evenementen gevonden. Probeer het later opnieuw';
 	@override String get no_events_found_title => 'Geen evenementen gevonden';
 	@override String get no_events_found_description_title => 'Er zijn momenteel geen evenementen gevonden. Probeer het later opnieuw';
-	@override String get no_events_found_description_title_search => 'Er zijn geen evenementen gevonden voor de uitgevoerde zoekopdracht. Probeer het met een andere term opnieuw';
-	@override String get loadingEvents => 'Er is een fout opgetreden tijdens het laden van de evenementen';
-	@override String get failedToResetPassword => 'Wachtwoord resetten is mislukt';
+	@override String get no_events_found_description_title_search => 'Er zijn geen evenementen gevonden voor de uitgevoerde zoekopdracht. Probeer het opnieuw met een andere zoekterm';
+	@override String get loadingEvents => 'Er is een fout opgetreden bij het laden van de evenementen';
+	@override String get failedToResetPassword => 'Wachtwoordreset is mislukt';
 }
 
 // Path: auth
@@ -268,11 +269,11 @@ class _TranslationsAuthNl implements TranslationsAuthFr {
 
 	// Translations
 	@override String get forgotPassword => 'Wachtwoord vergeten?';
-	@override String get enterEmail => 'Voer uw e-mailadres in om de instructies voor het opnieuw instellen te ontvangen';
-	@override String get resetPassword => 'Wachtwoord opnieuw instellen';
-	@override String get enterNewPassword => 'Voer uw nieuwe wachtwoord in';
-	@override String get resetInstructionsSent => 'Instructies voor het opnieuw instellen zijn naar uw e-mail verzonden';
-	@override String get passwordResertSuccess => 'Uw wachtwoord is succesvol opnieuw ingesteld';
+	@override String get enterEmail => 'Voer je e-mailadres in om instructies voor reset te ontvangen';
+	@override String get resetPassword => 'Wachtwoord resetten';
+	@override String get enterNewPassword => 'Voer je nieuwe wachtwoord in';
+	@override String get resetInstructionsSent => 'Instructies voor reset zijn naar je e-mail gestuurd';
+	@override String get passwordResertSuccess => 'Je wachtwoord is succesvol gereset';
 }
 
 // Path: verify
@@ -282,10 +283,10 @@ class _TranslationsVerifyNl implements TranslationsVerifyFr {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => 'Code verificatie';
-	@override String get description => 'Voer de verificatiecode in die naar uw e-mail is gestuurd';
+	@override String get title => 'Verificatiecode';
+	@override String get description => 'Voer de verificatiecode in die naar je e-mail is gestuurd';
 	@override String get inputLabel => 'Verificatiecode';
-	@override String get button => 'Controleren';
+	@override String get button => 'Verifiëren';
 	@override String get error => 'Voer de verificatiecode in';
 }
 
@@ -296,7 +297,7 @@ class _TranslationsProfileNl implements TranslationsProfileFr {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
-	@override String get editProfile => 'Bewerk mijn profiel';
+	@override String get editProfile => 'Mijn profiel bewerken';
 	@override String get firstname => 'Voornaam';
 	@override String get lastname => 'Achternaam';
 	@override String get bio => 'Bio';
@@ -305,9 +306,9 @@ class _TranslationsProfileNl implements TranslationsProfileFr {
 	@override String get address => 'Adres';
 	@override String get save => 'Opslaan';
 	@override String get cancel => 'Annuleren';
-	@override String get enterFirstname => 'Voer uw voornaam in';
-	@override String get enterLastname => 'Voer uw achternaam in';
-	@override String get enterEmail => 'Voer uw e-mailadres in';
+	@override String get enterFirstname => 'Voer je voornaam in';
+	@override String get enterLastname => 'Voer je achternaam in';
+	@override String get enterEmail => 'Voer je e-mailadres in';
 	@override String get invalidEmail => 'Voer een geldig e-mailadres in';
 	@override String get logout => 'Uitloggen';
 }
@@ -319,7 +320,7 @@ class _TranslationsResourcesNl implements TranslationsResourcesFr {
 	final TranslationsNl _root; // ignore: unused_field
 
 	// Translations
-	@override String get availableResources => 'Beschikbare middelen';
+	@override String get availableResources => 'Beschikbare bronnen';
 	@override String get name => 'Naam';
 	@override String get type => 'Type';
 }
@@ -335,7 +336,7 @@ class _TranslationsMessagesNl implements TranslationsMessagesFr {
 	@override String get seeAllMessages => 'Bekijk alle berichten';
 	@override String get noMessages => 'Geen berichten';
 	@override String get writeMessageHint => 'Schrijf een bericht...';
-	@override String get sendMessage => 'Verzenden';
+	@override String get sendMessage => 'Verstuur';
 }
 
 // Path: common
@@ -364,10 +365,10 @@ class _TranslationsPageNl implements TranslationsPageFr {
 	@override String get settingsPage => 'Instellingenpagina';
 	@override String get search => 'Zoeken';
 	@override String get searchPage => 'Zoekpagina';
-	@override String get sheet => 'Blad';
-	@override String get sheetPage => 'Bladpagina';
-	@override String get subject => 'Onderwerp';
-	@override String get subjectPage => 'Onderwerp pagina';
+	@override String get sheet => 'Fiche';
+	@override String get sheetPage => 'Fichepagina';
+	@override String get subject => 'Vak';
+	@override String get subjectPage => 'Vakpagina';
 	@override String get topic => 'Onderwerp';
 	@override String get topicPage => 'Onderwerp pagina';
 	@override String get event => 'Evenement';
@@ -375,17 +376,17 @@ class _TranslationsPageNl implements TranslationsPageFr {
 	@override String get user => 'Gebruiker';
 	@override String get userPage => 'Gebruikerspagina';
 	@override String get about => 'Over';
-	@override String get aboutPage => 'Overpagina';
+	@override String get aboutPage => 'Over pagina';
 	@override String get contact => 'Contact';
 	@override String get contactPage => 'Contactpagina';
 	@override String get terms => 'Gebruiksvoorwaarden';
-	@override String get termsPage => 'Gebruiksvoorwaarden pagina';
+	@override String get termsPage => 'Pagina van de gebruiksvoorwaarden';
 	@override String get privacy => 'Privacybeleid';
 	@override String get privacyPage => 'Privacybeleid pagina';
-	@override String get notifications => 'Notificaties';
+	@override String get notifications => 'Meldingen';
 	@override String get events => 'Evenementen';
-	@override String get sheets => 'Bladen';
-	@override String get subjects => 'Onderwerpen';
+	@override String get sheets => 'Fiches';
+	@override String get subjects => 'Vakken';
 	@override String get topics => 'Onderwerpen';
 	@override String get users => 'Gebruikers';
 	@override String get help => 'Hulp';
@@ -399,7 +400,7 @@ extension on TranslationsNl {
 		switch (path) {
 			case 'app.login': return 'Inloggen';
 			case 'app.signup': return 'Aanmelden';
-			case 'app.logout': return 'Afmelden';
+			case 'app.logout': return 'Uitloggen';
 			case 'app.search': return 'Zoeken';
 			case 'app.searchLanguage': return 'Zoek een taal';
 			case 'app.add': return 'Toevoegen';
@@ -417,18 +418,18 @@ extension on TranslationsNl {
 			case 'app.skip': return 'Overslaan';
 			case 'app.next': return 'Volgende';
 			case 'app.previous': return 'Vorige';
-			case 'app.finish': return 'Voltooien';
+			case 'app.finish': return 'Voltooi';
 			case 'app.back': return 'Terug';
-			case 'app.submit': return 'Verzenden';
+			case 'app.submit': return 'Indienen';
 			case 'app.searchUser': return 'Zoek een gebruiker';
 			case 'app.searchSubject': return 'Zoek een vak';
 			case 'app.searchTopic': return 'Zoek een onderwerp';
-			case 'app.searchSheet': return 'Zoek een blad';
-			case 'app.alreadyHaveAccount': return 'Heeft u al een account?';
+			case 'app.searchSheet': return 'Zoek een fiche';
+			case 'app.alreadyHaveAccount': return 'Heb je al een account?';
 			case 'app.loadingIndicator': return 'Laden...';
 			case 'app.errorOccurred': return 'Er is een fout opgetreden';
 			case 'app.backTo': return 'Terug naar ';
-			case 'user.email': return 'Email';
+			case 'user.email': return 'E-mail';
 			case 'user.username': return 'Gebruikersnaam';
 			case 'user.name': return 'Naam';
 			case 'user.firstname': return 'Voornaam';
@@ -443,61 +444,61 @@ extension on TranslationsNl {
 			case 'user.noDescription': return 'Geen beschrijving';
 			case 'user.noAddress': return 'Adres niet beschikbaar';
 			case 'user.noReportsAvailable': return 'Aantal meldingen niet beschikbaar';
-			case 'welcome.welcome': return 'Welkom bij Edumeet, het samenwerkende studieplatform';
+			case 'welcome.welcome': return 'Welkom bij Edumeet, het platform voor samenwerkingsstudie';
 			case 'welcome.setup': return 'Laten we beginnen met het kiezen van een taal';
 			case 'welcome.whatLanguage': return 'Welke taal spreek je?';
 			case 'welcome.chooseLanguage': return 'Kies een taal zodat we samen kunnen communiceren';
-			case 'welcome.title1': return 'Vind je studiematerialen';
-			case 'welcome.description1': return 'Toegang tot duizenden \ngestudeerde materialen gemaakt door studenten, gratis';
-			case 'welcome.title2': return 'Organiseer je studie';
-			case 'welcome.description2': return 'Sorteer en organiseer je materialen voor een \neffectief geheugen';
+			case 'welcome.title1': return 'Vind je studiefiches';
+			case 'welcome.description1': return 'Toegang tot duizenden studiefiches die door studenten zijn gemaakt';
+			case 'welcome.title2': return 'Organiseer je studies';
+			case 'welcome.description2': return 'Categoriseer en organiseer je fiches voor effectieve onthouding';
 			case 'welcome.title3': return 'Blijf gemotiveerd';
-			case 'welcome.description3': return 'Bereik je doelen met praktische \ntips';
+			case 'welcome.description3': return 'Bereik je doelen met praktische tips';
 			case 'welcome.title4': return 'Word lid van onze gemeenschap';
-			case 'welcome.description4': return 'Deel je studiematerialen en \nontvang persoonlijke tips';
-			case 'login.title': return 'Inloggen';
-			case 'login.description': return 'Voer onderstaande informatie in om in te loggen';
+			case 'welcome.description4': return 'Deel je studiefiches en ontvang persoonlijke adviezen';
+			case 'login.title': return 'Aanmelding';
+			case 'login.description': return 'Voer hieronder je gegevens in om in te loggen';
 			case 'login.forgotPassword': return 'Wachtwoord vergeten?';
-			case 'login.noAccount': return 'Heeft u geen account?';
+			case 'login.noAccount': return 'Heb je geen account?';
 			case 'login.createAccount': return 'Maak een account aan';
 			case 'register.title': return 'Account aanmaken';
-			case 'register.description': return 'Sluit je bij ons aan om van onze diensten te profiteren';
-			case 'register.conditions': return 'Door een account aan te maken, accepteert u onze Gebruiksvoorwaarden en Privacybeleid';
-			case 'register.registerConfirm': return 'Registratie bevestigd';
+			case 'register.description': return 'Sluit je bij ons aan om gebruik te maken van onze diensten';
+			case 'register.conditions': return 'Door een account aan te maken, ga je akkoord met onze Gebruiksvoorwaarden en Privacybeleid';
+			case 'register.registerConfirm': return 'Aanmelding bevestigd';
 			case 'form.emptyUsername': return 'Voer een gebruikersnaam in';
-			case 'form.emptyFirstname': return 'Voer uw voornaam in';
-			case 'form.emptyEmail': return 'Voer uw e-mailadres in';
-			case 'form.emptyLastname': return 'Voer uw achternaam in';
-			case 'form.emptyPassword': return 'Voer uw wachtwoord in';
-			case 'form.emptyConfirmPassword': return 'Bevestig uw wachtwoord';
-			case 'form.passwordMismatch': return 'De wachtwoorden komen niet overeen';
+			case 'form.emptyFirstname': return 'Voer je voornaam in';
+			case 'form.emptyEmail': return 'Voer je e-mailadres in';
+			case 'form.emptyLastname': return 'Voer je naam in';
+			case 'form.emptyPassword': return 'Voer je wachtwoord in';
+			case 'form.emptyConfirmPassword': return 'Bevestig je wachtwoord';
+			case 'form.passwordMismatch': return 'Wachtwoorden komen niet overeen';
 			case 'form.invalidEmail': return 'Voer een geldig e-mailadres in';
 			case 'form.invalidAddress': return 'Voer een geldig adres in';
-			case 'form.shortPassword': return 'Het wachtwoord moet minimaal 8 tekens bevatten';
+			case 'form.shortPassword': return 'Het wachtwoord moet minstens 8 tekens bevatten';
 			case 'form.passwordUpperCase': return 'Het wachtwoord moet minstens één hoofdletter bevatten';
 			case 'form.passwordDigit': return 'Het wachtwoord moet minstens één cijfer bevatten';
 			case 'form.passwordSpecialChar': return 'Het wachtwoord moet minstens één speciaal teken bevatten';
-			case 'form.haveToAcceptConditions': return 'U moet de gebruiksvoorwaarden en het privacybeleid accepteren';
-			case 'form.confirmPassword': return 'Bevestig wachtwoord';
-			case 'form.pleaseConfirmPassword': return 'Bevestig uw wachtwoord';
-			case 'form.passwordNotMatch': return 'De wachtwoorden komen niet overeen';
-			case 'swipe_cards.loading_error': return 'Fout bij het laden van evenementen';
-			case 'swipe_cards.end_of_list': return 'U heeft het einde van de lijst bereikt!';
+			case 'form.haveToAcceptConditions': return 'Je moet de gebruiksvoorwaarden en het privacybeleid accepteren';
+			case 'form.confirmPassword': return 'Bevestig het wachtwoord';
+			case 'form.pleaseConfirmPassword': return 'Bevestig je wachtwoord';
+			case 'form.passwordNotMatch': return 'Wachtwoorden komen niet overeen';
+			case 'swipe_cards.loading_error': return 'Fout bij het laden van de evenementen';
+			case 'swipe_cards.end_of_list': return 'Je hebt het einde van de lijst bereikt!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'Nee tegen ${title}';
 			case 'swipe_cards.joined_event': return ({required Object title}) => 'Je hebt je bij het evenement ${title} gevoegd';
 			case 'swipe_cards.item_changed': return ({required Object title}) => 'Item gewijzigd: ${title}';
 			case 'event.online': return 'Online';
 			case 'event.physical': return 'Fysiek';
 			case 'event.participants': return 'Deelnemers';
-			case 'event.hasJoinEvent': return ({required Object event_title}) => 'U heeft zich aangemeld voor het evenement ${event_title}';
+			case 'event.hasJoinEvent': return ({required Object event_title}) => 'Je hebt je bij het evenement ${event_title} gevoegd';
 			case 'event.address_copied': return 'Adres gekopieerd naar het klembord';
-			case 'event.createEvent': return 'Evenement aanmaken';
+			case 'event.createEvent': return 'Maak een evenement';
 			case 'event.name': return 'Naam';
 			case 'event.description': return 'Beschrijving';
 			case 'event.date': return 'Datum';
 			case 'event.time': return 'Tijd';
 			case 'event.location': return 'Locatie';
-			case 'event.maxParticipants': return 'Aantal deelnemers';
+			case 'event.maxParticipants': return 'Maximaal aantal deelnemers';
 			case 'event.price': return 'Prijs';
 			case 'event.image': return 'Afbeelding';
 			case 'event.create': return 'Aanmaken';
@@ -506,14 +507,15 @@ extension on TranslationsNl {
 			case 'event.enterDate': return 'Voer een datum in';
 			case 'event.enterTime': return 'Voer een tijd in';
 			case 'event.enterLocation': return 'Voer een locatie in';
-			case 'event.enterMaxParticipants': return 'Voer een aantal deelnemers in';
+			case 'event.enterMaxParticipants': return 'Voer een maximaal aantal deelnemers in';
 			case 'event.invalidMaxParticipants': return 'Voer een geldig aantal in';
 			case 'event.enterPrice': return 'Voer een prijs in';
 			case 'event.invalidPrice': return 'Voer een geldige prijs in';
-			case 'event.enterImage': return 'Voer een afbeelding URL in';
-			case 'event.joinEvent': return 'Nodig evenement';
-			case 'event.eventNotStarted': return 'De verbindingslink zal hier beschikbaar zijn wanneer het evenement begint.';
+			case 'event.enterImage': return 'Voer een afbeelding-URL in';
+			case 'event.joinEvent': return 'Deelnemen aan het evenement';
+			case 'event.eventNotStarted': return 'De inloglink zal hier beschikbaar zijn wanneer het evenement begint.';
 			case 'error.details': return ({required Object error}) => 'Fout: ${error}';
+			case 'error.general': return 'Er is een fout opgetreden';
 			case 'error.no_internet': return 'Geen internetverbinding';
 			case 'error.no_internet_description': return 'Controleer je internetverbinding en probeer het opnieuw';
 			case 'error.no_events': return 'Geen evenementen gevonden';
@@ -522,21 +524,21 @@ extension on TranslationsNl {
 			case 'error.no_events_found_description': return 'Er zijn momenteel geen evenementen gevonden. Probeer het later opnieuw';
 			case 'error.no_events_found_title': return 'Geen evenementen gevonden';
 			case 'error.no_events_found_description_title': return 'Er zijn momenteel geen evenementen gevonden. Probeer het later opnieuw';
-			case 'error.no_events_found_description_title_search': return 'Er zijn geen evenementen gevonden voor de uitgevoerde zoekopdracht. Probeer het met een andere term opnieuw';
-			case 'error.loadingEvents': return 'Er is een fout opgetreden tijdens het laden van de evenementen';
-			case 'error.failedToResetPassword': return 'Wachtwoord resetten is mislukt';
+			case 'error.no_events_found_description_title_search': return 'Er zijn geen evenementen gevonden voor de uitgevoerde zoekopdracht. Probeer het opnieuw met een andere zoekterm';
+			case 'error.loadingEvents': return 'Er is een fout opgetreden bij het laden van de evenementen';
+			case 'error.failedToResetPassword': return 'Wachtwoordreset is mislukt';
 			case 'auth.forgotPassword': return 'Wachtwoord vergeten?';
-			case 'auth.enterEmail': return 'Voer uw e-mailadres in om de instructies voor het opnieuw instellen te ontvangen';
-			case 'auth.resetPassword': return 'Wachtwoord opnieuw instellen';
-			case 'auth.enterNewPassword': return 'Voer uw nieuwe wachtwoord in';
-			case 'auth.resetInstructionsSent': return 'Instructies voor het opnieuw instellen zijn naar uw e-mail verzonden';
-			case 'auth.passwordResertSuccess': return 'Uw wachtwoord is succesvol opnieuw ingesteld';
-			case 'verify.title': return 'Code verificatie';
-			case 'verify.description': return 'Voer de verificatiecode in die naar uw e-mail is gestuurd';
+			case 'auth.enterEmail': return 'Voer je e-mailadres in om instructies voor reset te ontvangen';
+			case 'auth.resetPassword': return 'Wachtwoord resetten';
+			case 'auth.enterNewPassword': return 'Voer je nieuwe wachtwoord in';
+			case 'auth.resetInstructionsSent': return 'Instructies voor reset zijn naar je e-mail gestuurd';
+			case 'auth.passwordResertSuccess': return 'Je wachtwoord is succesvol gereset';
+			case 'verify.title': return 'Verificatiecode';
+			case 'verify.description': return 'Voer de verificatiecode in die naar je e-mail is gestuurd';
 			case 'verify.inputLabel': return 'Verificatiecode';
-			case 'verify.button': return 'Controleren';
+			case 'verify.button': return 'Verifiëren';
 			case 'verify.error': return 'Voer de verificatiecode in';
-			case 'profile.editProfile': return 'Bewerk mijn profiel';
+			case 'profile.editProfile': return 'Mijn profiel bewerken';
 			case 'profile.firstname': return 'Voornaam';
 			case 'profile.lastname': return 'Achternaam';
 			case 'profile.bio': return 'Bio';
@@ -545,19 +547,19 @@ extension on TranslationsNl {
 			case 'profile.address': return 'Adres';
 			case 'profile.save': return 'Opslaan';
 			case 'profile.cancel': return 'Annuleren';
-			case 'profile.enterFirstname': return 'Voer uw voornaam in';
-			case 'profile.enterLastname': return 'Voer uw achternaam in';
-			case 'profile.enterEmail': return 'Voer uw e-mailadres in';
+			case 'profile.enterFirstname': return 'Voer je voornaam in';
+			case 'profile.enterLastname': return 'Voer je achternaam in';
+			case 'profile.enterEmail': return 'Voer je e-mailadres in';
 			case 'profile.invalidEmail': return 'Voer een geldig e-mailadres in';
 			case 'profile.logout': return 'Uitloggen';
-			case 'resources.availableResources': return 'Beschikbare middelen';
+			case 'resources.availableResources': return 'Beschikbare bronnen';
 			case 'resources.name': return 'Naam';
 			case 'resources.type': return 'Type';
 			case 'messages.latestMessages': return 'Laatste berichten';
 			case 'messages.seeAllMessages': return 'Bekijk alle berichten';
 			case 'messages.noMessages': return 'Geen berichten';
 			case 'messages.writeMessageHint': return 'Schrijf een bericht...';
-			case 'messages.sendMessage': return 'Verzenden';
+			case 'messages.sendMessage': return 'Verstuur';
 			case 'common.sender': return 'Afzender';
 			case 'common.message': return 'Bericht';
 			case 'page.home': return 'Startpagina';
@@ -568,10 +570,10 @@ extension on TranslationsNl {
 			case 'page.settingsPage': return 'Instellingenpagina';
 			case 'page.search': return 'Zoeken';
 			case 'page.searchPage': return 'Zoekpagina';
-			case 'page.sheet': return 'Blad';
-			case 'page.sheetPage': return 'Bladpagina';
-			case 'page.subject': return 'Onderwerp';
-			case 'page.subjectPage': return 'Onderwerp pagina';
+			case 'page.sheet': return 'Fiche';
+			case 'page.sheetPage': return 'Fichepagina';
+			case 'page.subject': return 'Vak';
+			case 'page.subjectPage': return 'Vakpagina';
 			case 'page.topic': return 'Onderwerp';
 			case 'page.topicPage': return 'Onderwerp pagina';
 			case 'page.event': return 'Evenement';
@@ -579,17 +581,17 @@ extension on TranslationsNl {
 			case 'page.user': return 'Gebruiker';
 			case 'page.userPage': return 'Gebruikerspagina';
 			case 'page.about': return 'Over';
-			case 'page.aboutPage': return 'Overpagina';
+			case 'page.aboutPage': return 'Over pagina';
 			case 'page.contact': return 'Contact';
 			case 'page.contactPage': return 'Contactpagina';
 			case 'page.terms': return 'Gebruiksvoorwaarden';
-			case 'page.termsPage': return 'Gebruiksvoorwaarden pagina';
+			case 'page.termsPage': return 'Pagina van de gebruiksvoorwaarden';
 			case 'page.privacy': return 'Privacybeleid';
 			case 'page.privacyPage': return 'Privacybeleid pagina';
-			case 'page.notifications': return 'Notificaties';
+			case 'page.notifications': return 'Meldingen';
 			case 'page.events': return 'Evenementen';
-			case 'page.sheets': return 'Bladen';
-			case 'page.subjects': return 'Onderwerpen';
+			case 'page.sheets': return 'Fiches';
+			case 'page.subjects': return 'Vakken';
 			case 'page.topics': return 'Onderwerpen';
 			case 'page.users': return 'Gebruikers';
 			case 'page.help': return 'Hulp';

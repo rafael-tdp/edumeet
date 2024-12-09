@@ -251,6 +251,7 @@ class TranslationsErrorFr {
 
 	// Translations
 	String details({required Object error}) => 'Erreur : ${error}';
+	String get general => 'Une erreur est survenue';
 	String get no_internet => 'Pas de connexion Internet';
 	String get no_internet_description => 'Veuillez vérifier votre connexion Internet et réessayer';
 	String get no_events => 'Aucun événement trouvé';
@@ -518,6 +519,7 @@ extension on Translations {
 			case 'event.joinEvent': return 'Rejoindre l\'évènement';
 			case 'event.eventNotStarted': return 'Le lien de connexion sera disponible ici lorsque l\'événement commencera.';
 			case 'error.details': return ({required Object error}) => 'Erreur : ${error}';
+			case 'error.general': return 'Une erreur est survenue';
 			case 'error.no_internet': return 'Pas de connexion Internet';
 			case 'error.no_internet_description': return 'Veuillez vérifier votre connexion Internet et réessayer';
 			case 'error.no_events': return 'Aucun événement trouvé';
