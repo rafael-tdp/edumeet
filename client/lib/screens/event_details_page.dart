@@ -12,28 +12,31 @@ import 'package:client/components/event/event_details_section.dart';
 class EventDetailsPage extends StatefulWidget {
   final String eventId;
 
-  EventDetailsPage({super.key, required this.eventId});
+  const EventDetailsPage({super.key, required this.eventId});
 
   @override
+  // ignore: library_private_types_in_public_api
   _EventDetailsPageState createState() => _EventDetailsPageState();
 }
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isAppBarExpanded = false;
+  late Future<Event> _eventFuture;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(() {
       final isExpanded = _scrollController.hasClients &&
-          _scrollController.offset > (400 - kToolbarHeight);
-      if (_isAppBarExpanded != isExpanded) {
+          _scrollController.offset > (300 - kToolbarHeight);
+      if (isExpanded != _isAppBarExpanded) {
         setState(() {
           _isAppBarExpanded = isExpanded;
         });
       }
     });
+    _eventFuture = EventServices.getEventDetails(widget.eventId);
   }
 
   @override
@@ -56,12 +59,13 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: FutureBuilder<Event>(
-        future: EventServices.getEventDetails(widget.eventId),
+        future: _eventFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text(t.error.details(error: snapshot.error.toString())));
+            return Center(
+                child: Text(t.error.details(error: snapshot.error.toString())));
           } else if (!snapshot.hasData) {
             return Center(child: Text(t.error.no_events_found));
           }
