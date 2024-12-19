@@ -1,9 +1,10 @@
+import 'package:client/core/models/event.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/messages/message_input_field.dart';
 import 'package:client/components/messages/chat_message.dart';
 
 class EventChatPage extends StatefulWidget {
-  final Map<String, dynamic> event;
+  final Event event;
 
   const EventChatPage({super.key, required this.event});
 
@@ -44,7 +45,7 @@ class _EventChatPageState extends State<EventChatPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
-          widget.event['title']!,
+          widget.event.title,
           style: const TextStyle(
             color: Colors.black,
             fontSize: 16,

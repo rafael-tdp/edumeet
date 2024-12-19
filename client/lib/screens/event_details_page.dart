@@ -1,4 +1,5 @@
 import 'package:client/core/models/event.dart';
+import 'package:client/core/models/user.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/event_services.dart';
@@ -11,11 +12,15 @@ import 'package:client/components/event/event_details_section.dart';
 
 class EventDetailsPage extends StatefulWidget {
   final String eventId;
+  final User currentUser;
 
-  const EventDetailsPage({super.key, required this.eventId});
+  const EventDetailsPage({
+    super.key,
+    required this.eventId,
+    required this.currentUser,
+  });
 
   @override
-  // ignore: library_private_types_in_public_api
   _EventDetailsPageState createState() => _EventDetailsPageState();
 }
 
@@ -23,6 +28,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isAppBarExpanded = false;
   late Future<Event> _eventFuture;
+  late bool isCurrentUserEvent;
 
   @override
   void initState() {
@@ -36,7 +42,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         });
       }
     });
-    _eventFuture = EventServices.getEventDetails(widget.eventId);
+    _eventFuture = EventServices.getEventDetails(widget.eventId).then((event) {
+      isCurrentUserEvent = event.createdBy == widget.currentUser.id;
+      return event;
+    });
   }
 
   @override
@@ -45,7 +54,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     super.dispose();
   }
 
-  void _navigateToChat(BuildContext context, dynamic event) {
+  void _navigateToChat(BuildContext context, Event event) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -65,12 +74,13 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(
-                child: Text(t.error.details(error: snapshot.error.toString())));
+              child: Text(t.error.details(error: snapshot.error.toString())),
+            );
           } else if (!snapshot.hasData) {
             return Center(child: Text(t.error.no_events_found));
           }
 
-          final event = snapshot.data;
+          final event = snapshot.data!;
 
           return CustomScrollView(
             controller: _scrollController,
@@ -79,7 +89,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 expandedHeight: 400,
                 flexibleSpace: FlexibleSpaceBar(
                   background: EventHeader(
-                    date: event!.startDate,
+                    date: event.startDate,
                     image: event.image,
                     title: event.title,
                     description: event.description,
@@ -114,7 +124,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       opacity: 1.0,
                       duration: const Duration(milliseconds: 500),
                       child: ParticipantsList(
-                          participants: event.participants ?? const []),
+                        participants: event.participants ?? const [],
+                        isCurrentUserEvent: isCurrentUserEvent,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     AnimatedOpacity(

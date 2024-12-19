@@ -34,4 +34,32 @@ class ParticipantServices {
       return null;
     }
   }
+
+  static Future<dynamic> processParticipant(
+      String participantId, String status) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return null;
+      }
+
+      final response = await http.get(
+        Uri.parse(
+            '${Env.BACKEND_URL}/participants/process/$participantId/$status'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+    } catch (error) {
+      log('An error occurred while processing the participant request',
+          error: error);
+      return null;
+    }
+  }
 }

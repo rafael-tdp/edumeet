@@ -250,6 +250,7 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 		Participants:      dtos.ConvertParticipantsWithUser(participants),
 		ParticipantsCount: len(participants),
 		EventDocuments:    dtos.EntToEventDocumentDTO(event.Edges.EventDocuments),
+		CreatedBy:         event.CreatedBy,
 	}
 
 	if event.Edges.RemoteEvent != nil {

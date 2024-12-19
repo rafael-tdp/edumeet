@@ -26,15 +26,28 @@ class _EventsPageState extends State<EventsPage> {
     _fetchCurrentUser();
   }
 
-  void _fetchCurrentUser() {
-    UserServices().getUserInfo().then((value) {
+  void _fetchCurrentUser() async {
+    try {
+      final response = await UserServices().getUserInfo();
       setState(() {
-        _currentUser = value.data;
+        _currentUser = response.data;
       });
-    });
+    } catch (e) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("User not loaded")),
+      );
+    }
   }
 
   void _openEventPage(String eventId) {
+    if (_currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("User not loaded")),
+      );
+      return;
+    }
+
     Navigator.of(context).push(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 150),
@@ -45,7 +58,8 @@ class _EventsPageState extends State<EventsPage> {
               begin: const Offset(1.0, 0.0),
               end: Offset.zero,
             ).animate(animation),
-            child: EventDetailsPage(eventId: eventId),
+            child:
+                EventDetailsPage(eventId: eventId, currentUser: _currentUser!),
           );
         },
       ),
@@ -66,12 +80,17 @@ class _EventsPageState extends State<EventsPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_currentUser == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         automaticallyImplyLeading: false,
-        // toolbarHeight: 30,
         backgroundColor: Colors.transparent,
         actions: [
           IconButton(
@@ -105,28 +124,21 @@ class _EventsPageState extends State<EventsPage> {
 
           final events = snapshot.data!;
 
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: events.length,
-                  itemBuilder: (context, index) {
-                    final event = events[index];
-                    return GestureDetector(
-                      onTap: () => _openEventPage(event.id),
-                      child: EventCard(
-                        title: event.title,
-                        date: event.startDate,
-                        imageUrl: event.image,
-                        participants: event.participantsCount.toString(),
-                        isCurrentUserEvent: _currentUser != null &&
-                            event.createdBy == _currentUser!.id,
-                      ),
-                    );
-                  },
+          return ListView.builder(
+            itemCount: events.length,
+            itemBuilder: (context, index) {
+              final event = events[index];
+              return GestureDetector(
+                onTap: () => _openEventPage(event.id),
+                child: EventCard(
+                  title: event.title,
+                  date: event.startDate,
+                  imageUrl: event.image,
+                  participants: event.participantsCount.toString(),
+                  isCurrentUserEvent: event.createdBy == _currentUser!.id,
                 ),
-              ),
-            ],
+              );
+            },
           );
         },
       ),

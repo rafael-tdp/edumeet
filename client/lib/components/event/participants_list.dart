@@ -1,26 +1,151 @@
+import 'package:client/core/services/participant_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:client/screens/profile_screen.dart';
 
-class ParticipantsList extends StatelessWidget {
+class ParticipantsList extends StatefulWidget {
   final List<dynamic> participants;
+  final bool isCurrentUserEvent;
 
-  const ParticipantsList({super.key, required this.participants});
+  const ParticipantsList({
+    super.key,
+    required this.participants,
+    required this.isCurrentUserEvent,
+  });
+
+  @override
+  _ParticipantsListState createState() => _ParticipantsListState();
+}
+
+class _ParticipantsListState extends State<ParticipantsList> {
+  void _acceptUser(String participantId) {
+    ParticipantServices.processParticipant(participantId, 'accepted');
+    setState(() {});
+  }
+
+  void _rejectUser(String participantId) {
+    ParticipantServices.processParticipant(participantId, 'rejected');
+    setState(() {});
+  }
+
+  void _removeUser(String participantId) {
+    ParticipantServices.processParticipant(participantId, 'rejected');
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
+    final acceptedParticipants = widget.participants
+        .where((participant) => participant['status'] == 'accepted')
+        .toList();
+
+    final pendingParticipantsCount = widget.participants
+        .where((participant) => participant['status'] == 'pending')
+        .length;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            t.event.participants,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black.withOpacity(0.8),
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                t.event.participants,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black.withOpacity(0.8),
+                ),
+              ),
+              if (widget.isCurrentUserEvent && pendingParticipantsCount > 0)
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.group, size: 28),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text("Gestion des utilisateurs"),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children:
+                                    widget.participants.map((participant) {
+                                  String status = participant['status'];
+                                  return ListTile(
+                                    title:
+                                        Text(participant['user']['username']),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        if (status == 'pending') ...[
+                                          IconButton(
+                                            icon: const Icon(Icons.check),
+                                            onPressed: () =>
+                                                _acceptUser(participant['id']),
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.cancel),
+                                            onPressed: () =>
+                                                _rejectUser(participant['id']),
+                                          ),
+                                        ],
+                                        if (status == 'accepted') ...[
+                                          IconButton(
+                                            icon: const Icon(Icons.delete),
+                                            onPressed: () =>
+                                                _removeUser(participant['id']),
+                                          ),
+                                        ],
+                                        // rejected status
+                                        if (status == 'rejected') ...[
+                                          const Text(
+                                            'Rejeté',
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text("Fermer"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    Positioned(
+                      right: 4,
+                      top: -4,
+                      child: CircleAvatar(
+                        radius: 10,
+                        backgroundColor: Colors.red,
+                        child: Text(
+                          pendingParticipantsCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
           ),
         ),
         const SizedBox(height: 10),
@@ -28,13 +153,13 @@ class ParticipantsList extends StatelessWidget {
           height: 100,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: participants.length,
+            itemCount: acceptedParticipants.length,
             itemBuilder: (context, index) {
-              final participant = participants[index];
+              final participant = acceptedParticipants[index];
               return GestureDetector(
                 onTap: () {
                   final bool isCurrentUser =
-                      participant['user']['id'] == 'test'; // userId;
+                      participant['user']['id'] == 'test';
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -83,6 +208,63 @@ class ParticipantsList extends StatelessWidget {
             },
           ),
         ),
+        if (widget.isCurrentUserEvent) ...[
+          const SizedBox(height: 20),
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Gestion des utilisateurs"),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: widget.participants.map((participant) {
+                          String status = participant['status'];
+                          return ListTile(
+                            title: Text(participant['user']['username']),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (status == 'pending') ...[
+                                  IconButton(
+                                    icon: const Icon(Icons.check),
+                                    onPressed: () =>
+                                        _acceptUser(participant['id']),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.cancel),
+                                    onPressed: () =>
+                                        _rejectUser(participant['id']),
+                                  ),
+                                ],
+                                if (status == 'accepted') ...[
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () =>
+                                        _removeUser(participant['id']),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("Fermer"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: const Text("Gérer les utilisateurs"),
+            ),
+          ),
+        ],
       ],
     );
   }
@@ -107,7 +289,10 @@ class UserProfileWrapper extends StatelessWidget {
               backgroundColor: Colors.white,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.black,
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ),

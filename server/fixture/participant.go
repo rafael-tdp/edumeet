@@ -23,9 +23,14 @@ func (e *Participant) GenerateParticipant(ctx context.Context, client *ent.Clien
 
 	// create 2 or 3 participants for each event
 	for _, event := range events {
-		for i := 0; i < gofakeit.Number(2, 3); i++ {
+		for i := 0; i < 3; i++ {
 			_, err := client.Participant.Create().
-				SetStatus("ACCEPTED").
+				SetStatus(func() string {
+					if i == 2 {
+						return "pending"
+					}
+					return "accepted"
+				}()).
 				SetRequestedAt(time.Now()).
 				SetJoinedAt(time.Now()).
 				SetUserID(users[gofakeit.Number(0, len(users)-1)].ID).

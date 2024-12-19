@@ -79,4 +79,5 @@ type EventWithDetailsDTO struct {
 	ParticipantsCount int                      `json:"participants_count"`
 	Participants      []ParticipantWithUserDTO `json:"participants"`
 	EventDocuments    []*EventDocumentDTO      `json:"event_documents"`
+	CreatedBy         *string                  `json:"created_by,omitempty"`
 }
