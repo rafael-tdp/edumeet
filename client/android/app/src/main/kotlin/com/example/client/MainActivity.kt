@@ -1,4 +1,4 @@
-package com.example.client
+package com.edumeetApp.Edumeet
 
 import io.flutter.embedding.android.FlutterActivity
 
