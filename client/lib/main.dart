@@ -10,14 +10,25 @@ import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
 import 'utils/colors.dart';
 import 'screens/conversations_screen.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
+
+final _router = GoRouter(initialLocation: '/',routes: [
+  GoRoute(path: '/', builder: (context, state) => const AuthGuard(child: HomePage())),
+  GoRoute(path: LoginPage.routeName, name: LoginPage.routeName.replaceAll("/", ""), builder: (context, state) => const LoginPage()),
+  GoRoute(path: RegisterPage.routeName, name: RegisterPage.routeName.replaceAll("/", ""), builder: (context, state) => const RegisterPage()),
+  GoRoute(path: HomePage.routeName, name: HomePage.routeName.replaceAll("/", ""), builder: (context, state) => const HomePage()),
+  GoRoute(path: ForgotPasswordPage.routeName, name: ForgotPasswordPage.routeName.replaceAll("/", ""), builder: (context, state) => const ForgotPasswordPage()),
+]);
 
 void main() {
+  setUrlStrategy(PathUrlStrategy());
   runApp(
     DevicePreview(
       enabled: true,
@@ -34,26 +45,9 @@ class MyApp extends StatelessWidget {
         create: (context) => LocaleProvider(),
         builder: (context, build) {
           final provider = Provider.of<LocaleProvider>(context);
-
-          return MaterialApp(
+          return MaterialApp.router(
             debugShowCheckedModeBanner: false,
-            routes: {
-              '/': (context) => const AuthGuard(child: HomePage()),
-              LoginPage.routeName: (context) => const LoginPage(),
-              RegisterPage.routeName: (context) => const RegisterPage(),
-              HomePage.routeName: (context) => const HomePage(),
-              ForgotPasswordPage.routeName: (context) =>
-                  const ForgotPasswordPage(),
-            },
-            onGenerateRoute: (routeSettings) {
-              switch (routeSettings.name) {
-                case EditProfilePage.routeName:
-                  return MaterialPageRoute(
-                      builder: (context) => EditProfilePage(
-                          user: routeSettings.arguments as User));
-              }
-              return null;
-            },
+            routerConfig: _router,
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             locale: provider.currentLocale.flutterLocale,
             supportedLocales: AppLocaleUtils.supportedLocales,
@@ -66,6 +60,7 @@ class HomePage extends StatefulWidget {
   static const String routeName = '/home';
   static navigateTo(BuildContext context) {
     Navigator.pushNamed(context, routeName);
+    context.go(routeName);
   }
 
   const HomePage({super.key});

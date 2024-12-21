@@ -3,6 +3,7 @@ import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/valide_account_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
+import 'package:go_router/go_router.dart';
 import '../core/models/auth/registerRequest.dart';
 import '../core/services/adresse_services.dart';
 import '../core/services/auth_services.dart';
@@ -14,6 +15,7 @@ class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
   static const String routeName = '/register';
   static navigateTo(BuildContext context) {
+    GoRouter.of(context).go(routeName);
     Navigator.pushNamed(context, routeName);
   }
 

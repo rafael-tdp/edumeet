@@ -5,6 +5,7 @@ import 'package:client/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/colors.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
+import 'package:go_router/go_router.dart';
 
 import '../components/profile_button.dart';
 import '../core/models/user.dart';
@@ -14,6 +15,7 @@ class EditProfilePage extends StatefulWidget {
   static navigateTo(BuildContext context,
       {required Map<String, dynamic> user}) {
     Navigator.pushNamed(context, routeName, arguments: user);
+    GoRouter.of(context).go(routeName, extra: user);
   }
 
   const EditProfilePage({super.key, required this.user});

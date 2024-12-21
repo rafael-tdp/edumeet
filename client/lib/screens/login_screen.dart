@@ -5,6 +5,7 @@ import 'package:client/core/models/auth/loginRequest.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:client/screens/forgot_password_screen.dart';
+import 'package:go_router/go_router.dart';
 import '../main.dart';
 import '../utils/colors.dart';
 
@@ -12,6 +13,7 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
   static const String routeName = '/login';
   static navigateTo(BuildContext context) {
+    GoRouter.of(context).go(routeName);
     Navigator.pushNamed(context, routeName);
   }
 
