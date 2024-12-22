@@ -5,11 +5,12 @@ import 'package:client/components/messages/chat_message.dart';
 import 'package:go_router/go_router.dart';
 
 class EventChatPage extends StatefulWidget {
-  static const String routeName = '/event-chat/:eventId';
+  static const String routeName = '/event-chat';
   static navigateTo(BuildContext context, Event event, String eventId) {
     // Navigator.pushNamed(context, routeName, arguments: event);
-    final routeNameEventChat = routeName.replaceAll(':eventId', eventId);
-    context.go(routeNameEventChat, extra: {'event': event, 'eventId': event.id});
+    // final routeNameEventChat = routeName.replaceAll(':eventId', eventId);
+    // print('eventId: ${event.id}');
+    context.go('$routeName/$eventId', extra: event);
   }
   final Event event;
   final String eventId;

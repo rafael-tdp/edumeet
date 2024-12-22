@@ -129,11 +129,11 @@ final _router = GoRouter(
           )
       ),
       GoRoute(
-          path: EventChatPage.routeName,
+          path: '${EventChatPage.routeName}/:eventId',
           name: EventChatPage.routeName.replaceAll("/", ""),
           builder: (context, state) {
             final eventId = state.pathParameters['eventId']!;
-            final event = state.pathParameters['event'] as Event;
+            final event = state.extra as Event;
             return EventChatPage(
               eventId: eventId,
               event: event,
