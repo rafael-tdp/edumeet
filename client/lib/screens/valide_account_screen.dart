@@ -4,10 +4,17 @@ import 'package:client/core/services/auth_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/reset_password_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../utils/colors.dart';
 import 'login_screen.dart';
 
 class ValidateAccountPage extends StatefulWidget {
+  static const String routeName = '/validate-account';
+  static navigateTo(BuildContext context,
+      {required bool isResetPassword, required String email}) {
+    Navigator.pushNamed(context, routeName,
+        arguments: {'isResetPassword': isResetPassword, 'email': email});
+  }
   final bool isResetPassword;
   final String email;
 
@@ -73,11 +80,12 @@ class _ValidateAccountPageState extends State<ValidateAccountPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(t.register.registerConfirm)),
         );
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginPage()),
-          (route) => false,
-        );
+        // Navigator.pushAndRemoveUntil(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => const LoginPage()),
+        //   (route) => false,
+        // );
+        context.go(LoginPage.routeName);
       }
     } catch (error) {
       setState(() {

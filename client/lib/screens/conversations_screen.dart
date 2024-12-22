@@ -3,8 +3,13 @@ import 'package:client/utils/colors.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:client/fake_data.dart';
 import 'package:client/screens/chat_page.dart';
+import 'package:go_router/go_router.dart';
 
 class ConversationsPage extends StatelessWidget {
+  static const String routeName = '/conversations';
+  static navigateTo(BuildContext context) {
+    context.go(routeName);
+  }
   const ConversationsPage({super.key});
 
   @override

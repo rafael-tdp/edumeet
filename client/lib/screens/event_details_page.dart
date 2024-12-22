@@ -9,8 +9,18 @@ import 'package:client/components/event/messages_preview.dart';
 import 'package:client/screens/event_chat_page.dart';
 import 'package:client/components/event/resources_section.dart';
 import 'package:client/components/event/event_details_section.dart';
+import 'package:go_router/go_router.dart';
+
+import 'events_screen.dart';
 
 class EventDetailsPage extends StatefulWidget {
+  static const String routeName = 'details';
+  static navigateTo(BuildContext context, String eventId, User currentUser) {
+    context.go(
+      '${EventsPage.routeName}/$eventId/$routeName',
+      extra: currentUser,
+    );
+  }
   final String eventId;
   final User currentUser;
 
@@ -58,7 +68,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => EventChatPage(event: event),
+        builder: (context) => EventChatPage(event: event, eventId: event.id),
       ),
     );
   }

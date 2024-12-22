@@ -1,37 +1,119 @@
-import 'package:client/core/guard/auth_gard.dart';
-import 'package:client/core/models/user.dart';
-import 'package:client/core/services/message_services.dart';
-import 'package:client/i18n/generated/translations.g.dart';
-import 'package:client/providers/locale_provider.dart';
 import 'package:client/screens/edit_profile_page.dart';
-import 'package:client/screens/forgot_password_screen.dart';
-import 'package:client/screens/login_screen.dart';
-import 'package:client/screens/profile_screen.dart';
-import 'package:client/screens/register_screen.dart';
+import 'package:client/screens/event_details_page.dart';
+import 'package:client/screens/valide_account_screen.dart';
+import 'package:client/utils/colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:client/providers/locale_provider.dart';
+import 'package:client/screens/login_screen.dart';
+import 'package:client/screens/register_screen.dart';
+import 'package:client/screens/forgot_password_screen.dart';
+import 'package:client/screens/profile_screen.dart';
+import 'core/models/user.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
-import 'utils/colors.dart';
 import 'screens/conversations_screen.dart';
+import 'package:client/core/guard/auth_gard.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
-final _router = GoRouter(initialLocation: '/',routes: [
-  GoRoute(path: '/', builder: (context, state) => const AuthGuard(child: HomePage())),
-  GoRoute(path: LoginPage.routeName, name: LoginPage.routeName.replaceAll("/", ""), builder: (context, state) => const LoginPage()),
-  GoRoute(path: RegisterPage.routeName, name: RegisterPage.routeName.replaceAll("/", ""), builder: (context, state) => const RegisterPage()),
-  GoRoute(path: HomePage.routeName, name: HomePage.routeName.replaceAll("/", ""), builder: (context, state) => const HomePage()),
-  GoRoute(path: ForgotPasswordPage.routeName, name: ForgotPasswordPage.routeName.replaceAll("/", ""), builder: (context, state) => const ForgotPasswordPage()),
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _router = GoRouter(
+    initialLocation: '/',
+    routes: [
+      ShellRoute(
+          navigatorKey: _rootNavigatorKey,
+          builder: (context, state, child) => Scaffold(
+            body: HomePage(child: child),
+          ),
+        routes: [
+          GoRoute(
+            path: HomePage.routeName,
+            builder: (context, state) => const SwipeCardsPage(),
+          ),
+          GoRoute(
+            path: EventsPage.routeName,
+            builder: (context, state) => const EventsPage(),
+            routes: [
+              GoRoute(
+                path: ':eventId/details',
+                builder: (context, state) {
+                  final eventId = state.pathParameters['eventId']!;
+                  final currentUser = state.extra as User;
+                  return EventDetailsPage(
+                    eventId: eventId,
+                    currentUser: currentUser,
+                  );
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: ConversationsPage.routeName,
+            builder: (context, state) => const ConversationsPage(),
+          ),
+          GoRoute(
+            path: ProfilePage.routeName,
+            builder: (context, state) => const ProfilePage(isCurrentUser: true),
+          ),
+        ],
+      ),
+      GoRoute(
+          path: '/',
+          builder: (context, state) => const AuthGuard(child: HomePage())
+      ),
+      GoRoute(
+          path: LoginPage.routeName,
+          name: LoginPage.routeName.replaceAll("/", ""),
+          builder: (context, state) => const LoginPage()
+      ),
+      GoRoute(
+          path: RegisterPage.routeName,
+          name: RegisterPage.routeName.replaceAll("/", ""),
+          builder: (context, state) => const RegisterPage()
+      ),
+      GoRoute(
+          path: HomePage.routeName,
+          name: HomePage.routeName.replaceAll("/", ""),
+          builder: (context, state) => const HomePage()
+      ),
+      GoRoute(
+          path: ForgotPasswordPage.routeName,
+          name: ForgotPasswordPage.routeName.replaceAll("/", ""),
+          builder: (context, state) => const ForgotPasswordPage()
+      ),
+      GoRoute(
+        path: EditProfilePage.routeName,
+        name: EditProfilePage.routeName.replaceAll("/", ""),
+        builder: (context, state) => EditProfilePage(
+          user: state.extra as User,
+        ),
+      ),
+      GoRoute(
+        path: ValidateAccountPage.routeName,
+        builder: (context, state) => ValidateAccountPage(
+          isResetPassword: state.pathParameters['isResetPassword'] == 'true',
+          email: state.pathParameters['email']!,
+        ),
+      ),
+      GoRoute(
+        path: ProfilePage.routeName,
+        name: ProfilePage.routeName.replaceAll("/", ""),
+        builder: (context, state) => const ProfilePage(
+          isCurrentUser: false,
+        ),
+      ),
 ]);
 
 void main() {
   setUrlStrategy(PathUrlStrategy());
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: !kReleaseMode,
       builder: (context) => TranslationProvider(child: const MyApp()),
     ),
   );
@@ -59,14 +141,12 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatefulWidget {
   static const String routeName = '/home';
   static navigateTo(BuildContext context) {
-    Navigator.pushNamed(context, routeName);
     context.go(routeName);
   }
-
-  const HomePage({super.key});
+  final Widget? child;
+  const HomePage({super.key, this.child});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
 }
 
@@ -86,6 +166,21 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _currentIndex = index;
     });
+
+    switch (index) {
+      case 0:
+        context.go(HomePage.routeName);
+        break;
+      case 1:
+        context.go(EventsPage.routeName);
+        break;
+      case 2:
+        context.go(ConversationsPage.routeName);
+        break;
+      case 3:
+        context.go(ProfilePage.routeName);
+        break;
+    }
   }
 
   @override

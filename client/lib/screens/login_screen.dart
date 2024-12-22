@@ -43,10 +43,7 @@ class _LoginPageState extends State<LoginPage> {
       );
       ResponseRequest response = await _authServices.login(loginRequest);
       if (response.success) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
+        context.go(HomePage.routeName);
       } else {
         setState(() {
           _errorMessage = response.message;
@@ -142,11 +139,7 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ForgotPasswordPage()),
-                        );
+                        context.go(ForgotPasswordPage.routeName);
                       },
                       child: Text(
                         t.login.forgotPassword,
@@ -197,11 +190,7 @@ class _LoginPageState extends State<LoginPage> {
                       Text(t.login.noAccount),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const RegisterPage()),
-                          );
+                          context.go(RegisterPage.routeName);
                         },
                         child: Text(
                           t.login.createAccount,

@@ -97,12 +97,16 @@ class _RegisterPageState extends State<RegisterPage> {
       ResponseRequest response = await _authServices.register(registerRequest);
       if (response.success) {
         final userId = response.data["id"];
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ValidateAccountPage(
-                  isResetPassword: false, email: registerRequest.email)),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //       builder: (context) => ValidateAccountPage(
+        //           isResetPassword: false, email: registerRequest.email)),
+        // );
+        context.go(ValidateAccountPage.routeName, extra: {
+          'isResetPassword': false,
+          'email': registerRequest.email,
+        });
       } else {
         setState(() {
           _errorMessage = response.message;
@@ -425,11 +429,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginPage()),
-                          );
+                          context.go(LoginPage.routeName);
                         },
                         child: Text(
                           t.app.login,

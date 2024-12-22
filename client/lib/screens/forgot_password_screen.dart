@@ -52,10 +52,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(t.auth.resetInstructionsSent)),
       );
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ValidateAccountPage(isResetPassword: true, email: _emailController.text)),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => ValidateAccountPage(isResetPassword: true, email: _emailController.text)),
+      // );
+      context.go(ValidateAccountPage.routeName, extra: {
+        'isResetPassword': true,
+        'email': _emailController.text,
+      });
     } on AppException catch (error) {
       setState(() {
         _errorMessage = error.message;
@@ -168,10 +172,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const LoginPage()),
-                          );
+                          context.go(LoginPage.routeName);
                         },
                         child: Text(
                           t.app.login,

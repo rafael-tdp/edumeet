@@ -1,6 +1,7 @@
 import 'package:client/core/models/auth/resetPasswordRequest.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../core/services/auth_services.dart';
 import '../utils/colors.dart';
 import '../widgets/password_condition_widget.dart';
@@ -61,10 +62,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(t.auth.passwordResertSuccess)),
         );
-        Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage())
-        );
+        context.go(LoginPage.routeName);
       } else {
         setState(() {
           _errorMessage = t.error.failedToResetPassword;

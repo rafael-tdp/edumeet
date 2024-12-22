@@ -12,10 +12,8 @@ import '../core/models/user.dart';
 
 class EditProfilePage extends StatefulWidget {
   static const String routeName = '/edit-profile';
-  static navigateTo(BuildContext context,
-      {required Map<String, dynamic> user}) {
-    Navigator.pushNamed(context, routeName, arguments: user);
-    GoRouter.of(context).go(routeName, extra: user);
+  static navigateTo(BuildContext context, {required Map<String, dynamic> user}) {
+    context.go(routeName, extra: user);
   }
 
   const EditProfilePage({super.key, required this.user});
@@ -227,11 +225,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     text: t.profile.cancel,
                     backgroundColor: Colors.redAccent,
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ProfilePage()),
-                      );
+                      context.go(ProfilePage.routeName);
                     },
                   ),
                 ],
