@@ -74,13 +74,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ResponseRequest response =
           await UserServices().updateUserInfo(updatedUser);
       if (response.success) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const ProfilePage(
-                    isCurrentUser: true,
-                  )),
-        );
+        // go router
+        context.go(ProfilePage.routeName);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

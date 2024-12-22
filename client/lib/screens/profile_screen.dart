@@ -144,13 +144,8 @@ class ProfilePage extends StatelessWidget {
                             text: t.profile.editProfile,
                             backgroundColor: AppColors.purple,
                             onPressed: () async {
-                              final updatedUser = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      EditProfilePage(user: user),
-                                ),
-                              );
+                              // go router
+                              final updatedUser = await context.push(EditProfilePage.routeName, extra: user) as dynamic;
                               if (updatedUser != null) {
                                 context
                                     .read<ProfileBloc>()

@@ -80,11 +80,6 @@ class _ValidateAccountPageState extends State<ValidateAccountPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(t.register.registerConfirm)),
         );
-        // Navigator.pushAndRemoveUntil(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => const LoginPage()),
-        //   (route) => false,
-        // );
         context.go(LoginPage.routeName);
       }
     } catch (error) {

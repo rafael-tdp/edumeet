@@ -1,5 +1,7 @@
+import 'package:client/core/models/event.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/edit_profile_page.dart';
+import 'package:client/screens/event_chat_page.dart';
 import 'package:client/screens/event_details_page.dart';
 import 'package:client/screens/valide_account_screen.dart';
 import 'package:client/utils/colors.dart';
@@ -13,6 +15,7 @@ import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/screens/profile_screen.dart';
+import 'components/event/participants_list.dart';
 import 'core/models/user.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
@@ -116,6 +119,26 @@ final _router = GoRouter(
         builder: (context, state) => const ProfilePage(
           isCurrentUser: false,
         ),
+      ),
+      GoRoute(
+          path: UserProfileWrapper.routeName,
+          name: UserProfileWrapper.routeName.replaceAll("/", ""),
+          builder: (context, state) => UserProfileWrapper(
+            user: state.pathParameters['user'] as Map<String, String>,
+            isCurrentUser: state.pathParameters['isCurrentUser'] as bool,
+          )
+      ),
+      GoRoute(
+          path: EventChatPage.routeName,
+          name: EventChatPage.routeName.replaceAll("/", ""),
+          builder: (context, state) {
+            final eventId = state.pathParameters['eventId']!;
+            final event = state.pathParameters['event'] as Event;
+            return EventChatPage(
+              eventId: eventId,
+              event: event,
+            );
+          },
       ),
 ]);
 

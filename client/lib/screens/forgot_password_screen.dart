@@ -52,10 +52,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(t.auth.resetInstructionsSent)),
       );
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => ValidateAccountPage(isResetPassword: true, email: _emailController.text)),
-      // );
       context.go(ValidateAccountPage.routeName, extra: {
         'isResetPassword': true,
         'email': _emailController.text,
