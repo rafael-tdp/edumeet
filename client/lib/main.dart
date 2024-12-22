@@ -1,3 +1,4 @@
+import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/screens/event_details_page.dart';
 import 'package:client/screens/valide_account_screen.dart';
@@ -55,6 +56,15 @@ final _router = GoRouter(
           GoRoute(
             path: ConversationsPage.routeName,
             builder: (context, state) => const ConversationsPage(),
+            routes: [
+              GoRoute(
+                path: ':userName/details',
+                builder: (context, state) {
+                  final userName = state.extra as String;
+                  return ChatPage(userName: userName);
+                },
+              )
+            ],
           ),
           GoRoute(
             path: ProfilePage.routeName,
