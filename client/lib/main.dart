@@ -1,26 +1,167 @@
-import 'package:client/core/guard/auth_gard.dart';
-import 'package:client/core/models/user.dart';
-import 'package:client/core/services/message_services.dart';
-import 'package:client/i18n/generated/translations.g.dart';
-import 'package:client/providers/locale_provider.dart';
+import 'package:client/core/models/event.dart';
+import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/edit_profile_page.dart';
-import 'package:client/screens/forgot_password_screen.dart';
-import 'package:client/screens/login_screen.dart';
-import 'package:client/screens/profile_screen.dart';
-import 'package:client/screens/register_screen.dart';
+import 'package:client/screens/event_chat_page.dart';
+import 'package:client/screens/event_details_page.dart';
+import 'package:client/screens/valide_account_screen.dart';
+import 'package:client/utils/colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:client/providers/locale_provider.dart';
+import 'package:client/screens/login_screen.dart';
+import 'package:client/screens/register_screen.dart';
+import 'package:client/screens/forgot_password_screen.dart';
+import 'package:client/screens/profile_screen.dart';
+import 'components/event/participants_list.dart';
+import 'core/models/user.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
-import 'utils/colors.dart';
 import 'screens/conversations_screen.dart';
+import 'package:client/core/guard/auth_gard.dart';
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
+
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final _router = GoRouter(
+    initialLocation: '/',
+    navigatorKey: _rootNavigatorKey,
+    routes: [
+      ShellRoute(
+          navigatorKey: _shellNavigatorKey,
+          builder: (context, state, child) => Scaffold(
+            body: HomePage(child: child),
+          ),
+        routes: [
+          GoRoute(
+            path: HomePage.routeName,
+            parentNavigatorKey: _shellNavigatorKey,
+            builder: (context, state) => const HomePage(),
+          ),
+          GoRoute(
+            path: EventsPage.routeName,
+            parentNavigatorKey: _shellNavigatorKey,
+            builder: (context, state) => const EventsPage(),
+          ),
+          GoRoute(
+            path: ConversationsPage.routeName,
+            parentNavigatorKey: _shellNavigatorKey,
+            builder: (context, state) => const ConversationsPage(),
+            routes: [
+              GoRoute(
+                path: ':userName/details',
+                builder: (context, state) {
+                  final userName = state.extra as String;
+                  return ChatPage(userName: userName);
+                },
+              )
+            ],
+          ),
+          GoRoute(
+            path: ProfilePage.routeName,
+            parentNavigatorKey: _shellNavigatorKey,
+            builder: (context, state) => const ProfilePage(isCurrentUser: true),
+          ),
+        ],
+      ),
+      GoRoute(
+          path: '/',
+          parentNavigatorKey: _rootNavigatorKey,
+          builder: (context, state) => const AuthGuard(child: HomePage())
+      ),
+      GoRoute(
+          path: LoginPage.routeName,
+          name: LoginPage.routeName.replaceAll("/", ""),
+          parentNavigatorKey: _rootNavigatorKey,
+          builder: (context, state) => const LoginPage()
+      ),
+      GoRoute(
+          path: RegisterPage.routeName,
+          name: RegisterPage.routeName.replaceAll("/", ""),
+          parentNavigatorKey: _rootNavigatorKey,
+          builder: (context, state) => const RegisterPage()
+      ),
+      GoRoute(
+          path: HomePage.routeName,
+          name: HomePage.routeName.replaceAll("/", ""),
+          parentNavigatorKey: _rootNavigatorKey,
+          builder: (context, state) => const HomePage()
+      ),
+      GoRoute(
+          path: ForgotPasswordPage.routeName,
+          name: ForgotPasswordPage.routeName.replaceAll("/", ""),
+          parentNavigatorKey: _rootNavigatorKey,
+          builder: (context, state) => const ForgotPasswordPage()
+      ),
+      GoRoute(
+        path: EditProfilePage.routeName,
+        name: EditProfilePage.routeName.replaceAll("/", ""),
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => EditProfilePage(
+          user: state.extra as User,
+        ),
+      ),
+      GoRoute(
+        path: ValidateAccountPage.routeName,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => ValidateAccountPage(
+          isResetPassword: state.pathParameters['isResetPassword'] == 'true',
+          email: state.pathParameters['email']!,
+        ),
+      ),
+      GoRoute(
+        path: ProfilePage.routeName,
+        parentNavigatorKey: _rootNavigatorKey,
+        name: ProfilePage.routeName.replaceAll("/", ""),
+        builder: (context, state) => const ProfilePage(
+          isCurrentUser: false,
+        ),
+      ),
+      GoRoute(
+          path: UserProfileWrapper.routeName,
+          parentNavigatorKey: _rootNavigatorKey,
+          name: UserProfileWrapper.routeName.replaceAll("/", ""),
+          builder: (context, state) => UserProfileWrapper(
+            user: state.pathParameters['user'] as Map<String, String>,
+            isCurrentUser: state.pathParameters['isCurrentUser'] as bool,
+          )
+      ),
+      GoRoute(
+          path: '${EventChatPage.routeName}/:eventId',
+          parentNavigatorKey: _rootNavigatorKey,
+          name: EventChatPage.routeName.replaceAll("/", ""),
+          builder: (context, state) {
+            final eventId = state.pathParameters['eventId']!;
+            final event = state.extra as Event;
+            return EventChatPage(
+              eventId: eventId,
+              event: event,
+            );
+          },
+      ),
+      GoRoute(
+        path: '${EventsPage.routeName}/:eventId/details',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          final eventId = state.pathParameters['eventId']!;
+          final currentUser = state.extra as User;
+          return EventDetailsPage(
+            eventId: eventId,
+            currentUser: currentUser,
+          );
+        },
+      ),
+]);
 
 void main() {
+  setUrlStrategy(PathUrlStrategy());
   runApp(
     DevicePreview(
-      enabled: true,
+      enabled: !kReleaseMode,
       builder: (context) => TranslationProvider(child: const MyApp()),
     ),
   );
@@ -34,26 +175,9 @@ class MyApp extends StatelessWidget {
         create: (context) => LocaleProvider(),
         builder: (context, build) {
           final provider = Provider.of<LocaleProvider>(context);
-
-          return MaterialApp(
+          return MaterialApp.router(
             debugShowCheckedModeBanner: false,
-            routes: {
-              '/': (context) => const AuthGuard(child: HomePage()),
-              LoginPage.routeName: (context) => const LoginPage(),
-              RegisterPage.routeName: (context) => const RegisterPage(),
-              HomePage.routeName: (context) => const HomePage(),
-              ForgotPasswordPage.routeName: (context) =>
-                  const ForgotPasswordPage(),
-            },
-            onGenerateRoute: (routeSettings) {
-              switch (routeSettings.name) {
-                case EditProfilePage.routeName:
-                  return MaterialPageRoute(
-                      builder: (context) => EditProfilePage(
-                          user: routeSettings.arguments as User));
-              }
-              return null;
-            },
+            routerConfig: _router,
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             locale: provider.currentLocale.flutterLocale,
             supportedLocales: AppLocaleUtils.supportedLocales,
@@ -65,13 +189,12 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatefulWidget {
   static const String routeName = '/home';
   static navigateTo(BuildContext context) {
-    Navigator.pushNamed(context, routeName);
+    context.go(routeName);
   }
-
-  const HomePage({super.key});
+  final Widget? child;
+  const HomePage({super.key, this.child});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
 }
 
@@ -88,6 +211,20 @@ class _HomePageState extends State<HomePage> {
   ];
 
   void _onTabTapped(int index) {
+    switch (index) {
+      case 0:
+        context.go(HomePage.routeName);
+        break;
+      case 1:
+        context.go(EventsPage.routeName);
+        break;
+      case 2:
+        context.go(ConversationsPage.routeName);
+        break;
+      case 3:
+        context.go(ProfilePage.routeName);
+        break;
+    }
     setState(() {
       _currentIndex = index;
     });

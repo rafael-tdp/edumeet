@@ -54,7 +54,6 @@ class _LanguageSelectionState extends State<LanguageSelection> {
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(widget.parentContext);
-    final supportedLocales = AppLocaleUtils.supportedLocales;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -100,8 +99,8 @@ class _LanguageSelectionState extends State<LanguageSelection> {
                                 : languageCode == "uk"
                                     ? "ua"
                                     : languageCode,
-                            height: 25,
-                            width: 50,
+                            height: 20,
+                            width: 40,
                             fit: BoxFit.fill,
                           ),
                           title: Text(languageNames[languageCode]!),

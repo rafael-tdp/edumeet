@@ -2,11 +2,20 @@ import 'package:client/core/models/event.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/messages/message_input_field.dart';
 import 'package:client/components/messages/chat_message.dart';
+import 'package:go_router/go_router.dart';
 
 class EventChatPage extends StatefulWidget {
+  static const String routeName = '/event-chat';
+  static navigateTo(BuildContext context, Event event, String eventId) {
+    // Navigator.pushNamed(context, routeName, arguments: event);
+    // final routeNameEventChat = routeName.replaceAll(':eventId', eventId);
+    // print('eventId: ${event.id}');
+    context.go('$routeName/$eventId', extra: event);
+  }
   final Event event;
+  final String eventId;
 
-  const EventChatPage({super.key, required this.event});
+  const EventChatPage({super.key, required this.event, required this.eventId});
 
   @override
   // ignore: library_private_types_in_public_api

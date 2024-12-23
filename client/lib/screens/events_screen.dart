@@ -8,8 +8,13 @@ import 'package:client/screens/event_details_page.dart';
 import 'package:client/screens/create_event_screen.dart';
 import 'package:client/core/models/event.dart';
 import 'package:client/core/services/user_services.dart';
+import 'package:go_router/go_router.dart';
 
 class EventsPage extends StatefulWidget {
+  static const String routeName = '/events';
+  static navigateTo(BuildContext context) {
+    context.go(routeName);
+  }
   const EventsPage({super.key});
 
   @override
@@ -40,7 +45,17 @@ class _EventsPageState extends State<EventsPage> {
     }
   }
 
-  void _openEventPage(String eventId) {
+// void _openEventPage(BuildContext context, String eventId) {
+//   if (_currentUser == null) {
+//     ScaffoldMessenger.of(context).showSnackBar(
+//       const SnackBar(content: Text("User not loaded")),
+//     );
+//     return;
+//   }
+//
+//   EventDetailsPage.navigateTo(context, eventId, _currentUser!);
+// }
+  void _openEventPage(BuildContext context, String eventId) {
     if (_currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User not loaded")),
@@ -53,6 +68,8 @@ class _EventsPageState extends State<EventsPage> {
         transitionDuration: const Duration(milliseconds: 150),
         reverseTransitionDuration: const Duration(milliseconds: 150),
         pageBuilder: (context, animation, secondaryAnimation) {
+          // context.go(EventDetailsPage.routeName, extra: {eventId, _currentUser});
+          EventDetailsPage.navigateTo(context, eventId, _currentUser!);
           return SlideTransition(
             position: Tween<Offset>(
               begin: const Offset(1.0, 0.0),
@@ -67,9 +84,7 @@ class _EventsPageState extends State<EventsPage> {
   }
 
   void _createEvent() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const CreateEventPage()),
-    );
+    context.go(CreateEventPage.routeName);
   }
 
   Future<List<Event>> _fetchEvents() {
@@ -129,7 +144,7 @@ class _EventsPageState extends State<EventsPage> {
             itemBuilder: (context, index) {
               final event = events[index];
               return GestureDetector(
-                onTap: () => _openEventPage(event.id),
+                onTap: () => _openEventPage(context, event.id),
                 child: EventCard(
                   title: event.title,
                   date: event.startDate,

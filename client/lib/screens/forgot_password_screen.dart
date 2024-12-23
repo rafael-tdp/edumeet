@@ -2,6 +2,7 @@ import 'package:client/core/models/response.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/valide_account_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../core/exceptions/app_exception.dart';
 import '../core/models/auth/forgotPasswordRequest.dart';
 import '../core/services/auth_services.dart';
@@ -11,6 +12,7 @@ import 'login_screen.dart';
 class ForgotPasswordPage extends StatefulWidget {
   static const String routeName = '/forgot-password';
   static navigateTo(BuildContext context) {
+    GoRouter.of(context).go(routeName);
     Navigator.pushNamed(context, routeName);
   }
 
@@ -50,10 +52,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(t.auth.resetInstructionsSent)),
       );
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ValidateAccountPage(isResetPassword: true, email: _emailController.text)),
-      );
+      context.go(ValidateAccountPage.routeName, extra: {
+        'isResetPassword': true,
+        'email': _emailController.text,
+      });
     } on AppException catch (error) {
       setState(() {
         _errorMessage = error.message;
@@ -166,10 +168,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const LoginPage()),
-                          );
+                          context.go(LoginPage.routeName);
                         },
                         child: Text(
                           t.app.login,

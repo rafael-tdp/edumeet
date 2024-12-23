@@ -2,6 +2,10 @@ import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 
 class CreateEventPage extends StatefulWidget {
+  static const String routeName = '/create-event';
+  static navigateTo(BuildContext context) {
+    Navigator.pushNamed(context, routeName);
+  }
   const CreateEventPage({super.key});
 
   @override
