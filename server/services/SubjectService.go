@@ -76,19 +76,3 @@ func (sr *SubjectService) Update(subjectID string, subjectDTO dtos.SubjectDTO) (
 
 	return updatedSubject, nil
 }
-
-func (ss *SubjectService) AddUserToSubject(subjectID string, userID string) error {
-	_, err := ss.subjectRepository.AddUserToSubject(subjectID, userID)
-	if err != nil {
-		return errors.New("error adding user to subject")
-	}
-	return nil
-}
-
-func (ss *SubjectService) RemoveUserFromSubject(subjectID string, userID string) error {
-	_, err := ss.subjectRepository.RemoveUserFromSubject(subjectID, userID)
-	if err != nil {
-		return errors.New("error removing user from subject")
-	}
-	return nil
-}

@@ -120,39 +120,3 @@ func (sc *SubjectController) GetSubjects(c *fiber.Ctx) error {
 
 	return c.JSON(subjects)
 }
-
-func (sc *SubjectController) AddUserToSubject(c *fiber.Ctx) error {
-	subjectID, err := ulid.Parse(c.Params("id"))
-
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
-	}
-
-	user := c.Locals("user").(*ent.User)
-
-	errAddUser := sc.subjectService.AddUserToSubject(subjectID.String(), user.ID)
-
-	if errAddUser != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": errAddUser.Error()})
-	}
-
-	return c.SendStatus(fiber.StatusNoContent)
-}
-
-func (sc *SubjectController) RemoveUserFromSubject(c *fiber.Ctx) error {
-	subjectID, err := ulid.Parse(c.Params("id"))
-
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
-	}
-
-	user := c.Locals("user").(*ent.User)
-
-	errRemoveUser := sc.subjectService.RemoveUserFromSubject(subjectID.String(), user.ID)
-
-	if errRemoveUser != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": errRemoveUser.Error()})
-	}
-
-	return c.SendStatus(fiber.StatusNoContent)
-}

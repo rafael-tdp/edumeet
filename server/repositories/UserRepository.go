@@ -4,6 +4,7 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
+	"edumeet/ent/subject"
 	"edumeet/ent/user"
 	"edumeet/utils"
 	"errors"
@@ -128,4 +129,30 @@ func (ur *UserRepository) GetUserSubjecs(userID string) ([]*ent.Subject, error) 
 		return nil, err
 	}
 	return user.Edges.Subjects, nil
+}
+
+func (ur *UserRepository) UpdateUserSubjects(ctx context.Context, userID string, subjectIDs []string) (*ent.User, error) {
+	user, err := ur.client.User.Query().Where(user.IDEQ(userID)).WithSubjects().Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = user.Update().ClearSubjects().Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, subjectID := range subjectIDs {
+		subject, err := ur.client.Subject.Query().Where(subject.IDEQ(subjectID)).Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = user.Update().AddSubjects(subject).Save(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return user, nil
 }

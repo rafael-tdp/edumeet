@@ -125,3 +125,17 @@ func (us *UserService) GetUserSubjects(userID string) ([]dtos.SubjectDTO, error)
 
 	return subjectsDTO, nil
 }
+
+func (us *UserService) UpdateUserSubjects(ctx context.Context, userID string, subjects []string) error {
+	_, err := us.userRepo.GetById(userID)
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	_, err = us.userRepo.UpdateUserSubjects(ctx, userID, subjects)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

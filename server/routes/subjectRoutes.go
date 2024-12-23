@@ -16,8 +16,6 @@ func setupRoutesSubject(app *fiber.App, subjectController *controllers.SubjectCo
 	app.Delete("/subjects/:id", middlewares.AdminMiddleware, subjectController.Delete)
 	app.Put("/subjects/:id", middlewares.AdminMiddleware, subjectController.Update)
 	app.Get("/subjects", subjectController.GetSubjects)
-	app.Post("/subjects/:id/subscribe", middlewares.JWTAuthMiddleware, subjectController.AddUserToSubject)
-	app.Delete("/subjects/:id/unsubscribe", middlewares.JWTAuthMiddleware, subjectController.RemoveUserFromSubject)
 }
 
 func initSubjectController(client *ent.Client) *controllers.SubjectController {

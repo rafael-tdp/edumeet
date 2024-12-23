@@ -121,3 +121,18 @@ func (uc *UserController) GetUserSubjects(c *fiber.Ctx) error {
 	}
 	return c.JSON(subjects)
 }
+
+func (uc *UserController) UpdateUserSubjects(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+	var subjects []string
+	if err := c.BodyParser(&subjects); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	err := uc.userService.UpdateUserSubjects(ctx, currentUser.ID, subjects)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"message": "Subjects updated successfully"})
+}
