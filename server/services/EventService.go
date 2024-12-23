@@ -278,3 +278,11 @@ func (es *EventService) GetParticipantPending(eventID string) ([]dtos.PendingPar
 
 	return pendingParticipantsDTO, nil
 }
+
+func (es *EventService) UpdateEventSubjects(ctx context.Context, eventID string, subjects []string) error {
+	_, err := es.eventRepository.UpdateEventSubjects(ctx, eventID, subjects)
+	if err != nil {
+		return err
+	}
+	return nil
+}

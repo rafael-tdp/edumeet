@@ -240,3 +240,34 @@ func (ec *EventController) GetPendingParticipant(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(pendingParticipants)
 
 }
+
+func (ec *EventController) UpdateEventSubjects(c *fiber.Ctx) error {
+	eventID, errParse := ulid.Parse(c.Params("id"))
+	if errParse != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	currentUser := c.Locals("user").(*ent.User)
+
+	event, errGetEvent := ec.eventservice.GetEvent(eventID.String())
+
+	if errGetEvent != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": errGetEvent.Error()})
+	}
+
+	if !guards.CanAuthorize(currentUser, event) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
+	var subjects []string
+	if err := c.BodyParser(&subjects); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	err := ec.eventservice.UpdateEventSubjects(ctx, event.ID, subjects)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"message": "Subjects updated successfully"})
+}

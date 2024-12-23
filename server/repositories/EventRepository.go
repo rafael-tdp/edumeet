@@ -7,7 +7,9 @@ import (
 	"edumeet/ent/event"
 	"edumeet/ent/participant"
 	"edumeet/ent/remoteevent"
+	"edumeet/ent/subject"
 	"edumeet/ent/user"
+	"edumeet/utils"
 )
 
 type EventRepository struct {
@@ -21,6 +23,16 @@ func NewEventRepository(client *ent.Client) *EventRepository {
 }
 
 func (er *EventRepository) CreateEvent(ctx context.Context, event dtos.EventDTO) (*ent.Event, error) {
+	subjects := make([]*ent.Subject, 0)
+
+	for _, subjectDTO := range event.Subjects {
+		entSubject, err := er.client.Subject.Query().Where(subject.IDEQ(subjectDTO.ID)).First(ctx)
+		if err != nil {
+			return nil, err
+		}
+		subjects = append(subjects, entSubject)
+	}
+
 	createdEvent, err := er.client.Event.
 		Create().
 		SetTitle(event.Title).
@@ -29,6 +41,7 @@ func (er *EventRepository) CreateEvent(ctx context.Context, event dtos.EventDTO)
 		SetIsPrivate(event.IsPrivate).
 		SetDescription(event.Description).
 		SetInvitationLink(event.InvitationLink).
+		AddSubjects(subjects...).
 		Save(ctx)
 
 	if err != nil {
@@ -53,12 +66,18 @@ func (er *EventRepository) CreateRemoteEvent(ctx context.Context, remoteEvent dt
 }
 
 func (er *EventRepository) CreatePhysicalEvent(ctx context.Context, physicalEvent dtos.PhysicalEventDTO, eventID string) (*ent.PhysicalEvent, error) {
+	lat, lng, err := utils.GetLatLng(physicalEvent.Location)
+
+	if err != nil {
+		return nil, err
+	}
+
 	createdPhysicalEvent, err := er.client.PhysicalEvent.
 		Create().
 		SetEventID(eventID).
 		SetLocation(physicalEvent.Location).
-		SetLat(physicalEvent.Lat).
-		SetLng(physicalEvent.Lng).
+		SetLat(lat).
+		SetLng(lng).
 		Save(ctx)
 
 	if err != nil {
@@ -195,4 +214,30 @@ func (er *EventRepository) GetEventsCreatedByUser(userID string) ([]*ent.Event, 
 	}
 
 	return events, nil
+}
+
+func (er *EventRepository) UpdateEventSubjects(ctx context.Context, eventId string, subjectIDs []string) (*ent.Event, error) {
+	event, err := er.client.Event.Query().Where(event.IDEQ(eventId)).WithSubjects().Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = event.Update().ClearSubjects().Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, subjectID := range subjectIDs {
+		subject, err := er.client.Subject.Query().Where(subject.IDEQ(subjectID)).Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = event.Update().AddSubjects(subject).Save(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return event, nil
 }
