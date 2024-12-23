@@ -29,32 +29,32 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _router = GoRouter(
     initialLocation: '/',
     routes: [
-      ShellRoute(
-          navigatorKey: _rootNavigatorKey,
-          builder: (context, state, child) => Scaffold(
-            body: HomePage(child: child),
-          ),
-        routes: [
+      // ShellRoute(
+      //     navigatorKey: _rootNavigatorKey,
+      //     builder: (context, state, child) => Scaffold(
+      //       body: HomePage(child: child),
+      //     ),
+      //   routes: [
           GoRoute(
-            path: HomePage.routeName,
+            path: SwipeCardsPage.routeName,
             builder: (context, state) => const SwipeCardsPage(),
           ),
           GoRoute(
             path: EventsPage.routeName,
             builder: (context, state) => const EventsPage(),
-            routes: [
-              GoRoute(
-                path: ':eventId/details',
-                builder: (context, state) {
-                  final eventId = state.pathParameters['eventId']!;
-                  final currentUser = state.extra as User;
-                  return EventDetailsPage(
-                    eventId: eventId,
-                    currentUser: currentUser,
-                  );
-                },
-              ),
-            ],
+            // routes: [
+            //   GoRoute(
+            //     path: ':eventId/details',
+            //     builder: (context, state) {
+            //       final eventId = state.pathParameters['eventId']!;
+            //       final currentUser = state.extra as User;
+            //       return EventDetailsPage(
+            //         eventId: eventId,
+            //         currentUser: currentUser,
+            //       );
+            //     },
+            //   ),
+            // ],
           ),
           GoRoute(
             path: ConversationsPage.routeName,
@@ -73,8 +73,8 @@ final _router = GoRouter(
             path: ProfilePage.routeName,
             builder: (context, state) => const ProfilePage(isCurrentUser: true),
           ),
-        ],
-      ),
+      //   ],
+      // ),
       GoRoute(
           path: '/',
           builder: (context, state) => const AuthGuard(child: HomePage())
@@ -140,6 +140,17 @@ final _router = GoRouter(
             );
           },
       ),
+      GoRoute(
+        path: '${EventsPage.routeName}/:eventId/details',
+        builder: (context, state) {
+          final eventId = state.pathParameters['eventId']!;
+          final currentUser = state.extra as User;
+          return EventDetailsPage(
+            eventId: eventId,
+            currentUser: currentUser,
+          );
+        },
+      ),
 ]);
 
 void main() {
@@ -202,7 +213,7 @@ class _HomePageState extends State<HomePage> {
 
     switch (index) {
       case 0:
-        context.go(HomePage.routeName);
+        context.go(SwipeCardsPage.routeName);
         break;
       case 1:
         context.go(EventsPage.routeName);

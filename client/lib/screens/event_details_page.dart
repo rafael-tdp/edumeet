@@ -126,7 +126,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     weight: 30,
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    EventsPage.navigateTo(context);
                   },
                 ),
               ),
