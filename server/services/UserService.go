@@ -139,3 +139,36 @@ func (us *UserService) UpdateUserSubjects(ctx context.Context, userID string, su
 
 	return nil
 }
+
+func (us *UserService) CreateFriendship(ctx context.Context, userID string, friendship dtos.FriendshipDTO) (*ent.Friendship, error) {
+	user, err := us.userRepo.GetById(userID)
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	friend, err := us.userRepo.GetByUsername(friendship.User.Username)
+	if err != nil {
+		return nil, errors.New("friend not found")
+	}
+
+	friendshipCreated, err := us.userRepo.CreateFriendship(ctx, user.ID, friend.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return friendshipCreated, nil
+}
+
+func (us *UserService) UpdateFriendship(ctx context.Context, friendshipID string, status string) (*ent.Friendship, error) {
+	friendship, err := us.userRepo.GetFriendshipById(friendshipID)
+	if err != nil {
+		return nil, errors.New("friendship not found")
+	}
+
+	updatedFriendship, err := us.userRepo.UpdateFriendship(ctx, friendship.ID, status)
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedFriendship, nil
+}

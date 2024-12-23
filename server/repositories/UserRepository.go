@@ -4,6 +4,7 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
+	"edumeet/ent/friendship"
 	"edumeet/ent/subject"
 	"edumeet/ent/user"
 	"edumeet/utils"
@@ -152,6 +153,63 @@ func (ur *UserRepository) UpdateUserSubjects(ctx context.Context, userID string,
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	return user, nil
+}
+
+func (ur *UserRepository) CreateFriendship(ctx context.Context, userID string, friendID string) (*ent.Friendship, error) {
+	currentUser, err := ur.client.User.Query().Where(user.IDEQ(userID)).Only(ctx)
+	friend, err := ur.client.User.Query().Where(user.IDEQ(friendID)).Only(ctx)
+	if err != nil {
+		return nil, errors.New("friend not found")
+	}
+
+	friendship, err := ur.client.Friendship.
+		Create().
+		SetStatus("PENDING").
+		SetUser(friend).
+		Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = currentUser.Update().AddFriendships(friendship).Save(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return friendship, nil
+}
+
+func (ur *UserRepository) UpdateFriendship(ctx context.Context, friendshipID string, status string) (*ent.Friendship, error) {
+	friendship, err := ur.client.Friendship.Query().Where(friendship.IDEQ(friendshipID)).Only(ctx)
+	if err != nil {
+		return nil, errors.New("friendship not found")
+	}
+
+	_, err = friendship.Update().SetStatus(status).Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return friendship, nil
+}
+
+func (ur *UserRepository) GetFriendshipById(friendshipID string) (*ent.Friendship, error) {
+	friendship, err := ur.client.Friendship.Query().Where(friendship.IDEQ(friendshipID)).Only(context.Background())
+	if err != nil {
+		return nil, errors.New("friendship not found")
+	}
+
+	return friendship, nil
+}
+
+func (ur *UserRepository) GetByUsername(username string) (*ent.User, error) {
+	user, err := ur.client.User.Query().Where(user.UsernameEQ(username)).Only(context.Background())
+	if err != nil {
+		return nil, errors.New("user not found")
 	}
 
 	return user, nil
