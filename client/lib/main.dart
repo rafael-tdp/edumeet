@@ -26,38 +26,30 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _router = GoRouter(
     initialLocation: '/',
+    navigatorKey: _rootNavigatorKey,
     routes: [
-      // ShellRoute(
-      //     navigatorKey: _rootNavigatorKey,
-      //     builder: (context, state, child) => Scaffold(
-      //       body: HomePage(child: child),
-      //     ),
-      //   routes: [
+      ShellRoute(
+          navigatorKey: _shellNavigatorKey,
+          builder: (context, state, child) => Scaffold(
+            body: HomePage(child: child),
+          ),
+        routes: [
           GoRoute(
-            path: SwipeCardsPage.routeName,
-            builder: (context, state) => const SwipeCardsPage(),
+            path: HomePage.routeName,
+            parentNavigatorKey: _shellNavigatorKey,
+            builder: (context, state) => const HomePage(),
           ),
           GoRoute(
             path: EventsPage.routeName,
+            parentNavigatorKey: _shellNavigatorKey,
             builder: (context, state) => const EventsPage(),
-            // routes: [
-            //   GoRoute(
-            //     path: ':eventId/details',
-            //     builder: (context, state) {
-            //       final eventId = state.pathParameters['eventId']!;
-            //       final currentUser = state.extra as User;
-            //       return EventDetailsPage(
-            //         eventId: eventId,
-            //         currentUser: currentUser,
-            //       );
-            //     },
-            //   ),
-            // ],
           ),
           GoRoute(
             path: ConversationsPage.routeName,
+            parentNavigatorKey: _shellNavigatorKey,
             builder: (context, state) => const ConversationsPage(),
             routes: [
               GoRoute(
@@ -71,43 +63,51 @@ final _router = GoRouter(
           ),
           GoRoute(
             path: ProfilePage.routeName,
+            parentNavigatorKey: _shellNavigatorKey,
             builder: (context, state) => const ProfilePage(isCurrentUser: true),
           ),
-      //   ],
-      // ),
+        ],
+      ),
       GoRoute(
           path: '/',
+          parentNavigatorKey: _rootNavigatorKey,
           builder: (context, state) => const AuthGuard(child: HomePage())
       ),
       GoRoute(
           path: LoginPage.routeName,
           name: LoginPage.routeName.replaceAll("/", ""),
+          parentNavigatorKey: _rootNavigatorKey,
           builder: (context, state) => const LoginPage()
       ),
       GoRoute(
           path: RegisterPage.routeName,
           name: RegisterPage.routeName.replaceAll("/", ""),
+          parentNavigatorKey: _rootNavigatorKey,
           builder: (context, state) => const RegisterPage()
       ),
       GoRoute(
           path: HomePage.routeName,
           name: HomePage.routeName.replaceAll("/", ""),
+          parentNavigatorKey: _rootNavigatorKey,
           builder: (context, state) => const HomePage()
       ),
       GoRoute(
           path: ForgotPasswordPage.routeName,
           name: ForgotPasswordPage.routeName.replaceAll("/", ""),
+          parentNavigatorKey: _rootNavigatorKey,
           builder: (context, state) => const ForgotPasswordPage()
       ),
       GoRoute(
         path: EditProfilePage.routeName,
         name: EditProfilePage.routeName.replaceAll("/", ""),
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => EditProfilePage(
           user: state.extra as User,
         ),
       ),
       GoRoute(
         path: ValidateAccountPage.routeName,
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => ValidateAccountPage(
           isResetPassword: state.pathParameters['isResetPassword'] == 'true',
           email: state.pathParameters['email']!,
@@ -115,6 +115,7 @@ final _router = GoRouter(
       ),
       GoRoute(
         path: ProfilePage.routeName,
+        parentNavigatorKey: _rootNavigatorKey,
         name: ProfilePage.routeName.replaceAll("/", ""),
         builder: (context, state) => const ProfilePage(
           isCurrentUser: false,
@@ -122,6 +123,7 @@ final _router = GoRouter(
       ),
       GoRoute(
           path: UserProfileWrapper.routeName,
+          parentNavigatorKey: _rootNavigatorKey,
           name: UserProfileWrapper.routeName.replaceAll("/", ""),
           builder: (context, state) => UserProfileWrapper(
             user: state.pathParameters['user'] as Map<String, String>,
@@ -130,6 +132,7 @@ final _router = GoRouter(
       ),
       GoRoute(
           path: '${EventChatPage.routeName}/:eventId',
+          parentNavigatorKey: _rootNavigatorKey,
           name: EventChatPage.routeName.replaceAll("/", ""),
           builder: (context, state) {
             final eventId = state.pathParameters['eventId']!;
@@ -142,6 +145,7 @@ final _router = GoRouter(
       ),
       GoRoute(
         path: '${EventsPage.routeName}/:eventId/details',
+        parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
           final eventId = state.pathParameters['eventId']!;
           final currentUser = state.extra as User;
@@ -207,13 +211,9 @@ class _HomePageState extends State<HomePage> {
   ];
 
   void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-
     switch (index) {
       case 0:
-        context.go(SwipeCardsPage.routeName);
+        context.go(HomePage.routeName);
         break;
       case 1:
         context.go(EventsPage.routeName);
@@ -225,6 +225,9 @@ class _HomePageState extends State<HomePage> {
         context.go(ProfilePage.routeName);
         break;
     }
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   @override
