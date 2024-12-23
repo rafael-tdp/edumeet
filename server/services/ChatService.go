@@ -92,7 +92,7 @@ func (cs *ChatService) SendMessageToUser(userID string, message string) error {
 	return nil
 }
 
-func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, participants []dtos.ParticipantDTO, message string, userId string) error {
+func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, participants []dtos.ParticipantDTO, message string, userId string, username string) error {
 	// Create message for event
 	messageCreated, err := cs.chatRepo.CreateMessage(ctx, message, eventID, userId)
 	if err != nil {
@@ -100,11 +100,20 @@ func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, p
 		return err
 	}
 
+	messageResponse := dtos.CreateMessageEventDTO{
+		Type:         "CREATE",
+		Username:     username,
+		MessageId:    messageCreated.ID,
+		EventId:      eventID,
+		CreationDate: messageCreated.CreatedAt.String(),
+		Content:      message,
+	}
+
 	// Send message to all active participants except the sender
 	for _, participant := range participants {
-		if participant.Status == "ACCEPTED" && participant.UserID != userId { // Exclure l'expéditeur
+		if participant.Status == "ACCEPTED" && participant.UserID != userId {
 			userID := participant.UserID
-			_ = cs.SendMessageToUser(userID, fmt.Sprintf("Message for event %s: %s", eventID, messageCreated))
+			_ = cs.SendMessageToUser(userID, utils.JSONStringify(messageResponse))
 		}
 	}
 	return nil
@@ -121,10 +130,16 @@ func (cs *ChatService) DeleteMessage(eventID, messageID, userID string, particip
 	// Construisez l'objet de notification pour les participants
 	deleteMessageDTO := dtos.EntToDeleteMessageDTO(messageID, "DELETE", userID)
 
+	deleteMessage := dtos.DeleteMessageEventDTO{
+		Type:      "DELETE",
+		MessageId: messageID,
+		EventId:   eventID,
+	}
+
 	// Envoyer la notification aux participants connectés
 	for _, participant := range participants {
-		if participant.Status == "ACCEPTED" && participant.UserID != userID { // Exclure l'expéditeur s'il est un participant
-			_ = cs.SendMessageToUser(participant.UserID, utils.JSONStringify(deleteMessageDTO))
+		if participant.Status == "ACCEPTED" && participant.UserID != userID {
+			_ = cs.SendMessageToUser(participant.UserID, utils.JSONStringify(deleteMessage))
 		}
 	}
 

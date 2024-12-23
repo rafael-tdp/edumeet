@@ -131,7 +131,7 @@ func (cc *ChatController) SendMessageToEvent(c *fiber.Ctx) error {
 
 	// Envoyez le message à tous les utilisateurs de cet événement
 	ctx := context.WithValue(c.Context(), "user_id", user.ID)
-	err = cc.chatService.SendMessageToEvent(ctx, eventId, event.Participants, messageDTO.Message, user.ID)
+	err = cc.chatService.SendMessageToEvent(ctx, eventId, event.Participants, messageDTO.Message, user.ID, user.Username)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -141,8 +141,6 @@ func (cc *ChatController) SendMessageToEvent(c *fiber.Ctx) error {
 
 func (cc *ChatController) DeleteMessageEvent(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-
-	fmt.Print("Deleting message")
 
 	messageID, err := ulid.Parse(c.Params("messageId"))
 	if err != nil {
