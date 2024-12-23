@@ -19,15 +19,27 @@ type Event struct {
 
 type ChatService struct {
 	chatRepo *repositories.ChatRepository
-	events   map[string]*Event
+	users    map[string]chan string // Connexions utilisateurs
 	mu       sync.Mutex
 }
 
 func NewChatService(chatRepo *repositories.ChatRepository) *ChatService {
 	return &ChatService{
 		chatRepo: chatRepo,
-		events:   make(map[string]*Event),
+		users:    make(map[string]chan string),
 	}
+}
+
+func (cs *ChatService) SubscribeUser(userID string, ch chan string) {
+	cs.mu.Lock()
+	defer cs.mu.Unlock()
+	cs.users[userID] = ch
+}
+
+func (cs *ChatService) UnsubscribeUser(userID string) {
+	cs.mu.Lock()
+	defer cs.mu.Unlock()
+	delete(cs.users, userID)
 }
 
 func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {
@@ -39,101 +51,11 @@ func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {
 	return dtos.EntToGetChatDTO(message.Edges.Event.ID, message.Content, message.ID, message.CreatedAt.String(), message.Edges.User.ID, []string{}), nil
 }
 
-func (cs *ChatService) SubscribeToEvent(eventID, userID string, ch chan string) {
-	cs.mu.Lock()
-	defer cs.mu.Unlock() // Assurez-vous que le verrou est libéré dès que possible
-
-	event, exists := cs.events[eventID]
-	if !exists {
-		event = &Event{
-			ID:        eventID,
-			Listeners: make(map[string]chan string),
-		}
-		cs.events[eventID] = event
-	}
-
-	// Ajoutez l'utilisateur et son canal au bon événement
-	event.mu.Lock()
-	defer event.mu.Unlock()
-
-	event.Listeners[userID] = ch
-}
-
-func (cs *ChatService) BroadcastMessage(ctx context.Context, messageDTO dtos.MessageDTO, eventID string, userID string) (*dtos.ResponseMessageDTO, error) {
-	cs.mu.Lock()
-	event, exists := cs.events[eventID]
-	cs.mu.Unlock()
-
-	if !exists {
-		return nil, fmt.Errorf("event %s not found", eventID)
-	}
-
-	message, err := cs.chatRepo.CreateMessage(ctx, messageDTO, eventID, userID)
-	if err != nil {
-		fmt.Printf("Error creating message: %v\n", err)
-		return nil, err
-	}
-
-	// Envoie de messages à tous les utilisateurs du bon événement
-	event.mu.Lock()
-	defer event.mu.Unlock()
-
-	// TODO : remplacer par la liste des documents
-	documents := []string{}
-
-	responseMessage := dtos.EntToResponseMessageDTO(message, documents, "CREATE", userID)
-
-	for userID, ch := range event.Listeners {
-		select {
-		case ch <- utils.JSONStringify(responseMessage):
-			fmt.Printf("Message sent to %s in event %s\n", userID, eventID)
-		default:
-			fmt.Printf("Unable to send message to %s in event %s\n", userID, eventID)
-		}
-	}
-	return responseMessage, nil
-}
-
 func (cs *ChatService) CheckUserHasPermission(participants []dtos.ParticipantDTO, userID string) bool {
 	_, foundParticipant := lo.Find(participants, func(p dtos.ParticipantDTO) bool {
 		return p.UserID == userID && p.Status == "ACCEPTED"
 	})
 	return foundParticipant
-}
-
-//delete message
-
-func (cs *ChatService) DeleteMessage(eventID, messageID, userID string) (*dtos.DeleteMessageDTO, error) {
-
-	cs.mu.Lock()
-	event, exists := cs.events[eventID]
-	cs.mu.Unlock()
-
-	if !exists {
-		return nil, fmt.Errorf("event %s not found", eventID)
-	}
-
-	err := cs.chatRepo.DeleteMessage(messageID)
-	if err != nil {
-		fmt.Printf("Error deleting message: %v\n", err)
-		return nil, err
-	}
-	// Envoie de messages à tous les utilisateurs du bon événement
-	event.mu.Lock()
-	defer event.mu.Unlock()
-
-	deleteMessageDTO := dtos.EntToDeleteMessageDTO(messageID, "DELETE", userID)
-
-	for userID, ch := range event.Listeners {
-		select {
-		case ch <- utils.JSONStringify(deleteMessageDTO):
-			fmt.Printf("Message sent to %s in event %s\n", userID, eventID)
-		default:
-			fmt.Printf("Unable to send message to %s in event %s\n", userID, eventID)
-		}
-	}
-
-	return deleteMessageDTO, nil
 }
 
 func (cs *ChatService) GetChats(eventID string) ([]*dtos.GetChatDTO, error) {
@@ -148,4 +70,63 @@ func (cs *ChatService) GetChats(eventID string) ([]*dtos.GetChatDTO, error) {
 	}
 
 	return getChatDtos, nil
+}
+
+func (cs *ChatService) SendMessageToUser(userID string, message string) error {
+	cs.mu.Lock()
+	defer cs.mu.Unlock()
+
+	ch, exists := cs.users[userID]
+	if !exists {
+		fmt.Printf("User %s not connected. Skipping message delivery.\n", userID)
+		return nil
+	}
+
+	select {
+	case ch <- message:
+		fmt.Printf("Message sent to user %s\n", userID)
+	default:
+		fmt.Printf("Failed to send message to user %s\n", userID)
+	}
+
+	return nil
+}
+
+func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, participants []dtos.ParticipantDTO, message string, userId string) error {
+	// Create message for event
+	messageCreated, err := cs.chatRepo.CreateMessage(ctx, message, eventID, userId)
+	if err != nil {
+		fmt.Printf("Error creating message: %v\n", err)
+		return err
+	}
+
+	// Send message to all active participants except the sender
+	for _, participant := range participants {
+		if participant.Status == "ACCEPTED" && participant.UserID != userId { // Exclure l'expéditeur
+			userID := participant.UserID
+			_ = cs.SendMessageToUser(userID, fmt.Sprintf("Message for event %s: %s", eventID, messageCreated))
+		}
+	}
+	return nil
+}
+
+func (cs *ChatService) DeleteMessage(eventID, messageID, userID string, participants []dtos.ParticipantDTO) (*dtos.DeleteMessageDTO, error) {
+	// Supprimez le message de la base de données
+	err := cs.chatRepo.DeleteMessage(messageID)
+	if err != nil {
+		fmt.Printf("Error deleting message: %v\n", err)
+		return nil, err
+	}
+
+	// Construisez l'objet de notification pour les participants
+	deleteMessageDTO := dtos.EntToDeleteMessageDTO(messageID, "DELETE", userID)
+
+	// Envoyer la notification aux participants connectés
+	for _, participant := range participants {
+		if participant.Status == "ACCEPTED" && participant.UserID != userID { // Exclure l'expéditeur s'il est un participant
+			_ = cs.SendMessageToUser(participant.UserID, utils.JSONStringify(deleteMessageDTO))
+		}
+	}
+
+	return deleteMessageDTO, nil
 }
