@@ -137,16 +137,16 @@ func (ec *EventCreate) SetNillableDescription(s *string) *EventCreate {
 	return ec
 }
 
-// SetInvitationLink sets the "invitationLink" field.
-func (ec *EventCreate) SetInvitationLink(s string) *EventCreate {
-	ec.mutation.SetInvitationLink(s)
+// SetCode sets the "code" field.
+func (ec *EventCreate) SetCode(s string) *EventCreate {
+	ec.mutation.SetCode(s)
 	return ec
 }
 
-// SetNillableInvitationLink sets the "invitationLink" field if the given value is not nil.
-func (ec *EventCreate) SetNillableInvitationLink(s *string) *EventCreate {
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (ec *EventCreate) SetNillableCode(s *string) *EventCreate {
 	if s != nil {
-		ec.SetInvitationLink(*s)
+		ec.SetCode(*s)
 	}
 	return ec
 }
@@ -449,9 +449,9 @@ func (ec *EventCreate) createSpec() (*Event, *sqlgraph.CreateSpec) {
 		_spec.SetField(event.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := ec.mutation.InvitationLink(); ok {
-		_spec.SetField(event.FieldInvitationLink, field.TypeString, value)
-		_node.InvitationLink = value
+	if value, ok := ec.mutation.Code(); ok {
+		_spec.SetField(event.FieldCode, field.TypeString, value)
+		_node.Code = value
 	}
 	if value, ok := ec.mutation.Image(); ok {
 		_spec.SetField(event.FieldImage, field.TypeString, value)

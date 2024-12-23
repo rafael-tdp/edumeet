@@ -29,7 +29,7 @@ func (Event) Fields() []ent.Field {
 		field.Bool("isPrivate").Default(false),
 		field.String("title"),
 		field.String("description").Optional(),
-		field.String("invitationLink").Optional(),
+		field.String("code").Optional(),
 		field.String("image").Optional(),
 	}
 }

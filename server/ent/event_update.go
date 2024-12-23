@@ -177,23 +177,23 @@ func (eu *EventUpdate) ClearDescription() *EventUpdate {
 	return eu
 }
 
-// SetInvitationLink sets the "invitationLink" field.
-func (eu *EventUpdate) SetInvitationLink(s string) *EventUpdate {
-	eu.mutation.SetInvitationLink(s)
+// SetCode sets the "code" field.
+func (eu *EventUpdate) SetCode(s string) *EventUpdate {
+	eu.mutation.SetCode(s)
 	return eu
 }
 
-// SetNillableInvitationLink sets the "invitationLink" field if the given value is not nil.
-func (eu *EventUpdate) SetNillableInvitationLink(s *string) *EventUpdate {
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (eu *EventUpdate) SetNillableCode(s *string) *EventUpdate {
 	if s != nil {
-		eu.SetInvitationLink(*s)
+		eu.SetCode(*s)
 	}
 	return eu
 }
 
-// ClearInvitationLink clears the value of the "invitationLink" field.
-func (eu *EventUpdate) ClearInvitationLink() *EventUpdate {
-	eu.mutation.ClearInvitationLink()
+// ClearCode clears the value of the "code" field.
+func (eu *EventUpdate) ClearCode() *EventUpdate {
+	eu.mutation.ClearCode()
 	return eu
 }
 
@@ -531,11 +531,11 @@ func (eu *EventUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if eu.mutation.DescriptionCleared() {
 		_spec.ClearField(event.FieldDescription, field.TypeString)
 	}
-	if value, ok := eu.mutation.InvitationLink(); ok {
-		_spec.SetField(event.FieldInvitationLink, field.TypeString, value)
+	if value, ok := eu.mutation.Code(); ok {
+		_spec.SetField(event.FieldCode, field.TypeString, value)
 	}
-	if eu.mutation.InvitationLinkCleared() {
-		_spec.ClearField(event.FieldInvitationLink, field.TypeString)
+	if eu.mutation.CodeCleared() {
+		_spec.ClearField(event.FieldCode, field.TypeString)
 	}
 	if value, ok := eu.mutation.Image(); ok {
 		_spec.SetField(event.FieldImage, field.TypeString, value)
@@ -972,23 +972,23 @@ func (euo *EventUpdateOne) ClearDescription() *EventUpdateOne {
 	return euo
 }
 
-// SetInvitationLink sets the "invitationLink" field.
-func (euo *EventUpdateOne) SetInvitationLink(s string) *EventUpdateOne {
-	euo.mutation.SetInvitationLink(s)
+// SetCode sets the "code" field.
+func (euo *EventUpdateOne) SetCode(s string) *EventUpdateOne {
+	euo.mutation.SetCode(s)
 	return euo
 }
 
-// SetNillableInvitationLink sets the "invitationLink" field if the given value is not nil.
-func (euo *EventUpdateOne) SetNillableInvitationLink(s *string) *EventUpdateOne {
+// SetNillableCode sets the "code" field if the given value is not nil.
+func (euo *EventUpdateOne) SetNillableCode(s *string) *EventUpdateOne {
 	if s != nil {
-		euo.SetInvitationLink(*s)
+		euo.SetCode(*s)
 	}
 	return euo
 }
 
-// ClearInvitationLink clears the value of the "invitationLink" field.
-func (euo *EventUpdateOne) ClearInvitationLink() *EventUpdateOne {
-	euo.mutation.ClearInvitationLink()
+// ClearCode clears the value of the "code" field.
+func (euo *EventUpdateOne) ClearCode() *EventUpdateOne {
+	euo.mutation.ClearCode()
 	return euo
 }
 
@@ -1356,11 +1356,11 @@ func (euo *EventUpdateOne) sqlSave(ctx context.Context) (_node *Event, err error
 	if euo.mutation.DescriptionCleared() {
 		_spec.ClearField(event.FieldDescription, field.TypeString)
 	}
-	if value, ok := euo.mutation.InvitationLink(); ok {
-		_spec.SetField(event.FieldInvitationLink, field.TypeString, value)
+	if value, ok := euo.mutation.Code(); ok {
+		_spec.SetField(event.FieldCode, field.TypeString, value)
 	}
-	if euo.mutation.InvitationLinkCleared() {
-		_spec.ClearField(event.FieldInvitationLink, field.TypeString)
+	if euo.mutation.CodeCleared() {
+		_spec.ClearField(event.FieldCode, field.TypeString)
 	}
 	if value, ok := euo.mutation.Image(); ok {
 		_spec.SetField(event.FieldImage, field.TypeString, value)

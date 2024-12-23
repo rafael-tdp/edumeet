@@ -241,6 +241,49 @@ func (ec *EventController) GetPendingParticipant(c *fiber.Ctx) error {
 
 }
 
+func (ec *EventController) JoinEventByCode(c *fiber.Ctx) error {
+
+	code := c.Params("code")
+
+	user := c.Locals("user").(*ent.User)
+
+	err := ec.eventservice.JoinEventByCode(code, user.ID)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(
+		fiber.Map{
+			"message": "Successfully joined event",
+		},
+	)
+}
+
+func (ec *EventController) GetEventCode(c *fiber.Ctx) error {
+	eventID := c.Params("eventId")
+
+	currentUser := c.Locals("user").(*ent.User)
+
+	event, err := ec.eventservice.GetEventCode(eventID)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if !guards.CanAuthorize(currentUser, event) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"code": event.Code,
+	})
+}
+
 func (ec *EventController) UpdateEventSubjects(c *fiber.Ctx) error {
 	eventID, errParse := ulid.Parse(c.Params("id"))
 	if errParse != nil {

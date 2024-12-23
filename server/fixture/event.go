@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
+	"github.com/samber/lo"
 )
 
 type Event struct{}
@@ -45,7 +46,7 @@ func (e *Event) GenerateEvent(ctx context.Context, client *ent.Client) {
 			SetEndDate(end).
 			// SetIsPrivate(gofakeit.Bool()).
 			SetImage(images[gofakeit.Number(0, len(images)-1)]).
-			SetInvitationLink(gofakeit.URL()).
+			SetCode(lo.RandomString(6, lo.LettersCharset)).
 			SetCreatedBy(createdBy).
 			Save(ctx)
 

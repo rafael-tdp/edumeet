@@ -33,8 +33,8 @@ const (
 	FieldTitle = "title"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// FieldInvitationLink holds the string denoting the invitationlink field in the database.
-	FieldInvitationLink = "invitation_link"
+	// FieldCode holds the string denoting the code field in the database.
+	FieldCode = "code"
 	// FieldImage holds the string denoting the image field in the database.
 	FieldImage = "image"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -114,7 +114,7 @@ var Columns = []string{
 	FieldIsPrivate,
 	FieldTitle,
 	FieldDescription,
-	FieldInvitationLink,
+	FieldCode,
 	FieldImage,
 }
 
@@ -217,9 +217,9 @@ func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
 }
 
-// ByInvitationLink orders the results by the invitationLink field.
-func ByInvitationLink(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldInvitationLink, opts...).ToFunc()
+// ByCode orders the results by the code field.
+func ByCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCode, opts...).ToFunc()
 }
 
 // ByImage orders the results by the image field.

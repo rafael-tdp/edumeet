@@ -12,7 +12,6 @@ type EventDTO struct {
 	IsPrivate        bool              `json:"is_private"`
 	Title            string            `json:"title" validate:"required,min=3"`
 	Description      string            `json:"description,omitempty" validate:"required,min=3"`
-	InvitationLink   string            `json:"invitation_link,omitempty"`
 	PhysicalEventDTO *PhysicalEventDTO `json:"physical_event,omitempty"`
 	RemoteEventDTO   *RemoteEventDTO   `json:"remote_event,omitempty"`
 	CreatedBy        *string           `json:"created_by,omitempty"`
@@ -39,7 +38,6 @@ func EntToEventDTO(event *ent.Event) *EventDTO {
 		IsPrivate:        event.IsPrivate,
 		Title:            event.Title,
 		Description:      event.Description,
-		InvitationLink:   event.InvitationLink,
 		RemoteEventDTO:   remoteEventDTO,
 		PhysicalEventDTO: physicalEventDTO,
 		CreatedBy:        event.CreatedBy,
@@ -59,7 +57,6 @@ type EventWithTypeDTO struct {
 	IsPrivate         bool              `json:"is_private"`
 	Title             string            `json:"title"`
 	Description       string            `json:"description,omitempty"`
-	InvitationLink    string            `json:"invitation_link,omitempty"`
 	Image             string            `json:"image,omitempty"`
 	PhysicalEventDTO  *PhysicalEventDTO `json:"physical_event,omitempty"`
 	RemoteEventDTO    *RemoteEventDTO   `json:"remote_event,omitempty"`
@@ -74,7 +71,6 @@ type EventWithDetailsDTO struct {
 	IsPrivate         bool                     `json:"is_private"`
 	Title             string                   `json:"title"`
 	Description       string                   `json:"description,omitempty"`
-	InvitationLink    string                   `json:"invitation_link,omitempty"`
 	Image             string                   `json:"image,omitempty"`
 	PhysicalEventDTO  *PhysicalEventDTO        `json:"physical_event,omitempty"`
 	RemoteEventDTO    *RemoteEventDTO          `json:"remote_event,omitempty"`
