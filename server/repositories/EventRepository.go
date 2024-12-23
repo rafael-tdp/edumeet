@@ -215,3 +215,29 @@ func (er *EventRepository) GetEventsCreatedByUser(userID string) ([]*ent.Event, 
 
 	return events, nil
 }
+
+func (er *EventRepository) UpdateEventSubjects(ctx context.Context, eventId string, subjectIDs []string) (*ent.Event, error) {
+	event, err := er.client.Event.Query().Where(event.IDEQ(eventId)).WithSubjects().Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = event.Update().ClearSubjects().Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, subjectID := range subjectIDs {
+		subject, err := er.client.Subject.Query().Where(subject.IDEQ(subjectID)).Only(ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		_, err = event.Update().AddSubjects(subject).Save(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return event, nil
+}
