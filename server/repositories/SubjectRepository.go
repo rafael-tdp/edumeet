@@ -6,7 +6,6 @@ import (
 	"edumeet/ent"
 	"edumeet/ent/subject"
 	"errors"
-	"fmt"
 )
 
 type SubjectRepository struct {
@@ -61,35 +60,4 @@ func (sr *SubjectRepository) Update(subjectID string, subjectDTO dtos.SubjectDTO
 		return nil, errors.New("error updating subject")
 	}
 	return subject, nil
-}
-
-func (sr *SubjectRepository) AddUserToSubject(subjectID string, userID string) (*ent.Subject, error) {
-	// Récupérer le subject existant
-	subject, err := sr.client.Subject.Get(context.Background(), subjectID)
-	if err != nil {
-		fmt.Print(err)
-		return nil, fmt.Errorf("error fetching subject with ID %s: %v", subjectID, err)
-	}
-
-	// Ajouter l'utilisateur au subject
-	updatedSubject, err := subject.Update().AddUserIDs(userID).Save(context.Background())
-	if err != nil {
-		return nil, errors.New("error adding user to subject")
-	}
-
-	return updatedSubject, nil
-}
-
-func (sr *SubjectRepository) RemoveUserFromSubject(subjectID string, userID string) (*ent.Subject, error) {
-	subject, err := sr.client.Subject.Get(context.Background(), subjectID)
-	if err != nil {
-		return nil, fmt.Errorf("error fetching subject with ID %s: %v", subjectID, err)
-	}
-
-	updatedSubject, err := subject.Update().RemoveUserIDs(userID).Save(context.Background())
-	if err != nil {
-		return nil, fmt.Errorf("error removing user %s from subject %s: %v", userID, subjectID, err)
-	}
-
-	return updatedSubject, nil
 }
