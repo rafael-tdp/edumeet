@@ -4,6 +4,7 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/repositories"
+	"errors"
 )
 
 type EventService struct {
@@ -115,7 +116,6 @@ func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
 				IsPrivate:         event.IsPrivate,
 				Title:             event.Title,
 				Description:       event.Description,
-				InvitationLink:    event.InvitationLink,
 				Image:             event.Image,
 				RemoteEventDTO:    dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent),
 				ParticipantsCount: len(event.Edges.Participants),
@@ -129,7 +129,6 @@ func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
 				IsPrivate:         event.IsPrivate,
 				Title:             event.Title,
 				Description:       event.Description,
-				InvitationLink:    event.InvitationLink,
 				Image:             event.Image,
 				PhysicalEventDTO:  dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent),
 				ParticipantsCount: len(event.Edges.Participants),
@@ -158,7 +157,6 @@ func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO,
 				IsPrivate:         event.IsPrivate,
 				Title:             event.Title,
 				Description:       event.Description,
-				InvitationLink:    event.InvitationLink,
 				Image:             event.Image,
 				RemoteEventDTO:    dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent),
 				ParticipantsCount: len(event.Edges.Participants),
@@ -172,7 +170,6 @@ func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO,
 				IsPrivate:         event.IsPrivate,
 				Title:             event.Title,
 				Description:       event.Description,
-				InvitationLink:    event.InvitationLink,
 				Image:             event.Image,
 				PhysicalEventDTO:  dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent),
 				ParticipantsCount: len(event.Edges.Participants),
@@ -201,7 +198,6 @@ func (es *EventService) GetEventsCreatedByUser(userID string) ([]dtos.EventWithT
 				IsPrivate:         event.IsPrivate,
 				Title:             event.Title,
 				Description:       event.Description,
-				InvitationLink:    event.InvitationLink,
 				Image:             event.Image,
 				RemoteEventDTO:    dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent),
 				ParticipantsCount: len(event.Edges.Participants),
@@ -215,7 +211,6 @@ func (es *EventService) GetEventsCreatedByUser(userID string) ([]dtos.EventWithT
 				IsPrivate:         event.IsPrivate,
 				Title:             event.Title,
 				Description:       event.Description,
-				InvitationLink:    event.InvitationLink,
 				Image:             event.Image,
 				PhysicalEventDTO:  dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent),
 				ParticipantsCount: len(event.Edges.Participants),
@@ -245,7 +240,6 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 		IsPrivate:         event.IsPrivate,
 		Title:             event.Title,
 		Description:       event.Description,
-		InvitationLink:    event.InvitationLink,
 		Image:             event.Image,
 		Participants:      dtos.ConvertParticipantsWithUser(participants),
 		ParticipantsCount: len(participants),
@@ -285,4 +279,36 @@ func (es *EventService) UpdateEventSubjects(ctx context.Context, eventID string,
 		return err
 	}
 	return nil
+}
+func (es *EventService) JoinEventByCode(eventCode string, userID string) error {
+
+	event, err := es.eventRepository.GetEventByCode(eventCode)
+
+	if err != nil {
+		return err
+	}
+
+	if event.Edges.Participants != nil {
+		for _, participant := range event.Edges.Participants {
+			if participant.Edges.User.ID == userID {
+				return errors.New("user already joined the event")
+			}
+		}
+	}
+
+	_, err = es.participantRepository.CreateParticipant(userID, event.ID, "accepted")
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (es *EventService) GetEventCode(eventId string) (*dtos.EventCodeDTO, error) {
+	event, err := es.eventRepository.GetEventCode(eventId)
+	if err != nil {
+		return nil, err
+	}
+	return dtos.EntToEventCodeDTO(event), nil
 }

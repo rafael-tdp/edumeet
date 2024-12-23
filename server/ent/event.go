@@ -38,8 +38,8 @@ type Event struct {
 	Title string `json:"title,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
-	// InvitationLink holds the value of the "invitationLink" field.
-	InvitationLink string `json:"invitationLink,omitempty"`
+	// Code holds the value of the "code" field.
+	Code string `json:"code,omitempty"`
 	// Image holds the value of the "image" field.
 	Image string `json:"image,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -146,7 +146,7 @@ func (*Event) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case event.FieldIsPrivate:
 			values[i] = new(sql.NullBool)
-		case event.FieldID, event.FieldCreatedBy, event.FieldUpdatedBy, event.FieldTitle, event.FieldDescription, event.FieldInvitationLink, event.FieldImage:
+		case event.FieldID, event.FieldCreatedBy, event.FieldUpdatedBy, event.FieldTitle, event.FieldDescription, event.FieldCode, event.FieldImage:
 			values[i] = new(sql.NullString)
 		case event.FieldCreatedAt, event.FieldUpdatedAt, event.FieldStartDate, event.FieldEndDate:
 			values[i] = new(sql.NullTime)
@@ -229,11 +229,11 @@ func (e *Event) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				e.Description = value.String
 			}
-		case event.FieldInvitationLink:
+		case event.FieldCode:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field invitationLink", values[i])
+				return fmt.Errorf("unexpected type %T for field code", values[i])
 			} else if value.Valid {
-				e.InvitationLink = value.String
+				e.Code = value.String
 			}
 		case event.FieldImage:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -350,8 +350,8 @@ func (e *Event) String() string {
 	builder.WriteString("description=")
 	builder.WriteString(e.Description)
 	builder.WriteString(", ")
-	builder.WriteString("invitationLink=")
-	builder.WriteString(e.InvitationLink)
+	builder.WriteString("code=")
+	builder.WriteString(e.Code)
 	builder.WriteString(", ")
 	builder.WriteString("image=")
 	builder.WriteString(e.Image)

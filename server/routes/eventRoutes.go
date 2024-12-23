@@ -11,15 +11,17 @@ import (
 )
 
 func setupEventRoutes(app *fiber.App, eventController *controllers.EventController) {
-	app.Get("/api/events", middlewares.JWTAuthMiddleware, eventController.GetAllEvents)
-	app.Get("/api/events/users/current", middlewares.JWTAuthMiddleware, eventController.GetCurrentUserEvents)
-	app.Get("/api/events/created-by/current", middlewares.JWTAuthMiddleware, eventController.GetEventsCreatedByCurrentUser)
-	app.Get("/api/events/:id", middlewares.JWTAuthMiddleware, eventController.GetEvent)
-	app.Get("/api/events/:id/details", middlewares.JWTAuthMiddleware, eventController.GetEventWithDetails)
-	app.Post("/api/events", middlewares.JWTAuthMiddleware, eventController.CreateEvent)
-	app.Put("/api/events/:id", middlewares.JWTAuthMiddleware, eventController.UpdateEvent)
-	app.Delete("/api/events/:id", middlewares.JWTAuthMiddleware, eventController.DeleteEvent)
-	app.Get("/api/events/:eventID/participants/pending", middlewares.JWTAuthMiddleware, eventController.GetPendingParticipant)
+	app.Get("/events", middlewares.JWTAuthMiddleware, eventController.GetAllEvents)
+	app.Get("/events/users/current", middlewares.JWTAuthMiddleware, eventController.GetCurrentUserEvents)
+	app.Get("/events/created-by/current", middlewares.JWTAuthMiddleware, eventController.GetEventsCreatedByCurrentUser)
+	app.Get("/events/:id", middlewares.JWTAuthMiddleware, eventController.GetEvent)
+	app.Get("/events/:id/details", middlewares.JWTAuthMiddleware, eventController.GetEventWithDetails)
+	app.Post("/events", middlewares.JWTAuthMiddleware, eventController.CreateEvent)
+	app.Put("/events/:id", middlewares.JWTAuthMiddleware, eventController.UpdateEvent)
+	app.Delete("/events/:id", middlewares.JWTAuthMiddleware, eventController.DeleteEvent)
+	app.Get("/events/:eventID/participants/pending", middlewares.JWTAuthMiddleware, eventController.GetPendingParticipant)
+	app.Get("/events/join/:code", middlewares.JWTAuthMiddleware, eventController.JoinEventByCode)
+	app.Get("/events/code/:eventId", middlewares.JWTAuthMiddleware, eventController.GetEventCode)
 	app.Put("/events/subjects/update/:id", middlewares.JWTAuthMiddleware, eventController.UpdateEventSubjects)
 }
 

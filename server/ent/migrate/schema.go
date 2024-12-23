@@ -54,7 +54,7 @@ var (
 		{Name: "is_private", Type: field.TypeBool, Default: false},
 		{Name: "title", Type: field.TypeString},
 		{Name: "description", Type: field.TypeString, Nullable: true},
-		{Name: "invitation_link", Type: field.TypeString, Nullable: true},
+		{Name: "code", Type: field.TypeString, Nullable: true},
 		{Name: "image", Type: field.TypeString, Nullable: true},
 		{Name: "user_events", Type: field.TypeString, Nullable: true},
 	}

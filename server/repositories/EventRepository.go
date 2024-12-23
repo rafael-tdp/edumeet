@@ -10,6 +10,8 @@ import (
 	"edumeet/ent/subject"
 	"edumeet/ent/user"
 	"edumeet/utils"
+
+	"github.com/samber/lo"
 )
 
 type EventRepository struct {
@@ -40,8 +42,8 @@ func (er *EventRepository) CreateEvent(ctx context.Context, event dtos.EventDTO)
 		SetEndDate(event.EndDate).
 		SetIsPrivate(event.IsPrivate).
 		SetDescription(event.Description).
-		SetInvitationLink(event.InvitationLink).
 		AddSubjects(subjects...).
+		SetCode(lo.RandomString(6, lo.LettersCharset)).
 		Save(ctx)
 
 	if err != nil {
@@ -170,7 +172,6 @@ func (er *EventRepository) UpdateEvent(ctx context.Context, event dtos.EventDTO,
 		SetEndDate(event.EndDate).
 		SetIsPrivate(event.IsPrivate).
 		SetDescription(event.Description).
-		SetInvitationLink(event.InvitationLink).
 		Save(ctx)
 
 	if err != nil {
@@ -214,6 +215,33 @@ func (er *EventRepository) GetEventsCreatedByUser(userID string) ([]*ent.Event, 
 	}
 
 	return events, nil
+}
+
+func (er *EventRepository) GetEventByCode(code string) (*ent.Event, error) {
+	event, err := er.client.Event.Query().
+		Where(event.Code(code)).
+		WithParticipants(func(pq *ent.ParticipantQuery) {
+			pq.WithUser()
+		}).
+		First(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
+}
+
+func (er *EventRepository) GetEventCode(eventId string) (*ent.Event, error) {
+	event, err := er.client.Event.Query().
+		Where(event.ID(eventId)).
+		First(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
 }
 
 func (er *EventRepository) UpdateEventSubjects(ctx context.Context, eventId string, subjectIDs []string) (*ent.Event, error) {

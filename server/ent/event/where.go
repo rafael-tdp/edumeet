@@ -110,9 +110,9 @@ func Description(v string) predicate.Event {
 	return predicate.Event(sql.FieldEQ(FieldDescription, v))
 }
 
-// InvitationLink applies equality check predicate on the "invitationLink" field. It's identical to InvitationLinkEQ.
-func InvitationLink(v string) predicate.Event {
-	return predicate.Event(sql.FieldEQ(FieldInvitationLink, v))
+// Code applies equality check predicate on the "code" field. It's identical to CodeEQ.
+func Code(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldCode, v))
 }
 
 // Image applies equality check predicate on the "image" field. It's identical to ImageEQ.
@@ -590,79 +590,79 @@ func DescriptionContainsFold(v string) predicate.Event {
 	return predicate.Event(sql.FieldContainsFold(FieldDescription, v))
 }
 
-// InvitationLinkEQ applies the EQ predicate on the "invitationLink" field.
-func InvitationLinkEQ(v string) predicate.Event {
-	return predicate.Event(sql.FieldEQ(FieldInvitationLink, v))
+// CodeEQ applies the EQ predicate on the "code" field.
+func CodeEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldEQ(FieldCode, v))
 }
 
-// InvitationLinkNEQ applies the NEQ predicate on the "invitationLink" field.
-func InvitationLinkNEQ(v string) predicate.Event {
-	return predicate.Event(sql.FieldNEQ(FieldInvitationLink, v))
+// CodeNEQ applies the NEQ predicate on the "code" field.
+func CodeNEQ(v string) predicate.Event {
+	return predicate.Event(sql.FieldNEQ(FieldCode, v))
 }
 
-// InvitationLinkIn applies the In predicate on the "invitationLink" field.
-func InvitationLinkIn(vs ...string) predicate.Event {
-	return predicate.Event(sql.FieldIn(FieldInvitationLink, vs...))
+// CodeIn applies the In predicate on the "code" field.
+func CodeIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldIn(FieldCode, vs...))
 }
 
-// InvitationLinkNotIn applies the NotIn predicate on the "invitationLink" field.
-func InvitationLinkNotIn(vs ...string) predicate.Event {
-	return predicate.Event(sql.FieldNotIn(FieldInvitationLink, vs...))
+// CodeNotIn applies the NotIn predicate on the "code" field.
+func CodeNotIn(vs ...string) predicate.Event {
+	return predicate.Event(sql.FieldNotIn(FieldCode, vs...))
 }
 
-// InvitationLinkGT applies the GT predicate on the "invitationLink" field.
-func InvitationLinkGT(v string) predicate.Event {
-	return predicate.Event(sql.FieldGT(FieldInvitationLink, v))
+// CodeGT applies the GT predicate on the "code" field.
+func CodeGT(v string) predicate.Event {
+	return predicate.Event(sql.FieldGT(FieldCode, v))
 }
 
-// InvitationLinkGTE applies the GTE predicate on the "invitationLink" field.
-func InvitationLinkGTE(v string) predicate.Event {
-	return predicate.Event(sql.FieldGTE(FieldInvitationLink, v))
+// CodeGTE applies the GTE predicate on the "code" field.
+func CodeGTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldGTE(FieldCode, v))
 }
 
-// InvitationLinkLT applies the LT predicate on the "invitationLink" field.
-func InvitationLinkLT(v string) predicate.Event {
-	return predicate.Event(sql.FieldLT(FieldInvitationLink, v))
+// CodeLT applies the LT predicate on the "code" field.
+func CodeLT(v string) predicate.Event {
+	return predicate.Event(sql.FieldLT(FieldCode, v))
 }
 
-// InvitationLinkLTE applies the LTE predicate on the "invitationLink" field.
-func InvitationLinkLTE(v string) predicate.Event {
-	return predicate.Event(sql.FieldLTE(FieldInvitationLink, v))
+// CodeLTE applies the LTE predicate on the "code" field.
+func CodeLTE(v string) predicate.Event {
+	return predicate.Event(sql.FieldLTE(FieldCode, v))
 }
 
-// InvitationLinkContains applies the Contains predicate on the "invitationLink" field.
-func InvitationLinkContains(v string) predicate.Event {
-	return predicate.Event(sql.FieldContains(FieldInvitationLink, v))
+// CodeContains applies the Contains predicate on the "code" field.
+func CodeContains(v string) predicate.Event {
+	return predicate.Event(sql.FieldContains(FieldCode, v))
 }
 
-// InvitationLinkHasPrefix applies the HasPrefix predicate on the "invitationLink" field.
-func InvitationLinkHasPrefix(v string) predicate.Event {
-	return predicate.Event(sql.FieldHasPrefix(FieldInvitationLink, v))
+// CodeHasPrefix applies the HasPrefix predicate on the "code" field.
+func CodeHasPrefix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasPrefix(FieldCode, v))
 }
 
-// InvitationLinkHasSuffix applies the HasSuffix predicate on the "invitationLink" field.
-func InvitationLinkHasSuffix(v string) predicate.Event {
-	return predicate.Event(sql.FieldHasSuffix(FieldInvitationLink, v))
+// CodeHasSuffix applies the HasSuffix predicate on the "code" field.
+func CodeHasSuffix(v string) predicate.Event {
+	return predicate.Event(sql.FieldHasSuffix(FieldCode, v))
 }
 
-// InvitationLinkIsNil applies the IsNil predicate on the "invitationLink" field.
-func InvitationLinkIsNil() predicate.Event {
-	return predicate.Event(sql.FieldIsNull(FieldInvitationLink))
+// CodeIsNil applies the IsNil predicate on the "code" field.
+func CodeIsNil() predicate.Event {
+	return predicate.Event(sql.FieldIsNull(FieldCode))
 }
 
-// InvitationLinkNotNil applies the NotNil predicate on the "invitationLink" field.
-func InvitationLinkNotNil() predicate.Event {
-	return predicate.Event(sql.FieldNotNull(FieldInvitationLink))
+// CodeNotNil applies the NotNil predicate on the "code" field.
+func CodeNotNil() predicate.Event {
+	return predicate.Event(sql.FieldNotNull(FieldCode))
 }
 
-// InvitationLinkEqualFold applies the EqualFold predicate on the "invitationLink" field.
-func InvitationLinkEqualFold(v string) predicate.Event {
-	return predicate.Event(sql.FieldEqualFold(FieldInvitationLink, v))
+// CodeEqualFold applies the EqualFold predicate on the "code" field.
+func CodeEqualFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldEqualFold(FieldCode, v))
 }
 
-// InvitationLinkContainsFold applies the ContainsFold predicate on the "invitationLink" field.
-func InvitationLinkContainsFold(v string) predicate.Event {
-	return predicate.Event(sql.FieldContainsFold(FieldInvitationLink, v))
+// CodeContainsFold applies the ContainsFold predicate on the "code" field.
+func CodeContainsFold(v string) predicate.Event {
+	return predicate.Event(sql.FieldContainsFold(FieldCode, v))
 }
 
 // ImageEQ applies the EQ predicate on the "image" field.

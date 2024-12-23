@@ -1761,7 +1761,7 @@ type EventMutation struct {
 	isPrivate              *bool
 	title                  *string
 	description            *string
-	invitationLink         *string
+	code                   *string
 	image                  *string
 	clearedFields          map[string]struct{}
 	user                   *string
@@ -2267,53 +2267,53 @@ func (m *EventMutation) ResetDescription() {
 	delete(m.clearedFields, event.FieldDescription)
 }
 
-// SetInvitationLink sets the "invitationLink" field.
-func (m *EventMutation) SetInvitationLink(s string) {
-	m.invitationLink = &s
+// SetCode sets the "code" field.
+func (m *EventMutation) SetCode(s string) {
+	m.code = &s
 }
 
-// InvitationLink returns the value of the "invitationLink" field in the mutation.
-func (m *EventMutation) InvitationLink() (r string, exists bool) {
-	v := m.invitationLink
+// Code returns the value of the "code" field in the mutation.
+func (m *EventMutation) Code() (r string, exists bool) {
+	v := m.code
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldInvitationLink returns the old "invitationLink" field's value of the Event entity.
+// OldCode returns the old "code" field's value of the Event entity.
 // If the Event object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EventMutation) OldInvitationLink(ctx context.Context) (v string, err error) {
+func (m *EventMutation) OldCode(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldInvitationLink is only allowed on UpdateOne operations")
+		return v, errors.New("OldCode is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldInvitationLink requires an ID field in the mutation")
+		return v, errors.New("OldCode requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldInvitationLink: %w", err)
+		return v, fmt.Errorf("querying old value for OldCode: %w", err)
 	}
-	return oldValue.InvitationLink, nil
+	return oldValue.Code, nil
 }
 
-// ClearInvitationLink clears the value of the "invitationLink" field.
-func (m *EventMutation) ClearInvitationLink() {
-	m.invitationLink = nil
-	m.clearedFields[event.FieldInvitationLink] = struct{}{}
+// ClearCode clears the value of the "code" field.
+func (m *EventMutation) ClearCode() {
+	m.code = nil
+	m.clearedFields[event.FieldCode] = struct{}{}
 }
 
-// InvitationLinkCleared returns if the "invitationLink" field was cleared in this mutation.
-func (m *EventMutation) InvitationLinkCleared() bool {
-	_, ok := m.clearedFields[event.FieldInvitationLink]
+// CodeCleared returns if the "code" field was cleared in this mutation.
+func (m *EventMutation) CodeCleared() bool {
+	_, ok := m.clearedFields[event.FieldCode]
 	return ok
 }
 
-// ResetInvitationLink resets all changes to the "invitationLink" field.
-func (m *EventMutation) ResetInvitationLink() {
-	m.invitationLink = nil
-	delete(m.clearedFields, event.FieldInvitationLink)
+// ResetCode resets all changes to the "code" field.
+func (m *EventMutation) ResetCode() {
+	m.code = nil
+	delete(m.clearedFields, event.FieldCode)
 }
 
 // SetImage sets the "image" field.
@@ -2760,8 +2760,8 @@ func (m *EventMutation) Fields() []string {
 	if m.description != nil {
 		fields = append(fields, event.FieldDescription)
 	}
-	if m.invitationLink != nil {
-		fields = append(fields, event.FieldInvitationLink)
+	if m.code != nil {
+		fields = append(fields, event.FieldCode)
 	}
 	if m.image != nil {
 		fields = append(fields, event.FieldImage)
@@ -2792,8 +2792,8 @@ func (m *EventMutation) Field(name string) (ent.Value, bool) {
 		return m.Title()
 	case event.FieldDescription:
 		return m.Description()
-	case event.FieldInvitationLink:
-		return m.InvitationLink()
+	case event.FieldCode:
+		return m.Code()
 	case event.FieldImage:
 		return m.Image()
 	}
@@ -2823,8 +2823,8 @@ func (m *EventMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldTitle(ctx)
 	case event.FieldDescription:
 		return m.OldDescription(ctx)
-	case event.FieldInvitationLink:
-		return m.OldInvitationLink(ctx)
+	case event.FieldCode:
+		return m.OldCode(ctx)
 	case event.FieldImage:
 		return m.OldImage(ctx)
 	}
@@ -2899,12 +2899,12 @@ func (m *EventMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDescription(v)
 		return nil
-	case event.FieldInvitationLink:
+	case event.FieldCode:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetInvitationLink(v)
+		m.SetCode(v)
 		return nil
 	case event.FieldImage:
 		v, ok := value.(string)
@@ -2955,8 +2955,8 @@ func (m *EventMutation) ClearedFields() []string {
 	if m.FieldCleared(event.FieldDescription) {
 		fields = append(fields, event.FieldDescription)
 	}
-	if m.FieldCleared(event.FieldInvitationLink) {
-		fields = append(fields, event.FieldInvitationLink)
+	if m.FieldCleared(event.FieldCode) {
+		fields = append(fields, event.FieldCode)
 	}
 	if m.FieldCleared(event.FieldImage) {
 		fields = append(fields, event.FieldImage)
@@ -2987,8 +2987,8 @@ func (m *EventMutation) ClearField(name string) error {
 	case event.FieldDescription:
 		m.ClearDescription()
 		return nil
-	case event.FieldInvitationLink:
-		m.ClearInvitationLink()
+	case event.FieldCode:
+		m.ClearCode()
 		return nil
 	case event.FieldImage:
 		m.ClearImage()
@@ -3028,8 +3028,8 @@ func (m *EventMutation) ResetField(name string) error {
 	case event.FieldDescription:
 		m.ResetDescription()
 		return nil
-	case event.FieldInvitationLink:
-		m.ResetInvitationLink()
+	case event.FieldCode:
+		m.ResetCode()
 		return nil
 	case event.FieldImage:
 		m.ResetImage()
