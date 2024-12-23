@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/ent/event"
 	"edumeet/ent/message"
@@ -18,10 +17,10 @@ func NewChatRepository(client *ent.Client) *ChatRepository {
 	}
 }
 
-func (cr *ChatRepository) CreateMessage(ctx context.Context, messageDTO dtos.MessageDTO, eventID string, userID string) (*ent.Message, error) {
+func (cr *ChatRepository) CreateMessage(ctx context.Context, message string, eventID string, userID string) (*ent.Message, error) {
 	//flush message in DB
-	message, err := cr.client.Message.Create().
-		SetContent(messageDTO.Message).
+	messageCreated, err := cr.client.Message.Create().
+		SetContent(message).
 		SetUserID(userID).
 		SetEventID(eventID).
 		Save(ctx)
@@ -30,7 +29,7 @@ func (cr *ChatRepository) CreateMessage(ctx context.Context, messageDTO dtos.Mes
 		return nil, err
 	}
 
-	return message, nil
+	return messageCreated, nil
 }
 
 func (cr *ChatRepository) DeleteMessage(messageID string) error {
