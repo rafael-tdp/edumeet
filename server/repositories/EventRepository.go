@@ -9,7 +9,10 @@ import (
 	"edumeet/ent/remoteevent"
 	"edumeet/ent/subject"
 	"edumeet/ent/user"
+	"edumeet/structures"
 	"edumeet/utils"
+	"fmt"
+	"strings"
 
 	"github.com/samber/lo"
 )
@@ -181,10 +184,29 @@ func (er *EventRepository) UpdateEvent(ctx context.Context, event dtos.EventDTO,
 	return updatedEvent, nil
 }
 
-func (er *EventRepository) GetEvents() ([]*ent.Event, error) {
-	events, err := er.client.Event.Query().WithRemoteEvent().WithPhysicalEvent().WithParticipants().All(context.Background())
+func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters) ([]*ent.Event, error) {
+	query := er.client.Event.Query().
+		WithRemoteEvent().
+		WithPhysicalEvent().
+		WithParticipants()
+
+	// Filtrer par type d'événement
+	if filters.Type == "remote" {
+		query = query.Where(event.HasRemoteEvent())
+	} else if filters.Type == "physical" {
+		query = query.Where(event.HasPhysicalEvent())
+	}
+
+	// Filtrer par subjects (string avec des IDs séparés par des virgules)
+	if filters.Subjects != "" {
+		subjectIDs := strings.Split(filters.Subjects, ",") // Convertir la chaîne en slice
+		query = query.Where(event.HasSubjectsWith(subject.IDIn(subjectIDs...)))
+	}
+
+	// Exécuter la requête
+	events, err := query.All(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch events: %v", err)
 	}
 
 	return events, nil

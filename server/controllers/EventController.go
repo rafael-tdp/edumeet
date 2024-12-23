@@ -6,6 +6,7 @@ import (
 	"edumeet/ent"
 	"edumeet/guards"
 	"edumeet/services"
+	"edumeet/structures"
 
 	customValidators "edumeet/validator"
 
@@ -164,10 +165,25 @@ func (ec *EventController) UpdateEvent(c *fiber.Ctx) error {
 }
 
 func (ec *EventController) GetAllEvents(c *fiber.Ctx) error {
-	events, err := ec.eventservice.GetAllEvents()
+	eventType := c.Query("type", "all")
+	distance := c.Query("distance", "")
+	longitude := c.Query("longitude", "")
+	latitude := c.Query("latitude", "")
+	subjects := c.Query("subjects", "")
+
+	filters := structures.EventFilters{
+		Type:      eventType,
+		Distance:  distance,
+		Longitude: longitude,
+		Latitude:  latitude,
+		Subjects:  subjects,
+	}
+
+	events, err := ec.eventservice.GetFilteredEvents(filters)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
+
 	return c.Status(fiber.StatusOK).JSON(events)
 }
 

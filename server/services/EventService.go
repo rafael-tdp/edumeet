@@ -3,8 +3,14 @@ package services
 import (
 	"context"
 	"edumeet/dtos"
+	"edumeet/ent"
 	"edumeet/repositories"
+	"edumeet/structures"
+	"edumeet/utils"
 	"errors"
+	"fmt"
+	"sort"
+	"strconv"
 )
 
 type EventService struct {
@@ -99,15 +105,51 @@ func (es *EventService) UpdateEvent(ctx context.Context, event dtos.EventDTO, ev
 	return dtos.EntToEventDTO(eventCreatedWithEdge), nil
 }
 
-func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
-	events, err := es.eventRepository.GetEvents()
+func (es *EventService) GetFilteredEvents(filters structures.EventFilters) ([]dtos.EventWithTypeDTO, error) {
+	events, err := es.eventRepository.GetEventsWithFilters(filters)
 	if err != nil {
 		return nil, err
 	}
 
-	var eventsWithType []dtos.EventWithTypeDTO
+	var filteredEvents []*ent.Event
 
-	for _, event := range events {
+	if filters.Type != "remote" && filters.Distance != "" && filters.Longitude != "" && filters.Latitude != "" {
+
+		dist, err := strconv.ParseFloat(filters.Distance, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid distance value: %v", err)
+		}
+
+		longitude, err := strconv.ParseFloat(filters.Longitude, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid longitude value: %v", err)
+		}
+
+		latitude, err := strconv.ParseFloat(filters.Latitude, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid latitude value: %v", err)
+		}
+
+		for _, event := range events {
+			if filters.Type == "all" && event.Edges.RemoteEvent != nil {
+				filteredEvents = append(filteredEvents, event)
+				continue
+			}
+			if event.Edges.PhysicalEvent != nil {
+				eventLng := event.Edges.PhysicalEvent.Lng
+				eventLat := event.Edges.PhysicalEvent.Lat
+
+				if utils.CalculateDistance(latitude, longitude, eventLat, eventLng) <= dist {
+					filteredEvents = append(filteredEvents, event)
+				}
+			}
+		}
+	} else {
+		filteredEvents = events
+	}
+
+	eventsWithType := make([]dtos.EventWithTypeDTO, 0)
+	for _, event := range filteredEvents {
 		if event.Edges.RemoteEvent != nil {
 			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
 				ID:                event.ID,
@@ -136,6 +178,10 @@ func (es *EventService) GetAllEvents() ([]dtos.EventWithTypeDTO, error) {
 			})
 		}
 	}
+
+	sort.Slice(eventsWithType, func(i, j int) bool {
+		return eventsWithType[i].StartDate.Before(eventsWithType[j].StartDate)
+	})
 
 	return eventsWithType, nil
 }
