@@ -8,6 +8,7 @@ import (
 	"edumeet/ent/document"
 	"edumeet/ent/event"
 	"edumeet/ent/eventdocument"
+	"edumeet/ent/friendship"
 	"edumeet/ent/message"
 	"edumeet/ent/participant"
 	"edumeet/ent/physicalevent"
@@ -87,6 +88,7 @@ func checkColumn(table, column string) error {
 			document.Table:      document.ValidColumn,
 			event.Table:         event.ValidColumn,
 			eventdocument.Table: eventdocument.ValidColumn,
+			friendship.Table:    friendship.ValidColumn,
 			message.Table:       message.ValidColumn,
 			participant.Table:   participant.ValidColumn,
 			physicalevent.Table: physicalevent.ValidColumn,

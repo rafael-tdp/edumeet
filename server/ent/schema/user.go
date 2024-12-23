@@ -47,5 +47,6 @@ func (User) Edges() []ent.Edge {
 		edge.To("messages", Message.Type),
 		edge.To("reports", Reporting.Type),
 		edge.To("participants", Participant.Type),
+		edge.To("friendships", Friendship.Type),
 	}
 }

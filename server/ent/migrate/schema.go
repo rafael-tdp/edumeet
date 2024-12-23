@@ -99,6 +99,26 @@ var (
 			},
 		},
 	}
+	// FriendshipsColumns holds the columns for the "friendships" table.
+	FriendshipsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "status", Type: field.TypeString, Default: "PENDING"},
+		{Name: "user_friendships", Type: field.TypeString, Nullable: true},
+	}
+	// FriendshipsTable holds the schema information for the "friendships" table.
+	FriendshipsTable = &schema.Table{
+		Name:       "friendships",
+		Columns:    FriendshipsColumns,
+		PrimaryKey: []*schema.Column{FriendshipsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "friendships_users_friendships",
+				Columns:    []*schema.Column{FriendshipsColumns[2]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// MessagesColumns holds the columns for the "messages" table.
 	MessagesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
@@ -371,6 +391,7 @@ var (
 		DocumentsTable,
 		EventsTable,
 		EventDocumentsTable,
+		FriendshipsTable,
 		MessagesTable,
 		ParticipantsTable,
 		PhysicalEventsTable,
@@ -389,6 +410,7 @@ func init() {
 	EventsTable.ForeignKeys[0].RefTable = UsersTable
 	EventDocumentsTable.ForeignKeys[0].RefTable = DocumentsTable
 	EventDocumentsTable.ForeignKeys[1].RefTable = EventsTable
+	FriendshipsTable.ForeignKeys[0].RefTable = UsersTable
 	MessagesTable.ForeignKeys[0].RefTable = EventsTable
 	MessagesTable.ForeignKeys[1].RefTable = UsersTable
 	ParticipantsTable.ForeignKeys[0].RefTable = EventsTable

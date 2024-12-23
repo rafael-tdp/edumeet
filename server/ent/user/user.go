@@ -62,6 +62,8 @@ const (
 	EdgeReports = "reports"
 	// EdgeParticipants holds the string denoting the participants edge name in mutations.
 	EdgeParticipants = "participants"
+	// EdgeFriendships holds the string denoting the friendships edge name in mutations.
+	EdgeFriendships = "friendships"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// BadgesTable is the table that holds the badges relation/edge. The primary key declared below.
@@ -102,6 +104,13 @@ const (
 	ParticipantsInverseTable = "participants"
 	// ParticipantsColumn is the table column denoting the participants relation/edge.
 	ParticipantsColumn = "user_participants"
+	// FriendshipsTable is the table that holds the friendships relation/edge.
+	FriendshipsTable = "friendships"
+	// FriendshipsInverseTable is the table name for the Friendship entity.
+	// It exists in this package in order to avoid circular dependency with the "friendship" package.
+	FriendshipsInverseTable = "friendships"
+	// FriendshipsColumn is the table column denoting the friendships relation/edge.
+	FriendshipsColumn = "user_friendships"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -369,6 +378,20 @@ func ByParticipants(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newParticipantsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByFriendshipsCount orders the results by friendships count.
+func ByFriendshipsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newFriendshipsStep(), opts...)
+	}
+}
+
+// ByFriendships orders the results by friendships terms.
+func ByFriendships(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFriendshipsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newBadgesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -409,5 +432,12 @@ func newParticipantsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ParticipantsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ParticipantsTable, ParticipantsColumn),
+	)
+}
+func newFriendshipsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FriendshipsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, FriendshipsTable, FriendshipsColumn),
 	)
 }

@@ -7,6 +7,7 @@ import (
 	"edumeet/ent/document"
 	"edumeet/ent/event"
 	"edumeet/ent/eventdocument"
+	"edumeet/ent/friendship"
 	"edumeet/ent/message"
 	"edumeet/ent/participant"
 	"edumeet/ent/physicalevent"
@@ -95,6 +96,16 @@ func init() {
 	eventdocumentDescID := eventdocumentFields[0].Descriptor()
 	// eventdocument.DefaultID holds the default value on creation for the id field.
 	eventdocument.DefaultID = eventdocumentDescID.Default.(func() string)
+	friendshipFields := schema.Friendship{}.Fields()
+	_ = friendshipFields
+	// friendshipDescStatus is the schema descriptor for status field.
+	friendshipDescStatus := friendshipFields[1].Descriptor()
+	// friendship.DefaultStatus holds the default value on creation for the status field.
+	friendship.DefaultStatus = friendshipDescStatus.Default.(string)
+	// friendshipDescID is the schema descriptor for id field.
+	friendshipDescID := friendshipFields[0].Descriptor()
+	// friendship.DefaultID holds the default value on creation for the id field.
+	friendship.DefaultID = friendshipDescID.Default.(func() string)
 	messageMixin := schema.Message{}.Mixin()
 	messageMixinHooks0 := messageMixin[0].Hooks()
 	message.Hooks[0] = messageMixinHooks0[0]

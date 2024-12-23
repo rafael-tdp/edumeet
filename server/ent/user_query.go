@@ -7,6 +7,7 @@ import (
 	"database/sql/driver"
 	"edumeet/ent/badge"
 	"edumeet/ent/event"
+	"edumeet/ent/friendship"
 	"edumeet/ent/message"
 	"edumeet/ent/participant"
 	"edumeet/ent/predicate"
@@ -35,6 +36,7 @@ type UserQuery struct {
 	withMessages     *MessageQuery
 	withReports      *ReportingQuery
 	withParticipants *ParticipantQuery
+	withFriendships  *FriendshipQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -196,6 +198,28 @@ func (uq *UserQuery) QueryParticipants() *ParticipantQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(participant.Table, participant.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.ParticipantsTable, user.ParticipantsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFriendships chains the current query on the "friendships" edge.
+func (uq *UserQuery) QueryFriendships() *FriendshipQuery {
+	query := (&FriendshipClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(friendship.Table, friendship.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.FriendshipsTable, user.FriendshipsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -401,6 +425,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withMessages:     uq.withMessages.Clone(),
 		withReports:      uq.withReports.Clone(),
 		withParticipants: uq.withParticipants.Clone(),
+		withFriendships:  uq.withFriendships.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -470,6 +495,17 @@ func (uq *UserQuery) WithParticipants(opts ...func(*ParticipantQuery)) *UserQuer
 		opt(query)
 	}
 	uq.withParticipants = query
+	return uq
+}
+
+// WithFriendships tells the query-builder to eager-load the nodes that are connected to
+// the "friendships" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithFriendships(opts ...func(*FriendshipQuery)) *UserQuery {
+	query := (&FriendshipClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withFriendships = query
 	return uq
 }
 
@@ -551,13 +587,14 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [6]bool{
+		loadedTypes = [7]bool{
 			uq.withBadges != nil,
 			uq.withSubjects != nil,
 			uq.withEvents != nil,
 			uq.withMessages != nil,
 			uq.withReports != nil,
 			uq.withParticipants != nil,
+			uq.withFriendships != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -617,6 +654,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadParticipants(ctx, query, nodes,
 			func(n *User) { n.Edges.Participants = []*Participant{} },
 			func(n *User, e *Participant) { n.Edges.Participants = append(n.Edges.Participants, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withFriendships; query != nil {
+		if err := uq.loadFriendships(ctx, query, nodes,
+			func(n *User) { n.Edges.Friendships = []*Friendship{} },
+			func(n *User, e *Friendship) { n.Edges.Friendships = append(n.Edges.Friendships, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -864,6 +908,37 @@ func (uq *UserQuery) loadParticipants(ctx context.Context, query *ParticipantQue
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_participants" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadFriendships(ctx context.Context, query *FriendshipQuery, nodes []*User, init func(*User), assign func(*User, *Friendship)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Friendship(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.FriendshipsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_friendships
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_friendships" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_friendships" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
