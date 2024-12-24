@@ -19,7 +19,7 @@ func setupRoutesUser(app *fiber.App, userController *controllers.UserController)
 	app.Get("/user/subjects", middlewares.JWTAuthMiddleware, userController.GetUserSubjects)
 	app.Put("/user/subjects/update", middlewares.JWTAuthMiddleware, userController.UpdateUserSubjects)
 	app.Post("/user/friendship", middlewares.JWTAuthMiddleware, userController.CreateFriendship)
-	app.Put("/user/friendship/:id", middlewares.JWTAuthMiddleware, userController.UpdateFriendship)
+	// app.Put("/user/friendship/:id", middlewares.JWTAuthMiddleware, userController.UpdateFriendship)
 	app.Get("/user/friendship", middlewares.JWTAuthMiddleware, userController.GetFriendships)
 	app.Delete("/user/friendship/:id", middlewares.JWTAuthMiddleware, userController.DeleteFriendship)
 

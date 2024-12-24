@@ -140,7 +140,7 @@ func (us *UserService) UpdateUserSubjects(ctx context.Context, userID string, su
 	return nil
 }
 
-func (us *UserService) CreateFriendship(ctx context.Context, userID string, friendship dtos.FriendshipDTO) (*ent.Friendship, error) {
+func (us *UserService) CreateFriendship(ctx context.Context, userID string, friendship dtos.CreateFriendshipDTO) (*ent.Friendship, error) {
 	user, err := us.userRepo.GetById(userID)
 	if err != nil {
 		return nil, errors.New("user not found")
@@ -149,6 +149,16 @@ func (us *UserService) CreateFriendship(ctx context.Context, userID string, frie
 	friend, err := us.userRepo.GetById(friendship.FriendID)
 	if err != nil {
 		return nil, errors.New("friend not found")
+	}
+
+	// Check if friendship already exists
+	friendshipExists, err := us.userRepo.IsFriendshipExist(user.ID, friend.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if friendshipExists {
+		return nil, errors.New("friendship already exists")
 	}
 
 	friendshipCreated, err := us.userRepo.CreateFriendship(ctx, user.ID, friend.ID)
@@ -173,24 +183,35 @@ func (us *UserService) UpdateFriendship(ctx context.Context, friendshipID string
 	return updatedFriendship, nil
 }
 
-func (us *UserService) GetFriendships(userID string) ([]dtos.FriendshipDTO, error) {
-	friendships, err := us.userRepo.GetFriendshipsByUserId(userID)
-	if err != nil {
-		return nil, err
-	}
+func (us *UserService) GetFriendships(userID string, status string) ([]dtos.FriendshipDTO, error) {
 
-	friendshipsDTO := make([]dtos.FriendshipDTO, 0)
-	for _, friendship := range friendships {
-		print(friendship.ID)
-		friendshipDTO, err := dtos.FriendshipEntToDTO(friendship)
+	if status == "pending" {
+		pendingFriendships, err := us.userRepo.GetPendingFriendships(userID)
+
 		if err != nil {
 			return nil, err
 		}
 
-		friendshipsDTO = append(friendshipsDTO, *friendshipDTO)
-	}
+		pendingFriendshipsDTO, err := dtos.FriendshipsEntToDTO(pendingFriendships, userID, status)
+		if err != nil {
+			return nil, err
+		}
 
-	return friendshipsDTO, nil
+		return pendingFriendshipsDTO, nil
+	} else {
+
+		friendships, err := us.userRepo.GetFriendshipsByUserId(userID)
+		if err != nil {
+			return nil, err
+		}
+
+		acceptedFriendshipDTO, err := dtos.FriendshipsEntToDTO(friendships, userID, status)
+		if err != nil {
+			return nil, err
+		}
+
+		return acceptedFriendshipDTO, nil
+	}
 }
 
 func (us *UserService) DeleteFriendship(ctx context.Context, friendshipID string) error {

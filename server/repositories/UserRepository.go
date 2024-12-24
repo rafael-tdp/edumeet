@@ -202,7 +202,19 @@ func (ur *UserRepository) GetFriendshipById(friendshipID string) (*ent.Friendshi
 }
 
 func (ur *UserRepository) GetFriendshipsByUserId(userID string) ([]*ent.Friendship, error) {
-	friendships, err := ur.client.Friendship.Query().Where(friendship.HasUserWith(user.IDEQ(userID))).WithFriend().All(context.Background())
+	friendships, err := ur.client.Friendship.Query().
+		Where(
+			friendship.And(
+				friendship.StatusEQ("ACCEPTED"),
+				friendship.Or(
+					friendship.HasUserWith(user.IDEQ(userID)),
+					friendship.HasFriendWith(user.IDEQ(userID)),
+				),
+			),
+		).
+		WithFriend().
+		WithUser().
+		All(context.Background())
 	if err != nil {
 		return nil, err
 	}
@@ -217,4 +229,47 @@ func (ur *UserRepository) DeleteFriendship(ctx context.Context, friendshipID str
 	}
 
 	return nil
+}
+
+func (ur *UserRepository) IsFriendshipExist(userId1 string, userId2 string) (bool, error) {
+	exist, err := ur.client.Friendship.Query().
+		Where(
+			// Condition for userId1 being a friend of userId2 or vice versa
+
+			friendship.Or(
+				friendship.And(
+					friendship.HasUserWith(user.IDEQ(userId1)),
+					friendship.HasFriendWith(user.IDEQ(userId2)),
+				),
+				friendship.And(
+					friendship.HasUserWith(user.IDEQ(userId2)),
+					friendship.HasFriendWith(user.IDEQ(userId1)),
+				),
+			),
+		).
+		Exist(context.Background())
+
+	if err != nil {
+		return false, err
+	}
+
+	return exist, nil
+}
+
+// On m'a fait la demande
+func (ur *UserRepository) GetPendingFriendships(userID string) ([]*ent.Friendship, error) {
+	friendships, err := ur.client.Friendship.Query().
+		Where(
+			friendship.And(
+				friendship.HasFriendWith(user.IDEQ(userID)),
+				friendship.StatusEQ("PENDING"),
+			),
+		).
+		WithUser().
+		All(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return friendships, nil
 }

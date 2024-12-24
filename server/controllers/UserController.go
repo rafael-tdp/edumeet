@@ -139,38 +139,42 @@ func (uc *UserController) UpdateUserSubjects(c *fiber.Ctx) error {
 
 func (uc *UserController) CreateFriendship(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
-	var friendshipDTO dtos.FriendshipDTO
+	var friendshipDTO dtos.CreateFriendshipDTO
 	if err := c.BodyParser(&friendshipDTO); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
 
 	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+
 	friendship, err := uc.userService.CreateFriendship(ctx, currentUser.ID, friendshipDTO)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.JSON(friendship)
+	return c.Status(fiber.StatusCreated).JSON(friendship)
 }
 
-func (uc *UserController) UpdateFriendship(c *fiber.Ctx) error {
-	currentUser := c.Locals("user").(*ent.User)
-	friendshipID := c.Params("id")
-	var friendshipDTO dtos.FriendshipDTO
-	if err := c.BodyParser(&friendshipDTO); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
-	}
+// func (uc *UserController) UpdateFriendship(c *fiber.Ctx) error {
+// 	currentUser := c.Locals("user").(*ent.User)
+// 	friendshipID := c.Params("id")
+// 	var friendshipDTO dtos.FriendshipDTO
+// 	if err := c.BodyParser(&friendshipDTO); err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+// 	}
 
-	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
-	friendship, err := uc.userService.UpdateFriendship(ctx, friendshipID, friendshipDTO.Status)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-	}
-	return c.JSON(friendship)
-}
+// 	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+// 	friendship, err := uc.userService.UpdateFriendship(ctx, friendshipID, friendshipDTO.Status)
+// 	if err != nil {
+// 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+// 	}
+// 	return c.JSON(friendship)
+// }
 
 func (uc *UserController) GetFriendships(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
-	friendships, err := uc.userService.GetFriendships(currentUser.ID)
+
+	status := c.Query("status", "pending")
+
+	friendships, err := uc.userService.GetFriendships(currentUser.ID, status)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
