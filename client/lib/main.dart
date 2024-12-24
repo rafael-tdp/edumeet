@@ -25,152 +25,154 @@ import 'package:client/i18n/generated/translations.g.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:client/screens/create_event_screen.dart';
+import 'package:client/providers/user_provider.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
-final _router = GoRouter(
-    initialLocation: '/',
-    navigatorKey: _rootNavigatorKey,
+final _router =
+    GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
+  ShellRoute(
+    navigatorKey: _shellNavigatorKey,
+    builder: (context, state, child) => Scaffold(
+      body: HomePage(child: child),
+    ),
     routes: [
-      ShellRoute(
-          navigatorKey: _shellNavigatorKey,
-          builder: (context, state, child) => Scaffold(
-            body: HomePage(child: child),
-          ),
+      GoRoute(
+        path: HomePage.routeName,
+        parentNavigatorKey: _shellNavigatorKey,
+        builder: (context, state) => const HomePage(),
+      ),
+      GoRoute(
+        path: EventsPage.routeName,
+        parentNavigatorKey: _shellNavigatorKey,
+        builder: (context, state) => const EventsPage(),
         routes: [
           GoRoute(
-            path: HomePage.routeName,
-            parentNavigatorKey: _shellNavigatorKey,
-            builder: (context, state) => const HomePage(),
-          ),
-          GoRoute(
-            path: EventsPage.routeName,
-            parentNavigatorKey: _shellNavigatorKey,
-            builder: (context, state) => const EventsPage(),
-            routes: [
-              GoRoute(
-                path: CreateEventPage.routeName,
-                parentNavigatorKey: _rootNavigatorKey,
-                builder: (context, state) => const CreateEventPage(),
-              ),
-            ],
-          ),
-          GoRoute(
-            path: ConversationsPage.routeName,
-            parentNavigatorKey: _shellNavigatorKey,
-            builder: (context, state) => const ConversationsPage(),
-            routes: [
-              GoRoute(
-                path: ':userName/details',
-                builder: (context, state) {
-                  final userName = state.extra as String;
-                  return ChatPage(userName: userName);
-                },
-              )
-            ],
-          ),
-          GoRoute(
-            path: ProfilePage.routeName,
-            parentNavigatorKey: _shellNavigatorKey,
-            builder: (context, state) => const ProfilePage(isCurrentUser: true),
+            path: CreateEventPage.routeName,
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => const CreateEventPage(),
           ),
         ],
       ),
       GoRoute(
-          path: '/',
-          parentNavigatorKey: _rootNavigatorKey,
-          builder: (context, state) => const AuthGuard(child: HomePage())
-      ),
-      GoRoute(
-          path: LoginPage.routeName,
-          name: LoginPage.routeName.replaceAll("/", ""),
-          parentNavigatorKey: _rootNavigatorKey,
-          builder: (context, state) => const LoginPage()
-      ),
-      GoRoute(
-          path: RegisterPage.routeName,
-          name: RegisterPage.routeName.replaceAll("/", ""),
-          parentNavigatorKey: _rootNavigatorKey,
-          builder: (context, state) => const RegisterPage()
-      ),
-      GoRoute(
-          path: HomePage.routeName,
-          name: HomePage.routeName.replaceAll("/", ""),
-          parentNavigatorKey: _rootNavigatorKey,
-          builder: (context, state) => const HomePage()
-      ),
-      GoRoute(
-          path: ForgotPasswordPage.routeName,
-          name: ForgotPasswordPage.routeName.replaceAll("/", ""),
-          parentNavigatorKey: _rootNavigatorKey,
-          builder: (context, state) => const ForgotPasswordPage()
-      ),
-      GoRoute(
-        path: EditProfilePage.routeName,
-        name: EditProfilePage.routeName.replaceAll("/", ""),
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => EditProfilePage(
-          user: state.extra as User,
-        ),
-      ),
-      GoRoute(
-        path: ValidateAccountPage.routeName,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => ValidateAccountPage(
-          isResetPassword: state.pathParameters['isResetPassword'] == 'true',
-          email: state.pathParameters['email']!,
-        ),
+        path: ConversationsPage.routeName,
+        parentNavigatorKey: _shellNavigatorKey,
+        builder: (context, state) => const ConversationsPage(),
+        routes: [
+          GoRoute(
+            path: ':userName/details',
+            builder: (context, state) {
+              final userName = state.extra as String;
+              return ChatPage(userName: userName);
+            },
+          )
+        ],
       ),
       GoRoute(
         path: ProfilePage.routeName,
-        parentNavigatorKey: _rootNavigatorKey,
-        name: ProfilePage.routeName.replaceAll("/", ""),
-        builder: (context, state) => const ProfilePage(
-          isCurrentUser: false,
-        ),
+        parentNavigatorKey: _shellNavigatorKey,
+        builder: (context, state) => const ProfilePage(isCurrentUser: true),
       ),
-      GoRoute(
-          path: UserProfileWrapper.routeName,
-          parentNavigatorKey: _rootNavigatorKey,
-          name: UserProfileWrapper.routeName.replaceAll("/", ""),
-          builder: (context, state) => UserProfileWrapper(
+    ],
+  ),
+  GoRoute(
+      path: '/',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const AuthGuard(child: HomePage())),
+  GoRoute(
+      path: LoginPage.routeName,
+      name: LoginPage.routeName.replaceAll("/", ""),
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const LoginPage()),
+  GoRoute(
+      path: RegisterPage.routeName,
+      name: RegisterPage.routeName.replaceAll("/", ""),
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const RegisterPage()),
+  GoRoute(
+      path: HomePage.routeName,
+      name: HomePage.routeName.replaceAll("/", ""),
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const HomePage()),
+  GoRoute(
+      path: ForgotPasswordPage.routeName,
+      name: ForgotPasswordPage.routeName.replaceAll("/", ""),
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ForgotPasswordPage()),
+  GoRoute(
+    path: EditProfilePage.routeName,
+    name: EditProfilePage.routeName.replaceAll("/", ""),
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => EditProfilePage(
+      user: state.extra as User,
+    ),
+  ),
+  GoRoute(
+    path: ValidateAccountPage.routeName,
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => ValidateAccountPage(
+      isResetPassword: state.pathParameters['isResetPassword'] == 'true',
+      email: state.pathParameters['email']!,
+    ),
+  ),
+  GoRoute(
+    path: ProfilePage.routeName,
+    parentNavigatorKey: _rootNavigatorKey,
+    name: ProfilePage.routeName.replaceAll("/", ""),
+    builder: (context, state) => const ProfilePage(
+      isCurrentUser: false,
+    ),
+  ),
+  GoRoute(
+      path: UserProfileWrapper.routeName,
+      parentNavigatorKey: _rootNavigatorKey,
+      name: UserProfileWrapper.routeName.replaceAll("/", ""),
+      builder: (context, state) => UserProfileWrapper(
             user: state.pathParameters['user'] as Map<String, String>,
             isCurrentUser: state.pathParameters['isCurrentUser'] as bool,
-          )
-      ),
-      GoRoute(
-          path: '${EventChatPage.routeName}/:eventId',
-          parentNavigatorKey: _rootNavigatorKey,
-          name: EventChatPage.routeName.replaceAll("/", ""),
-          builder: (context, state) {
-            final eventId = state.pathParameters['eventId']!;
-            final event = state.extra as Event;
-            return EventChatPage(
-              eventId: eventId,
-              event: event,
-            );
-          },
-      ),
-      GoRoute(
-        path: '${EventsPage.routeName}/:eventId/details',
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) {
-          final eventId = state.pathParameters['eventId']!;
-          final currentUser = state.extra as User;
-          return EventDetailsPage(
-            eventId: eventId,
-            currentUser: currentUser,
-          );
-        },
-      ),
+          )),
+  GoRoute(
+    path: '${EventChatPage.routeName}/:eventId',
+    parentNavigatorKey: _rootNavigatorKey,
+    name: EventChatPage.routeName.replaceAll("/", ""),
+    builder: (context, state) {
+      final eventId = state.pathParameters['eventId']!;
+      final event = state.extra as Event;
+      return EventChatPage(
+        eventId: eventId,
+        event: event,
+      );
+    },
+  ),
+  GoRoute(
+    path: '${EventsPage.routeName}/:eventId/details',
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) {
+      final eventId = state.pathParameters['eventId']!;
+      final currentUser = state.extra as User;
+      return EventDetailsPage(
+        eventId: eventId,
+        currentUser: currentUser,
+      );
+    },
+  ),
 ]);
 
-void main() {
+void main() async {
   setUrlStrategy(PathUrlStrategy());
+
+  final userProvider = UserProvider();
+  await userProvider.loadUserFromCache();
+
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
-      builder: (context) => TranslationProvider(child: const MyApp()),
+      builder: (context) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => UserProvider()),
+        ],
+        child: TranslationProvider(child: const MyApp()),
+      ),
     ),
   );
 }
@@ -199,6 +201,7 @@ class HomePage extends StatefulWidget {
   static navigateTo(BuildContext context) {
     context.go(routeName);
   }
+
   final Widget? child;
   const HomePage({super.key, this.child});
 

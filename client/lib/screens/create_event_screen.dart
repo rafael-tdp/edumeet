@@ -1,10 +1,16 @@
+import 'package:client/core/models/event.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:client/components/subjects_selection.dart';
+import 'package:client/core/services/event_services.dart';
+import 'package:intl/intl.dart';
+import 'package:client/core/services/adresse_services.dart';
 
 class CreateEventPage extends StatefulWidget {
   static const String routeName = '/create';
+
   static navigateTo(BuildContext context) {
     context.go('${EventsPage.routeName}$routeName');
   }
@@ -19,19 +25,89 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _dateController = TextEditingController();
-  final _timeController = TextEditingController();
+  DateTime? _startDate;
+  DateTime? _endDate;
   final _locationController = TextEditingController();
   final _maxParticipantsController = TextEditingController();
-  final _priceController = TextEditingController();
-  final _imageController = TextEditingController();
+  final _onlineLinkController = TextEditingController();
+
+  bool _isPrivate = false;
+  bool _isPhysical = true;
+  Set<String> _selectedSubjects = {};
+  
+  // Liste pour stocker les suggestions d'adresses
+  List<String> _addressSuggestions = [];
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _locationController.dispose();
+    _maxParticipantsController.dispose();
+    _onlineLinkController.dispose();
+    super.dispose();
+  }
+
+  // Fonction pour obtenir les suggestions d'adresses
+  void _getAddressSuggestions(String query) async {
+    try {
+      List<String> suggestions = await fetchAddressSuggestions(query);
+      setState(() {
+        _addressSuggestions = suggestions;
+      });
+    } catch (e) {
+      // Gérez les erreurs de récupération des adresses
+      print("Erreur de récupération des adresses: $e");
+    }
+  }
 
   void _createEvent() {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    // TODO: Ajouter la logique pour créer un événement
+    Event event = Event(
+      title: _nameController.text,
+      description: _descriptionController.text,
+      startDate:
+          _startDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
+      endDate: _endDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
+      isPrivate: _isPrivate,
+      nbMaxParticipants: int.parse(_maxParticipantsController.text),
+      physicalEvent: _isPhysical
+          ? {
+              'location': _locationController.text,
+            }
+          : null,
+      remoteEvent: !_isPhysical
+          ? {
+              'url': _onlineLinkController.text,
+            }
+          : null,
+      subjects: _selectedSubjects.toList(),
+    );
+
+    EventServices.createEvent(event);
+  }
+
+  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+    DateTime initialDate = DateTime.now();
+    DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+
+    if (selectedDate != null) {
+      setState(() {
+        if (isStartDate) {
+          _startDate = selectedDate;
+        } else {
+          _endDate = selectedDate;
+        }
+      });
+    }
   }
 
   @override
@@ -54,7 +130,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
           ),
         ),
         backgroundColor: Colors.transparent,
-        elevation: 0, // Supprime l'ombre sous l'AppBar
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -84,38 +160,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   return null;
                 },
               ),
-              _buildTextFormField(
-                controller: _dateController,
-                label: t.event.date,
-                icon: Icons.calendar_today,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return t.event.enterDate;
-                  }
-                  return null;
-                },
+              _buildDateField(
+                context,
+                label: "Date de début",
+                isStartDate: true,
               ),
-              _buildTextFormField(
-                controller: _timeController,
-                label: t.event.time,
-                icon: Icons.access_time,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return t.event.enterTime;
-                  }
-                  return null;
-                },
-              ),
-              _buildTextFormField(
-                controller: _locationController,
-                label: t.event.location,
-                icon: Icons.location_on,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return t.event.enterLocation;
-                  }
-                  return null;
-                },
+              _buildDateField(
+                context,
+                label: "Date de fin",
+                isStartDate: false,
               ),
               _buildTextFormField(
                 controller: _maxParticipantsController,
@@ -132,31 +185,69 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   return null;
                 },
               ),
-              _buildTextFormField(
-                controller: _priceController,
-                label: t.event.price,
-                icon: Icons.attach_money,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return t.event.enterPrice;
-                  }
-                  if (double.tryParse(value) == null) {
-                    return t.event.invalidPrice;
-                  }
-                  return null;
+              const SizedBox(height: 20),
+              SwitchListTile(
+                title: const Text("Événement physique"),
+                value: _isPhysical,
+                onChanged: (bool value) {
+                  setState(() {
+                    _isPhysical = value;
+                  });
                 },
               ),
-              _buildTextFormField(
-                controller: _imageController,
-                label: t.event.image,
-                icon: Icons.image,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return t.event.enterImage;
-                  }
-                  return null;
-                },
+              const SizedBox(height: 10),
+              _isPhysical
+                  ? _buildTextFormField(
+                      controller: _locationController,
+                      label: t.event.location,
+                      icon: Icons.location_on,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return t.event.enterLocation;
+                        }
+                        return null;
+                      },
+                      onChanged: _getAddressSuggestions,
+                    )
+                  : _buildTextFormField(
+                      controller: _onlineLinkController,
+                      label: "Lien de connexion",
+                      icon: Icons.link,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Veuillez entrer un lien de connexion.";
+                        }
+                        return null;
+                      },
+                    ),
+              // Affichage des suggestions d'adresses
+              if (_addressSuggestions.isNotEmpty)
+                Column(
+                  children: _addressSuggestions.map((suggestion) {
+                    return ListTile(
+                      title: Text(suggestion),
+                      onTap: () {
+                        _locationController.text = suggestion;
+                        setState(() {
+                          _addressSuggestions.clear(); // Efface les suggestions après sélection
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 300.0, // Hauteur maximale que vous souhaitez
+                child: SingleChildScrollView(
+                  child: SubjectsSelection(
+                    onSelected: (selectedSubjects) {
+                      setState(() {
+                        _selectedSubjects = selectedSubjects;
+                      });
+                    },
+                    selectedSubjects: _selectedSubjects,
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -176,20 +267,59 @@ class _CreateEventPageState extends State<CreateEventPage> {
     required IconData icon,
     String? Function(String?)? validator,
     TextInputType keyboardType = TextInputType.text,
+    ValueChanged<String>? onChanged,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
+        onChanged: onChanged,
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
           ),
           prefixIcon: Icon(icon),
         ),
         validator: validator,
+      ),
+    );
+  }
+
+  Widget _buildDateField(
+    BuildContext context, {
+    required String label,
+    required bool isStartDate,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: GestureDetector(
+        onTap: () {
+          _selectDate(context, isStartDate);
+        },
+        child: AbsorbPointer(
+          child: TextFormField(
+            controller: isStartDate
+                ? TextEditingController(
+                    text: _startDate == null
+                        ? ''
+                        : DateFormat('yyyy-MM-dd').format(_startDate!),
+                  )
+                : TextEditingController(
+                    text: _endDate == null
+                        ? ''
+                        : DateFormat('yyyy-MM-dd').format(_endDate!),
+                  ),
+            decoration: InputDecoration(
+              labelText: label,
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              prefixIcon: const Icon(Icons.calendar_today),
+            ),
+          ),
+        ),
       ),
     );
   }

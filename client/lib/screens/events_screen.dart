@@ -144,11 +144,11 @@ class _EventsPageState extends State<EventsPage> {
             itemBuilder: (context, index) {
               final event = events[index];
               return GestureDetector(
-                onTap: () => _openEventPage(context, event.id),
+                onTap: () => _openEventPage(context, event.id!),
                 child: EventCard(
                   title: event.title,
                   date: event.startDate,
-                  imageUrl: event.image,
+                  imageUrl: event.image!,
                   participants: event.participantsCount.toString(),
                   isCurrentUserEvent: event.createdBy == _currentUser!.id,
                 ),

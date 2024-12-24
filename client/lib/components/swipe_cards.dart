@@ -34,10 +34,12 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
           return SwipeItem(
             content: event,
             likeAction: () async {
-              await ParticipantServices.joinEvent(event.id);
+              await ParticipantServices.joinEvent(event.id!);
               // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(t.event.hasJoinEvent(event_title: event.title))),
+                SnackBar(
+                    content:
+                        Text(t.event.hasJoinEvent(event_title: event.title))),
               );
             },
           );
@@ -62,7 +64,8 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                     children: [
                       Positioned.fill(
                         child: Image.network(
-                          event.image,
+                          event.image ??
+                              'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dHJhdmFpbHxlbnwwfHwwfHx8Mg%3D%3D',
                           fit: BoxFit.cover,
                           loadingBuilder: (context, child, progress) {
                             if (progress == null) return child;
@@ -148,12 +151,12 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
           },
           onStackFinished: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(t.swipe_cards.end_of_list)),
+              SnackBar(content: Text(t.swipe_cards.end_of_list)),
             );
           },
           itemChanged: (SwipeItem item, int index) {
-            print(t.swipe_cards.item_changed(title: (item.content as Event).title));
+            print(t.swipe_cards
+                .item_changed(title: (item.content as Event).title));
           },
           upSwipeAllowed: false,
           fillSpace: true,

@@ -102,4 +102,32 @@ class EventServices {
       rethrow;
     }
   }
+
+  static Future<void> createEvent(Event event) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      print(event.toJson());
+
+      final response = await http.post(
+        Uri.parse('${Env.BACKEND_URL}/events'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(event.toJson()),
+      );
+
+      if (response.statusCode != 201) {
+        throw Exception('Failed to create event');
+      }
+    } catch (error) {
+      log('An error occurred while creating event', error: error);
+      rethrow;
+    }
+  }
 }

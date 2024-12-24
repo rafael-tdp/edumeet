@@ -70,14 +70,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         transitionDuration: const Duration(milliseconds: 150),
         reverseTransitionDuration: const Duration(milliseconds: 150),
         pageBuilder: (context, animation, secondaryAnimation) {
-          EventChatPage.navigateTo(context, event, event.id);
+          EventChatPage.navigateTo(context, event, event.id!);
           return SlideTransition(
             position: Tween<Offset>(
               begin: const Offset(1.0, 0.0),
               end: Offset.zero,
             ).animate(animation),
             child:
-            EventChatPage(event: event, eventId: event.id),
+            EventChatPage(event: event, eventId: event.id!),
           );
         },
       ),
@@ -111,10 +111,10 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 flexibleSpace: FlexibleSpaceBar(
                   background: EventHeader(
                     date: event.startDate,
-                    image: event.image,
+                    image: event.image!,
                     title: event.title,
                     description: event.description,
-                    participantsCount: event.participantsCount,
+                    participantsCount: event.participantsCount!,
                   ),
                 ),
                 pinned: true,
