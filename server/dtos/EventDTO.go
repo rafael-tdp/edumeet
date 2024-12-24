@@ -16,7 +16,7 @@ type EventDTO struct {
 	RemoteEventDTO   *RemoteEventDTO   `json:"remote_event,omitempty"`
 	CreatedBy        *string           `json:"created_by,omitempty"`
 	Participants     []ParticipantDTO  `json:"participants,omitempty"`
-	Subjects         []SubjectDTO      `json:"subjects,omitempty"`
+	Subjects         []string          `json:"subjects,omitempty"`
 }
 
 func EntToEventDTO(event *ent.Event) *EventDTO {

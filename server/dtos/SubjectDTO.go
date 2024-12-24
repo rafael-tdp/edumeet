@@ -16,10 +16,10 @@ func SubjectEntToDTO(subject *ent.Subject) *SubjectDTO {
 	}
 }
 
-func ConvertSubjects(subjects []*ent.Subject) []SubjectDTO {
-	var subjectDTOs []SubjectDTO
+func ConvertSubjects(subjects []*ent.Subject) []string {
+	var subjectIds []string
 	for _, subject := range subjects {
-		subjectDTOs = append(subjectDTOs, *SubjectEntToDTO(subject))
+		subjectIds = append(subjectIds, subject.ID)
 	}
-	return subjectDTOs
+	return subjectIds
 }
