@@ -1,25 +1,19 @@
 package dtos
 
 type GetChatDTO struct {
-	EventID   string   `json:"eventID"`
-	Message   string   `json:"message"`
-	MessageID string   `json:"messageID"`
-	Documents []string `json:"documents"`
-	CreatedAt string   `json:"createdAt"`
-	CreatedBy string   `json:"createdBy"`
+	Message   string `json:"message"`
+	MessageID string `json:"messageID"`
+	CreatedBy string `json:"createdBy"`
 }
 
 func (e *GetChatDTO) GetCreatedBy() *string {
 	return &e.CreatedBy
 }
 
-func EntToGetChatDTO(eventID, message, messageID, createdAt, createdBy string, documents []string) *GetChatDTO {
+func EntToGetChatDTO(message, messageID, createdBy string) *GetChatDTO {
 	return &GetChatDTO{
-		EventID:   eventID,
 		Message:   message,
 		MessageID: messageID,
-		Documents: documents,
-		CreatedAt: createdAt,
 		CreatedBy: createdBy,
 	}
 }

@@ -74,6 +74,7 @@ func (cr *ChatRepository) GetChat(messageID string) (*ent.Message, error) {
 		Where(message.IDEQ(messageID)).
 		WithUser().
 		WithEvent().
+		WithFriendship().
 		Only(context.Background())
 
 	if err != nil {
