@@ -24,6 +24,7 @@ import 'package:client/core/guard/auth_gard.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:client/screens/create_event_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -154,6 +155,12 @@ final _router = GoRouter(
             currentUser: currentUser,
           );
         },
+      ),
+      // route to create event
+      GoRoute(
+        path: CreateEventPage.routeName,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const CreateEventPage(),
       ),
 ]);
 
