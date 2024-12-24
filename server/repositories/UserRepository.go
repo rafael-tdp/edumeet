@@ -178,13 +178,13 @@ func (ur *UserRepository) CreateFriendship(ctx context.Context, userID string, f
 	return friendship, nil
 }
 
-func (ur *UserRepository) UpdateFriendship(ctx context.Context, friendshipID string, status string) (*ent.Friendship, error) {
-	friendship, err := ur.client.Friendship.Query().Where(friendship.IDEQ(friendshipID)).Only(ctx)
+func (ur *UserRepository) UpdateFriendship(friendshipID string) (*ent.Friendship, error) {
+	friendship, err := ur.client.Friendship.Query().Where(friendship.IDEQ(friendshipID)).Only(context.Background())
 	if err != nil {
 		return nil, errors.New("friendship not found")
 	}
 
-	friendshipUpdated, err := friendship.Update().SetStatus(status).Save(ctx)
+	friendshipUpdated, err := friendship.Update().SetStatus("ACCEPTED").Save(context.Background())
 	if err != nil {
 		return nil, err
 	}
@@ -193,7 +193,11 @@ func (ur *UserRepository) UpdateFriendship(ctx context.Context, friendshipID str
 }
 
 func (ur *UserRepository) GetFriendshipById(friendshipID string) (*ent.Friendship, error) {
-	friendship, err := ur.client.Friendship.Query().Where(friendship.IDEQ(friendshipID)).Only(context.Background())
+	friendship, err := ur.client.Friendship.Query().
+		Where(friendship.IDEQ(friendshipID)).
+		WithFriend().
+		WithUser().
+		Only(context.Background())
 	if err != nil {
 		return nil, errors.New("friendship not found")
 	}
@@ -222,8 +226,8 @@ func (ur *UserRepository) GetFriendshipsByUserId(userID string) ([]*ent.Friendsh
 	return friendships, nil
 }
 
-func (ur *UserRepository) DeleteFriendship(ctx context.Context, friendshipID string) error {
-	_, err := ur.client.Friendship.Delete().Where(friendship.IDEQ(friendshipID)).Exec(ctx)
+func (ur *UserRepository) DeleteFriendship(friendshipID string) error {
+	_, err := ur.client.Friendship.Delete().Where(friendship.IDEQ(friendshipID)).Exec(context.Background())
 	if err != nil {
 		return err
 	}

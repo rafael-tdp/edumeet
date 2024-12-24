@@ -153,21 +153,16 @@ func (uc *UserController) CreateFriendship(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(friendship)
 }
 
-// func (uc *UserController) UpdateFriendship(c *fiber.Ctx) error {
-// 	currentUser := c.Locals("user").(*ent.User)
-// 	friendshipID := c.Params("id")
-// 	var friendshipDTO dtos.FriendshipDTO
-// 	if err := c.BodyParser(&friendshipDTO); err != nil {
-// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
-// 	}
+func (uc *UserController) AcceptFriendship(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+	friendshipID := c.Params("id")
 
-// 	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
-// 	friendship, err := uc.userService.UpdateFriendship(ctx, friendshipID, friendshipDTO.Status)
-// 	if err != nil {
-// 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
-// 	}
-// 	return c.JSON(friendship)
-// }
+	friendship, err := uc.userService.UpdateFriendship(friendshipID, currentUser.ID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusOK).JSON(friendship)
+}
 
 func (uc *UserController) GetFriendships(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
@@ -184,10 +179,9 @@ func (uc *UserController) GetFriendships(c *fiber.Ctx) error {
 func (uc *UserController) DeleteFriendship(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 	friendshipID := c.Params("id")
-	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
-	err := uc.userService.DeleteFriendship(ctx, friendshipID)
+	err := uc.userService.DeleteFriendship(friendshipID, currentUser.ID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.JSON(fiber.Map{"message": "Friendship deleted successfully"})
+	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{"message": "Friendship deleted successfully"})
 }
