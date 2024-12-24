@@ -146,7 +146,7 @@ func (us *UserService) CreateFriendship(ctx context.Context, userID string, frie
 		return nil, errors.New("user not found")
 	}
 
-	friend, err := us.userRepo.GetByUsername(friendship.User.Username)
+	friend, err := us.userRepo.GetById(friendship.FriendID)
 	if err != nil {
 		return nil, errors.New("friend not found")
 	}
@@ -171,4 +171,38 @@ func (us *UserService) UpdateFriendship(ctx context.Context, friendshipID string
 	}
 
 	return updatedFriendship, nil
+}
+
+func (us *UserService) GetFriendships(userID string) ([]dtos.FriendshipDTO, error) {
+	friendships, err := us.userRepo.GetFriendshipsByUserId(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	friendshipsDTO := make([]dtos.FriendshipDTO, 0)
+	for _, friendship := range friendships {
+		print(friendship.ID)
+		friendshipDTO, err := dtos.FriendshipEntToDTO(friendship)
+		if err != nil {
+			return nil, err
+		}
+
+		friendshipsDTO = append(friendshipsDTO, *friendshipDTO)
+	}
+
+	return friendshipsDTO, nil
+}
+
+func (us *UserService) DeleteFriendship(ctx context.Context, friendshipID string) error {
+	_, err := us.userRepo.GetFriendshipById(friendshipID)
+	if err != nil {
+		return errors.New("friendship not found")
+	}
+
+	err = us.userRepo.DeleteFriendship(ctx, friendshipID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

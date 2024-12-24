@@ -24,6 +24,7 @@ type FriendshipQuery struct {
 	inters     []Interceptor
 	predicates []predicate.Friendship
 	withUser   *UserQuery
+	withFriend *UserQuery
 	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -75,7 +76,29 @@ func (fq *FriendshipQuery) QueryUser() *UserQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(friendship.Table, friendship.FieldID, selector),
 			sqlgraph.To(user.Table, user.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, friendship.UserTable, friendship.UserColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, friendship.UserTable, friendship.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFriend chains the current query on the "friend" edge.
+func (fq *FriendshipQuery) QueryFriend() *UserQuery {
+	query := (&UserClient{config: fq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := fq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := fq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(friendship.Table, friendship.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, friendship.FriendTable, friendship.FriendColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(fq.driver.Dialect(), step)
 		return fromU, nil
@@ -276,6 +299,7 @@ func (fq *FriendshipQuery) Clone() *FriendshipQuery {
 		inters:     append([]Interceptor{}, fq.inters...),
 		predicates: append([]predicate.Friendship{}, fq.predicates...),
 		withUser:   fq.withUser.Clone(),
+		withFriend: fq.withFriend.Clone(),
 		// clone intermediate query.
 		sql:  fq.sql.Clone(),
 		path: fq.path,
@@ -290,6 +314,17 @@ func (fq *FriendshipQuery) WithUser(opts ...func(*UserQuery)) *FriendshipQuery {
 		opt(query)
 	}
 	fq.withUser = query
+	return fq
+}
+
+// WithFriend tells the query-builder to eager-load the nodes that are connected to
+// the "friend" edge. The optional arguments are used to configure the query builder of the edge.
+func (fq *FriendshipQuery) WithFriend(opts ...func(*UserQuery)) *FriendshipQuery {
+	query := (&UserClient{config: fq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	fq.withFriend = query
 	return fq
 }
 
@@ -372,11 +407,12 @@ func (fq *FriendshipQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*F
 		nodes       = []*Friendship{}
 		withFKs     = fq.withFKs
 		_spec       = fq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			fq.withUser != nil,
+			fq.withFriend != nil,
 		}
 	)
-	if fq.withUser != nil {
+	if fq.withUser != nil || fq.withFriend != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -406,10 +442,48 @@ func (fq *FriendshipQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*F
 			return nil, err
 		}
 	}
+	if query := fq.withFriend; query != nil {
+		if err := fq.loadFriend(ctx, query, nodes, nil,
+			func(n *Friendship, e *User) { n.Edges.Friend = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
 func (fq *FriendshipQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Friendship, init func(*Friendship), assign func(*Friendship, *User)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*Friendship)
+	for i := range nodes {
+		if nodes[i].friendship_user == nil {
+			continue
+		}
+		fk := *nodes[i].friendship_user
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "friendship_user" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (fq *FriendshipQuery) loadFriend(ctx context.Context, query *UserQuery, nodes []*Friendship, init func(*Friendship), assign func(*Friendship, *User)) error {
 	ids := make([]string, 0, len(nodes))
 	nodeids := make(map[string][]*Friendship)
 	for i := range nodes {

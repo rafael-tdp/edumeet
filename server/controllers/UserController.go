@@ -167,3 +167,23 @@ func (uc *UserController) UpdateFriendship(c *fiber.Ctx) error {
 	}
 	return c.JSON(friendship)
 }
+
+func (uc *UserController) GetFriendships(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+	friendships, err := uc.userService.GetFriendships(currentUser.ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(friendships)
+}
+
+func (uc *UserController) DeleteFriendship(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+	friendshipID := c.Params("id")
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	err := uc.userService.DeleteFriendship(ctx, friendshipID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"message": "Friendship deleted successfully"})
+}

@@ -67,6 +67,25 @@ func (fc *FriendshipCreate) SetUser(u *User) *FriendshipCreate {
 	return fc.SetUserID(u.ID)
 }
 
+// SetFriendID sets the "friend" edge to the User entity by ID.
+func (fc *FriendshipCreate) SetFriendID(id string) *FriendshipCreate {
+	fc.mutation.SetFriendID(id)
+	return fc
+}
+
+// SetNillableFriendID sets the "friend" edge to the User entity by ID if the given value is not nil.
+func (fc *FriendshipCreate) SetNillableFriendID(id *string) *FriendshipCreate {
+	if id != nil {
+		fc = fc.SetFriendID(*id)
+	}
+	return fc
+}
+
+// SetFriend sets the "friend" edge to the User entity.
+func (fc *FriendshipCreate) SetFriend(u *User) *FriendshipCreate {
+	return fc.SetFriendID(u.ID)
+}
+
 // Mutation returns the FriendshipMutation object of the builder.
 func (fc *FriendshipCreate) Mutation() *FriendshipMutation {
 	return fc.mutation
@@ -159,9 +178,26 @@ func (fc *FriendshipCreate) createSpec() (*Friendship, *sqlgraph.CreateSpec) {
 	if nodes := fc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
-			Inverse: true,
+			Inverse: false,
 			Table:   friendship.UserTable,
 			Columns: []string{friendship.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.friendship_user = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fc.mutation.FriendIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   friendship.FriendTable,
+			Columns: []string{friendship.FriendColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
