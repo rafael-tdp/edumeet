@@ -4,6 +4,7 @@ package ent
 
 import (
 	"edumeet/ent/event"
+	"edumeet/ent/friendship"
 	"edumeet/ent/message"
 	"edumeet/ent/user"
 	"fmt"
@@ -31,10 +32,11 @@ type Message struct {
 	Content string `json:"content,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MessageQuery when eager-loading is set.
-	Edges          MessageEdges `json:"edges"`
-	event_messages *string
-	user_messages  *string
-	selectValues   sql.SelectValues
+	Edges               MessageEdges `json:"edges"`
+	event_messages      *string
+	friendship_messages *string
+	user_messages       *string
+	selectValues        sql.SelectValues
 }
 
 // MessageEdges holds the relations/edges for other nodes in the graph.
@@ -43,11 +45,13 @@ type MessageEdges struct {
 	User *User `json:"user,omitempty"`
 	// Event holds the value of the event edge.
 	Event *Event `json:"event,omitempty"`
+	// Friendship holds the value of the friendship edge.
+	Friendship *Friendship `json:"friendship,omitempty"`
 	// Documents holds the value of the documents edge.
 	Documents []*Document `json:"documents,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -72,10 +76,21 @@ func (e MessageEdges) EventOrErr() (*Event, error) {
 	return nil, &NotLoadedError{edge: "event"}
 }
 
+// FriendshipOrErr returns the Friendship value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MessageEdges) FriendshipOrErr() (*Friendship, error) {
+	if e.Friendship != nil {
+		return e.Friendship, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: friendship.Label}
+	}
+	return nil, &NotLoadedError{edge: "friendship"}
+}
+
 // DocumentsOrErr returns the Documents value or an error if the edge
 // was not loaded in eager-loading.
 func (e MessageEdges) DocumentsOrErr() ([]*Document, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.Documents, nil
 	}
 	return nil, &NotLoadedError{edge: "documents"}
@@ -92,7 +107,9 @@ func (*Message) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullTime)
 		case message.ForeignKeys[0]: // event_messages
 			values[i] = new(sql.NullString)
-		case message.ForeignKeys[1]: // user_messages
+		case message.ForeignKeys[1]: // friendship_messages
+			values[i] = new(sql.NullString)
+		case message.ForeignKeys[2]: // user_messages
 			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -156,6 +173,13 @@ func (m *Message) assignValues(columns []string, values []any) error {
 			}
 		case message.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field friendship_messages", values[i])
+			} else if value.Valid {
+				m.friendship_messages = new(string)
+				*m.friendship_messages = value.String
+			}
+		case message.ForeignKeys[2]:
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field user_messages", values[i])
 			} else if value.Valid {
 				m.user_messages = new(string)
@@ -182,6 +206,11 @@ func (m *Message) QueryUser() *UserQuery {
 // QueryEvent queries the "event" edge of the Message entity.
 func (m *Message) QueryEvent() *EventQuery {
 	return NewMessageClient(m.config).QueryEvent(m)
+}
+
+// QueryFriendship queries the "friendship" edge of the Message entity.
+func (m *Message) QueryFriendship() *FriendshipQuery {
+	return NewMessageClient(m.config).QueryFriendship(m)
 }
 
 // QueryDocuments queries the "documents" edge of the Message entity.

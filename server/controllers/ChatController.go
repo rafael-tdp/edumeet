@@ -90,17 +90,18 @@ func (cc *ChatController) GetChats(c *fiber.Ctx) error {
 	return c.JSON(chats)
 }
 
-func (cc *ChatController) SendMessageToUser(c *fiber.Ctx) error {
-	var payload struct {
-		UserID  string `json:"user_id" validate:"required"`
-		Message string `json:"message" validate:"required"`
-	}
+func (cc *ChatController) SendMessageToFriend(c *fiber.Ctx) error {
+	friendId := c.Params("friendId")
+	currentUser := c.Locals("user").(*ent.User)
 
-	if err := c.BodyParser(&payload); err != nil {
+	var messageDTO dtos.MessageDTO
+
+	if err := c.BodyParser(&messageDTO); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if err := cc.chatService.SendMessageToUser(payload.UserID, payload.Message); err != nil {
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	if err := cc.chatService.SendMessageToFriend(ctx, messageDTO.Message, friendId, currentUser.ID, currentUser.Username); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 

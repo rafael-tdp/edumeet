@@ -431,6 +431,29 @@ func HasEventWith(preds ...predicate.Event) predicate.Message {
 	})
 }
 
+// HasFriendship applies the HasEdge predicate on the "friendship" edge.
+func HasFriendship() predicate.Message {
+	return predicate.Message(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, FriendshipTable, FriendshipColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasFriendshipWith applies the HasEdge predicate on the "friendship" edge with a given conditions (other predicates).
+func HasFriendshipWith(preds ...predicate.Friendship) predicate.Message {
+	return predicate.Message(func(s *sql.Selector) {
+		step := newFriendshipStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasDocuments applies the HasEdge predicate on the "documents" edge.
 func HasDocuments() predicate.Message {
 	return predicate.Message(func(s *sql.Selector) {

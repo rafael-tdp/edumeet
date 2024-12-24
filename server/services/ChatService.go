@@ -18,15 +18,17 @@ type Event struct {
 }
 
 type ChatService struct {
-	chatRepo *repositories.ChatRepository
-	users    map[string]chan string // Connexions utilisateurs
-	mu       sync.Mutex
+	chatRepo       *repositories.ChatRepository
+	userRepository *repositories.UserRepository
+	users          map[string]chan string // Connexions utilisateurs
+	mu             sync.Mutex
 }
 
-func NewChatService(chatRepo *repositories.ChatRepository) *ChatService {
+func NewChatService(chatRepo *repositories.ChatRepository, userRepository *repositories.UserRepository) *ChatService {
 	return &ChatService{
-		chatRepo: chatRepo,
-		users:    make(map[string]chan string),
+		chatRepo:       chatRepo,
+		userRepository: userRepository,
+		users:          make(map[string]chan string),
 	}
 }
 
@@ -144,4 +146,54 @@ func (cs *ChatService) DeleteMessage(eventID, messageID, userID string, particip
 	}
 
 	return deleteMessageDTO, nil
+}
+
+func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendId string, userId string, username string) error {
+
+	// Check if friendship exists between the two users
+	friendship, err := cs.userRepository.GetFriendshipById(friendId)
+
+	if err != nil {
+		fmt.Printf("Error getting friendship: %v\n", err)
+	}
+
+	if friendship.Status != "ACCEPTED" {
+		return fmt.Errorf("Vous ne pouvez pas envoyer de message à cet ami car la demande d'ami n'a pas été acceptée")
+	}
+
+	if userId != friendship.Edges.User.ID && userId != friendship.Edges.Friend.ID {
+		return fmt.Errorf("Vous n'êtes pas autorisé à envoyer un message à cet ami")
+	}
+
+	// Create message for friend
+	messageCreated, err := cs.chatRepo.CreateMessageFriend(ctx, message, friendId, userId)
+	if err != nil {
+		fmt.Printf("Error creating message: %v\n", err)
+		return err
+	}
+
+	var senderId string
+	var receiverId string
+	if userId == friendship.Edges.User.ID {
+		senderId = friendship.Edges.User.ID
+		receiverId = friendship.Edges.Friend.ID
+	} else {
+		senderId = friendship.Edges.Friend.ID
+		receiverId = friendship.Edges.User.ID
+	}
+
+	messageResponse := dtos.CreateMessageFriendDTO{
+		Type:         "CREATE",
+		Username:     username,
+		MessageId:    messageCreated.ID,
+		SenderId:     senderId,
+		ReceiverId:   receiverId,
+		CreationDate: messageCreated.CreatedAt.String(),
+		Content:      message,
+	}
+
+	// Send message to friend
+	_ = cs.SendMessageToUser(receiverId, utils.JSONStringify(messageResponse))
+
+	return nil
 }
