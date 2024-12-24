@@ -1,8 +1,18 @@
+import 'package:client/screens/conversations_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/messages/chat_message.dart';
 import 'package:client/components/messages/message_input_field.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatPage extends StatefulWidget {
+  static const String routeName = 'details';
+  static navigateTo(BuildContext context, String userName) {
+    context.go(
+      '${ConversationsPage.routeName}/$userName/$routeName',
+      extra: userName,
+    );
+  }
+
   final String userName;
 
   const ChatPage({super.key, required this.userName});

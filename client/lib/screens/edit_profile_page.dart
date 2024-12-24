@@ -5,15 +5,15 @@ import 'package:client/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/colors.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
+import 'package:go_router/go_router.dart';
 
 import '../components/profile_button.dart';
 import '../core/models/user.dart';
 
 class EditProfilePage extends StatefulWidget {
   static const String routeName = '/edit-profile';
-  static navigateTo(BuildContext context,
-      {required Map<String, dynamic> user}) {
-    Navigator.pushNamed(context, routeName, arguments: user);
+  static navigateTo(BuildContext context, {required Map<String, dynamic> user}) {
+    context.go(routeName, extra: user);
   }
 
   const EditProfilePage({super.key, required this.user});
@@ -74,13 +74,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ResponseRequest response =
           await UserServices().updateUserInfo(updatedUser);
       if (response.success) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const ProfilePage(
-                    isCurrentUser: true,
-                  )),
-        );
+        // go router
+        context.go(ProfilePage.routeName);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -225,11 +220,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     text: t.profile.cancel,
                     backgroundColor: Colors.redAccent,
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ProfilePage()),
-                      );
+                      context.go(ProfilePage.routeName);
                     },
                   ),
                 ],

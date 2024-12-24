@@ -12,8 +12,16 @@ import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfilePage extends StatelessWidget {
+  static const String routeName = '/profile';
+  static navigateTo(BuildContext context,
+      {required Map<String, dynamic> user}) {
+    // Navigator.pushNamed(context, routeName, arguments: user);
+    context.go(routeName, extra: user);
+  }
+
   final bool isCurrentUser;
 
   const ProfilePage({
@@ -38,7 +46,7 @@ class ProfilePage extends StatelessWidget {
 
               return SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -136,13 +144,8 @@ class ProfilePage extends StatelessWidget {
                             text: t.profile.editProfile,
                             backgroundColor: AppColors.purple,
                             onPressed: () async {
-                              final updatedUser = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      EditProfilePage(user: user),
-                                ),
-                              );
+                              // go router
+                              final updatedUser = await context.push(EditProfilePage.routeName, extra: user) as dynamic;
                               if (updatedUser != null) {
                                 context
                                     .read<ProfileBloc>()
@@ -156,12 +159,7 @@ class ProfilePage extends StatelessWidget {
                             backgroundColor: Colors.redAccent,
                             onPressed: () async {
                               await AuthServices().logout();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const LoginPage(),
-                                ),
-                              );
+                              context.go(LoginPage.routeName);
                             },
                           ),
                         ],

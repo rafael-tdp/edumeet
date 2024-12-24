@@ -15,6 +15,7 @@ import (
 	"edumeet/ent/document"
 	"edumeet/ent/event"
 	"edumeet/ent/eventdocument"
+	"edumeet/ent/friendship"
 	"edumeet/ent/message"
 	"edumeet/ent/participant"
 	"edumeet/ent/physicalevent"
@@ -42,6 +43,8 @@ type Client struct {
 	Event *EventClient
 	// EventDocument is the client for interacting with the EventDocument builders.
 	EventDocument *EventDocumentClient
+	// Friendship is the client for interacting with the Friendship builders.
+	Friendship *FriendshipClient
 	// Message is the client for interacting with the Message builders.
 	Message *MessageClient
 	// Participant is the client for interacting with the Participant builders.
@@ -71,6 +74,7 @@ func (c *Client) init() {
 	c.Document = NewDocumentClient(c.config)
 	c.Event = NewEventClient(c.config)
 	c.EventDocument = NewEventDocumentClient(c.config)
+	c.Friendship = NewFriendshipClient(c.config)
 	c.Message = NewMessageClient(c.config)
 	c.Participant = NewParticipantClient(c.config)
 	c.PhysicalEvent = NewPhysicalEventClient(c.config)
@@ -174,6 +178,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Document:      NewDocumentClient(cfg),
 		Event:         NewEventClient(cfg),
 		EventDocument: NewEventDocumentClient(cfg),
+		Friendship:    NewFriendshipClient(cfg),
 		Message:       NewMessageClient(cfg),
 		Participant:   NewParticipantClient(cfg),
 		PhysicalEvent: NewPhysicalEventClient(cfg),
@@ -204,6 +209,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Document:      NewDocumentClient(cfg),
 		Event:         NewEventClient(cfg),
 		EventDocument: NewEventDocumentClient(cfg),
+		Friendship:    NewFriendshipClient(cfg),
 		Message:       NewMessageClient(cfg),
 		Participant:   NewParticipantClient(cfg),
 		PhysicalEvent: NewPhysicalEventClient(cfg),
@@ -240,8 +246,8 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Badge, c.Document, c.Event, c.EventDocument, c.Message, c.Participant,
-		c.PhysicalEvent, c.RemoteEvent, c.Reporting, c.Subject, c.User,
+		c.Badge, c.Document, c.Event, c.EventDocument, c.Friendship, c.Message,
+		c.Participant, c.PhysicalEvent, c.RemoteEvent, c.Reporting, c.Subject, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -251,8 +257,8 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Badge, c.Document, c.Event, c.EventDocument, c.Message, c.Participant,
-		c.PhysicalEvent, c.RemoteEvent, c.Reporting, c.Subject, c.User,
+		c.Badge, c.Document, c.Event, c.EventDocument, c.Friendship, c.Message,
+		c.Participant, c.PhysicalEvent, c.RemoteEvent, c.Reporting, c.Subject, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -269,6 +275,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Event.mutate(ctx, m)
 	case *EventDocumentMutation:
 		return c.EventDocument.mutate(ctx, m)
+	case *FriendshipMutation:
+		return c.Friendship.mutate(ctx, m)
 	case *MessageMutation:
 		return c.Message.mutate(ctx, m)
 	case *ParticipantMutation:
@@ -1012,6 +1020,171 @@ func (c *EventDocumentClient) mutate(ctx context.Context, m *EventDocumentMutati
 		return (&EventDocumentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown EventDocument mutation op: %q", m.Op())
+	}
+}
+
+// FriendshipClient is a client for the Friendship schema.
+type FriendshipClient struct {
+	config
+}
+
+// NewFriendshipClient returns a client for the Friendship from the given config.
+func NewFriendshipClient(c config) *FriendshipClient {
+	return &FriendshipClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `friendship.Hooks(f(g(h())))`.
+func (c *FriendshipClient) Use(hooks ...Hook) {
+	c.hooks.Friendship = append(c.hooks.Friendship, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `friendship.Intercept(f(g(h())))`.
+func (c *FriendshipClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Friendship = append(c.inters.Friendship, interceptors...)
+}
+
+// Create returns a builder for creating a Friendship entity.
+func (c *FriendshipClient) Create() *FriendshipCreate {
+	mutation := newFriendshipMutation(c.config, OpCreate)
+	return &FriendshipCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Friendship entities.
+func (c *FriendshipClient) CreateBulk(builders ...*FriendshipCreate) *FriendshipCreateBulk {
+	return &FriendshipCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *FriendshipClient) MapCreateBulk(slice any, setFunc func(*FriendshipCreate, int)) *FriendshipCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &FriendshipCreateBulk{err: fmt.Errorf("calling to FriendshipClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*FriendshipCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &FriendshipCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Friendship.
+func (c *FriendshipClient) Update() *FriendshipUpdate {
+	mutation := newFriendshipMutation(c.config, OpUpdate)
+	return &FriendshipUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *FriendshipClient) UpdateOne(f *Friendship) *FriendshipUpdateOne {
+	mutation := newFriendshipMutation(c.config, OpUpdateOne, withFriendship(f))
+	return &FriendshipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *FriendshipClient) UpdateOneID(id string) *FriendshipUpdateOne {
+	mutation := newFriendshipMutation(c.config, OpUpdateOne, withFriendshipID(id))
+	return &FriendshipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Friendship.
+func (c *FriendshipClient) Delete() *FriendshipDelete {
+	mutation := newFriendshipMutation(c.config, OpDelete)
+	return &FriendshipDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *FriendshipClient) DeleteOne(f *Friendship) *FriendshipDeleteOne {
+	return c.DeleteOneID(f.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *FriendshipClient) DeleteOneID(id string) *FriendshipDeleteOne {
+	builder := c.Delete().Where(friendship.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &FriendshipDeleteOne{builder}
+}
+
+// Query returns a query builder for Friendship.
+func (c *FriendshipClient) Query() *FriendshipQuery {
+	return &FriendshipQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeFriendship},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Friendship entity by its id.
+func (c *FriendshipClient) Get(ctx context.Context, id string) (*Friendship, error) {
+	return c.Query().Where(friendship.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *FriendshipClient) GetX(ctx context.Context, id string) *Friendship {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a Friendship.
+func (c *FriendshipClient) QueryUser(f *Friendship) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(friendship.Table, friendship.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, friendship.UserTable, friendship.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFriend queries the friend edge of a Friendship.
+func (c *FriendshipClient) QueryFriend(f *Friendship) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(friendship.Table, friendship.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, friendship.FriendTable, friendship.FriendColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *FriendshipClient) Hooks() []Hook {
+	return c.hooks.Friendship
+}
+
+// Interceptors returns the client interceptors.
+func (c *FriendshipClient) Interceptors() []Interceptor {
+	return c.inters.Friendship
+}
+
+func (c *FriendshipClient) mutate(ctx context.Context, m *FriendshipMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&FriendshipCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&FriendshipUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&FriendshipUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&FriendshipDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Friendship mutation op: %q", m.Op())
 	}
 }
 
@@ -2178,6 +2351,22 @@ func (c *UserClient) QueryParticipants(u *User) *ParticipantQuery {
 	return query
 }
 
+// QueryFriendships queries the friendships edge of a User.
+func (c *UserClient) QueryFriendships(u *User) *FriendshipQuery {
+	query := (&FriendshipClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(friendship.Table, friendship.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.FriendshipsTable, user.FriendshipsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	hooks := c.hooks.User
@@ -2207,11 +2396,11 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Badge, Document, Event, EventDocument, Message, Participant, PhysicalEvent,
-		RemoteEvent, Reporting, Subject, User []ent.Hook
+		Badge, Document, Event, EventDocument, Friendship, Message, Participant,
+		PhysicalEvent, RemoteEvent, Reporting, Subject, User []ent.Hook
 	}
 	inters struct {
-		Badge, Document, Event, EventDocument, Message, Participant, PhysicalEvent,
-		RemoteEvent, Reporting, Subject, User []ent.Interceptor
+		Badge, Document, Event, EventDocument, Friendship, Message, Participant,
+		PhysicalEvent, RemoteEvent, Reporting, Subject, User []ent.Interceptor
 	}
 )

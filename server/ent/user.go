@@ -71,9 +71,11 @@ type UserEdges struct {
 	Reports []*Reporting `json:"reports,omitempty"`
 	// Participants holds the value of the participants edge.
 	Participants []*Participant `json:"participants,omitempty"`
+	// Friendships holds the value of the friendships edge.
+	Friendships []*Friendship `json:"friendships,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [7]bool
 }
 
 // BadgesOrErr returns the Badges value or an error if the edge
@@ -128,6 +130,15 @@ func (e UserEdges) ParticipantsOrErr() ([]*Participant, error) {
 		return e.Participants, nil
 	}
 	return nil, &NotLoadedError{edge: "participants"}
+}
+
+// FriendshipsOrErr returns the Friendships value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) FriendshipsOrErr() ([]*Friendship, error) {
+	if e.loadedTypes[6] {
+		return e.Friendships, nil
+	}
+	return nil, &NotLoadedError{edge: "friendships"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -316,6 +327,11 @@ func (u *User) QueryReports() *ReportingQuery {
 // QueryParticipants queries the "participants" edge of the User entity.
 func (u *User) QueryParticipants() *ParticipantQuery {
 	return NewUserClient(u.config).QueryParticipants(u)
+}
+
+// QueryFriendships queries the "friendships" edge of the User entity.
+func (u *User) QueryFriendships() *FriendshipQuery {
+	return NewUserClient(u.config).QueryFriendships(u)
 }
 
 // Update returns a builder for updating this User.

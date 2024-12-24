@@ -6,6 +6,7 @@ import (
 	"context"
 	"edumeet/ent/badge"
 	"edumeet/ent/event"
+	"edumeet/ent/friendship"
 	"edumeet/ent/message"
 	"edumeet/ent/participant"
 	"edumeet/ent/reporting"
@@ -328,6 +329,21 @@ func (uc *UserCreate) AddParticipants(p ...*Participant) *UserCreate {
 	return uc.AddParticipantIDs(ids...)
 }
 
+// AddFriendshipIDs adds the "friendships" edge to the Friendship entity by IDs.
+func (uc *UserCreate) AddFriendshipIDs(ids ...string) *UserCreate {
+	uc.mutation.AddFriendshipIDs(ids...)
+	return uc
+}
+
+// AddFriendships adds the "friendships" edges to the Friendship entity.
+func (uc *UserCreate) AddFriendships(f ...*Friendship) *UserCreate {
+	ids := make([]string, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uc.AddFriendshipIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -630,6 +646,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(participant.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.FriendshipsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.FriendshipsTable,
+			Columns: []string{user.FriendshipsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(friendship.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

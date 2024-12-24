@@ -18,6 +18,9 @@ type Event func(*sql.Selector)
 // EventDocument is the predicate function for eventdocument builders.
 type EventDocument func(*sql.Selector)
 
+// Friendship is the predicate function for friendship builders.
+type Friendship func(*sql.Selector)
+
 // Message is the predicate function for message builders.
 type Message func(*sql.Selector)
 

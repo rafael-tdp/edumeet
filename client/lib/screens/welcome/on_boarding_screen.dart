@@ -3,6 +3,7 @@ import 'package:client/utils/colors.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:go_router/go_router.dart';
 
 class OnboardingPage extends StatelessWidget {
   final String imagePath;
@@ -30,6 +31,7 @@ class OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: const EdgeInsets.all(10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -84,11 +86,7 @@ class OnboardingPage extends StatelessWidget {
                   ),
                   child: TextButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RegisterPage()),
-                      );
+                      context.go(RegisterPage.routeName);
                     },
                     child: Text(
                       t.app.signup,
@@ -99,11 +97,7 @@ class OnboardingPage extends StatelessWidget {
                 const SizedBox(width: 20),
                 TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginPage()),
-                    );
+                    context.go(LoginPage.routeName);
                   },
                   child: Text(
                     t.app.login,

@@ -2,6 +2,7 @@ import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:client/widgets/language_selection.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'on_boarding_screen.dart';
 import 'package:client/i18n/generated/translations.g.dart';
@@ -48,10 +49,7 @@ class _OnboardingPagerState extends State<OnboardingPager> {
   }
 
   void _skip() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-    );
+    context.go(LoginPage.routeName);
   }
 
   @override
@@ -100,10 +98,7 @@ class _OnboardingPagerState extends State<OnboardingPager> {
           title: t.welcome.title4,
           description: t.welcome.description4,
           onNext: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const RegisterPage()),
-            );
+            context.go(RegisterPage.routeName);
           },
           isLastPage: true,
         ),

@@ -2,6 +2,7 @@ import 'package:client/core/services/participant_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:client/screens/profile_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class ParticipantsList extends StatefulWidget {
   final List<dynamic> participants;
@@ -160,15 +161,11 @@ class _ParticipantsListState extends State<ParticipantsList> {
                 onTap: () {
                   final bool isCurrentUser =
                       participant['user']['id'] == 'test';
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => UserProfileWrapper(
-                        user: participant,
-                        isCurrentUser: isCurrentUser,
-                      ),
-                    ),
-                  );
+                  // go router
+                  context.go(UserProfileWrapper.routeName, extra: {
+                    'user': participant,
+                    'isCurrentUser': isCurrentUser,
+                  });
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -271,6 +268,18 @@ class _ParticipantsListState extends State<ParticipantsList> {
 }
 
 class UserProfileWrapper extends StatelessWidget {
+  static const routeName = '/user-profile';
+  static navigateTo(BuildContext context, {required Map<String, String> user, required bool isCurrentUser}){
+    Navigator.pushNamed(
+      context,
+      routeName,
+      arguments: {
+        'user': user,
+        'isCurrentUser': isCurrentUser,
+      },
+    );
+  }
+
   final Map<String, String> user;
   final bool isCurrentUser;
 

@@ -20,6 +20,8 @@ type Tx struct {
 	Event *EventClient
 	// EventDocument is the client for interacting with the EventDocument builders.
 	EventDocument *EventDocumentClient
+	// Friendship is the client for interacting with the Friendship builders.
+	Friendship *FriendshipClient
 	// Message is the client for interacting with the Message builders.
 	Message *MessageClient
 	// Participant is the client for interacting with the Participant builders.
@@ -169,6 +171,7 @@ func (tx *Tx) init() {
 	tx.Document = NewDocumentClient(tx.config)
 	tx.Event = NewEventClient(tx.config)
 	tx.EventDocument = NewEventDocumentClient(tx.config)
+	tx.Friendship = NewFriendshipClient(tx.config)
 	tx.Message = NewMessageClient(tx.config)
 	tx.Participant = NewParticipantClient(tx.config)
 	tx.PhysicalEvent = NewPhysicalEventClient(tx.config)

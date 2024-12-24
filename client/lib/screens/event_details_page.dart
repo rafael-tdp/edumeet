@@ -9,8 +9,18 @@ import 'package:client/components/event/messages_preview.dart';
 import 'package:client/screens/event_chat_page.dart';
 import 'package:client/components/event/resources_section.dart';
 import 'package:client/components/event/event_details_section.dart';
+import 'package:go_router/go_router.dart';
+
+import 'events_screen.dart';
 
 class EventDetailsPage extends StatefulWidget {
+  static const String routeName = 'details';
+  static navigateTo(BuildContext context, String eventId, User currentUser) {
+    context.go(
+      '${EventsPage.routeName}/$eventId/$routeName',
+      extra: currentUser,
+    );
+  }
   final String eventId;
   final User currentUser;
 
@@ -55,10 +65,21 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   void _navigateToChat(BuildContext context, Event event) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => EventChatPage(event: event),
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 150),
+        reverseTransitionDuration: const Duration(milliseconds: 150),
+        pageBuilder: (context, animation, secondaryAnimation) {
+          EventChatPage.navigateTo(context, event, event.id);
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child:
+            EventChatPage(event: event, eventId: event.id),
+          );
+        },
       ),
     );
   }
@@ -105,7 +126,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     weight: 30,
                   ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    EventsPage.navigateTo(context);
                   },
                 ),
               ),
