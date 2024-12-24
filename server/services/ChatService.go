@@ -34,12 +34,14 @@ func (cs *ChatService) SubscribeUser(userID string, ch chan string) {
 	cs.mu.Lock()
 	defer cs.mu.Unlock()
 	cs.users[userID] = ch
+	print("User ", userID, " subscribed\n")
 }
 
 func (cs *ChatService) UnsubscribeUser(userID string) {
 	cs.mu.Lock()
 	defer cs.mu.Unlock()
 	delete(cs.users, userID)
+	print("User ", userID, " unsubscribed\n")
 }
 
 func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {

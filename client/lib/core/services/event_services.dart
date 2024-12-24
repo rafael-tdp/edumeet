@@ -1,26 +1,25 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:client/core/services/auth_services.dart';
+import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
+import 'package:flutter_client_sse/flutter_client_sse.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import 'package:client/core/models/event.dart';
 
 class EventServices {
-  static Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('auth_token');
-  }
 
   static Future<List<Event>> getEvents() async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();
 
       if (token == null) {
         return [];
       }
 
       final response = await http.get(
-        Uri.parse('${Env.BACKEND_URL}/api/events'),
+        Uri.parse('${Env.BACKEND_URL}/events'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -36,14 +35,14 @@ class EventServices {
 
   static Future<List<Event>> getCurrentUserEvents() async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();
 
       if (token == null) {
         return [];
       }
 
       final response = await http.get(
-        Uri.parse('${Env.BACKEND_URL}/api/events/users/current'),
+        Uri.parse('${Env.BACKEND_URL}/events/users/current'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -59,14 +58,14 @@ class EventServices {
 
   static Future<List<Event>> getEventsCreatedByCurrentUser() async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();
 
       if (token == null) {
         return [];
       }
 
       final response = await http.get(
-        Uri.parse('${Env.BACKEND_URL}/api/events/created-by/current'),
+        Uri.parse('${Env.BACKEND_URL}/events/created-by/current'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -82,14 +81,14 @@ class EventServices {
 
   static Future<Event> getEventDetails(String eventId) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();
 
       if (token == null) {
         throw Exception('No token found');
       }
 
       final response = await http.get(
-        Uri.parse('${Env.BACKEND_URL}/api/events/$eventId/details'),
+        Uri.parse('${Env.BACKEND_URL}/events/$eventId/details'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

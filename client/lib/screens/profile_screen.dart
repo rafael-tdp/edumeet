@@ -1,6 +1,7 @@
 import 'package:client/bloc/profile_bloc.dart';
 import 'package:client/bloc/profile_event.dart';
 import 'package:client/bloc/profile_state.dart';
+import 'package:client/core/services/sse_services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:client/widgets/language_dropdown.dart';
@@ -31,6 +32,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final SseServices _sseServices = SseServices();
     return BlocProvider(
       create: (context) => ProfileBloc(UserServices())..add(LoadProfileEvent()),
       child: Scaffold(
@@ -79,6 +81,14 @@ class ProfilePage extends StatelessWidget {
                           fontSize: 16,
                           color: Colors.grey,
                         ),
+                      ),
+                      const SizedBox(height: 20),
+                      ProfileButton(
+                        text: "Envoyer un message",
+                        backgroundColor: AppColors.purple,
+                        onPressed: () async {
+                          await _sseServices.sendMessage();
+                        },
                       ),
                       const SizedBox(height: 20),
                       LanguageDropdown(parentContext: context),

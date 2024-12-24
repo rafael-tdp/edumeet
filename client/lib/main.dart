@@ -1,5 +1,12 @@
 import 'package:client/core/models/event.dart';
+import 'package:client/core/services/sse_services.dart';
 import 'package:client/screens/chat_page.dart';
+import 'package:client/core/guard/auth_gard.dart';
+import 'package:client/core/models/user.dart';
+import 'package:client/core/services/auth_services.dart';
+import 'package:client/core/services/message_services.dart';
+import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/providers/locale_provider.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/screens/event_chat_page.dart';
 import 'package:client/screens/event_details_page.dart';
@@ -7,23 +14,23 @@ import 'package:client/screens/valide_account_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
+import 'package:flutter_client_sse/flutter_client_sse.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:client/providers/locale_provider.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'components/event/participants_list.dart';
-import 'core/models/user.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
 import 'screens/conversations_screen.dart';
-import 'package:client/core/guard/auth_gard.dart';
-import 'package:client/i18n/generated/translations.g.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:http/http.dart' as http;
+import 'package:client/core/services/sse_client_services.dart' as customSSE;
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -199,6 +206,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final SseServices _sseServices = SseServices();
+  final List<String> _messages = [];
+  late customSSE.SSEClient _sseClient;
+  late Stream<String> _sseStream;
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
@@ -227,6 +238,32 @@ class _HomePageState extends State<HomePage> {
     }
     setState(() {
       _currentIndex = index;
+    });
+  }
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // _sseServices.connectToSse();
+  
+    _sseClient = customSSE.SSEClient('http://localhost:3000/chats/connect');
+    _sseStream = _sseClient.connect();
+    _listenToSSE();
+  }
+
+  void _listenToSSE() {
+    _sseStream.listen((message) {
+      setState(() {
+        print('Message reçu : $message');
+        _messages.add(message);
+      });
+    }, onError: (error) {
+      print('Erreur : $error');
+    }, onDone: () {
+      print('Connexion SSE terminée');
     });
   }
 
