@@ -47,6 +47,13 @@ final _router = GoRouter(
             path: EventsPage.routeName,
             parentNavigatorKey: _shellNavigatorKey,
             builder: (context, state) => const EventsPage(),
+            routes: [
+              GoRoute(
+                path: CreateEventPage.routeName,
+                parentNavigatorKey: _rootNavigatorKey,
+                builder: (context, state) => const CreateEventPage(),
+              ),
+            ],
           ),
           GoRoute(
             path: ConversationsPage.routeName,
@@ -155,12 +162,6 @@ final _router = GoRouter(
             currentUser: currentUser,
           );
         },
-      ),
-      // route to create event
-      GoRoute(
-        path: CreateEventPage.routeName,
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const CreateEventPage(),
       ),
 ]);
 

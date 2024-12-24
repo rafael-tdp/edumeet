@@ -83,8 +83,8 @@ class _EventsPageState extends State<EventsPage> {
     );
   }
 
-  void _createEvent() {
-    context.go(CreateEventPage.routeName);
+  void _createEvent(context) {
+    CreateEventPage.navigateTo(context);
   }
 
   Future<List<Event>> _fetchEvents() {
@@ -121,7 +121,7 @@ class _EventsPageState extends State<EventsPage> {
           ),
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: _createEvent,
+            onPressed: () => _createEvent(context),
             color: AppColors.purple,
           ),
         ],

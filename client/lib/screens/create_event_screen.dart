@@ -1,11 +1,14 @@
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/screens/events_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CreateEventPage extends StatefulWidget {
-  static const String routeName = '/create-event';
+  static const String routeName = '/create';
   static navigateTo(BuildContext context) {
-    Navigator.pushNamed(context, routeName);
+    context.go('${EventsPage.routeName}$routeName');
   }
+
   const CreateEventPage({super.key});
 
   @override
@@ -36,6 +39,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            context.go(EventsPage.routeName);
+          },
+        ),
         title: Text(
           t.event.createEvent,
           style: const TextStyle(
@@ -45,6 +54,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
           ),
         ),
         backgroundColor: Colors.transparent,
+        elevation: 0, // Supprime l'ombre sous l'AppBar
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
