@@ -17,6 +17,7 @@ import 'package:client/providers/user_provider.dart';
 import 'router.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   setUrlStrategy(PathUrlStrategy());
 
   final userProvider = UserProvider();
