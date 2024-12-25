@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 class ChatPage extends StatefulWidget {
   static const String routeName = 'details';
   static navigateTo(BuildContext context, String userName) {
-    context.go(
+    context.push(
       '${ConversationsPage.routeName}/$userName/$routeName',
       extra: userName,
     );

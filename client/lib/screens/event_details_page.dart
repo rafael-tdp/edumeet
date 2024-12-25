@@ -65,23 +65,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   void _navigateToChat(BuildContext context, Event event) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 150),
-        reverseTransitionDuration: const Duration(milliseconds: 150),
-        pageBuilder: (context, animation, secondaryAnimation) {
-          EventChatPage.navigateTo(context, event, event.id!);
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1.0, 0.0),
-              end: Offset.zero,
-            ).animate(animation),
-            child:
-            EventChatPage(event: event, eventId: event.id!),
-          );
-        },
-      ),
-    );
+    context.go('${EventsPage.routeName}/${event.id}/details${EventChatPage.routeName}', extra: event);
   }
 
   @override

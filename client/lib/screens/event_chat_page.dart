@@ -1,16 +1,14 @@
 import 'package:client/core/models/event.dart';
+import 'package:client/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/messages/message_input_field.dart';
 import 'package:client/components/messages/chat_message.dart';
 import 'package:go_router/go_router.dart';
 
 class EventChatPage extends StatefulWidget {
-  static const String routeName = '/event-chat';
+  static const String routeName = '/chat';
   static navigateTo(BuildContext context, Event event, String eventId) {
-    // Navigator.pushNamed(context, routeName, arguments: event);
-    // final routeNameEventChat = routeName.replaceAll(':eventId', eventId);
-    // print('eventId: ${event.id}');
-    context.go('$routeName/$eventId', extra: event);
+    context.go('${EventsPage.routeName}/$eventId/details/$routeName', extra: event);
   }
   final Event event;
   final String eventId;

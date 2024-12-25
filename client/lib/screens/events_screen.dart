@@ -63,24 +63,9 @@ class _EventsPageState extends State<EventsPage> {
       );
       return;
     }
-
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 150),
-        reverseTransitionDuration: const Duration(milliseconds: 150),
-        pageBuilder: (context, animation, secondaryAnimation) {
-          // context.go(EventDetailsPage.routeName, extra: {eventId, _currentUser});
-          EventDetailsPage.navigateTo(context, eventId, _currentUser!);
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1.0, 0.0),
-              end: Offset.zero,
-            ).animate(animation),
-            child:
-                EventDetailsPage(eventId: eventId, currentUser: _currentUser!),
-          );
-        },
-      ),
+    context.go(
+      '${EventsPage.routeName}/$eventId/details',
+      extra: _currentUser,
     );
   }
 

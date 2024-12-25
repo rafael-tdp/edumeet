@@ -145,7 +145,7 @@ class ProfilePage extends StatelessWidget {
                             backgroundColor: AppColors.purple,
                             onPressed: () async {
                               // go router
-                              final updatedUser = await context.push(EditProfilePage.routeName, extra: user) as dynamic;
+                              final updatedUser = await context.push('$routeName${EditProfilePage.routeName}', extra: user) as dynamic;
                               if (updatedUser != null) {
                                 context
                                     .read<ProfileBloc>()
