@@ -31,6 +31,7 @@ func (Message) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("user", User.Type).Ref("messages").Unique(),
 		edge.From("event", Event.Type).Ref("messages").Unique(),
+		edge.From("friendship", Friendship.Type).Ref("messages").Unique(),
 		edge.To("documents", Document.Type),
 	}
 }

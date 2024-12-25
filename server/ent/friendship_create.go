@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"edumeet/ent/friendship"
+	"edumeet/ent/message"
 	"edumeet/ent/user"
 	"errors"
 	"fmt"
@@ -84,6 +85,21 @@ func (fc *FriendshipCreate) SetNillableFriendID(id *string) *FriendshipCreate {
 // SetFriend sets the "friend" edge to the User entity.
 func (fc *FriendshipCreate) SetFriend(u *User) *FriendshipCreate {
 	return fc.SetFriendID(u.ID)
+}
+
+// AddMessageIDs adds the "messages" edge to the Message entity by IDs.
+func (fc *FriendshipCreate) AddMessageIDs(ids ...string) *FriendshipCreate {
+	fc.mutation.AddMessageIDs(ids...)
+	return fc
+}
+
+// AddMessages adds the "messages" edges to the Message entity.
+func (fc *FriendshipCreate) AddMessages(m ...*Message) *FriendshipCreate {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return fc.AddMessageIDs(ids...)
 }
 
 // Mutation returns the FriendshipMutation object of the builder.
@@ -207,6 +223,22 @@ func (fc *FriendshipCreate) createSpec() (*Friendship, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.user_friendships = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := fc.mutation.MessagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   friendship.MessagesTable,
+			Columns: []string{friendship.MessagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

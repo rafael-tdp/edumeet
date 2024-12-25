@@ -32,6 +32,21 @@ func (cr *ChatRepository) CreateMessage(ctx context.Context, message string, eve
 	return messageCreated, nil
 }
 
+func (cr *ChatRepository) CreateMessageFriend(ctx context.Context, message string, friendId string, userID string) (*ent.Message, error) {
+	//flush message in DB
+	messageCreated, err := cr.client.Message.Create().
+		SetContent(message).
+		SetUserID(userID).
+		SetFriendshipID(friendId).
+		Save(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return messageCreated, nil
+}
+
 func (cr *ChatRepository) DeleteMessage(messageID string) error {
 	err := cr.client.Message.DeleteOneID(messageID).Exec(context.Background())
 	if err != nil {
@@ -59,6 +74,7 @@ func (cr *ChatRepository) GetChat(messageID string) (*ent.Message, error) {
 		Where(message.IDEQ(messageID)).
 		WithUser().
 		WithEvent().
+		WithFriendship().
 		Only(context.Background())
 
 	if err != nil {

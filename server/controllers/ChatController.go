@@ -57,50 +57,51 @@ func (cc *ChatController) Connect(c *fiber.Ctx) error {
 	return nil
 }
 
-func (cc *ChatController) GetChats(c *fiber.Ctx) error {
-	user := c.Locals("user").(*ent.User)
+// func (cc *ChatController) GetChats(c *fiber.Ctx) error {
+// 	user := c.Locals("user").(*ent.User)
 
-	eventID, err := ulid.Parse(c.Params("event_id"))
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
-	}
+// 	eventID, err := ulid.Parse(c.Params("event_id"))
+// 	if err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+// 	}
 
-	// Vérifiez si l'event existe
-	event, errEvent := cc.eventService.GetEvent(eventID.String())
-	if errEvent != nil {
-		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+// 	// Vérifiez si l'event existe
+// 	event, errEvent := cc.eventService.GetEvent(eventID.String())
+// 	if errEvent != nil {
+// 		return c.Status(http.StatusNotFound).JSON(fiber.Map{
 
-			"error": "Event not found",
-		})
-	}
+// 			"error": "Event not found",
+// 		})
+// 	}
 
-	if !cc.chatService.CheckUserHasPermission(event.Participants, user.ID) {
-		return c.Status(http.StatusForbidden).JSON(fiber.Map{
-			"error": "You don't have permission to access this event",
-		})
-	}
+// 	if !cc.chatService.CheckUserHasPermission(event.Participants, user.ID) {
+// 		return c.Status(http.StatusForbidden).JSON(fiber.Map{
+// 			"error": "You don't have permission to access this event",
+// 		})
+// 	}
 
-	chats, err := cc.chatService.GetChats(eventID.String())
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
+// 	chats, err := cc.chatService.GetChats(eventID.String())
+// 	if err != nil {
+// 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+// 			"error": err.Error(),
+// 		})
+// 	}
 
-	return c.JSON(chats)
-}
+// 	return c.JSON(chats)
+// }
 
-func (cc *ChatController) SendMessageToUser(c *fiber.Ctx) error {
-	var payload struct {
-		UserID  string `json:"user_id" validate:"required"`
-		Message string `json:"message" validate:"required"`
-	}
+func (cc *ChatController) SendMessageToFriend(c *fiber.Ctx) error {
+	friendId := c.Params("friendId")
+	currentUser := c.Locals("user").(*ent.User)
 
-	if err := c.BodyParser(&payload); err != nil {
+	var messageDTO dtos.MessageDTO
+
+	if err := c.BodyParser(&messageDTO); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	if err := cc.chatService.SendMessageToUser(payload.UserID, payload.Message); err != nil {
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	if err := cc.chatService.SendMessageToFriend(ctx, messageDTO.Message, friendId, currentUser.ID, currentUser.Username); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
@@ -188,4 +189,40 @@ func (cc *ChatController) DeleteMessageEvent(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(deleteMessage)
+}
+
+func (cc *ChatController) DeleteMessageFriend(c *fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	friendId, err := ulid.Parse(c.Params("friendId"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid Friend ID"})
+	}
+
+	messageID, err := ulid.Parse(c.Params("messageId"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	// Vérifiez si le message existe
+	msg, errMessage := cc.chatService.GetChat(messageID.String())
+	if errMessage != nil {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+			"error": "Message not found",
+		})
+	}
+
+	if !guards.CanAuthorize(user, msg) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
+	errDelete := cc.chatService.DeleteMessageFriend(messageID.String(), user.ID, friendId.String())
+
+	if errDelete != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{})
 }

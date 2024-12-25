@@ -11,15 +11,18 @@ import (
 )
 
 func setupRoutesChat(app *fiber.App, chatController *controllers.ChatController) {
-	app.Get("/chats/:event_id/messages", middlewares.JWTAuthMiddleware, chatController.GetChats)
+	// app.Get("/chats/:event_id/messages", middlewares.JWTAuthMiddleware, chatController.GetChats)
 	app.Get("/chats/connect", middlewares.JWTAuthMiddleware, chatController.Connect)
 	app.Post("/chats/send-message-to-event/:eventId", middlewares.JWTAuthMiddleware, chatController.SendMessageToEvent)
 	app.Delete("/chats/delete-message-to-event/:eventId/:messageId", middlewares.JWTAuthMiddleware, chatController.DeleteMessageEvent)
+	app.Post("/chats/send-message-to-friend/:friendId", middlewares.JWTAuthMiddleware, chatController.SendMessageToFriend)
+	app.Delete("/chats/delete-message-to-friend/:friendId/:messageId", middlewares.JWTAuthMiddleware, chatController.DeleteMessageFriend)
 }
 
 func initChatController(client *ent.Client) *controllers.ChatController {
 	chatRepo := repositories.NewChatRepository(client)
-	chatService := services.NewChatService(chatRepo)
+	userRepository := repositories.NewUserRepository(client)
+	chatService := services.NewChatService(chatRepo, userRepository)
 
 	eventRepository := repositories.NewEventRepository(client)
 	participantRepository := repositories.NewParticipantRepository(client)
