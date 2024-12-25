@@ -17,11 +17,31 @@ import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/core/guard/auth_gard.dart';
 import 'package:client/screens/create_event_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/foundation.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
-final _router =
-GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
+List<RouteBase>commonRoutes = [
+  GoRoute(
+      path: '/',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const AuthGuard(child: HomePage())),
+  GoRoute(
+      path: LoginPage.routeName,
+      name: LoginPage.routeName.replaceAll("/", ""),
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const LoginPage()),
+  GoRoute(
+      path: RegisterPage.routeName,
+      name: RegisterPage.routeName.replaceAll("/", ""),
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const RegisterPage()),
+  GoRoute(
+      path: ForgotPasswordPage.routeName,
+      name: ForgotPasswordPage.routeName.replaceAll("/", ""),
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ForgotPasswordPage()),
+];
+
+List<RouteBase>mobileRoutes = [
   ShellRoute(
     navigatorKey: _shellNavigatorKey,
     builder: (context, state, child) => Scaffold(
@@ -44,31 +64,31 @@ GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
             builder: (context, state) => const CreateEventPage(),
           ),
           GoRoute(
-            path: '/:eventId/details',
-            parentNavigatorKey: _rootNavigatorKey,
-            builder: (context, state) {
-              final eventId = state.pathParameters['eventId']!;
-              final currentUser = state.extra as User;
-              return EventDetailsPage(
-                eventId: eventId,
-                currentUser: currentUser,
-              );
-            },
-            routes: [
-              GoRoute(
-                path: '${EventChatPage.routeName}',
-                parentNavigatorKey: _rootNavigatorKey,
-                name: EventChatPage.routeName.replaceAll("/", ""),
-                builder: (context, state) {
-                  final eventId = state.pathParameters['eventId']!;
-                  final event = state.extra as Event;
-                  return EventChatPage(
-                    eventId: eventId,
-                    event: event,
-                  );
-                },
-              ),
-            ]
+              path: '/:eventId/details',
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) {
+                final eventId = state.pathParameters['eventId']!;
+                final currentUser = state.extra as User;
+                return EventDetailsPage(
+                  eventId: eventId,
+                  currentUser: currentUser,
+                );
+              },
+              routes: [
+                GoRoute(
+                  path: '${EventChatPage.routeName}',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  name: EventChatPage.routeName.replaceAll("/", ""),
+                  builder: (context, state) {
+                    final eventId = state.pathParameters['eventId']!;
+                    final event = state.extra as Event;
+                    return EventChatPage(
+                      eventId: eventId,
+                      event: event,
+                    );
+                  },
+                ),
+              ]
           ),
         ],
       ),
@@ -87,46 +107,28 @@ GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
         ],
       ),
       GoRoute(
-        path: ProfilePage.routeName,
-        parentNavigatorKey: _shellNavigatorKey,
-        builder: (context, state) => const ProfilePage(isCurrentUser: true),
-        routes: [
-          GoRoute(
-            path: EditProfilePage.routeName,
-            name: EditProfilePage.routeName.replaceAll("/", ""),
-            parentNavigatorKey: _rootNavigatorKey,
-            builder: (context, state) => EditProfilePage(
-              user: state.extra as User,
+          path: ProfilePage.routeName,
+          parentNavigatorKey: _shellNavigatorKey,
+          builder: (context, state) => const ProfilePage(isCurrentUser: true),
+          routes: [
+            GoRoute(
+              path: EditProfilePage.routeName,
+              name: EditProfilePage.routeName.replaceAll("/", ""),
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) => EditProfilePage(
+                user: state.extra as User,
+              ),
             ),
-          ),
-        ]
+          ]
       ),
     ],
   ),
-  GoRoute(
-      path: '/',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const AuthGuard(child: HomePage())),
-  GoRoute(
-      path: LoginPage.routeName,
-      name: LoginPage.routeName.replaceAll("/", ""),
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const LoginPage()),
-  GoRoute(
-      path: RegisterPage.routeName,
-      name: RegisterPage.routeName.replaceAll("/", ""),
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const RegisterPage()),
+
   GoRoute(
       path: HomePage.routeName,
       name: HomePage.routeName.replaceAll("/", ""),
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const HomePage()),
-  GoRoute(
-      path: ForgotPasswordPage.routeName,
-      name: ForgotPasswordPage.routeName.replaceAll("/", ""),
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const ForgotPasswordPage()),
   GoRoute(
     path: ValidateAccountPage.routeName,
     parentNavigatorKey: _rootNavigatorKey,
@@ -152,6 +154,16 @@ GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
         isCurrentUser: state.pathParameters['isCurrentUser'] as bool,
       )
   ),
+];
+
+
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final _router =
+GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
+  commonRoutes,
+    if (kIsWeb) ..._webRoutes(),
+    if (!kIsWeb) ..._mobileRoutes(),
 ]);
 
 GoRouter get router => _router;
