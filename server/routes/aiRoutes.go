@@ -21,5 +21,6 @@ func initAIController(client *ent.Client) *controllers.AIController {
 
 	aiService := services.NewAIService(repositories.NewDocumentRepository(client), repositories.NewEventRepository(client))
 	eventService := services.NewEventService(repositories.NewEventRepository(client), nil)
-	return controllers.NewAIController(aiService, eventService)
+	subjectService := services.NewSubjectService(repositories.NewSubjectRepository(client))
+	return controllers.NewAIController(aiService, eventService, subjectService)
 }

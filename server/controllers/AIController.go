@@ -13,19 +13,20 @@ import (
 )
 
 type AIController struct {
-	aiService    *services.AIService
-	eventService *services.EventService
+	aiService      *services.AIService
+	eventService   *services.EventService
+	subjectService *services.SubjectService
 }
 
-func NewAIController(aiService *services.AIService, eventService *services.EventService) *AIController {
+func NewAIController(aiService *services.AIService, eventService *services.EventService, subjectService *services.SubjectService) *AIController {
 	return &AIController{
-		aiService:    aiService,
-		eventService: eventService,
+		aiService:      aiService,
+		eventService:   eventService,
+		subjectService: subjectService,
 	}
 }
 
 func (ai *AIController) GenerateExo(c *fiber.Ctx) error {
-	var aiDTO dtos.AIExerciseDTO
 	eventID, errParse := ulid.Parse(c.Params("id"))
 	if errParse != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
@@ -39,21 +40,19 @@ func (ai *AIController) GenerateExo(c *fiber.Ctx) error {
 	if !guards.CanAuthorize(user, event) {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
 	}
-	if err := c.BodyParser(&aiDTO); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-
-	validations := validator.New()
-	err = validations.Struct(aiDTO)
-	if err != nil {
-		errors := make([]string, 0)
-		for _, err := range err.(validator.ValidationErrors) {
-			errors = append(errors, err.Error())
+	var subjectsName string
+	for _, subjectIds := range event.Subjects {
+		subject, err := ai.subjectService.GetSubject(subjectIds)
+		if err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Subject not found"})
 		}
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
+
+		subjectsName += subject.Name + ", "
 	}
 
-	exo, err := ai.aiService.GenerateExo(aiDTO.Statement)
+	statement := `Génère moi des exercices sur en prenant en compte le titre suivant ` + event.Title + ` la description suivante : ` + event.Description
+	statement += ` et les matière suivantes : ` + subjectsName
+	exo, err := ai.aiService.GenerateExo(statement)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{
 			"error": err.Error(),
