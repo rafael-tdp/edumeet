@@ -241,17 +241,29 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-
-
   @override
   void initState() {
     super.initState();
-    
+    SSEClient.subscribeToSSE(
+        method: SSERequestType.GET,
+        url:
+        'http://localhost:3000/chats/connect',
+        header: {
+          "Authorization":
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1ha2FuQHVzZXIuY29tIiwidXNlcl9pZCI6IjAxSkZaS1ROUlRXWFpLVlo1RzlDUks4UU5DIiwicm9sZSI6IlVTRVIiLCJleHAiOjE3Mzc3NDYwODN9.hMGvta5zzF97gE1Kg_Odsh2GM_iYQPZNTlbiv_-Cods',
+          "Accept": "text/event-stream",
+          "Cache-Control": "no-cache",
+        }).listen((event) {
+      print('Id: ' + event.id!);
+      print('Event: ' + event.event!);
+      print('Data: ' + event.data!);
+    },
+    );
     // _sseServices.connectToSse();
   
-    _sseClient = customSSE.SSEClient('http://localhost:3000/chats/connect');
-    _sseStream = _sseClient.connect();
-    _listenToSSE();
+    // _sseClient = customSSE.SSEClient('http://localhost:3000/chats/connect');
+    // _sseStream = _sseClient.connect();
+    // _listenToSSE();
   }
 
   void _listenToSSE() {
