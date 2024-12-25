@@ -15,6 +15,7 @@ class EventsPage extends StatefulWidget {
   static navigateTo(BuildContext context) {
     context.go(routeName);
   }
+
   const EventsPage({super.key});
 
   @override
@@ -148,7 +149,8 @@ class _EventsPageState extends State<EventsPage> {
                 child: EventCard(
                   title: event.title,
                   date: event.startDate,
-                  imageUrl: event.image!,
+                  imageUrl: event.image ??
+                      'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dHJhdmFpbHxlbnwwfHwwfHx8Mg%3D%3D',
                   participants: event.participantsCount.toString(),
                   isCurrentUserEvent: event.createdBy == _currentUser!.id,
                 ),

@@ -215,7 +215,15 @@ func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters)
 
 func (er *EventRepository) GetEventsByUser(userID string) ([]*ent.Event, error) {
 	events, err := er.client.Event.Query().
-		Where(event.HasParticipantsWith(participant.HasUserWith(user.IDEQ(userID)))).WithParticipants().WithEventDocuments().All(context.Background())
+		Where(
+			event.Or(
+				event.HasParticipantsWith(participant.HasUserWith(user.IDEQ(userID))),
+				event.CreatedBy(userID),
+			),
+		).
+		WithParticipants().
+		WithEventDocuments().
+		All(context.Background())
 
 	if err != nil {
 		return nil, err
