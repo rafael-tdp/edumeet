@@ -18,17 +18,19 @@ type Event struct {
 }
 
 type ChatService struct {
-	chatRepo       *repositories.ChatRepository
-	userRepository *repositories.UserRepository
-	users          map[string]chan string // Connexions utilisateurs
-	mu             sync.Mutex
+	chatRepo              *repositories.ChatRepository
+	userRepository        *repositories.UserRepository
+	participantRepository *repositories.ParticipantRepository
+	users                 map[string]chan string // Connexions utilisateurs
+	mu                    sync.Mutex
 }
 
-func NewChatService(chatRepo *repositories.ChatRepository, userRepository *repositories.UserRepository) *ChatService {
+func NewChatService(chatRepo *repositories.ChatRepository, userRepository *repositories.UserRepository, participantRepository *repositories.ParticipantRepository) *ChatService {
 	return &ChatService{
-		chatRepo:       chatRepo,
-		userRepository: userRepository,
-		users:          make(map[string]chan string),
+		chatRepo:              chatRepo,
+		userRepository:        userRepository,
+		participantRepository: participantRepository,
+		users:                 make(map[string]chan string),
 	}
 }
 
@@ -240,4 +242,37 @@ func (cs *ChatService) DeleteMessageFriend(messageID, userID string, friendId st
 	_ = cs.SendMessageToUser(receiverId, utils.JSONStringify(deleteMessage))
 
 	return nil
+}
+
+func (cs *ChatService) GetConversations(userId string) ([]dtos.ConversationDTO, error) {
+	var conversationDTOs []dtos.ConversationDTO
+
+	conversationsFriends, err := cs.userRepository.GetFriendshipsByUserId(userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	conversationsEvents, err := cs.participantRepository.GetParticipationsUser(userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, friendship := range conversationsFriends {
+		var userNameFriend string
+		if friendship.Edges.User.ID == userId {
+			userNameFriend = friendship.Edges.Friend.Username
+		} else {
+			userNameFriend = friendship.Edges.User.Username
+		}
+
+		conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(friendship.ID, userNameFriend, "friend"))
+	}
+
+	for _, participant := range conversationsEvents {
+		conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(participant.Edges.Event.ID, participant.Edges.Event.Title, "event"))
+	}
+
+	return conversationDTOs, nil
 }
