@@ -27,9 +27,9 @@ func (e *Participant) GenerateParticipant(ctx context.Context, client *ent.Clien
 			_, err := client.Participant.Create().
 				SetStatus(func() string {
 					if i == 2 {
-						return "pending"
+						return "PENDING"
 					}
-					return "accepted"
+					return "ACCEPTED"
 				}()).
 				SetRequestedAt(time.Now()).
 				SetJoinedAt(time.Now()).
