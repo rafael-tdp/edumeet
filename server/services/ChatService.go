@@ -286,7 +286,7 @@ func (cs *ChatService) GetMessagesFriend(userId, friendId string) ([]dtos.Respon
 		return nil, err
 	}
 
-	var getChatDtos []dtos.ResponseMessageDTO
+	getChatDtos := make([]dtos.ResponseMessageDTO, 0)
 	for _, message := range messages {
 		getChatDtos = append(getChatDtos, dtos.EntToResponseMessageDTO(message.Content, message.ID, *message.CreatedBy, message.CreatedAt.String(), message.Edges.User.Username))
 	}
