@@ -17,13 +17,11 @@ Si plusieurs exercices sont demandés, sépare-les par des saut de ligne.
 Voici le thème de l'exercice :`
 
 const correctionPrompt = `
-Voici une version corrigée et optimisée de votre prompt pour générer des corrections :
-
-On te fournit un ou plusieurs énoncés d'exercices. Ta mission est de fournir une correction pour chaque énoncé.
+On te fournit un ou plusieurs énoncés d'exercices. Ta mission est de résoudre et donner la solution pour chaque énoncé.
 Pour chaque énoncé : Écris une correction en commençant par "Correction :".
-Assure-toi que la correction soit concise et clairement structurée, en respectant le format et le contexte de l'énoncé.
-Place chaque correction immédiatement après l'énoncé correspondant.
-Voici les énoncés d'exercices à corriger :`
+Assure-toi que la solution à l'énoncé soit concise et clairement structurée, en respectant le format et le contexte de l'énoncé.
+Place chaque solution immédiatement après l'énoncé correspondant.
+Voici les énoncés d'exercices à résoudre :`
 
 func InitOpenAI(prompt string) (string, error) {
 	client := openai.NewClient(os.Getenv("OPENAI_API_KEY"))
