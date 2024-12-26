@@ -24,7 +24,7 @@ class _DataTableWithPaginationState<T> extends State<DataTableWithPagination<T>>
   late int _rowsPerPage;
   late int _totalPages;
 
-  final List<int> _validRowsPerPageOptions = [5, 10, 15, 20];
+  final List<int> _validRowsPerPageOptions = [5, 10];
 
   @override
   void initState() {
@@ -96,8 +96,8 @@ class _DataSource<T> extends DataTableSource {
     return DataRow(
       cells: rowBuilder(_data[index]),
       color: index.isEven
-          ? MaterialStateProperty.all(Colors.grey.shade200)
-          : MaterialStateProperty.all(Colors.white),
+          ? WidgetStateProperty.all(Colors.grey.shade200)
+          : WidgetStateProperty.all(Colors.white),
     );
   }
 

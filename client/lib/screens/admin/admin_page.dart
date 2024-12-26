@@ -1,12 +1,18 @@
 import 'package:client/core/models/user.dart';
 import 'package:client/core/services/user_services.dart';
+import 'package:client/screens/admin/badge_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:go_router/go_router.dart';
 import 'subject_page.dart';
+import 'package:client/utils/colors.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({Key? key}) : super(key: key);
+  static const String routeName = '/admin';
+  static navigateTo(BuildContext context) {
+    context.go(routeName);
+  }
 
   @override
   _AdminPageState createState() => _AdminPageState();
@@ -46,7 +52,12 @@ class _AdminPageState extends State<AdminPage> {
     AdminMenuItem(
       title: 'Subject',
       icon: Icons.menu_book,
-      route: '/admin/subjects',
+      route: '${AdminPage.routeName}${SubjectPage.routeName}',
+    ),
+    AdminMenuItem(
+      title: 'Badge',
+      icon: Icons.star,
+      route: '${AdminPage.routeName}${BadgePage.routeName}',
     ),
   ];
 
@@ -82,31 +93,33 @@ class _AdminPageState extends State<AdminPage> {
         ),
       ),
       SubjectPage(),
+      BadgePage(),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
     return AdminScaffold(
-      backgroundColor: Colors.white,
-      leadingIcon: const Icon(Icons.menu),
+      backgroundColor: AppColors.lightBlue,
+      leadingIcon: const Icon(Icons.menu, color: AppColors.white),
       appBar: AppBar(
-        title: const Text('Edumeet Admin'),
+        backgroundColor: AppColors.purple,
+        title: const Text('Edumeet Admin', style: TextStyle(color: AppColors.white)),
         actions: [
           PopupMenuButton<AdminMenuItem>(
-            child: const Icon(Icons.account_circle),
+            child: const Icon(Icons.account_circle, color: AppColors.white),
             itemBuilder: (context) {
               return _adminMenuItems.map((AdminMenuItem item) {
                 return PopupMenuItem<AdminMenuItem>(
                   value: item,
                   child: Row(
                     children: [
-                      Icon(item.icon),
+                      Icon(item.icon, color: AppColors.white),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Text(
                           item.title,
-                          style: const TextStyle(fontSize: 14),
+                          style: TextStyle(color: AppColors.white, fontSize: 14),
                         ),
                       ),
                     ],
@@ -121,29 +134,33 @@ class _AdminPageState extends State<AdminPage> {
         ],
       ),
       sideBar: SideBar(
-        backgroundColor: const Color(0xFFEEEEEE),
-        activeBackgroundColor: Colors.black26,
-        borderColor: const Color(0xFFE7E7E7),
-        iconColor: Colors.black87,
-        activeIconColor: Colors.blue,
-        textStyle: const TextStyle(
-          color: Color(0xFF337ab7),
+        backgroundColor: AppColors.darkBlue,
+        activeBackgroundColor: AppColors.lightBlue,
+        borderColor: AppColors.white,
+        iconColor: AppColors.white,
+        activeIconColor: AppColors.lightBlue,
+        textStyle: TextStyle(
+          color: AppColors.white,
           fontSize: 13,
         ),
-        activeTextStyle: const TextStyle(
-          color: Colors.white,
+        activeTextStyle: TextStyle(
+          color: AppColors.darkBlue,
           fontSize: 13,
         ),
         items: _sideBarItems,
-        selectedRoute: '/admin',
+        selectedRoute: AdminPage.routeName,
         onSelected: (item) {
           if (item.route == '/admin/dashboard') {
             setState(() {
               _selectedIndex = 0;
             });
-          } else if (item.route == '/admin/subjects') {
+          } else if (item.route == '${AdminPage.routeName}${SubjectPage.routeName}') {
             setState(() {
               _selectedIndex = 1;
+            });
+          } else if (item.route == '${AdminPage.routeName}${BadgePage.routeName}') {
+            setState(() {
+              _selectedIndex = 2;
             });
           }
         },

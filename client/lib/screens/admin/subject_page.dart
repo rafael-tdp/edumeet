@@ -1,38 +1,63 @@
+import 'package:client/core/models/subject.dart';
+import 'package:client/core/services/subjects_services.dart';
+import 'package:client/screens/admin/admin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/datatable.dart';
+import 'package:client/utils/colors.dart';
+import 'package:go_router/go_router.dart';
 
+class SubjectPage extends StatefulWidget {
+  static const String routeName = '/subjects';
+  static navigateTo(BuildContext context) {
+    context.go('${AdminPage.routeName}$routeName');
+  }
 
-class Subject {
-  final int id;
-  final String name;
-
-  Subject({required this.id, required this.name});
+  @override
+  _SubjectPageState createState() => _SubjectPageState();
 }
 
-class SubjectPage extends StatelessWidget {
-  final List<Subject> subjects = [
-    Subject(id: 1, name: 'Mathématiques'),
-    Subject(id: 2, name: 'Physique'),
-    Subject(id: 3, name: 'Chimie'),
-    Subject(id: 4, name: 'Biologie'),
-    Subject(id: 5, name: 'Informatique'),
-    Subject(id: 6, name: 'Histoire'),
-    Subject(id: 7, name: 'Géographie'),
-    Subject(id: 8, name: 'Philosophie'),
-    Subject(id: 9, name: 'Anglais'),
-    Subject(id: 10, name: 'Espagnol'),
-  ];
+class _SubjectPageState extends State<SubjectPage> {
+  List<Subject> _subjects = [];
+
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSubjects();
+  }
+
+  Future<void> _fetchSubjects() async {
+    try {
+      final subjects = await SubjectServices.getSubjects();
+      setState(() {
+        _subjects = subjects;
+        _isLoading = false;
+      });
+    } catch (error) {
+      print('Error fetching subjects: $error');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.lightBlue,
       appBar: AppBar(
-        title: Text('Liste des Subjects'),
+        title: const Text('Liste des Subjects'),
+        backgroundColor: AppColors.transparent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: DataTableWithPagination<Subject>(
-          data: subjects,
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _subjects.isEmpty
+            ? const Center(child: Text('Aucun sujet disponible'))
+            : DataTableWithPagination<Subject>(
+          data: _subjects,
           initialRowsPerPage: 5,
           columns: const [
             DataColumn(label: Text('Id')),

@@ -1,4 +1,5 @@
 
+import 'package:client/screens/admin/admin_page.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -102,6 +103,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if(kIsWeb) {
+     return const AdminPage();
+    }
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

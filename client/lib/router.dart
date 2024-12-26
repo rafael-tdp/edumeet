@@ -2,6 +2,7 @@ import 'package:client/core/models/event.dart';
 import 'package:client/core/services/cache_service.dart';
 import 'package:client/main.dart';
 import 'package:client/screens/admin/admin_page.dart';
+import 'package:client/screens/admin/badge_page.dart';
 import 'package:client/screens/admin/subject_page.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/conversations_screen.dart';
@@ -24,11 +25,6 @@ import 'package:flutter/foundation.dart';
 import 'dart:html';
 
 List<RouteBase> commonRoutes = [
-  GoRoute(
-    path: '/',
-    parentNavigatorKey: _rootNavigatorKey,
-    builder: (context, state) => const AuthGuard(child: HomePage()),
-  ),
   GoRoute(
     path: LoginPage.routeName,
     name: LoginPage.routeName.replaceAll("/", ""),
@@ -101,6 +97,11 @@ List<RouteBase> mobileRoutes = [
         ],
       ),
       GoRoute(
+        path: '/',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AuthGuard(child: HomePage()),
+      ),
+      GoRoute(
         path: ConversationsPage.routeName,
         parentNavigatorKey: _shellNavigatorKey,
         builder: (context, state) => const ConversationsPage(),
@@ -164,9 +165,36 @@ List<RouteBase> mobileRoutes = [
   ),
 ];
 
+List<RouteBase> _webRoutes() {
+  return [
+    GoRoute(
+        path: '/',
+        redirect: (context,state) {
+          return AdminPage.routeName;
+        }
+    ),
+    GoRoute(
+      path: AdminPage.routeName,
+      builder: (context, state) {
+        return const AuthGuard(child: AdminPage());
+      },
+      routes: [
+        GoRoute(
+          path: SubjectPage.routeName,
+          builder: (context, state) => SubjectPage(),
+        ),
+        GoRoute(
+          path: BadgePage.routeName,
+          builder: (context, state) => BadgePage(),
+        ),
+      ],
+    ),
+  ];
+}
+
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
-final initialRoute = kIsWeb ? '/admin' : '/';
+final initialRoute = kIsWeb ? AdminPage.routeName : '/';
 
 final _router = GoRouter(
   initialLocation: initialRoute,
@@ -177,22 +205,5 @@ final _router = GoRouter(
     if (!kIsWeb) ...mobileRoutes,
   ],
 );
-
-List<RouteBase> _webRoutes() {
-  return [
-    GoRoute(
-      path: '/admin',
-      builder: (context, state) {
-        return AuthGuard(child: AdminPage());
-      },
-      routes: [
-        GoRoute(
-          path: '/subjects',
-          builder: (context, state) => SubjectPage(),
-        ),
-      ],
-    ),
-  ];
-}
 
 GoRouter get router => _router;
