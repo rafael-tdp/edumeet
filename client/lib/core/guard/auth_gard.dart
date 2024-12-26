@@ -1,7 +1,10 @@
 import 'package:client/core/services/cache_service.dart';
+import 'package:client/screens/admin/admin_page.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/welcome/welcome_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../services/auth_services.dart';
 
@@ -35,9 +38,10 @@ class _AuthGuardState extends State<AuthGuard> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isFirstLaunch) {
+    if (_isFirstLaunch && !kIsWeb) {
       return const WelcomeScreen();
-    } else if (!_isLoggedIn) {
+    }
+    else if (!_isLoggedIn) {
       return const LoginPage();
     } else {
       return widget.child;

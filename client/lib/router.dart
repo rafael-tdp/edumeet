@@ -1,4 +1,5 @@
 import 'package:client/core/models/event.dart';
+import 'package:client/core/services/cache_service.dart';
 import 'package:client/main.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:client/screens/admin/subject_page.dart';
@@ -20,6 +21,7 @@ import 'package:client/core/guard/auth_gard.dart';
 import 'package:client/screens/create_event_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:html';
 
 List<RouteBase> commonRoutes = [
   GoRoute(
@@ -164,9 +166,10 @@ List<RouteBase> mobileRoutes = [
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final initialRoute = kIsWeb ? '/admin' : '/';
 
 final _router = GoRouter(
-  initialLocation: '/',
+  initialLocation: initialRoute,
   navigatorKey: _rootNavigatorKey,
   routes: [
     ...commonRoutes,
@@ -179,13 +182,15 @@ List<RouteBase> _webRoutes() {
   return [
     GoRoute(
       path: '/admin',
-      builder: (context, state) => const AdminPage(),
+      builder: (context, state) {
+        return AuthGuard(child: AdminPage());
+      },
       routes: [
         GoRoute(
           path: '/subjects',
           builder: (context, state) => SubjectPage(),
-      ),
-    ],
+        ),
+      ],
     ),
   ];
 }

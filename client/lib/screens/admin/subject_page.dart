@@ -41,7 +41,7 @@ class SubjectPage extends StatelessWidget {
           rowBuilder: (subject) {
             return [
               DataCell(Text(subject.id.toString())),
-              DataCell(Text(subject.name)), 
+              DataCell(Text(subject.name)),
             ];
           },
         ),

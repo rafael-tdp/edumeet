@@ -1,7 +1,9 @@
+import 'package:client/core/models/user.dart';
+import 'package:client/core/services/user_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:go_router/go_router.dart';
-import 'subject_page.dart'; // Importez la page SubjectPage
+import 'subject_page.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({Key? key}) : super(key: key);
@@ -12,8 +14,29 @@ class AdminPage extends StatefulWidget {
 
 class _AdminPageState extends State<AdminPage> {
   int _selectedIndex = 0;
+  User? _currentUser;
 
-  // Les éléments de la sidebar
+  @override
+  void initState() {
+    super.initState();
+    _fetchCurrentUser();
+  }
+
+  void _fetchCurrentUser() async {
+    try {
+      final response = await UserServices().getUserInfo();
+      setState(() {
+        _currentUser = response.data;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User not loaded")),
+        );
+      }
+    }
+  }
+
   final List<AdminMenuItem> _sideBarItems = const [
     AdminMenuItem(
       title: 'Dashboard',
@@ -27,7 +50,6 @@ class _AdminPageState extends State<AdminPage> {
     ),
   ];
 
-  // Les éléments du menu utilisateur (profil, paramètres, déconnexion)
   final List<AdminMenuItem> _adminMenuItems = const [
     AdminMenuItem(
       title: 'User Profile',
@@ -46,22 +68,22 @@ class _AdminPageState extends State<AdminPage> {
     ),
   ];
 
-  // Contenu correspondant aux éléments de la sidebar
-  final List<Widget> _pages = [
-    // Vous pouvez ajouter ici d'autres pages si nécessaire.
-    Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        children: const [
-          Text(
-            'Welcome to the Admin Dashboard!',
-            style: TextStyle(fontSize: 18),
-          ),
-        ],
+  List<Widget> get _pages {
+    return [
+      Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Text(
+              'Welcome to the Admin Dashboard! ${_currentUser != null ? '${_currentUser!.firstname} ${_currentUser!.lastname}' : ''}',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
       ),
-    ),
-    SubjectPage(), // La page Subject sera affichée ici.
-  ];
+      SubjectPage(),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +115,7 @@ class _AdminPageState extends State<AdminPage> {
               }).toList();
             },
             onSelected: (item) {
-              context.go(item.route!); // Utilisation de GoRouter pour la navigation
+              context.go(item.route!);
             },
           ),
         ],
@@ -115,20 +137,20 @@ class _AdminPageState extends State<AdminPage> {
         items: _sideBarItems,
         selectedRoute: '/admin',
         onSelected: (item) {
-          print('sideBar: onTap(): title = ${item.title}, route = ${item.route}');
-          // Mise à jour de l'index en fonction de la sélection dans la Sidebar
           if (item.route == '/admin/dashboard') {
             setState(() {
-              _selectedIndex = 0; // Dashboard
+              _selectedIndex = 0;
             });
           } else if (item.route == '/admin/subjects') {
             setState(() {
-              _selectedIndex = 1; // Subject
+              _selectedIndex = 1;
             });
           }
         },
       ),
-      body: _pages[_selectedIndex], // Affichage du contenu en fonction de l'index sélectionné
+      body: _currentUser == null
+          ? const Center(child: CircularProgressIndicator())
+          : _pages[_selectedIndex],
     );
   }
 }
