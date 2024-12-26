@@ -1,6 +1,7 @@
 import 'package:client/core/models/event.dart';
 import 'package:client/main.dart';
 import 'package:client/screens/admin/admin_page.dart';
+import 'package:client/screens/admin/subject_page.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/conversations_screen.dart';
 import 'package:client/screens/edit_profile_page.dart';
@@ -179,6 +180,12 @@ List<RouteBase> _webRoutes() {
     GoRoute(
       path: '/admin',
       builder: (context, state) => const AdminPage(),
+      routes: [
+        GoRoute(
+          path: '/subjects',
+          builder: (context, state) => SubjectPage(),
+      ),
+    ],
     ),
   ];
 }

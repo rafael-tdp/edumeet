@@ -54,6 +54,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   device_preview: ^1.2.0
   connectivity_plus: ^6.1.0
+  flutter_admin_scaffold: ^1.4.0
 
 dev_dependencies:
   flutter_test:
