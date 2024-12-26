@@ -217,3 +217,25 @@ func (cc *ChatController) GetMessagesFriend(c *fiber.Ctx) error {
 
 	return c.JSON(messages)
 }
+
+func (cc *ChatController) GetMessagesEvent(c *fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	eventId := c.Params("eventId")
+
+	event, err := cc.eventService.GetEvent(eventId)
+	if err != nil {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Event not found"})
+	}
+
+	if !cc.chatService.CheckUserHasPermission(event.Participants, user.ID) {
+		return c.Status(http.StatusForbidden).JSON(fiber.Map{"error": "You don't have permission to access this event"})
+	}
+
+	messages, err := cc.chatService.GetMessagesEvent(user.ID, eventId)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(messages)
+}

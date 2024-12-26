@@ -293,3 +293,18 @@ func (cs *ChatService) GetMessagesFriend(userId, friendId string) ([]dtos.Respon
 
 	return getChatDtos, nil
 }
+
+func (cs *ChatService) GetMessagesEvent(userId, eventId string) ([]dtos.ResponseMessageDTO, error) {
+
+	messages, err := cs.chatRepo.GetMessagesEvent(eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	getChatDtos := make([]dtos.ResponseMessageDTO, 0)
+	for _, message := range messages {
+		getChatDtos = append(getChatDtos, dtos.EntToResponseMessageDTO(message.Content, message.ID, *message.CreatedBy, message.CreatedAt.String(), message.Edges.User.Username))
+	}
+
+	return getChatDtos, nil
+}

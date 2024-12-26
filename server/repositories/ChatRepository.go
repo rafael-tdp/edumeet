@@ -97,3 +97,16 @@ func (cr *ChatRepository) GetMessagesFriend(friendId string) ([]*ent.Message, er
 
 	return messages, nil
 }
+
+func (cr *ChatRepository) GetMessagesEvent(eventId string) ([]*ent.Message, error) {
+	messages, err := cr.client.Message.Query().
+		Where(message.HasEventWith(event.IDEQ(eventId))).
+		WithUser().
+		All(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return messages, nil
+}
