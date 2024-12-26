@@ -155,6 +155,10 @@ func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendI
 	// Check if friendship exists between the two users
 	friendship, err := cs.userRepository.GetFriendshipById(friendId)
 
+	if friendship == nil {
+		return fmt.Errorf("Vous ne pouvez pas envoyer de message à cet ami car vous n'êtes pas amis")
+	}
+
 	if err != nil {
 		fmt.Printf("Error getting friendship: %v\n", err)
 	}
