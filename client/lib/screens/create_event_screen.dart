@@ -1,5 +1,6 @@
 import 'package:client/core/models/event.dart';
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/screens/create_documents_screen.dart';
 import 'package:client/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -31,15 +32,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final _maxParticipantsController = TextEditingController();
   final _onlineLinkController = TextEditingController();
 
+  bool _isDisposed = false;
   bool _isPrivate = false;
   bool _isPhysical = true;
   Set<String> _selectedSubjects = {};
-  
+
   // Liste pour stocker les suggestions d'adresses
   List<String> _addressSuggestions = [];
 
   @override
   void dispose() {
+    _isDisposed = true;
     _nameController.dispose();
     _descriptionController.dispose();
     _locationController.dispose();
@@ -48,35 +51,46 @@ class _CreateEventPageState extends State<CreateEventPage> {
     super.dispose();
   }
 
-  // Fonction pour obtenir les suggestions d'adresses
   void _getAddressSuggestions(String query) async {
     try {
+      if (query.length < 3) {
+        return;
+      }
+
       List<String> suggestions = await fetchAddressSuggestions(query);
+      if (!mounted || _isDisposed) {
+        return;
+      }
       setState(() {
         _addressSuggestions = suggestions;
       });
     } catch (e) {
-      // Gérez les erreurs de récupération des adresses
       print("Erreur de récupération des adresses: $e");
     }
   }
 
-  void _createEvent() {
+  void _createEvent(context) async {
+
+    CreateDocumentsPage.navigateTo(context, "eventId");
+    return;
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
     Event event = Event(
-      title: _nameController.text,
-      description: _descriptionController.text,
-      startDate:
-          _startDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
-      endDate: _endDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
+      title: "title", //_nameController.text,
+      description: "description", //_descriptionController.text,
+      startDate: "2025-01-01T00:00:00Z",
+      //_startDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
+      endDate: "2025-01-02T00:00:00Z",
+      //_endDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
       isPrivate: _isPrivate,
       nbMaxParticipants: int.parse(_maxParticipantsController.text),
       physicalEvent: _isPhysical
           ? {
-              'location': _locationController.text,
+              'location':
+                  "1 Rue Lecourbe 75015 Paris" //_locationController.text,
             }
           : null,
       remoteEvent: !_isPhysical
@@ -87,7 +101,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
       subjects: _selectedSubjects.toList(),
     );
 
-    EventServices.createEvent(event);
+    try {
+      var createdEvent = await EventServices.createEvent(event);
+      final eventId = createdEvent.id;
+      CreateDocumentsPage.navigateTo(context, eventId!);
+    } catch (e) {
+      print("Erreur de création d'événement: $e");
+    }
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
@@ -229,7 +249,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       onTap: () {
                         _locationController.text = suggestion;
                         setState(() {
-                          _addressSuggestions.clear(); // Efface les suggestions après sélection
+                          _addressSuggestions.clear();
                         });
                       },
                     );
@@ -237,7 +257,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 ),
               const SizedBox(height: 20),
               SizedBox(
-                height: 300.0, // Hauteur maximale que vous souhaitez
+                height: 300.0,
                 child: SingleChildScrollView(
                   child: SubjectsSelection(
                     onSelected: (selectedSubjects) {
@@ -251,7 +271,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _createEvent,
+                onPressed: () => _createEvent(context),
                 child: Text(t.event.create),
               ),
             ],

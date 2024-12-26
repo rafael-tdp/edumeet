@@ -103,7 +103,7 @@ class EventServices {
     }
   }
 
-  static Future<void> createEvent(Event event) async {
+  static Future<Event> createEvent(Event event) async {
     try {
       final token = await getToken();
 
@@ -125,9 +125,67 @@ class EventServices {
       if (response.statusCode != 201) {
         throw Exception('Failed to create event');
       }
+
+      final createdEvent = jsonDecode(response.body);
+      return Event.fromJson(createdEvent);
     } catch (error) {
       log('An error occurred while creating event', error: error);
       rethrow;
     }
   }
+
+  static Future<void> generateExo(String eventId) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      final statement = "Génère moi un exercice d'algorithme niveau DUT INFORMATIQUE 1ere année";
+
+      final response = await http.post(
+        Uri.parse('${Env.BACKEND_URL}/ai/generate-exo/$eventId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'exercise': statement}),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to generate exo');
+      }
+    } catch (error) {
+      log('An error occurred while generating exo', error: error);
+      rethrow;
+    }
+  }  
+
+  static Future<void> generateCorrection(String eventId, String exercise) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      final response = await http.post(
+        Uri.parse('${Env.BACKEND_URL}/ai/generate-correction/$eventId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'exercise': exercise}),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to generate correction');
+      }
+    } catch (error) {
+      log('An error occurred while generating correction', error: error);
+      rethrow;
+    }
+  }
+
 }
