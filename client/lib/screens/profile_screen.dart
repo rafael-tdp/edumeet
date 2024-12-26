@@ -83,14 +83,6 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      ProfileButton(
-                        text: "Envoyer un message",
-                        backgroundColor: AppColors.purple,
-                        onPressed: () async {
-                          await _sseServices.sendMessage();
-                        },
-                      ),
-                      const SizedBox(height: 20),
                       LanguageDropdown(parentContext: context),
                       const SizedBox(height: 20),
                       Container(
