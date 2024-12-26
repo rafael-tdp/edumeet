@@ -2,6 +2,7 @@ import 'package:client/core/models/event.dart';
 import 'package:client/main.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/conversations_screen.dart';
+import 'package:client/screens/create_documents_screen.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/screens/event_chat_page.dart';
 import 'package:client/screens/event_details_page.dart';
@@ -42,6 +43,16 @@ GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
             path: CreateEventPage.routeName,
             parentNavigatorKey: _rootNavigatorKey,
             builder: (context, state) => const CreateEventPage(),
+            routes: [
+              GoRoute(
+                path: CreateDocumentsPage.routeName,
+                parentNavigatorKey: _rootNavigatorKey,
+                builder: (context, state) {
+                  final eventId = state.extra as String;
+                  return CreateDocumentsPage(eventId: eventId);
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: '/:eventId/details',
