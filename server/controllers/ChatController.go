@@ -204,3 +204,16 @@ func (cc *ChatController) GetConversations(c *fiber.Ctx) error {
 
 	return c.JSON(conversationDTOs)
 }
+
+func (cc *ChatController) GetMessagesFriend(c *fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	friendId := c.Params("friendId")
+
+	messages, err := cc.chatService.GetMessagesFriend(user.ID, friendId)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(messages)
+}

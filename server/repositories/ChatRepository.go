@@ -4,6 +4,7 @@ import (
 	"context"
 	"edumeet/ent"
 	"edumeet/ent/event"
+	"edumeet/ent/friendship"
 	"edumeet/ent/message"
 )
 
@@ -82,4 +83,17 @@ func (cr *ChatRepository) GetChat(messageID string) (*ent.Message, error) {
 	}
 
 	return message, nil
+}
+
+func (cr *ChatRepository) GetMessagesFriend(friendId string) ([]*ent.Message, error) {
+	messages, err := cr.client.Message.Query().
+		Where(message.HasFriendshipWith(friendship.IDEQ(friendId))).
+		WithUser().
+		All(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return messages, nil
 }

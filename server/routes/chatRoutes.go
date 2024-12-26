@@ -12,6 +12,7 @@ import (
 
 func setupRoutesChat(app *fiber.App, chatController *controllers.ChatController) {
 	app.Get("/chats/conversations", middlewares.JWTAuthMiddleware, chatController.GetConversations)
+	app.Get("/chats/get-conversation-friend/:friendId", middlewares.JWTAuthMiddleware, chatController.GetMessagesFriend)
 	app.Get("/chats/connect", middlewares.JWTAuthMiddleware, chatController.Connect)
 	app.Post("/chats/send-message-to-event/:eventId", middlewares.JWTAuthMiddleware, chatController.SendMessageToEvent)
 	app.Delete("/chats/delete-message-to-event/:eventId/:messageId", middlewares.JWTAuthMiddleware, chatController.DeleteMessageEvent)

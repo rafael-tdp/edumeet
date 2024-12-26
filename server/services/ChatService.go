@@ -5,6 +5,7 @@ import (
 	"edumeet/dtos"
 	"edumeet/repositories"
 	"edumeet/utils"
+	"errors"
 	"fmt"
 	"sync"
 
@@ -63,20 +64,6 @@ func (cs *ChatService) CheckUserHasPermission(participants []dtos.ParticipantDTO
 	})
 	return foundParticipant
 }
-
-// func (cs *ChatService) GetChats(eventID string) ([]*dtos.GetChatDTO, error) {
-// 	chats, err := cs.chatRepo.GetChatsByEventID(eventID)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	var getChatDtos []*dtos.GetChatDTO
-// 	for _, chat := range chats {
-// 		getChatDtos = append(getChatDtos, dtos.EntToGetChatDTO(eventID, chat.Content, chat.ID, chat.CreatedAt.String(), chat.Edges.User.ID, []string{}))
-// 	}
-
-// 	return getChatDtos, nil
-// }
 
 func (cs *ChatService) SendMessageToUser(userID string, message string) error {
 	cs.mu.Lock()
@@ -275,4 +262,34 @@ func (cs *ChatService) GetConversations(userId string) ([]dtos.ConversationDTO, 
 	}
 
 	return conversationDTOs, nil
+}
+
+func (cs *ChatService) GetMessagesFriend(userId, friendId string) ([]dtos.ResponseMessageDTO, error) {
+
+	// Check if friendship exists between the two users
+	friendship, err := cs.userRepository.GetFriendshipById(friendId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if userId != friendship.Edges.User.ID && userId != friendship.Edges.Friend.ID {
+		return nil, errors.New("Vous n'êtes pas autorisé à voir les messages de cet ami")
+	}
+
+	if friendship.Status != "ACCEPTED" {
+		return nil, errors.New("Vous ne pouvez pas voir les messages de cet ami car la demande d'ami n'a pas été acceptée")
+	}
+
+	messages, err := cs.chatRepo.GetMessagesFriend(friendId)
+	if err != nil {
+		return nil, err
+	}
+
+	var getChatDtos []dtos.ResponseMessageDTO
+	for _, message := range messages {
+		getChatDtos = append(getChatDtos, dtos.EntToResponseMessageDTO(message.Content, message.ID, *message.CreatedBy, message.CreatedAt.String(), message.Edges.User.Username))
+	}
+
+	return getChatDtos, nil
 }
