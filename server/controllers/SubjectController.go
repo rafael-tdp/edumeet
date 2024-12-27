@@ -5,6 +5,7 @@ import (
 	"edumeet/ent"
 	"edumeet/guards"
 	"edumeet/services"
+	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -94,13 +95,15 @@ func (sc *SubjectController) Update(c *fiber.Ctx) error {
 func (sc *SubjectController) Delete(c *fiber.Ctx) error {
 	id, err := ulid.Parse(c.Params("id"))
 
+	fmt.Print("ID : ", id)
+
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
-	currentUser := c.Locals("user").(*ent.User)
-	if !guards.IsAdmin(currentUser) {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
-	}
+	// currentUser := c.Locals("user").(*ent.User)
+	// if !guards.IsAdmin(currentUser) {
+	// 	return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	// }
 
 	errDelete := sc.subjectService.Delete(id.String())
 

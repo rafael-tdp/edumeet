@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
+import '../../widgets/confirmation_dialog.dart';
 
 class SubjectPage extends StatefulWidget {
   static const String routeName = '/subjects';
@@ -42,6 +43,44 @@ class _SubjectPageState extends State<SubjectPage> {
     }
   }
 
+  void _showDeleteConfirmation(BuildContext context, Subject subject) {
+    bool isDeleting = false;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return ConfirmationDialog(
+              title: 'Confirmer la suppression',
+              content: 'Êtes-vous sûr de vouloir supprimer le sujet "${subject.name}" ?',
+              isLoading: isDeleting,
+              onCancel: () {
+                Navigator.of(context).pop(); // Fermer la modal
+              },
+              onConfirm: () async {
+                setState(() {
+                  isDeleting = true; // Activer le loader
+                });
+                await SubjectServices.deleteSubject(subject.id);
+                setState(() {
+                  isDeleting = false;
+                });
+
+                // Logique de suppression ici
+                _subjects.remove(subject); // Simulez la suppression
+
+                Navigator.of(context).pop(); // Fermer la modal
+
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,15 +101,35 @@ class _SubjectPageState extends State<SubjectPage> {
           columns: const [
             DataColumn(label: Text('Id')),
             DataColumn(label: Text('Name')),
+            DataColumn(label: Text('Actions')), // Nouvelle colonne
           ],
           rowBuilder: (subject) {
             return [
               DataCell(Text(subject.id.toString())),
               DataCell(Text(subject.name)),
+              DataCell(Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    tooltip: 'Modifier',
+                    onPressed: () {
+                      // Action pour le bouton Modifier
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    tooltip: 'Supprimer',
+                    onPressed: () {
+                      _showDeleteConfirmation(context, subject); // Ouvre la modal
+                    },
+                  ),
+                ],
+              )),
             ];
           },
         ),
       ),
+
     );
   }
 }

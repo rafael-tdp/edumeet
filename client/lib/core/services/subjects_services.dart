@@ -42,6 +42,36 @@ class SubjectServices {
     }
   }
 
+  static Future<bool> deleteSubject(subjectId) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return false;
+      }
+
+      print(subjectId);
+
+      final response = await http.delete(
+        Uri.parse('${Env.BACKEND_URL}/subjects/' + subjectId),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+print("ici");
+      if (response.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while retrieving subjects',
+          error: error, stackTrace: stacktrace);
+      return false;
+    }
+  }
+
   static Future<void> subscribeToSubject(String subjectId) async {
     try {
       final token = await getToken();
