@@ -6,6 +6,7 @@ import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/confirmation_dialog.dart';
+import '../../widgets/edit_modal_subject.dart';
 
 class SubjectPage extends StatefulWidget {
   static const String routeName = '/subjects';
@@ -67,8 +68,7 @@ class _SubjectPageState extends State<SubjectPage> {
                   isDeleting = false;
                 });
 
-                // Logique de suppression ici
-                _subjects.remove(subject); // Simulez la suppression
+                _fetchSubjects();
 
                 Navigator.of(context).pop(); // Fermer la modal
 
@@ -79,6 +79,22 @@ class _SubjectPageState extends State<SubjectPage> {
       },
     );
   }
+
+  void _showEditSubjectDialog(BuildContext context, Subject subject) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return EditSubjectDialog(
+          initialName: subject.name,
+          onSave: (newName) async{
+              await SubjectServices.updateSubject(subject, newName);
+              _fetchSubjects();
+          },
+        );
+      },
+    );
+  }
+
 
 
   @override
@@ -113,14 +129,14 @@ class _SubjectPageState extends State<SubjectPage> {
                     icon: const Icon(Icons.edit),
                     tooltip: 'Modifier',
                     onPressed: () {
-                      // Action pour le bouton Modifier
+                      _showEditSubjectDialog(context, subject);
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete),
                     tooltip: 'Supprimer',
                     onPressed: () {
-                      _showDeleteConfirmation(context, subject); // Ouvre la modal
+                      _showDeleteConfirmation(context, subject);
                     },
                   ),
                 ],

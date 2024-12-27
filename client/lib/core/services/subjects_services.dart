@@ -72,6 +72,36 @@ print("ici");
     }
   }
 
+  static Future<bool> updateSubject(subject, newName) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return false;
+      }
+
+      final response = await http.put(
+        Uri.parse('${Env.BACKEND_URL}/subjects/' + subject.id),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+            "name": newName
+          })
+      );
+      if (response.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while retrieving subjects',
+          error: error, stackTrace: stacktrace);
+      return false;
+    }
+  }
+
   static Future<void> subscribeToSubject(String subjectId) async {
     try {
       final token = await getToken();
