@@ -14,6 +14,9 @@ import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/user_provider.dart';
 
 class ProfilePage extends StatelessWidget {
   static const String routeName = '/profile';
@@ -161,6 +164,7 @@ class ProfilePage extends StatelessWidget {
                             backgroundColor: Colors.redAccent,
                             onPressed: () async {
                               await AuthServices().logout();
+                              Provider.of<UserProvider>(context, listen: false).clearUserInfo();
                               context.go(LoginPage.routeName);
                             },
                           ),

@@ -1,5 +1,6 @@
 import 'package:client/core/models/event.dart';
 import 'package:client/core/services/sse_services.dart';
+import 'package:client/providers/user_provider.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/core/guard/auth_gard.dart';
 import 'package:client/core/models/user.dart';
@@ -169,10 +170,17 @@ void main() {
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
-      builder: (context) => TranslationProvider(child: const MyApp()),
+      builder: (context) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => LocaleProvider()),
+          ChangeNotifierProvider(create: (_) => UserProvider()),
+        ],
+        child: const MyApp(),
+      ),
     ),
   );
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -207,9 +215,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final SseServices _sseServices = SseServices();
-  final List<String> _messages = [];
-  late customSSE.SSEClient _sseClient;
-  late Stream<String> _sseStream;
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
@@ -244,6 +249,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    Future.microtask(() {
+      Provider.of<UserProvider>(context, listen: false).loadUserInfo();
+    });
     _sseServices.connectToSse();
   }
 

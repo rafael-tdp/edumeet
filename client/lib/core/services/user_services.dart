@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:client/core/models/response.dart';
 import 'package:client/core/services/auth_services.dart';
+import 'package:client/core/services/cache_service.dart';
 import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import '../models/user.dart';
@@ -25,6 +26,9 @@ class UserServices {
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as Map<String, dynamic>;
       final User user = User.fromJson(data);
+      await CacheService.saveDataToCache("user_username", user.username);
+      await CacheService.saveDataToCache("user_email", user.email);
+      await CacheService.saveDataToCache("user_role", user.role!);
       return ResponseRequest(success: true, data: user);
     } else {
       return ResponseRequest(success: false, message: json.decode(response.body)['error']);
