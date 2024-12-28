@@ -7,6 +7,7 @@ import (
 	"edumeet/utils"
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/samber/lo"
@@ -98,13 +99,13 @@ func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, p
 		Username:     username,
 		MessageId:    messageCreated.ID,
 		EventId:      eventID,
-		CreationDate: messageCreated.CreatedAt.String(),
+		CreationDate: messageCreated.CreatedAt,
 		Content:      message,
 	}
 
 	// Send message to all active participants except the sender
 	for _, participant := range participants {
-		if participant.Status == "ACCEPTED" && participant.UserID != userId {
+		if strings.ToUpper(participant.Status) == "ACCEPTED" && participant.UserID != userId {
 			userID := participant.UserID
 			_ = cs.SendMessageToUser(userID, utils.JSONStringify(messageResponse))
 		}
@@ -183,7 +184,7 @@ func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendI
 		MessageId:    messageCreated.ID,
 		SenderId:     senderId,
 		ReceiverId:   receiverId,
-		CreationDate: messageCreated.CreatedAt.String(),
+		CreationDate: messageCreated.CreatedAt,
 		Content:      message,
 	}
 
