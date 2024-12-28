@@ -55,6 +55,7 @@ dependencies:
   device_preview: ^1.2.0
   connectivity_plus: ^6.1.0
   flutter_client_sse: ^2.0.0
+  timezone: ^0.10.0
 
 dev_dependencies:
   flutter_test:
