@@ -2,6 +2,7 @@ import 'package:client/core/models/user.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/admin/badge_page.dart';
 import 'package:client/screens/admin/dashboard_page.dart';
+import 'package:client/screens/admin/event_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:go_router/go_router.dart';
@@ -60,6 +61,11 @@ class _AdminPageState extends State<AdminPage> {
       icon: Icons.star,
       route: '${AdminPage.routeName}${BadgePage.routeName}',
     ),
+    AdminMenuItem(
+      title: 'Event',
+      icon: Icons.event,
+      route: '${AdminPage.routeName}${EventsPageAdmin.routeName}',
+    ),
   ];
 
   final List<AdminMenuItem> _adminMenuItems = const [
@@ -85,6 +91,7 @@ class _AdminPageState extends State<AdminPage> {
       DashboardPage(),
       SubjectPage(),
       BadgePage(),
+      EventsPageAdmin(),
     ];
   }
 
@@ -152,6 +159,11 @@ class _AdminPageState extends State<AdminPage> {
           } else if (item.route == '${AdminPage.routeName}${BadgePage.routeName}') {
             setState(() {
               _selectedIndex = 2;
+            });
+          }
+          else if (item.route == '${AdminPage.routeName}${EventsPageAdmin.routeName}') {
+            setState(() {
+              _selectedIndex = 3;
             });
           }
         },
