@@ -1,4 +1,6 @@
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/screens/admin/admin_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/core/models/auth/loginRequest.dart';
@@ -43,7 +45,11 @@ class _LoginPageState extends State<LoginPage> {
       );
       ResponseRequest response = await _authServices.login(loginRequest, context);
       if (response.success) {
-        context.go(HomePage.routeName);
+        if(kIsWeb){
+          context.push(AdminPage.routeName);
+        } else {
+          context.go(HomePage.routeName);
+        }
       } else {
         setState(() {
           _errorMessage = response.message;
