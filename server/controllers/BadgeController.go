@@ -5,6 +5,7 @@ import (
 	"edumeet/ent"
 	"edumeet/guards"
 	"edumeet/services"
+	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -44,22 +45,22 @@ func (uc *BadgeController) GetBadge(c *fiber.Ctx) error {
 func (uc *BadgeController) DeleteBadge(c *fiber.Ctx) error {
 	badgeId, err := ulid.Parse(c.Params("id"))
 	currentUser := c.Locals("user").(*ent.User)
+
 	if err != nil {
+		fmt.Println(err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
 
 	if !guards.IsAdmin(currentUser) {
+		fmt.Print("Not authorized")
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
 	}
 
-	badgeUser := c.Locals("user").(*ent.User)
+	fmt.Println(badgeId.String())
+
 	badge, err := uc.badgeService.GetBadgeById(badgeId.String())
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Badge not found"})
-	}
-
-	if badgeUser.Role != "ADMIN" && badgeUser.Role != "SUPERADMIN" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 
 	err = uc.badgeService.DeleteBadge(badge.ID)
