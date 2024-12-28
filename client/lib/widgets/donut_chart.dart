@@ -1,8 +1,9 @@
+import 'package:client/core/models/stat.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class SubjectsChart extends StatefulWidget {
-  final List<Map<String, dynamic>> topSubjects;
+  final List<TopSubject> topSubjects;
   final String chartTitle;
   final double chartDiameterFactor;
   final bool showTitle;
@@ -95,7 +96,7 @@ class DonutChart extends State<SubjectsChart> {
                                 sectionsSpace: 0,
                                 centerSpaceRadius: chartRadius * widget.centerSpaceRadiusFactor,
                                 sections: widget.topSubjects.map((subject) {
-                                  final double previousYearEvents = subject["previousYear"].toDouble();
+                                  final double previousYearEvents = subject.previousYearCount.toDouble();
                                   final isTouched = widget.topSubjects.indexOf(subject) == touchedIndex;
                                   final fontSize = isTouched ? 25.0 : 16.0;
                                   final radius = isTouched ? chartRadius * 0.6 : chartRadius * 0.5;
@@ -103,8 +104,8 @@ class DonutChart extends State<SubjectsChart> {
                                     value: previousYearEvents,
                                     color: _getSubjectColor(widget.topSubjects.indexOf(subject)),
                                     title: isTouched
-                                        ? '${subject["previousYear"]} événements'
-                                        : subject["subject"],
+                                        ? '${subject.previousYearCount} événements'
+                                        : subject.name,
                                     radius: radius,
                                     titleStyle: TextStyle(
                                       fontSize: fontSize,
@@ -154,7 +155,7 @@ class DonutChart extends State<SubjectsChart> {
                                 sectionsSpace: 0,
                                 centerSpaceRadius: chartRadius * widget.centerSpaceRadiusFactor,
                                 sections: widget.topSubjects.map((subject) {
-                                  final double currentYearEvents = subject["events"].toDouble();
+                                  final double currentYearEvents = subject.currentYearCount.toDouble();
                                   final isTouched = widget.topSubjects.indexOf(subject) == touchedIndex;
                                   final fontSize = isTouched ? 25.0 : 16.0;
                                   final radius = isTouched ? chartRadius * 0.6 : chartRadius * 0.5;
@@ -162,8 +163,8 @@ class DonutChart extends State<SubjectsChart> {
                                     value: currentYearEvents,
                                     color: _getSubjectColor(widget.topSubjects.indexOf(subject)),
                                     title: isTouched
-                                        ? '${subject["events"]} événements'
-                                        : subject["subject"],
+                                        ? '${subject.currentYearCount} événements'
+                                        : subject.name,
                                     radius: radius,
                                     titleStyle: TextStyle(
                                       fontSize: fontSize,
