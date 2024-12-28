@@ -3,6 +3,7 @@ import 'package:client/core/services/cache_service.dart';
 import 'package:client/main.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:client/screens/admin/badge_page.dart';
+import 'package:client/screens/admin/dashboard_page.dart';
 import 'package:client/screens/admin/subject_page.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/conversations_screen.dart';
@@ -179,6 +180,10 @@ List<RouteBase> _webRoutes() {
         return const AuthGuard(child: AdminPage());
       },
       routes: [
+        GoRoute(
+          path: SubjectPage.routeName,
+          builder: (context, state) => DashboardPage(),
+        ),
         GoRoute(
           path: SubjectPage.routeName,
           builder: (context, state) => SubjectPage(),

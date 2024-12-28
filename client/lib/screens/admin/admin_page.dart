@@ -1,6 +1,7 @@
 import 'package:client/core/models/user.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/admin/badge_page.dart';
+import 'package:client/screens/admin/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:go_router/go_router.dart';
@@ -81,17 +82,7 @@ class _AdminPageState extends State<AdminPage> {
 
   List<Widget> get _pages {
     return [
-      Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            Text(
-              'Welcome to the Admin Dashboard! ${_currentUser != null ? '${_currentUser!.firstname} ${_currentUser!.lastname}' : ''}',
-              style: const TextStyle(fontSize: 18),
-            ),
-          ],
-        ),
-      ),
+      DashboardPage(),
       SubjectPage(),
       BadgePage(),
     ];
@@ -150,7 +141,7 @@ class _AdminPageState extends State<AdminPage> {
         items: _sideBarItems,
         selectedRoute: AdminPage.routeName,
         onSelected: (item) {
-          if (item.route == '/admin/dashboard') {
+          if (item.route == '${AdminPage.routeName}${DashboardPage.routeName}') {
             setState(() {
               _selectedIndex = 0;
             });
