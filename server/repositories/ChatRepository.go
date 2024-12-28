@@ -110,3 +110,31 @@ func (cr *ChatRepository) GetMessagesEvent(eventId string) ([]*ent.Message, erro
 
 	return messages, nil
 }
+
+func (cr *ChatRepository) GetLastMessageEvent(eventId string) (*ent.Message, error) {
+	message, err := cr.client.Message.Query().
+		Where(message.HasEventWith(event.IDEQ(eventId))).
+		WithUser().
+		Order(ent.Desc(message.FieldCreatedAt)).
+		First(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return message, nil
+}
+
+func (cr *ChatRepository) GetLastMessageFriend(friendId string) (*ent.Message, error) {
+	message, err := cr.client.Message.Query().
+		Where(message.HasFriendshipWith(friendship.IDEQ(friendId))).
+		WithUser().
+		Order(ent.Desc(message.FieldCreatedAt)).
+		First(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return message, nil
+}

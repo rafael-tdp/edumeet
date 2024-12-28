@@ -259,11 +259,24 @@ func (cs *ChatService) GetConversations(userId string) ([]dtos.ConversationDTO, 
 			userNameFriend = friendship.Edges.User.Username
 		}
 
-		conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(friendship.ID, userNameFriend, "friend"))
+		lastMessageFriend, err := cs.chatRepo.GetLastMessageFriend(friendship.ID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(friendship.ID, userNameFriend, "friend", lastMessageFriend.Content, lastMessageFriend.CreatedAt.String(), lastMessageFriend.Edges.User.Username))
 	}
 
 	for _, participant := range conversationsEvents {
-		conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(participant.Edges.Event.ID, participant.Edges.Event.Title, "event"))
+
+		lastMessageEvent, err := cs.chatRepo.GetLastMessageEvent(participant.Edges.Event.ID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(participant.Edges.Event.ID, participant.Edges.Event.Title, "event", lastMessageEvent.Content, lastMessageEvent.CreatedAt.String(), lastMessageEvent.Edges.User.Username))
 	}
 
 	return conversationDTOs, nil

@@ -45,6 +45,8 @@ func (es *EventService) CreateEvent(ctx context.Context, eventDTO dtos.EventDTO,
 		}
 	}
 
+	_, err = es.participantRepository.CreateParticipant(userId, event.ID, "ACCEPTED")
+
 	eventCreatedWithEdge, err := es.eventRepository.GetEvent(event.ID)
 	if err != nil {
 		return nil, err
