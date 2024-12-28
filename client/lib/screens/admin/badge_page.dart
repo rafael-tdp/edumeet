@@ -7,6 +7,8 @@ import 'package:client/utils/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../widgets/confirmation_dialog.dart';
+
 class BadgePage extends StatefulWidget {
   static const String routeName = '/badges';
   static navigateTo(BuildContext context) {
@@ -42,6 +44,51 @@ class _BadgePageState extends State<BadgePage> {
       });
     }
   }
+
+  void _showDeleteConfirmation(BuildContext context, Model.Badge badge) {
+    bool isDeleting = false;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return ConfirmationDialog(
+              title: 'Confirmer la suppression',
+              content: 'Êtes-vous sûr de vouloir supprimer le Badge "${badge.name}" ?',
+              isLoading: isDeleting,
+              onCancel: () {
+                Navigator.of(context).pop(); // Fermer la modal
+              },
+              onConfirm: () async {
+                setState(() {
+                  isDeleting = true; // Activer le loader
+                });
+                  bool isDeleted = await BadgeServices.deleteBadge(badge.id);
+                  setState(() {
+                    isDeleting = false;
+                  });
+
+                  if(isDeleted) {
+                    _fetchBadges();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Badge supprimé avec succes')),
+                    );
+                  } else{
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Une erreur s''est produite pendant la suppression')),
+                    );
+                  }
+                  Navigator.of(context).pop(); // Fermer la modal
+                },
+            );
+          },
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +140,7 @@ class _BadgePageState extends State<BadgePage> {
                     icon: const Icon(Icons.delete),
                     tooltip: 'Supprimer',
                     onPressed: () {
+                      _showDeleteConfirmation(context, badge);
                     },
                   ),
                 ],

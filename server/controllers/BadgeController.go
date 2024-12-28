@@ -47,12 +47,10 @@ func (uc *BadgeController) DeleteBadge(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 
 	if err != nil {
-		fmt.Println(err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
 
 	if !guards.IsAdmin(currentUser) {
-		fmt.Print("Not authorized")
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
 	}
 
