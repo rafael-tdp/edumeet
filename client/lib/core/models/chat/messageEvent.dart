@@ -1,3 +1,5 @@
+import 'chatMessage.dart';
+
 class MessageEvent {
   final String id;
   final String? type;
@@ -27,15 +29,16 @@ class MessageEvent {
       content: json['content'],
     );
   }
+}
 
-  Map<String, dynamic> toJson() {
-    return {
-      'messageId': id,
-      'type': type,
-      'username': username,
-      'eventId': eventId,
-      'creationDate': creationDate?.toIso8601String(),
-      'content': content,
-    };
+extension MessageEventAdapter on MessageEvent {
+  ChatMessageModel toChatMessageModel(String currentUsername) {
+    return ChatMessageModel(
+      id: this.id,
+      content: this.content ?? '',
+      username: this.username ?? 'Unknown',
+      createdAt: this.creationDate ?? DateTime.now(),
+      isSentByCurrentUser: this.username == currentUsername,
+    );
   }
 }

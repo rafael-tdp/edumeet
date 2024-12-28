@@ -1,24 +1,22 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
-import 'package:client/core/models/messageEvent.dart';
-import 'package:client/core/models/messagePrivate.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
 import 'package:flutter_client_sse/flutter_client_sse.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import '../../env/env.dart';
-import 'package:client/core/models/event.dart';
+import '../models/chat/messageEvent.dart';
 
 class SseServices {
   final AuthServices _authServices = AuthServices();
+  final StreamController<dynamic> _messageStreamController = StreamController.broadcast();
+
+  Stream<dynamic> get messageStream => _messageStreamController.stream;
 
   Future<void> connectToSse() async {
     final token = await _authServices.getToken();
     SSEClient.subscribeToSSE(
         method: SSERequestType.GET,
-        url:
-        '${Env.BACKEND_URL}/chats/connect',
+        url: '${Env.BACKEND_URL}/chats/connect',
         header: {
           'Authorization': 'Bearer $token',
           'Accept': 'text/event-stream',
@@ -26,15 +24,16 @@ class SseServices {
         }).listen((event) {
           if (event.data!.contains('eventId')) {
             final eventMessage = MessageEvent.fromJson(jsonDecode(event.data!));
-            print('Event: ' + eventMessage.eventId!);
-            print('Message: ' + eventMessage.content!);
+            _messageStreamController.add(eventMessage);
           } else {
-            final friendMessage = MessagePrivate.fromJson(jsonDecode(event.data!));
-            print('Sender: ' + friendMessage.senderId!);
-            print('Receiver: ' + friendMessage.receiverId!);
-            print('Message: ' + friendMessage.content!);
+            // final friendMessage = MessagePrivate.fromJson(jsonDecode(event.data!));
+            // _messageStreamController.add(friendMessage);
           }
         },
     );
+  }
+
+  void dispose() {
+    _messageStreamController.close();
   }
 }

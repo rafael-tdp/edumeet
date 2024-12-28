@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class DateUtils {
+  static final tz.Location _franceLocation = tz.getLocation('Europe/Paris');
+
+  static DateTime now() {
+    tz.initializeTimeZones();
+    return tz.TZDateTime.now(_franceLocation);
+  }
+
   static String isoToFormattedDate(String isoDate) {
     try {
       final dateTime = DateTime.parse(isoDate);
@@ -68,5 +77,23 @@ class DateUtils {
     if (picked != null) {
       controller.text = DateFormat('dd/MM/yyyy').format(picked);
     }
+  }
+
+  static String getMonthName(int month) {
+    const months = [
+      'janv',
+      'févr',
+      'mars',
+      'avr',
+      'mai',
+      'juin',
+      'juil',
+      'août',
+      'sept',
+      'oct',
+      'nov',
+      'déc'
+    ];
+    return months[month - 1];
   }
 }
