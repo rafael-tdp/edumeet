@@ -130,4 +130,32 @@ class EventServices {
       rethrow;
     }
   }
+
+  static Future<bool> deleteEvent(eventId) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return false;
+      }
+
+      final response = await http.delete(
+        Uri.parse('${Env.BACKEND_URL}/events/' + eventId),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while deleting event',
+          error: error, stackTrace: stacktrace);
+      return false;
+    }
+  }
 }

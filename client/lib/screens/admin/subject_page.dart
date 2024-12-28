@@ -63,15 +63,24 @@ class _SubjectPageState extends State<SubjectPage> {
                 setState(() {
                   isDeleting = true; // Activer le loader
                 });
-                await SubjectServices.deleteSubject(subject.id);
+
+                bool isDeleted = await SubjectServices.deleteSubject(subject.id);
                 setState(() {
                   isDeleting = false;
                 });
 
-                _fetchSubjects();
+                if(isDeleted) {
+                  _fetchSubjects();
 
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Matière supprimé avec succes')),
+                  );
+                } else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Une erreur s''est produite pendant la suppression')),
+                  );
+                }
                 Navigator.of(context).pop(); // Fermer la modal
-
               },
             );
           },

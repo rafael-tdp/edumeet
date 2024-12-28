@@ -47,7 +47,7 @@ class _EventPageState extends State<EventsPageAdmin> {
     }
   }
 
-  void _showDeleteConfirmation(BuildContext context, Subject subject) {
+  void _showDeleteConfirmation(BuildContext context, Event event) {
     bool isDeleting = false;
 
     showDialog(
@@ -57,7 +57,7 @@ class _EventPageState extends State<EventsPageAdmin> {
           builder: (context, setState) {
             return ConfirmationDialog(
               title: 'Confirmer la suppression',
-              content: 'Êtes-vous sûr de vouloir supprimer cet evenement "${subject.name}" ?',
+              content: 'Êtes-vous sûr de vouloir supprimer l\'evenement "${event.title}" ?',
               isLoading: isDeleting,
               onCancel: () {
                 Navigator.of(context).pop(); // Fermer la modal
@@ -66,13 +66,23 @@ class _EventPageState extends State<EventsPageAdmin> {
                 setState(() {
                   isDeleting = true; // Activer le loader
                 });
-                await SubjectServices.deleteSubject(subject.id);
+                bool isDeleted = await EventServices.deleteEvent(event.id);
                 setState(() {
                   isDeleting = false;
                 });
 
-                Navigator.of(context).pop(); // Fermer la modal
+                if(isDeleted) {
+                  _fetchEvents();
 
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Badge supprimé avec succes')),
+                  );
+                } else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Une erreur s''est produite pendant la suppression')),
+                  );
+                }
+                Navigator.of(context).pop(); // Fermer la modal
               },
             );
           },
@@ -143,6 +153,7 @@ class _EventPageState extends State<EventsPageAdmin> {
                     icon: const Icon(Icons.delete),
                     tooltip: 'Supprimer',
                     onPressed: () {
+                      _showDeleteConfirmation(context, event);
                     },
                   ),
                 ],
