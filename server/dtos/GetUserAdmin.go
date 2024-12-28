@@ -1,16 +1,20 @@
 package dtos
 
-import "edumeet/ent"
+import (
+	"edumeet/ent"
+	"time"
+)
 
 type GetUserAdmin struct {
-	ID           string `json:"id"`
-	Email        string `json:"email"`
-	Firstname    string `json:"firstname"`
-	Lastname     string `json:"lastname"`
-	BirthDate    string `json:"birthDate"`
-	Activated    bool   `json:"activated"`
-	ReportNumber int    `json:"reportNumber"`
-	Role         string `json:"role"`
+	ID           string     `json:"id"`
+	Email        string     `json:"email"`
+	Firstname    string     `json:"firstname"`
+	Lastname     string     `json:"lastname"`
+	Username     string     `json:"username"`
+	BirthDate    *time.Time `json:"birthDate"`
+	Activated    bool       `json:"activated"`
+	ReportNumber int        `json:"reportNumber"`
+	Role         string     `json:"role"`
 }
 
 func UserEntToDtoAdmin(user *ent.User) (*GetUserAdmin, error) {
@@ -19,7 +23,8 @@ func UserEntToDtoAdmin(user *ent.User) (*GetUserAdmin, error) {
 		Email:        user.Email,
 		Firstname:    user.Firstname,
 		Lastname:     user.Lastname,
-		BirthDate:    user.BirthDate.String(),
+		Username:     user.Username,
+		BirthDate:    user.BirthDate,
 		Activated:    user.Activated,
 		ReportNumber: user.ReportNumber,
 		Role:         user.Role.String(),

@@ -12,6 +12,7 @@ class User {
   final int? reportNumber;
   final String? address;
   final String? role;
+  final bool? activated;
 
   User({
     required this.id,
@@ -25,6 +26,7 @@ class User {
     this.reportNumber,
     this.address,
     this.role,
+    this.activated
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class User {
       reportNumber: json['reportNumber'] ?? 0,
       address: json['address'],
       role: json['role'],
+      activated: json['activated'],
     );
   }
 
@@ -56,6 +59,7 @@ class User {
       'reportNumber': reportNumber,
       'address': address,
       'role': role,
+      'activated': activated
     };
   }
 }
