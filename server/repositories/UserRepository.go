@@ -218,3 +218,12 @@ func (ur *UserRepository) DeleteFriendship(ctx context.Context, friendshipID str
 
 	return nil
 }
+
+func (ur *UserRepository) GetUsers() ([]*ent.User, error) {
+	users, err := ur.client.User.Query().All(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}

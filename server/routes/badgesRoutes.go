@@ -13,7 +13,7 @@ import (
 func setupRoutesBadge(app *fiber.App, badgeController *controllers.BadgeController) {
 
 	app.Get("/badge/:id", badgeController.GetBadge)
-	app.Get("/badge", badgeController.GetBadges)
+	app.Get("/badge", middlewares.JWTAuthMiddleware, badgeController.GetBadges)
 	app.Post("/badge", middlewares.JWTAuthMiddleware, badgeController.CreateBadge)
 	app.Delete("/badge/:id", middlewares.JWTAuthMiddleware, badgeController.DeleteBadge)
 	app.Put("/badge/:id", middlewares.JWTAuthMiddleware, badgeController.UpdateBadge)

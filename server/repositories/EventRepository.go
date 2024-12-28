@@ -300,3 +300,18 @@ func (er *EventRepository) UpdateEventSubjects(ctx context.Context, eventId stri
 
 	return event, nil
 }
+
+func (er *EventRepository) GetEvents() ([]*ent.Event, error) {
+	events, err := er.client.Event.Query().
+		WithParticipants().
+		WithSubjects().
+		WithRemoteEvent().
+		WithPhysicalEvent().
+		All(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return events, nil
+}
