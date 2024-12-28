@@ -11,6 +11,7 @@ import (
 )
 
 func setupRoutesUser(app *fiber.App, userController *controllers.UserController) {
+	app.Get("/users", middlewares.AdminMiddleware, userController.GetUsers)
 	app.Get("/me", middlewares.JWTAuthMiddleware, userController.Me)
 	app.Post("/user/verify", userController.Verify)
 	app.Post("/user/validate-user", userController.ValidateUser)

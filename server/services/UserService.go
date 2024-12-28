@@ -206,3 +206,21 @@ func (us *UserService) DeleteFriendship(ctx context.Context, friendshipID string
 
 	return nil
 }
+
+func (us *UserService) GetUsers() ([]dtos.GetUserAdmin, error) {
+	users, err := us.userRepo.GetUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	usersDTO := make([]dtos.GetUserAdmin, 0)
+	for _, user := range users {
+		userDTO, err := dtos.UserEntToDtoAdmin(user)
+		if err != nil {
+			return nil, err
+		}
+		usersDTO = append(usersDTO, *userDTO)
+	}
+
+	return usersDTO, nil
+}

@@ -187,3 +187,11 @@ func (uc *UserController) DeleteFriendship(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{"message": "Friendship deleted successfully"})
 }
+
+func (uc *UserController) GetUsers(c *fiber.Ctx) error {
+	users, err := uc.userService.GetUsers()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(users)
+}
