@@ -66,6 +66,7 @@ class _BadgePageState extends State<BadgePage> {
             DataColumn(label: Text('Type')),
             DataColumn(label: Text('Nb requirement event')),
             DataColumn(label: Text('SVG')),
+            DataColumn(label: Text('Actions')),
           ],
           rowBuilder: (badge) {
             return [
@@ -80,6 +81,22 @@ class _BadgePageState extends State<BadgePage> {
                   width: 40,
                 ),
               ),
+              DataCell(Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    tooltip: 'Modifier',
+                    onPressed: () {
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    tooltip: 'Supprimer',
+                    onPressed: () {
+                    },
+                  ),
+                ],
+              )),
             ];
           },
         ),

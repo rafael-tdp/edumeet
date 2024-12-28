@@ -105,7 +105,7 @@ class _UserPageState extends State<UserPageAdmin> {
             DataColumn(label: Text('Activated')),
             DataColumn(label: Text('ReportNumber')),
             DataColumn(label: Text('Role')),
-            DataColumn(label: Text('Actions')), // Nouvelle colonne
+            DataColumn(label: Text('Actions')),
           ],
           rowBuilder: (user) {
             return [
