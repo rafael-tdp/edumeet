@@ -6,7 +6,9 @@ import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/confirmation_dialog.dart';
+import '../../widgets/create_modal_subject.dart';
 import '../../widgets/edit_modal_subject.dart';
+import 'package:flutter/material.dart';
 
 class SubjectPage extends StatefulWidget {
   static const String routeName = '/subjects';
@@ -104,6 +106,16 @@ class _SubjectPageState extends State<SubjectPage> {
     );
   }
 
+  void _showCreateSubjectDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const CreateSubjectModal();
+      },
+    ).then((_) {
+      _fetchSubjects();
+    });
+  }
 
 
   @override
@@ -153,6 +165,13 @@ class _SubjectPageState extends State<SubjectPage> {
             ];
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showCreateSubjectDialog(context);
+        },
+        backgroundColor: AppColors.blue,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
 
     );

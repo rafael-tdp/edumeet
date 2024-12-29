@@ -124,4 +124,35 @@ class SubjectServices {
           error: error, stackTrace: stacktrace);
     }
   }
+
+  static Future<bool> createSubject(subjectName) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return false;
+      }
+
+      final response = await http.post(
+        Uri.parse('${Env.BACKEND_URL}/subjects'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          "name": subjectName
+        })
+      );
+
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while creating subject',
+          error: error, stackTrace: stacktrace);
+      return false;
+    }
+  }
 }
