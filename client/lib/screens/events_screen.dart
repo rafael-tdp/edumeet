@@ -4,7 +4,6 @@ import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/event_card.dart';
-import 'package:client/screens/event_details_page.dart';
 import 'package:client/screens/create_event_screen.dart';
 import 'package:client/core/models/event.dart';
 import 'package:client/core/services/user_services.dart';
@@ -12,8 +11,8 @@ import 'package:go_router/go_router.dart';
 
 class EventsPage extends StatefulWidget {
   static const String routeName = '/events';
-  static navigateTo(BuildContext context) {
-    context.go(routeName);
+  static navigateTo(BuildContext context, {String? action}) {
+    context.go(routeName, extra: action);
   }
 
   const EventsPage({super.key});

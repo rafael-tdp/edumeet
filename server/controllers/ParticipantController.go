@@ -71,7 +71,9 @@ func (pc *ParticipantController) LeaveEventParticipation(c *fiber.Ctx) error {
 		})
 	}
 
-	if *participantDetail.Event.CreatedBy != user.ID && user.Role != "admin" {
+	isValidUser := (*participantDetail.Event.CreatedBy == user.ID || user.Role == "admin") || participantDetail.User.ID == user.ID
+
+	if !isValidUser {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Unauthorized",
 		})
@@ -79,5 +81,8 @@ func (pc *ParticipantController) LeaveEventParticipation(c *fiber.Ctx) error {
 
 	pc.participantService.LeaveEventParticipation(participantID)
 
-	return c.SendStatus(fiber.StatusNoContent)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Successfully left the event",
+	})
+
 }

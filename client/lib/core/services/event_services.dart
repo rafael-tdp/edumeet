@@ -147,7 +147,7 @@ class EventServices {
         throw Exception('No token found');
       }
 
-      final statement =
+      const statement =
           "Génère moi un exercice d'algorithme niveau DUT INFORMATIQUE 1ere année";
 
       final response = await http.post(
@@ -275,6 +275,31 @@ class EventServices {
       return documentContent;
     } catch (error) {
       log('An error occurred while getting document content', error: error);
+      rethrow;
+    }
+  }
+
+  static Future<void> leaveEvent(String participantId) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      final response = await http.delete(
+        Uri.parse('${Env.BACKEND_URL}/participants/$participantId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to leave event');
+      }
+    } catch (error) {
+      log('An error occurred while leaving event', error: error);
       rethrow;
     }
   }

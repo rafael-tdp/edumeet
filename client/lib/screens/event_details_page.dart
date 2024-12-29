@@ -21,6 +21,7 @@ class EventDetailsPage extends StatefulWidget {
       extra: currentUser,
     );
   }
+
   final String eventId;
   final User currentUser;
 
@@ -65,7 +66,9 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   void _navigateToChat(BuildContext context, Event event) {
-    context.go('${EventsPage.routeName}/${event.id}/details${EventChatPage.routeName}', extra: event);
+    context.go(
+        '${EventsPage.routeName}/${event.id}/details${EventChatPage.routeName}',
+        extra: event);
   }
 
   @override
@@ -87,6 +90,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
           final event = snapshot.data!;
 
+          final currentParticipantId = event.participants!.firstWhere(
+              (participant) =>
+                  participant['user']['id'] == widget.currentUser.id,
+              orElse: () => null)?['id'];
+
           return CustomScrollView(
             controller: _scrollController,
             slivers: [
@@ -95,7 +103,8 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 flexibleSpace: FlexibleSpaceBar(
                   background: EventHeader(
                     date: event.startDate,
-                    image: event.image ?? 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dHJhdmFpbHxlbnwwfHwwfHx8Mg%3D%3D',
+                    image: event.image ??
+                        'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dHJhdmFpbHxlbnwwfHwwfHx8Mg%3D%3D',
                     title: event.title,
                     description: event.description,
                     participantsCount: event.participantsCount!,
@@ -147,6 +156,88 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       resources: event.documents ?? const [],
                       eventId: event.id!,
                     ),
+                    const SizedBox(height: 20),
+                    // Leave button
+                    if (!isCurrentUserEvent)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (currentParticipantId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Participant introuvable.'),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              EventServices.leaveEvent(currentParticipantId)
+                                  .then((_) {
+                                if (!mounted) return;
+                                EventsPage.navigateTo(context);
+                              }).catchError((e) {
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Erreur: ${e.toString()}'),
+                                  ),
+                                );
+                              });
+                            },
+                            child: const Text(
+                              "Quitter l'événement",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    // Delete button
+                    if (isCurrentUserEvent)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (currentParticipantId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Participant introuvable.'),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              EventServices.leaveEvent(currentParticipantId)
+                                  .then((_) {
+                                if (!mounted) return;
+                                EventsPage.navigateTo(context);
+                              }).catchError((e) {
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Erreur: ${e.toString()}'),
+                                  ),
+                                );
+                              });
+                            },
+                            child: const Text(
+                              "Supprimer l'événement",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     const SizedBox(height: 20),
                   ],
                 ),
