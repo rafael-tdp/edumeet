@@ -36,6 +36,19 @@ func (uc *DocumentController) GetDocument(c *fiber.Ctx) error {
 	return c.SendFile(document.Path)
 }
 
+func (uc *DocumentController) GetDocumentDetails(c *fiber.Ctx) error {
+	documentId, err := ulid.Parse(c.Params("id"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+	document, err := uc.documentService.GetDocumentById(documentId.String())
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Document not found"})
+	}
+
+	return c.JSON(document)
+}
+
 func (uc *DocumentController) DeleteDocument(c *fiber.Ctx) error {
 	documentId, err := ulid.Parse(c.Params("id"))
 	if err != nil {
