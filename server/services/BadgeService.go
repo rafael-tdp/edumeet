@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"edumeet/dtos"
 	"edumeet/repositories"
 )
@@ -39,8 +40,8 @@ func (r *BadgeService) DeleteBadge(badgeID string) error {
 	return nil
 }
 
-func (r *BadgeService) CreateBadge(badgeDTO dtos.BadgeDTO) (dtos.BadgeDTO, error) {
-	badge, err := r.badgeRepo.CreateBadge(badgeDTO)
+func (r *BadgeService) CreateBadge(ctx context.Context, badgeDTO dtos.BadgeDTO) (dtos.BadgeDTO, error) {
+	badge, err := r.badgeRepo.CreateBadge(ctx, badgeDTO)
 	if err != nil {
 		return dtos.BadgeDTO{}, err
 	}
@@ -66,8 +67,8 @@ func (r *BadgeService) GetBadges() ([]dtos.BadgeDTO, error) {
 	return badgesDTO, nil
 }
 
-func (r *BadgeService) UpdateBadge(badgeId string, badgeDTO dtos.BadgeDTO) (dtos.BadgeDTO, error) {
-	badge, err := r.badgeRepo.UpdateBadge(badgeId, badgeDTO)
+func (r *BadgeService) UpdateBadge(ctx context.Context, badgeId string, badgeDTO dtos.BadgeDTO) (dtos.BadgeDTO, error) {
+	badge, err := r.badgeRepo.UpdateBadge(ctx, badgeId, badgeDTO)
 	if err != nil {
 		return dtos.BadgeDTO{}, err
 	}

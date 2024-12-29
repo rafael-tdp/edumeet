@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/guards"
@@ -93,8 +94,8 @@ func (uc *BadgeController) CreateBadge(c *fiber.Ctx) error {
 	if badgeUser.Role != "ADMIN" && badgeUser.Role != "SUPERADMIN" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
 	}
-
-	badge, err := uc.badgeService.CreateBadge(badgeDTO)
+	ctx := context.WithValue(c.Context(), "user_id", badgeUser.ID)
+	badge, err := uc.badgeService.CreateBadge(ctx, badgeDTO)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -128,16 +129,17 @@ func (uc *BadgeController) UpdateBadge(c *fiber.Ctx) error {
 	if badgeUser.Role != "ADMIN" && badgeUser.Role != "SUPERADMIN" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
 	}
-
+	ctx := context.WithValue(c.Context(), "user_id", badgeUser.ID)
 	badge, err := uc.badgeService.GetBadgeById(badgeId.String())
 	if err != nil {
-		badge, err = uc.badgeService.CreateBadge(badgeDTO)
+		badge, err = uc.badgeService.CreateBadge(ctx, badgeDTO)
 		if err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 		}
 		return c.Status(fiber.StatusCreated).JSON(badge)
 	}
-	updatedBadge, err := uc.badgeService.UpdateBadge(badge.ID, badgeDTO)
+
+	updatedBadge, err := uc.badgeService.UpdateBadge(ctx, badge.ID, badgeDTO)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}

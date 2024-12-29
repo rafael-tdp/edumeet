@@ -69,6 +69,72 @@ class BadgeServices {
       return false;
     }
   }
+
+  static Future<bool> createBadge(newBadge) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return false;
+      }
+
+      final response = await http.post(
+          Uri.parse('${Env.BACKEND_URL}/badge'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            "name": newBadge.name,
+            "type": newBadge.type,
+            "nbRequirementEvent": newBadge.nbRequirementEvent,
+            "svg": newBadge.svg
+          })
+      );
+      if (response.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while retrieving subjects',
+          error: error, stackTrace: stacktrace);
+      return false;
+    }
+  }
+
+  static Future<bool> updateBadge(badge, newBadge) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return false;
+      }
+
+      final response = await http.put(
+          Uri.parse('${Env.BACKEND_URL}/badge/' + badge.id),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            "name": newBadge.name,
+            "type": newBadge.type,
+            "nbRequirementEvent": newBadge.nbRequirementEvent,
+            "svg": newBadge.svg
+          })
+      );
+      if (response.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while retrieving subjects',
+          error: error, stackTrace: stacktrace);
+      return false;
+    }
+  }
 }
 
 
