@@ -11,6 +11,11 @@ class EventServices {
     return prefs.getString('auth_token');
   }
 
+  static dynamic decodeResponse(http.Response response) {
+    final utf8DecodedBody = utf8.decode(response.bodyBytes);
+    return jsonDecode(utf8DecodedBody);
+  }
+
   static Future<List<Event>> getEvents() async {
     try {
       final token = await getToken();
@@ -26,7 +31,7 @@ class EventServices {
           'Authorization': 'Bearer $token',
         },
       );
-      final events = jsonDecode(response.body) as List<dynamic>;
+      final events = decodeResponse(response) as List<dynamic>;
       return events.map((event) => Event.fromJson(event)).toList();
     } catch (error) {
       log('An error occurred while retrieving events', error: error);
@@ -49,7 +54,7 @@ class EventServices {
           'Authorization': 'Bearer $token',
         },
       );
-      final events = jsonDecode(response.body) as List<dynamic>;
+      final events = decodeResponse(response) as List<dynamic>;
       return events.map((event) => Event.fromJson(event)).toList();
     } catch (error) {
       log('An error occurred while retrieving events', error: error);
@@ -72,7 +77,7 @@ class EventServices {
           'Authorization': 'Bearer $token',
         },
       );
-      final events = jsonDecode(response.body) as List<dynamic>;
+      final events = decodeResponse(response) as List<dynamic>;
       return events.map((event) => Event.fromJson(event)).toList();
     } catch (error) {
       log('An error occurred while retrieving events', error: error);
@@ -95,7 +100,7 @@ class EventServices {
           'Authorization': 'Bearer $token',
         },
       );
-      final event = jsonDecode(response.body);
+      final event = decodeResponse(response);
       return Event.fromJson(event);
     } catch (error) {
       log('An error occurred while retrieving event details', error: error);
@@ -134,7 +139,7 @@ class EventServices {
     }
   }
 
-  static Future<void> generateExo(String eventId) async {
+  static Future<String> generateExo(String eventId) async {
     try {
       final token = await getToken();
 
@@ -142,7 +147,8 @@ class EventServices {
         throw Exception('No token found');
       }
 
-      final statement = "Génère moi un exercice d'algorithme niveau DUT INFORMATIQUE 1ere année";
+      final statement =
+          "Génère moi un exercice d'algorithme niveau DUT INFORMATIQUE 1ere année";
 
       final response = await http.post(
         Uri.parse('${Env.BACKEND_URL}/ai/generate-exo/$eventId'),
@@ -156,13 +162,24 @@ class EventServices {
       if (response.statusCode != 200) {
         throw Exception('Failed to generate exo');
       }
+
+      final responseBody = utf8.decode(response.bodyBytes);
+      final decodedResponse = jsonDecode(responseBody);
+
+      if (decodedResponse['exo'] == null) {
+        throw Exception(
+            'The response does not contain the expected "exo" field');
+      }
+
+      return decodedResponse['exo'];
     } catch (error) {
       log('An error occurred while generating exo', error: error);
       rethrow;
     }
-  }  
+  }
 
-  static Future<void> generateCorrection(String eventId, String exercise) async {
+  static Future<String> generateCorrection(
+      String eventId, String exercise) async {
     try {
       final token = await getToken();
 
@@ -182,10 +199,83 @@ class EventServices {
       if (response.statusCode != 200) {
         throw Exception('Failed to generate correction');
       }
+
+      final responseBody = utf8.decode(response.bodyBytes);
+      final decodedResponse = jsonDecode(responseBody);
+
+      if (decodedResponse['correction'] == null) {
+        throw Exception(
+            'The response does not contain the expected "correction" field');
+      }
+
+      return decodedResponse['correction'];
     } catch (error) {
       log('An error occurred while generating correction', error: error);
       rethrow;
     }
   }
 
+  static Future<void> saveDocument(
+      String eventId, String content, String docType) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      if (docType != 'EXERCISE' && docType != 'CORRECTION') {
+        throw Exception('Invalid document type');
+      }
+
+      final response = await http.post(
+        Uri.parse('${Env.BACKEND_URL}/ai/save-document'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'content': content,
+          'doc_type': docType,
+          'event_id': eventId,
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to save document');
+      }
+    } catch (error) {
+      log('An error occurred while saving document', error: error);
+      rethrow;
+    }
+  }
+
+  // get document content
+  static Future<String> getDocumentContent(String documentId) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      final response = await http.get(
+        Uri.parse('${Env.BACKEND_URL}/document/$documentId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to get document content');
+      }
+
+      final documentContent = response.body;
+      return documentContent;
+    } catch (error) {
+      log('An error occurred while getting document content', error: error);
+      rethrow;
+    }
+  }
 }

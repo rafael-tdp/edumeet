@@ -3,6 +3,7 @@ import 'package:client/main.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/conversations_screen.dart';
 import 'package:client/screens/create_documents_screen.dart';
+import 'package:client/screens/document_viewer_screen.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/screens/event_chat_page.dart';
 import 'package:client/screens/event_details_page.dart';
@@ -22,7 +23,7 @@ import 'package:go_router/go_router.dart';
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _router =
-GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
+    GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
   ShellRoute(
     navigatorKey: _shellNavigatorKey,
     builder: (context, state, child) => Scaffold(
@@ -55,32 +56,43 @@ GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
             ],
           ),
           GoRoute(
-            path: '/:eventId/details',
-            parentNavigatorKey: _rootNavigatorKey,
-            builder: (context, state) {
-              final eventId = state.pathParameters['eventId']!;
-              final currentUser = state.extra as User;
-              return EventDetailsPage(
-                eventId: eventId,
-                currentUser: currentUser,
-              );
-            },
-            routes: [
-              GoRoute(
-                path: '${EventChatPage.routeName}',
-                parentNavigatorKey: _rootNavigatorKey,
-                name: EventChatPage.routeName.replaceAll("/", ""),
-                builder: (context, state) {
-                  final eventId = state.pathParameters['eventId']!;
-                  final event = state.extra as Event;
-                  return EventChatPage(
-                    eventId: eventId,
-                    event: event,
-                  );
-                },
-              ),
-            ]
-          ),
+              path: '/:eventId/details',
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) {
+                final eventId = state.pathParameters['eventId']!;
+                final currentUser = state.extra as User;
+                return EventDetailsPage(
+                  eventId: eventId,
+                  currentUser: currentUser,
+                );
+              },
+              routes: [
+                GoRoute(
+                  path: DocumentViewerPage.routeName,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  builder: (context, state) {
+                    final documentId = state.pathParameters['documentId']!;
+                    const documentName = 'Document'; 
+                    return DocumentViewerPage(
+                      documentId: documentId,
+                      documentName: documentName,
+                    );
+                  },
+                ),
+                GoRoute(
+                  path: EventChatPage.routeName,
+                  parentNavigatorKey: _rootNavigatorKey,
+                  name: EventChatPage.routeName.replaceAll("/", ""),
+                  builder: (context, state) {
+                    final eventId = state.pathParameters['eventId']!;
+                    final event = state.extra as Event;
+                    return EventChatPage(
+                      eventId: eventId,
+                      event: event,
+                    );
+                  },
+                ),
+              ]),
         ],
       ),
       GoRoute(
@@ -98,20 +110,19 @@ GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
         ],
       ),
       GoRoute(
-        path: ProfilePage.routeName,
-        parentNavigatorKey: _shellNavigatorKey,
-        builder: (context, state) => const ProfilePage(isCurrentUser: true),
-        routes: [
-          GoRoute(
-            path: EditProfilePage.routeName,
-            name: EditProfilePage.routeName.replaceAll("/", ""),
-            parentNavigatorKey: _rootNavigatorKey,
-            builder: (context, state) => EditProfilePage(
-              user: state.extra as User,
+          path: ProfilePage.routeName,
+          parentNavigatorKey: _shellNavigatorKey,
+          builder: (context, state) => const ProfilePage(isCurrentUser: true),
+          routes: [
+            GoRoute(
+              path: EditProfilePage.routeName,
+              name: EditProfilePage.routeName.replaceAll("/", ""),
+              parentNavigatorKey: _rootNavigatorKey,
+              builder: (context, state) => EditProfilePage(
+                user: state.extra as User,
+              ),
             ),
-          ),
-        ]
-      ),
+          ]),
     ],
   ),
   GoRoute(
@@ -159,10 +170,9 @@ GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
       parentNavigatorKey: _rootNavigatorKey,
       name: UserProfileWrapper.routeName.replaceAll("/", ""),
       builder: (context, state) => UserProfileWrapper(
-        user: state.pathParameters['user'] as Map<String, String>,
-        isCurrentUser: state.pathParameters['isCurrentUser'] as bool,
-      )
-  ),
+            user: state.pathParameters['user'] as Map<String, String>,
+            isCurrentUser: state.pathParameters['isCurrentUser'] as bool,
+          )),
 ]);
 
 GoRouter get router => _router;

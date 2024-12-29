@@ -13,7 +13,7 @@ class CreateEventPage extends StatefulWidget {
   static const String routeName = '/create';
 
   static navigateTo(BuildContext context) {
-    context.go('${EventsPage.routeName}$routeName');
+    context.push('${EventsPage.routeName}$routeName');
   }
 
   const CreateEventPage({super.key});
@@ -29,7 +29,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   DateTime? _startDate;
   DateTime? _endDate;
   final _locationController = TextEditingController();
-  final _maxParticipantsController = TextEditingController();
+  // final _maxParticipantsController = TextEditingController();
   final _onlineLinkController = TextEditingController();
 
   bool _isDisposed = false;
@@ -46,7 +46,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
     _nameController.dispose();
     _descriptionController.dispose();
     _locationController.dispose();
-    _maxParticipantsController.dispose();
+    // _maxParticipantsController.dispose();
     _onlineLinkController.dispose();
     super.dispose();
   }
@@ -71,22 +71,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   void _createEvent(context) async {
 
-    CreateDocumentsPage.navigateTo(context, "eventId");
-    return;
-
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
     Event event = Event(
-      title: "title", //_nameController.text,
-      description: "description", //_descriptionController.text,
-      startDate: "2025-01-01T00:00:00Z",
-      //_startDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
-      endDate: "2025-01-02T00:00:00Z",
-      //_endDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
+      title: _nameController.text,
+      description: _descriptionController.text,
+      startDate: _startDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
+      endDate: _endDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
       isPrivate: _isPrivate,
-      nbMaxParticipants: int.parse(_maxParticipantsController.text),
+      // nbMaxParticipants: int.parse(_maxParticipantsController.text),
       physicalEvent: _isPhysical
           ? {
               'location':
@@ -190,21 +185,21 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 label: "Date de fin",
                 isStartDate: false,
               ),
-              _buildTextFormField(
-                controller: _maxParticipantsController,
-                label: t.event.maxParticipants,
-                icon: Icons.people,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return t.event.enterMaxParticipants;
-                  }
-                  if (int.tryParse(value) == null) {
-                    return t.event.invalidMaxParticipants;
-                  }
-                  return null;
-                },
-              ),
+              // _buildTextFormField(
+              //   controller: _maxParticipantsController,
+              //   label: t.event.maxParticipants,
+              //   icon: Icons.people,
+              //   keyboardType: TextInputType.number,
+              //   validator: (value) {
+              //     if (value == null || value.isEmpty) {
+              //       return t.event.enterMaxParticipants;
+              //     }
+              //     if (int.tryParse(value) == null) {
+              //       return t.event.invalidMaxParticipants;
+              //     }
+              //     return null;
+              //   },
+              // ),
               const SizedBox(height: 20),
               SwitchListTile(
                 title: const Text("Événement physique"),

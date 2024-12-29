@@ -1,14 +1,19 @@
+import 'package:client/core/models/user.dart';
+import 'package:client/providers/user_provider.dart';
 import 'package:client/screens/create_event_screen.dart';
 import 'package:client/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:client/core/services/event_services.dart';
+import 'package:provider/provider.dart';
 
 class CreateDocumentsPage extends StatefulWidget {
   static const String routeName = '/documents';
 
   static navigateTo(BuildContext context, String eventId) {
-    context.go('${EventsPage.routeName}${CreateEventPage.routeName}$routeName', extra: eventId);
+    context.push(
+        '${EventsPage.routeName}${CreateEventPage.routeName}$routeName',
+        extra: eventId);
   }
 
   final String eventId;
@@ -24,6 +29,19 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
   String? _correction;
   bool _isLoading = false;
   final TextEditingController _exerciseController = TextEditingController();
+  User? _currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentUser();
+  }
+
+  Future<void> _loadCurrentUser() async {
+    if (!mounted) return;
+    _currentUser =
+        await Provider.of<UserProvider>(context, listen: false).getUser();
+  }
 
   @override
   void dispose() {
@@ -31,19 +49,21 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
     super.dispose();
   }
 
-  Future<void> _generateExo() async {
+  Future<void> _generateExo(context) async {
     setState(() {
       _isLoading = true;
     });
     try {
-      await EventServices.generateExo(widget.eventId);
+      final response = await EventServices.generateExo(widget.eventId);
       setState(() {
-        _exercise = "Exercice généré pour l'événement ${widget.eventId}"; // Exemple statique
+        _exercise = response;
         _exerciseController.text = _exercise!;
       });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur lors de la génération de l\'exercice: $error')),
+        SnackBar(
+            content:
+                Text('Erreur lors de la génération de l\'exercice: $error')),
       );
     } finally {
       setState(() {
@@ -52,10 +72,12 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
     }
   }
 
-  Future<void> _generateCorrection() async {
+  Future<void> _generateCorrection(context) async {
     if (_exercise == null || _exercise!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez d\'abord générer ou modifier un exercice.')),
+        const SnackBar(
+            content:
+                Text('Veuillez d\'abord générer ou modifier un exercice.')),
       );
       return;
     }
@@ -63,18 +85,54 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
       _isLoading = true;
     });
     try {
-      await EventServices.generateCorrection(widget.eventId, _exerciseController.text);
+      final response = await EventServices.generateCorrection(
+          widget.eventId, _exerciseController.text);
       setState(() {
-        _correction = "Correction générée pour l'exercice"; // Exemple statique
+        _correction = response;
       });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur lors de la génération de la correction: $error')),
+        SnackBar(
+            content:
+                Text('Erreur lors de la génération de la correction: $error')),
       );
     } finally {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  _confirmDocumentsContent(BuildContext context, VoidCallback onSuccess) async {
+    if (_exercise == null || _exercise!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content:
+                Text('Veuillez d\'abord générer ou modifier un exercice.')),
+      );
+      return;
+    }
+    if (_correction == null || _correction!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Veuillez d\'abord générer la correction.')),
+      );
+      return;
+    }
+
+    try {
+      await Future.wait([
+        EventServices.saveDocument(
+            widget.eventId, _exerciseController.text, 'EXERCISE'),
+        EventServices.saveDocument(widget.eventId, _correction!, 'CORRECTION'),
+      ]);
+      onSuccess.call();
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content:
+                Text('Erreur lors de la sauvegarde des documents: $error')),
+      );
     }
   }
 
@@ -98,7 +156,7 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
-                    onPressed: _generateExo,
+                    onPressed: () => _generateExo(context),
                     child: const Text("Générer un exercice"),
                   ),
                   const SizedBox(height: 16),
@@ -122,7 +180,9 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
                       ],
                     ),
                   ElevatedButton(
-                    onPressed: _generateCorrection,
+                    onPressed: (_exercise != null)
+                        ? () => _generateCorrection(context)
+                        : null,
                     child: const Text("Générer la correction"),
                   ),
                   const SizedBox(height: 16),
@@ -134,12 +194,37 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
                           "Correction générée :",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          _correction!,
-                          style: const TextStyle(color: Colors.black87),
+                        const SizedBox(height: 8),
+                        Container(
+                          constraints: const BoxConstraints(
+                            maxHeight: 300,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                _correction!,
+                                style: const TextStyle(color: Colors.black87),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => _confirmDocumentsContent(context, () {
+                      if (!mounted) return;
+                      context.go(
+                          '${EventsPage.routeName}/${widget.eventId}/details',
+                          extra: _currentUser);
+                    }),
+                    child: const Text("Valider le contenu"),
+                  ),
                 ],
               ),
       ),
