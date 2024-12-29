@@ -205,17 +205,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: GestureDetector(
                             onTap: () {
-                              if (currentParticipantId == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Participant introuvable.'),
-                                  ),
-                                );
-                                return;
-                              }
-
-                              EventServices.leaveEvent(currentParticipantId)
-                                  .then((_) {
+                              EventServices.deleteEvent(event.id!).then((_) {
                                 if (!mounted) return;
                                 EventsPage.navigateTo(context);
                               }).catchError((e) {
