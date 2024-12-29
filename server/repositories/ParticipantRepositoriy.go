@@ -102,3 +102,12 @@ func (pr *ParticipantRepository) GetPendingParticipantsByEvent(eventId string) (
 
 	return participants, nil
 }
+
+func (pr *ParticipantRepository) DeleteParticipant(participantId string) error {
+	err := pr.client.Participant.DeleteOneID(participantId).Exec(context.Background())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

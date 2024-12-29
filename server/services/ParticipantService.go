@@ -82,3 +82,7 @@ func (ps *ParticipantService) GetParticipantDetail(participantID string) (*dtos.
 
 	return dtos.EntToParticipantDetailDTO(participant), nil
 }
+
+func (ps *ParticipantService) LeaveEventParticipation(participantID string) error {
+	return ps.participantRepository.DeleteParticipant(participantID)
+}
