@@ -4,7 +4,9 @@ import 'package:client/main.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:client/screens/admin/badge_page.dart';
 import 'package:client/screens/admin/dashboard_page.dart';
+import 'package:client/screens/admin/event_page.dart';
 import 'package:client/screens/admin/subject_page.dart';
+import 'package:client/screens/admin/user_page.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/conversations_screen.dart';
 import 'package:client/screens/edit_profile_page.dart';
@@ -191,6 +193,14 @@ List<RouteBase> _webRoutes() {
         GoRoute(
           path: BadgePage.routeName,
           builder: (context, state) => BadgePage(),
+        ),
+        GoRoute(
+          path: EventsPageAdmin.routeName,
+          builder: (context, state) => EventsPageAdmin(),
+        ),
+        GoRoute(
+          path: UserPageAdmin.routeName,
+          builder: (context, state) => UserPageAdmin(),
         ),
       ],
     ),

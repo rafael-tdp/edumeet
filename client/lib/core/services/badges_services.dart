@@ -41,4 +41,34 @@ class BadgeServices {
       return [];
     }
   }
+
+  static Future<bool> deleteBadge(badgeId) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return false;
+      }
+
+      final response = await http.delete(
+        Uri.parse('${Env.BACKEND_URL}/badge/' + badgeId),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while deleting badge',
+          error: error, stackTrace: stacktrace);
+      return false;
+    }
+  }
 }
+
+

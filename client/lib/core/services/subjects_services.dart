@@ -50,8 +50,6 @@ class SubjectServices {
         return false;
       }
 
-      print(subjectId);
-
       final response = await http.delete(
         Uri.parse('${Env.BACKEND_URL}/subjects/' + subjectId),
         headers: {
@@ -59,7 +57,7 @@ class SubjectServices {
           'Authorization': 'Bearer $token',
         },
       );
-print("ici");
+
       if (response.statusCode == 204) {
         return true;
       } else {

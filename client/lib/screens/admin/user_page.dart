@@ -1,43 +1,44 @@
 import 'package:client/core/models/subject.dart';
 import 'package:client/core/services/subjects_services.dart';
+import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/confirmation_dialog.dart';
-import '../../widgets/edit_modal_subject.dart';
+import 'package:client/core/models/user.dart';
 
-class SubjectPage extends StatefulWidget {
-  static const String routeName = '/subjects';
+class UserPageAdmin extends StatefulWidget {
+  static const String routeName = '/users';
   static navigateTo(BuildContext context) {
     context.go('${AdminPage.routeName}$routeName');
   }
 
   @override
-  _SubjectPageState createState() => _SubjectPageState();
+  _UserPageState createState() => _UserPageState();
 }
 
-class _SubjectPageState extends State<SubjectPage> {
-  List<Subject> _subjects = [];
+class _UserPageState extends State<UserPageAdmin> {
+  List<User> _users = [];
 
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchSubjects();
+    _fetchUsers();
   }
 
-  Future<void> _fetchSubjects() async {
+  Future<void> _fetchUsers() async {
     try {
-      final subjects = await SubjectServices.getSubjects();
+      final users = await UserServices.getUsers();
       setState(() {
-        _subjects = subjects;
+        _users = users;
         _isLoading = false;
       });
     } catch (error) {
-      print('Error fetching subjects: $error');
+      print('Error fetching users: $error');
       setState(() {
         _isLoading = false;
       });
@@ -54,7 +55,7 @@ class _SubjectPageState extends State<SubjectPage> {
           builder: (context, setState) {
             return ConfirmationDialog(
               title: 'Confirmer la suppression',
-              content: 'Êtes-vous sûr de vouloir supprimer le sujet "${subject.name}" ?',
+              content: 'Êtes-vous sûr de vouloir supprimer cet utilisateur "${subject.name}" ?',
               isLoading: isDeleting,
               onCancel: () {
                 Navigator.of(context).pop(); // Fermer la modal
@@ -63,24 +64,13 @@ class _SubjectPageState extends State<SubjectPage> {
                 setState(() {
                   isDeleting = true; // Activer le loader
                 });
-
-                bool isDeleted = await SubjectServices.deleteSubject(subject.id);
+                await SubjectServices.deleteSubject(subject.id);
                 setState(() {
                   isDeleting = false;
                 });
 
-                if(isDeleted) {
-                  _fetchSubjects();
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Matière supprimé avec succes')),
-                  );
-                } else{
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Une erreur s''est produite pendant la suppression')),
-                  );
-                }
                 Navigator.of(context).pop(); // Fermer la modal
+
               },
             );
           },
@@ -89,63 +79,56 @@ class _SubjectPageState extends State<SubjectPage> {
     );
   }
 
-  void _showEditSubjectDialog(BuildContext context, Subject subject) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return EditSubjectDialog(
-          initialName: subject.name,
-          onSave: (newName) async{
-              await SubjectServices.updateSubject(subject, newName);
-              _fetchSubjects();
-          },
-        );
-      },
-    );
-  }
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.lightBlue,
       appBar: AppBar(
-        title: const Text('Liste des Subjects'),
+        title: const Text('Liste des Utilisateurs'),
         backgroundColor: AppColors.transparent,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
-            : _subjects.isEmpty
-            ? const Center(child: Text('Aucun sujet disponible'))
-            : DataTableWithPagination<Subject>(
-          data: _subjects,
+            : _users.isEmpty
+            ? const Center(child: Text('Aucun utilisateur trouvé'))
+            : DataTableWithPagination<User>(
+          data: _users,
           initialRowsPerPage: 5,
           columns: const [
             DataColumn(label: Text('Id')),
-            DataColumn(label: Text('Name')),
-            DataColumn(label: Text('Actions')), // Nouvelle colonne
+            DataColumn(label: Text('Email')),
+            DataColumn(label: Text('Firstname')),
+            DataColumn(label: Text('Lastname')),
+            DataColumn(label: Text('BirthDate')),
+            DataColumn(label: Text('Activated')),
+            DataColumn(label: Text('ReportNumber')),
+            DataColumn(label: Text('Role')),
+            DataColumn(label: Text('Actions')),
           ],
-          rowBuilder: (subject) {
+          rowBuilder: (user) {
             return [
-              DataCell(Text(subject.id.toString())),
-              DataCell(Text(subject.name)),
+              DataCell(Text(user.id.toString())),
+              DataCell(Text(user.email)),
+              DataCell(Text(user.firstname)),
+              DataCell(Text(user.lastname)),
+              DataCell(Text(user.birthDate.toString())),
+              DataCell(Text(user.activated.toString())),
+              DataCell(Text(user.reportNumber.toString())),
+              DataCell(Text(user.role.toString())),
               DataCell(Row(
                 children: [
                   IconButton(
                     icon: const Icon(Icons.edit),
                     tooltip: 'Modifier',
                     onPressed: () {
-                      _showEditSubjectDialog(context, subject);
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete),
                     tooltip: 'Supprimer',
                     onPressed: () {
-                      _showDeleteConfirmation(context, subject);
                     },
                   ),
                 ],
