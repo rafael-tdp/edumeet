@@ -4,6 +4,7 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
+	"edumeet/guards"
 	"edumeet/services"
 
 	"github.com/go-playground/validator/v10"
@@ -194,4 +195,36 @@ func (uc *UserController) GetUsers(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.JSON(users)
+}
+
+func (uc *UserController) UpdateUserAdmin(c *fiber.Ctx) error {
+	var updateUserDTO dtos.UpdateUserAdminDTO
+	userID := c.Params("id")
+	currentUser := c.Locals("user").(*ent.User)
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	updateUserDTO.Id = userID
+
+	if !guards.IsAdmin(currentUser) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
+	if err := c.BodyParser(&updateUserDTO); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	validations := validator.New()
+	err := validations.Struct(updateUserDTO)
+	if err != nil {
+		errors := make([]string, 0)
+		for _, err := range err.(validator.ValidationErrors) {
+			errors = append(errors, err.Error())
+		}
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
+	}
+
+	updatedUser, err := uc.userService.UpdateUserAdmin(ctx, updateUserDTO)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(updatedUser)
 }

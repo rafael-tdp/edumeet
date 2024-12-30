@@ -227,3 +227,21 @@ func (ur *UserRepository) GetUsers() ([]*ent.User, error) {
 
 	return users, nil
 }
+
+func (ur *UserRepository) UpdateUserAdmin(ctx context.Context, updateUserDTO dtos.UpdateUserAdminDTO) (*ent.User, error) {
+	user, err := ur.client.User.
+		UpdateOneID(updateUserDTO.Id).
+		SetEmail(updateUserDTO.Email).
+		SetUsername(updateUserDTO.Username).
+		SetFirstname(updateUserDTO.Firstname).
+		SetLastname(updateUserDTO.Lastname).
+		SetRole(updateUserDTO.Role).
+		SetActivated(updateUserDTO.Activated).
+		Save(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

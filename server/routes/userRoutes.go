@@ -23,6 +23,7 @@ func setupRoutesUser(app *fiber.App, userController *controllers.UserController)
 	app.Put("/user/friendship/:id", middlewares.JWTAuthMiddleware, userController.UpdateFriendship)
 	app.Get("/user/friendship", middlewares.JWTAuthMiddleware, userController.GetFriendships)
 	app.Delete("/user/friendship/:id", middlewares.JWTAuthMiddleware, userController.DeleteFriendship)
+	app.Patch("/user/admin/:id", middlewares.JWTAuthMiddleware, userController.UpdateUserAdmin)
 
 }
 

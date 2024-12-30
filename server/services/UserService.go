@@ -224,3 +224,22 @@ func (us *UserService) GetUsers() ([]dtos.GetUserAdmin, error) {
 
 	return usersDTO, nil
 }
+
+func (us *UserService) UpdateUserAdmin(ctx context.Context, updateUserDTO dtos.UpdateUserAdminDTO) (*dtos.GetUserAdmin, error) {
+	_, err := us.userRepo.GetById(updateUserDTO.Id)
+	if err != nil {
+		return &dtos.GetUserAdmin{}, errors.New("user not found")
+	}
+
+	updatedUser, err := us.userRepo.UpdateUserAdmin(ctx, updateUserDTO)
+	if err != nil {
+		return &dtos.GetUserAdmin{}, err
+	}
+
+	dtosUser, err := dtos.UserEntToDtoAdmin(updatedUser)
+	if err != nil {
+		return &dtos.GetUserAdmin{}, err
+	}
+
+	return dtosUser, nil
+}
