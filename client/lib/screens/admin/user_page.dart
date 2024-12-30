@@ -2,6 +2,7 @@ import 'package:client/core/models/subject.dart';
 import 'package:client/core/services/subjects_services.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/admin/admin_page.dart';
+import 'package:client/widgets/edit_modal_user.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
@@ -43,6 +44,21 @@ class _UserPageState extends State<UserPageAdmin> {
         _isLoading = false;
       });
     }
+  }
+
+  void _showEditUserDialog(BuildContext context, User user) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return EditUserDialog(
+          initialUser: user,
+          onSave: (newUser) async {
+            await UserServices.updateAdminUserInfo(newUser);
+            _fetchUsers();
+          },
+        );
+      },
+    );
   }
 
   void _showDeleteConfirmation(BuildContext context, Subject subject) {
@@ -123,6 +139,7 @@ class _UserPageState extends State<UserPageAdmin> {
                     icon: const Icon(Icons.edit),
                     tooltip: 'Modifier',
                     onPressed: () {
+                      _showEditUserDialog(context, user);
                     },
                   ),
                   IconButton(

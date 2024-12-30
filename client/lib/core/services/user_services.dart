@@ -92,5 +92,26 @@ class UserServices {
     }
   }
 
+  static Future<ResponseRequest> updateAdminUserInfo(User user) async {
+    final token = await getToken();
 
+    if (token == null) return ResponseRequest(success: false, message: 'User not authenticated');
+
+    final response = await http.patch(
+      Uri.parse('${Env.BACKEND_URL}/user/admin/${user.id}'),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode(user.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      final User user = User.fromJson(data);
+      return ResponseRequest(success: true, message: 'User updated', data: user);
+    } else {
+      return ResponseRequest(success: false, message: json.decode(response.body)['error']);
+    }
+  }
 }
