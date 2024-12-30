@@ -10,6 +10,8 @@ import 'package:go_router/go_router.dart';
 import '../../widgets/confirmation_dialog.dart';
 import 'package:client/core/models/user.dart';
 
+import '../../widgets/create_user_modal.dart';
+
 class UserPageAdmin extends StatefulWidget {
   static const String routeName = '/users';
   static navigateTo(BuildContext context) {
@@ -61,7 +63,7 @@ class _UserPageState extends State<UserPageAdmin> {
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, Subject subject) {
+  void _showDeleteConfirmation(BuildContext context, User user) {
     bool isDeleting = false;
 
     showDialog(
@@ -71,7 +73,7 @@ class _UserPageState extends State<UserPageAdmin> {
           builder: (context, setState) {
             return ConfirmationDialog(
               title: 'Confirmer la suppression',
-              content: 'Êtes-vous sûr de vouloir supprimer cet utilisateur "${subject.name}" ?',
+              content: 'Êtes-vous sûr de vouloir supprimer cet utilisateur "${user.username}" ?',
               isLoading: isDeleting,
               onCancel: () {
                 Navigator.of(context).pop(); // Fermer la modal
@@ -80,13 +82,23 @@ class _UserPageState extends State<UserPageAdmin> {
                 setState(() {
                   isDeleting = true; // Activer le loader
                 });
-                await SubjectServices.deleteSubject(subject.id);
+                bool isDeleted = await UserServices.deleteUser(user.id);
                 setState(() {
                   isDeleting = false;
                 });
 
-                Navigator.of(context).pop(); // Fermer la modal
+                if(isDeleted) {
+                  _fetchUsers();
 
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Utilisateur supprimé avec succes')),
+                  );
+                } else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Une erreur s''est produite pendant la suppression')),
+                  );
+                }
+                Navigator.of(context).pop();
               },
             );
           },
@@ -95,6 +107,30 @@ class _UserPageState extends State<UserPageAdmin> {
     );
   }
 
+  void _showCreateUserDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => CreateUserDialog(
+        onCreate: (newUser) async {
+          setState(() => _isLoading = true);
+
+          try {
+            await UserServices.createUser(newUser);
+            await _fetchUsers();
+          } catch (error) {
+            print('Erreur : $error');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Erreur lors de la création : $error')),
+            );
+          } finally {
+            setState(() => _isLoading = false);
+          }
+        },
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,6 +138,13 @@ class _UserPageState extends State<UserPageAdmin> {
       appBar: AppBar(
         title: const Text('Liste des Utilisateurs'),
         backgroundColor: AppColors.transparent,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showCreateUserDialog(context);
+        },
+        backgroundColor: AppColors.blue,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -146,6 +189,7 @@ class _UserPageState extends State<UserPageAdmin> {
                     icon: const Icon(Icons.delete),
                     tooltip: 'Supprimer',
                     onPressed: () {
+                      _showDeleteConfirmation(context, user);
                     },
                   ),
                 ],

@@ -114,4 +114,69 @@ class UserServices {
       return ResponseRequest(success: false, message: json.decode(response.body)['error']);
     }
   }
+  static Future<bool> createUser(dynamic user) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return false;
+      }
+
+      final response = await http.post(
+          Uri.parse('${Env.BACKEND_URL}/user/create'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            "email": user['email'],
+            "password": user['password'],
+            "firstname": user['firstname'],
+            "lastname": user['lastname'],
+            "username": user['username'],
+            "birthdate": user['birthdate'],
+            "role": user['role'],
+          })
+      );
+
+      if (response.statusCode == 201) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while creating user',
+          error: error, stackTrace: stacktrace);
+      return false;
+    }
+  }
+
+  static Future<bool> deleteUser(userId) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return false;
+      }
+
+      final response = await http.delete(
+        Uri.parse('${Env.BACKEND_URL}/user/' + userId),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 204) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while deleting event',
+          error: error, stackTrace: stacktrace);
+      return false;
+    }
+  }
 }
+

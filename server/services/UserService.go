@@ -243,3 +243,35 @@ func (us *UserService) UpdateUserAdmin(ctx context.Context, updateUserDTO dtos.U
 
 	return dtosUser, nil
 }
+
+func (us *UserService) CreateUserAdmin(ctx context.Context, createUserDTO dtos.CreateUserDTO) (*ent.User, error) {
+	user, err := us.userRepo.GetByEmail(createUserDTO.Email)
+	if err == nil {
+		return nil, errors.New("user already exists")
+	}
+
+	print(createUserDTO.Password)
+	bcryptUtils := utils.Bcrypt{}
+	hashedPassword := bcryptUtils.HashPassword(createUserDTO.Password)
+
+	user, err = us.userRepo.CreateUserAdmin(ctx, createUserDTO, hashedPassword)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (us *UserService) DeleteUser(ctx context.Context, userID string) error {
+	_, err := us.userRepo.GetById(userID)
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	err = us.userRepo.SoftDeleteUser(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

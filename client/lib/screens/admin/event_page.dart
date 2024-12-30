@@ -131,7 +131,7 @@ class _EventPageState extends State<EventsPageAdmin> {
             DataColumn(label: Text('Title')),
             DataColumn(label: Text('IsPrivate')),
             DataColumn(label: Text('NbParticipant')),
-            DataColumn(label: Text('Actions')), // Nouvelle colonne
+            DataColumn(label: Text('Actions')),
           ],
           rowBuilder: (event) {
             return [
