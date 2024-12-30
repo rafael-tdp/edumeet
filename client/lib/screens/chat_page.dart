@@ -132,6 +132,10 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     final groupedMessages = <String, List<ChatMessageModel>>{};
     final messages = _chatManager.getAllMessages();
+    final Avatar _avatar = DiceBearBuilder(
+      seed: widget.userName,
+      sprite: DiceBearSprite.bottts,
+    ).build();
 
     for (var message in messages) {
       final date = custom_date_utils.DateUtils.DateTimeToShortDate(message.createdAt);
@@ -141,15 +145,24 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(widget.userName),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _avatar.toImage(height: 25),
+            const SizedBox(width: 8),
+            Text(
+              widget.userName,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        titleTextStyle: const TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
           child: Container(
@@ -158,6 +171,24 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
       ),
+      // appBar: AppBar(
+      //   title: Text(widget.userName),
+      //   centerTitle: true,
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      //   titleTextStyle: const TextStyle(
+      //     color: Colors.black,
+      //     fontSize: 18,
+      //     fontWeight: FontWeight.bold,
+      //   ),
+      //   bottom: PreferredSize(
+      //     preferredSize: const Size.fromHeight(1),
+      //     child: Container(
+      //       color: Colors.grey[300],
+      //       height: 1,
+      //     ),
+      //   ),
+      // ),
       body: Column(
         children: [
           Expanded(
