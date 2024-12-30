@@ -1,5 +1,6 @@
 import '../../services/cache_service.dart';
 import 'messageEvent.dart';
+import 'messagePrivate.dart';
 import 'messageRequest.dart';
 import 'sendMessageRequest.dart';
 import 'chatMessage.dart';
@@ -22,6 +23,11 @@ class ChatManager {
   Future<void> addMessageEvent(MessageEvent messageEvent) async {
     final username = await currentUsername;
     messages.add(messageEvent.toChatMessageModel(username ?? ''));
+  }
+
+  Future<void> addMessagePrivate(MessagePrivate messagePrivate) async {
+    final username = await currentUsername;
+    messages.add(messagePrivate.toChatMessageModel(username ?? ''));
   }
 
   List<ChatMessageModel> getAllMessages() {

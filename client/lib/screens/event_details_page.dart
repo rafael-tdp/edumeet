@@ -70,14 +70,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         transitionDuration: const Duration(milliseconds: 150),
         reverseTransitionDuration: const Duration(milliseconds: 150),
         pageBuilder: (context, animation, secondaryAnimation) {
-          EventChatPage.navigateTo(context, event, event.id);
+          EventChatPage.navigateTo(context, event.id);
           return SlideTransition(
             position: Tween<Offset>(
               begin: const Offset(1.0, 0.0),
               end: Offset.zero,
             ).animate(animation),
             child:
-            EventChatPage(event: event, eventId: event.id),
+            EventChatPage(eventId: event.id),
           );
         },
       ),

@@ -59,15 +59,6 @@ final _router = GoRouter(
             path: ConversationsPage.routeName,
             parentNavigatorKey: _shellNavigatorKey,
             builder: (context, state) => const ConversationsPage(),
-            routes: [
-              GoRoute(
-                path: ':userName/details',
-                builder: (context, state) {
-                  final userName = state.extra as String;
-                  return ChatPage(userName: userName);
-                },
-              )
-            ],
           ),
           GoRoute(
             path: ProfilePage.routeName,
@@ -139,17 +130,23 @@ final _router = GoRouter(
           )
       ),
       GoRoute(
-          path: '${EventChatPage.routeName}/:eventId',
-          parentNavigatorKey: _rootNavigatorKey,
-          name: EventChatPage.routeName.replaceAll("/", ""),
-          builder: (context, state) {
-            final eventId = state.pathParameters['eventId']!;
-            final event = state.extra as Event;
-            return EventChatPage(
-              eventId: eventId,
-              event: event,
-            );
-          },
+        path: '${EventChatPage.routeName}/:eventId',
+        parentNavigatorKey: _rootNavigatorKey,
+        name: EventChatPage.routeName.replaceAll("/", ""),
+        builder: (context, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return EventChatPage(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: '${ChatPage.routeName}/:userName',
+        parentNavigatorKey: _rootNavigatorKey,
+        name: ChatPage.routeName.replaceAll("/", ""),
+        builder: (context, state) {
+          final userName = state.pathParameters['userName']!;
+          final conversationId = state.extra as String;
+          return ChatPage(userName: userName, friendId: conversationId);
+        },
       ),
       GoRoute(
         path: '${EventsPage.routeName}/:eventId/details',

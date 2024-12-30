@@ -2,6 +2,7 @@ import 'package:client/bloc/profile_bloc.dart';
 import 'package:client/bloc/profile_event.dart';
 import 'package:client/bloc/profile_state.dart';
 import 'package:client/core/services/sse_services.dart';
+import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:client/widgets/language_dropdown.dart';
@@ -15,7 +16,6 @@ import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/user_provider.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -35,7 +35,6 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SseServices _sseServices = SseServices();
     return BlocProvider(
       create: (context) => ProfileBloc(UserServices())..add(LoadProfileEvent()),
       child: Scaffold(
@@ -48,20 +47,19 @@ class ProfilePage extends StatelessWidget {
               return Center(child: Text(state.message));
             } else if (state is ProfileLoadedState) {
               final user = state.user;
+              final Avatar _avatar = DiceBearBuilder(
+                seed: user.username,
+                sprite: DiceBearSprite.bottts,
+              ).build();
 
               return SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundImage: NetworkImage(
-                          user.picture ?? '',
-                          scale: 1,
-                        ),
-                        onBackgroundImageError: (exception, stackTrace) {},
+                      _avatar.toImage(
+                        height: 100
                       ),
                       const SizedBox(height: 20),
                       Text(
@@ -127,16 +125,6 @@ class ProfilePage extends StatelessWidget {
                                   color: AppColors.purple),
                               title: Text(t.user.location),
                               subtitle: Text(user.address ?? t.user.noAddress),
-                            ),
-                            const Divider(),
-                            ListTile(
-                              leading: const Icon(Icons.report,
-                                  color: AppColors.purple),
-                              title: Text(t.user.nbReports),
-                              subtitle: Text(
-                                user.reportNumber?.toString() ??
-                                    t.user.noReportsAvailable,
-                              ),
                             ),
                           ],
                         ),

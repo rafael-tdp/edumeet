@@ -20,7 +20,6 @@ class ChatMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Format the time as "HH:mm"
     final timeString = "${createdAt.hour.toString().padLeft(2, '0')}:${createdAt.minute.toString().padLeft(2, '0')}";
 
     return GestureDetector(
@@ -41,7 +40,6 @@ class ChatMessage extends StatelessWidget {
                     onDelete();
                   },
                 ),
-                // Ajoutez d'autres options ici si nécessaire
               ],
             );
           },

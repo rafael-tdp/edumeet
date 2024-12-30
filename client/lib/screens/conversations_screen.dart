@@ -1,76 +1,90 @@
+import 'package:client/core/models/chat/conversation.dart';
+import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
-import 'package:client/utils/colors.dart';
+import 'package:client/core/services/message_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
-import 'package:client/fake_data.dart';
+import '../core/models/event.dart';
+import '../core/models/response.dart';
 import 'package:client/screens/chat_page.dart';
-import 'package:go_router/go_router.dart';
+import 'package:client/screens/event_chat_page.dart';
 
-class ConversationsPage extends StatelessWidget {
-  static const String routeName = '/conversations';
+class ConversationsPage extends StatefulWidget {
+  static const routeName = '/conversations';
   static navigateTo(BuildContext context) {
-    context.go(routeName);
+    Navigator.of(context).pushNamed(routeName);
   }
-  const ConversationsPage({super.key});
+
+  const ConversationsPage({Key? key}) : super(key: key);
+
+  @override
+  _ConversationsPageState createState() => _ConversationsPageState();
+}
+
+class _ConversationsPageState extends State<ConversationsPage> {
+  final MessageServices _messageServices = MessageServices();
+  Future<ResponseRequest>? _conversationsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _conversationsFuture = _messageServices.getConversations();
+  }
+
+  void _navigateToConversation(BuildContext context, Conversation conversation) {
+    if (conversation.type.name == 'private') {
+      ChatPage.navigateTo(context, conversation.name, conversation.id);
+    } else if (conversation.type.name == 'event') {
+      EventChatPage.navigateTo(context, conversation.id);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> conversations = FakeData.conversations;
-
     return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: ListView.builder(
-          itemCount: conversations.length,
-          itemBuilder: (context, index) {
-            final conversation = conversations[index];
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundColor: AppColors.purple,
-                backgroundImage: conversation['user'].containsKey('image')
-                    ? NetworkImage(conversation['user']['image']!)
-                    : null,
-                child: conversation['user'].containsKey('image')
-                    ? null
-                    : Text(
-                        conversation['user']['name']![0],
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-              ),
-              title: Text(conversation['user']['name']!,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  )),
-              subtitle: Text(conversation['lastMessage']!),
-              trailing: Text(custom_date_utils.DateUtils.isoToFormattedTime(
-                conversation['date']!,
-              )),
-              onTap: () {
-                Navigator.of(context).push(
-                  PageRouteBuilder(
-                    transitionDuration: const Duration(milliseconds: 150),
-                    reverseTransitionDuration: const Duration(milliseconds: 150),
-                    pageBuilder: (context, animation, secondaryAnimation) {
-                      // context.go(EventDetailsPage.routeName, extra: {eventId, _currentUser});
-                      ChatPage.navigateTo(context, conversation['user']['name']!);
-                      return SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(1.0, 0.0),
-                          end: Offset.zero,
-                        ).animate(animation),
-                        child:
-                            ChatPage(userName: conversation['user']['name']!),
-                      );
-                    },
-                  ),
+      appBar: AppBar(
+        title: Text('Conversations'),
+      ),
+      body: FutureBuilder<ResponseRequest>(
+        future: _conversationsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            final response = snapshot.data!;
+            if (!response.success || response.data == null) {
+              return Center(child: Text('Aucune conversation trouvée'));
+            }
+            final conversations = response.data as List<Conversation>;
+            if (conversations.isEmpty) {
+              return Center(child: Text('Aucune conversation trouvée'));
+            }
+            return ListView.builder(
+              itemCount: conversations.length,
+              itemBuilder: (context, index) {
+                final conversation = conversations[index];
+                final Avatar _avatar = conversation.type.name == 'private'
+                    ? DiceBearBuilder(seed: conversation.name, sprite: DiceBearSprite.bottts).build()
+                    : DiceBearBuilder(seed: conversation.name, sprite: DiceBearSprite.initials).build();
+                return Column(
+                  children: [
+                    ListTile(
+                      leading: _avatar.toImage(height: 50),
+                      title: Text(conversation.name),
+                      subtitle: Text('${conversation.lastMessageUsername}: ${conversation.lastMessage}'),
+                      trailing: Text(custom_date_utils.DateUtils.isoToFormattedTime(conversation.lastMessageDate.toIso8601String())),
+                      onTap: () => _navigateToConversation(context, conversation),
+                    ),
+                    const Divider(height: 1, color: Colors.black12),
+                  ],
                 );
               },
             );
-          },
-        ),
+          } else {
+            return Center(child: Text('Aucune conversation trouvée'));
+          }
+        },
       ),
     );
   }

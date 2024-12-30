@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
+import 'package:client/core/models/chat/conversation.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/env/env.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +22,7 @@ class MessageServices {
     if (type == MessageType.event) {
       return '${Env.BACKEND_URL}/chats/send-message-to-event/${message.eventId}';
     } else if (type == MessageType.private) {
-      return '${Env.BACKEND_URL}/chats/send-message-to-friend/${message.receiverId}';
+      return '${Env.BACKEND_URL}/chats/send-message-to-friend/${message.eventId}';
     } else {
       throw Exception('Unknown message type');
     }
@@ -117,7 +119,7 @@ class MessageServices {
   //   }
   // }
 
-  Future<List<MessageRequest>> getEventMessages(String eventId) async {
+  Future<ResponseRequest> getEventMessages(String eventId) async {
     try {
       final token = await _authServices.getToken();
       final response = await http.get(
@@ -129,13 +131,13 @@ class MessageServices {
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
-        return data.map((e) => MessageRequest.fromJson(e)).toList();
+        return ResponseRequest(success: true, data: data.map((e) => MessageRequest.fromJson(e)).toList());
       } else {
-        return [];
+        return ResponseRequest(success: false, message: 'Erreur lors de la récupération des messages de l\'événement');
       }
     } catch (e) {
       print("Erreur lors de la récupération des messages de l'événement : $e");
-      return [];
+      return ResponseRequest(success: false, message: 'Erreur lors de la récupération des messages de l\'événement');
     }
   }
 
@@ -157,6 +159,52 @@ class MessageServices {
     } catch (e) {
       print("Erreur lors de la suppression du message : $e");
       throw Exception('Erreur lors de la suppression du message');
+    }
+  }
+
+  Future<ResponseRequest> getConversations() async {
+    try {
+      final token = await _authServices.getToken();
+      final response = await http.get(
+        Uri.parse('${Env.BACKEND_URL}/chats/conversations'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        final result = data.map((e) => Conversation.fromJson(e)).toList();
+        result.sort((a, b) => b.lastMessageDate.compareTo(a.lastMessageDate));
+        return ResponseRequest(success: true, data: result);
+      } else {
+        return ResponseRequest(success: false, message: 'Erreur lors de la récupération des conversations');
+      }
+    } catch (e) {
+      print("Erreur lors de la récupération des conversations : $e");
+      return ResponseRequest(success: false, message: 'Erreur lors de la récupération des conversations');
+    }
+  }
+
+  Future<ResponseRequest> getPrivateMessages(String friendId) async {
+    try {
+      final token = await _authServices.getToken();
+      final response = await http.get(
+        Uri.parse('${Env.BACKEND_URL}/chats/get-conversation-friend/$friendId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return ResponseRequest(success: true, data: data.map((e) => MessageRequest.fromJson(e)).toList());
+      } else {
+        return ResponseRequest(success: false, message: 'Erreur lors de la récupération des messages de l\'événement');
+      }
+    } catch (e) {
+      print("Erreur lors de la récupération des messages de l'événement : $e");
+      return ResponseRequest(success: false, message: 'Erreur lors de la récupération des messages de l\'événement');
     }
   }
 }

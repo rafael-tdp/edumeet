@@ -11,6 +11,10 @@ class DateUtils {
     return tz.TZDateTime.now(_franceLocation);
   }
 
+  static String DateTimeToShortDate(DateTime date) {
+    return "${date.day.toString().padLeft(2, '0')} ${getMonthName(date.month)} ${date.year}";
+  }
+
   static String isoToFormattedDate(String isoDate) {
     try {
       final dateTime = DateTime.parse(isoDate);

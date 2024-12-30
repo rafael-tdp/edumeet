@@ -5,6 +5,7 @@ import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
 import 'package:flutter_client_sse/flutter_client_sse.dart';
 import '../../env/env.dart';
 import '../models/chat/messageEvent.dart';
+import '../models/chat/messagePrivate.dart';
 
 class SseServices {
   final AuthServices _authServices = AuthServices();
@@ -26,8 +27,8 @@ class SseServices {
             final eventMessage = MessageEvent.fromJson(jsonDecode(event.data!));
             _messageStreamController.add(eventMessage);
           } else {
-            // final friendMessage = MessagePrivate.fromJson(jsonDecode(event.data!));
-            // _messageStreamController.add(friendMessage);
+            final friendMessage = MessagePrivate.fromJson(jsonDecode(event.data!));
+            _messageStreamController.add(friendMessage);
           }
         },
     );

@@ -1,3 +1,4 @@
+import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/enums/MessageAction.dart';
 import 'package:client/core/models/chat/chatManager.dart';
@@ -10,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../core/models/chat/chatMessage.dart';
 import '../core/services/cache_service.dart';
+import '../core/services/event_services.dart';
 import '../providers/user_provider.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import '../core/enums/MessageType.dart';
@@ -17,14 +19,13 @@ import '../core/models/chat/sendMessageRequest.dart';
 
 class EventChatPage extends StatefulWidget {
   static const String routeName = '/event-chat';
-  static navigateTo(BuildContext context, Event event, String eventId) {
-    context.go('$routeName/$eventId', extra: event);
+  static navigateTo(BuildContext context, String eventId) {
+    context.go('$routeName/$eventId');
   }
 
-  final Event event;
   final String eventId;
 
-  const EventChatPage({super.key, required this.event, required this.eventId});
+  const EventChatPage({super.key, required this.eventId});
 
   @override
   _EventChatPageState createState() => _EventChatPageState();
@@ -36,6 +37,7 @@ class _EventChatPageState extends State<EventChatPage> {
   late final ChatManager _chatManager;
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  Event? _event;
 
   @override
   void initState() {
@@ -53,12 +55,27 @@ class _EventChatPageState extends State<EventChatPage> {
         _scrollToBottom();
       }
     });
-    _loadMessages();
+    _loadEvent();
   }
+
+Future<void> _loadEvent() async {
+  try {
+    final event = await EventServices.getEventDetails(widget.eventId);
+    setState(() {
+      _event = event;
+    });
+    _loadMessages();
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Erreur lors du chargement de l\'événement.')),
+    );
+  }
+}
 
   Future<void> _loadMessages() async {
     try {
-      final eventMessages = await _messageServices.getEventMessages(widget.eventId);
+      final response = await _messageServices.getEventMessages(widget.eventId);
+      final eventMessages = response.data;
       for (var message in eventMessages) {
         await _chatManager.addMessageRequest(message);
       }
@@ -123,31 +140,46 @@ class _EventChatPageState extends State<EventChatPage> {
     super.dispose();
   }
 
-  String _formatDate(DateTime date) {
-    return "${date.day.toString().padLeft(2, '0')} ${custom_date_utils.DateUtils.getMonthName(date.month)} ${date.year}";
-  }
-
   @override
   Widget build(BuildContext context) {
-    final currentUser = Provider.of<UserProvider>(context, listen: false);
+    if (_event == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Chargement...'),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final groupedMessages = <String, List<ChatMessageModel>>{};
     final messages = _chatManager.getAllMessages();
+    final Avatar _avatar = DiceBearBuilder(
+      seed: _event!.title,
+      sprite: DiceBearSprite.initials,
+    ).build();
 
     for (var message in messages) {
-      final date = _formatDate(message.createdAt);
+      final date = custom_date_utils.DateUtils.DateTimeToShortDate(message.createdAt);
       groupedMessages.putIfAbsent(date, () => []).add(message);
     }
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
-          widget.event.title,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _avatar.toImage(height: 25),
+            const SizedBox(width: 8), // Add some space between the icon and the text
+            Text(
+              _event!.title,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
@@ -197,14 +229,26 @@ class _EventChatPageState extends State<EventChatPage> {
                         ),
                       ),
                       ...messagesForDate.map((message) {
-                        bool isMe = message.username == Provider.of<UserProvider>(context, listen: false).username || "Moi" == message.username;
+                        bool isCurrentUser = message.username == Provider.of<UserProvider>(context, listen: false).username || "Moi" == message.username;
+                        final Avatar _avatar = DiceBearBuilder(
+                          seed: message.username,
+                          sprite: DiceBearSprite.bottts,
+                        ).build();
 
-                        return ChatMessage(
-                          sender: message.username,
-                          message: message.content,
-                          isCurrentUser: isMe,
-                          createdAt: message.createdAt,
-                          onDelete: () => _deleteMessage(message.id),
+                        return Row(
+                          mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                          children: [
+                            if (!isCurrentUser) _avatar.toImage(height: 25),
+                            Expanded(
+                              child: ChatMessage(
+                                sender: message.username,
+                                message: message.content,
+                                isCurrentUser: isCurrentUser,
+                                createdAt: message.createdAt,
+                                onDelete: () => _deleteMessage(message.id),
+                              ),
+                            ),
+                          ],
                         );
                       }),
                     ],
@@ -213,7 +257,7 @@ class _EventChatPageState extends State<EventChatPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(15.0),
               child: MessageInputField(
                 controller: _messageController,
                 onSendMessage: _sendMessage,
