@@ -46,7 +46,8 @@ class ProfilePage extends StatelessWidget {
 
               return SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -123,29 +124,33 @@ class ProfilePage extends StatelessWidget {
                               title: Text(t.user.location),
                               subtitle: Text(user.address ?? t.user.noAddress),
                             ),
-                            const Divider(),
-                            ListTile(
-                              leading: const Icon(Icons.report,
-                                  color: AppColors.purple),
-                              title: Text(t.user.nbReports),
-                              subtitle: Text(
-                                user.reportNumber?.toString() ??
-                                    t.user.noReportsAvailable,
-                              ),
-                            ),
+                            // const Divider(),
+                            // ListTile(
+                            //   leading: const Icon(Icons.report,
+                            //       color: AppColors.purple),
+                            //   title: Text(t.user.nbReports),
+                            //   subtitle: Text(
+                            //     user.reportNumber?.toString() ??
+                            //         t.user.noReportsAvailable,
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Wrap(
+                        spacing: 10, // Espacement horizontal entre les widgets
+                        runSpacing:
+                            10, // Espacement vertical si les widgets passent à une nouvelle ligne
+                        alignment: WrapAlignment.center,
                         children: [
                           ProfileButton(
                             text: t.profile.editProfile,
                             backgroundColor: AppColors.purple,
                             onPressed: () async {
-                              // go router
-                              final updatedUser = await context.push('$routeName${EditProfilePage.routeName}', extra: user) as dynamic;
+                              final updatedUser = await context.push(
+                                  '$routeName${EditProfilePage.routeName}',
+                                  extra: user) as dynamic;
                               if (updatedUser != null) {
                                 context
                                     .read<ProfileBloc>()
@@ -153,7 +158,6 @@ class ProfilePage extends StatelessWidget {
                               }
                             },
                           ),
-                          const SizedBox(width: 10),
                           ProfileButton(
                             text: t.profile.logout,
                             backgroundColor: Colors.redAccent,
@@ -163,7 +167,7 @@ class ProfilePage extends StatelessWidget {
                             },
                           ),
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ),

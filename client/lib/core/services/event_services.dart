@@ -16,7 +16,13 @@ class EventServices {
     return jsonDecode(utf8DecodedBody);
   }
 
-  static Future<List<Event>> getEvents() async {
+  static Future<List<Event>> getEvents(
+    List<String> subjects,
+    double? latitude,
+    double? longitude,
+    String eventType,
+    double? distance,
+  ) async {
     try {
       final token = await getToken();
 
@@ -24,8 +30,19 @@ class EventServices {
         return [];
       }
 
+      final queryParameters = {
+        if (subjects.isNotEmpty) 'subjects': subjects.join(','),
+        if (latitude != null) 'latitude': latitude.toString(),
+        if (longitude != null) 'longitude': longitude.toString(),
+        if (eventType.isNotEmpty) 'eventType': eventType,
+        if (distance != null) 'distance': distance.toString(),
+      };
+
+      final uri = Uri.parse('${Env.BACKEND_URL}/events')
+          .replace(queryParameters: queryParameters);
+
       final response = await http.get(
-        Uri.parse('${Env.BACKEND_URL}/events'),
+        uri,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

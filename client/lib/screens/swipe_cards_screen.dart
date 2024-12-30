@@ -1,10 +1,16 @@
-// lib/pages/swipe_cards_page.dart
-
+import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/swipe_cards.dart';
 
-class SwipeCardsPage extends StatelessWidget {
+class SwipeCardsPage extends StatefulWidget {
   const SwipeCardsPage({super.key});
+
+  @override
+  _SwipeCardsPageState createState() => _SwipeCardsPageState();
+}
+
+class _SwipeCardsPageState extends State<SwipeCardsPage> {
+  bool _showFilters = false;
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +30,24 @@ class SwipeCardsPage extends StatelessWidget {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _showFilters ? Icons.filter_list_off : Icons.filter_list,
+            ),
+            color: AppColors.purple,
+            onPressed: () {
+              setState(() {
+                _showFilters = !_showFilters;
+              });
+            },
+          ),
+        ],
       ),
       backgroundColor: Colors.transparent,
-      body: const Padding(
-        padding: EdgeInsets.symmetric(vertical: 20),
-        child: SwipeCardsComponent(),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: SwipeCardsComponent(showFilters: _showFilters),
       ),
     );
   }
