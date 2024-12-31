@@ -84,7 +84,6 @@ class _UserPageState extends State<UserPageAdmin> {
     );
   }
 
-
   void _showDeleteConfirmation(BuildContext context, User user) {
     bool isDeleting = false;
 
@@ -134,24 +133,25 @@ class _UserPageState extends State<UserPageAdmin> {
     showDialog(
       context: context,
       builder: (context) => CreateUserDialog(
-        onCreate: (newUser) async {
-          setState(() => _isLoading = true);
+        onCreate: (newUser, callback) async {
+          callback(false, null, true);
 
           try {
             await UserServices.createUser(newUser);
             await _fetchUsers();
-          } catch (error) {
-            print('Erreur : $error');
+
+            callback(true, null, false);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Erreur lors de la création : $error')),
+              const SnackBar(content: Text('Utilisateur créé avec succès.')),
             );
-          } finally {
-            setState(() => _isLoading = false);
+          } catch (error) {
+            callback(false, 'Erreur : $error', false);
           }
         },
       ),
     );
   }
+
 
 
   @override

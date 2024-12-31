@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CreateUserDialog extends StatefulWidget {
-  final Future<void> Function(Map<String, dynamic> newUser) onCreate;
+  final void Function(
+      Map<String, dynamic> newUser,
+      void Function(bool shouldClose, String? errorMessage, bool isLoading) callback,
+      ) onCreate;
 
   const CreateUserDialog({required this.onCreate, Key? key}) : super(key: key);
 
@@ -20,7 +23,8 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
 
   String _selectedRole = 'USER';
   DateTime? _birthDate;
-  bool isLoading = false;
+  bool _isLoading = false;
+  String? _errorMessage;
 
   void _pickDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -37,29 +41,15 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
     }
   }
 
-  void _submitForm() async {
-    if (_formKey.currentState!.validate() && _birthDate != null) {
-      setState(() => isLoading = true); // Démarrer le loader
+  void _updateState(bool shouldClose, String? errorMessage, bool isLoading) {
+    setState(() {
+      _isLoading = isLoading;
+      _errorMessage = errorMessage;
 
-      try {
-        await widget.onCreate({
-          'email': _emailController.text,
-          'password': _passwordController.text,
-          'firstname': _firstnameController.text,
-          'lastname': _lastnameController.text,
-          'username': _usernameController.text,
-          'role': _selectedRole,
-          'birthdate': _birthDate!.toUtc().toIso8601String(),
-        });
+      if (shouldClose) {
         Navigator.of(context).pop();
-      } finally {
-        setState(() => isLoading = false); // Désactiver le loader
       }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez remplir tous les champs.')),
-      );
-    }
+    });
   }
 
   @override
@@ -68,8 +58,8 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: isLoading
-            ? const Center(child: CircularProgressIndicator()) // Loader
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -81,6 +71,12 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
+                if (_errorMessage != null)
+                  Text(
+                    _errorMessage!,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                const SizedBox(height: 10),
                 TextFormField(
                   controller: _emailController,
                   decoration: const InputDecoration(labelText: 'Email'),
@@ -109,8 +105,8 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
                 ),
                 TextFormField(
                   controller: _usernameController,
-                  decoration:
-                  const InputDecoration(labelText: 'Nom d\'utilisateur'),
+                  decoration: const InputDecoration(
+                      labelText: 'Nom d\'utilisateur'),
                   validator: (value) => value!.isEmpty
                       ? 'Nom d\'utilisateur requis'
                       : null,
@@ -120,8 +116,10 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
                   value: _selectedRole,
                   decoration: const InputDecoration(labelText: 'Rôle'),
                   items: const [
-                    DropdownMenuItem(value: 'USER', child: Text('Utilisateur')),
-                    DropdownMenuItem(value: 'ADMIN', child: Text('Administrateur')),
+                    DropdownMenuItem(
+                        value: 'USER', child: Text('Utilisateur')),
+                    DropdownMenuItem(
+                        value: 'ADMIN', child: Text('Administrateur')),
                   ],
                   onChanged: (value) {
                     setState(() {
@@ -139,14 +137,41 @@ class _CreateUserDialogState extends State<CreateUserDialog> {
                       child: Text(
                         _birthDate == null
                             ? 'Choisir une date'
-                            : DateFormat('dd/MM/yyyy').format(_birthDate!),
+                            : DateFormat('dd/MM/yyyy')
+                            .format(_birthDate!),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: _submitForm,
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                    if (_formKey.currentState!.validate() &&
+                        _birthDate != null) {
+                      widget.onCreate(
+                        {
+                          'email': _emailController.text,
+                          'password': _passwordController.text,
+                          'firstname': _firstnameController.text,
+                          'lastname': _lastnameController.text,
+                          'username': _usernameController.text,
+                          'role': _selectedRole,
+                          'birthdate': _birthDate!
+                              .toUtc()
+                              .toIso8601String(),
+                        },
+                        _updateState,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Veuillez remplir tous les champs.')),
+                      );
+                    }
+                  },
                   child: const Text('Créer'),
                 ),
               ],

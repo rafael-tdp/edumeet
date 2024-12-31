@@ -114,12 +114,12 @@ class UserServices {
       return ResponseRequest(success: false, message: json.decode(response.body)['error']);
     }
   }
-  static Future<bool> createUser(dynamic user) async {
+  static Future<ResponseRequest> createUser(dynamic user) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'User not authenticated');
       }
 
       final response = await http.post(
@@ -140,14 +140,14 @@ class UserServices {
       );
 
       if (response.statusCode == 201) {
-        return true;
+        return ResponseRequest(success: true, message: 'Utilisateur crée avec succes.');
       } else {
-        return false;
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
       log('An error occurred while creating user',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: true, message: 'Erreur lors de la création.');
     }
   }
 
