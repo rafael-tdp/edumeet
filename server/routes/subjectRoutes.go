@@ -13,8 +13,8 @@ import (
 func setupRoutesSubject(app *fiber.App, subjectController *controllers.SubjectController) {
 
 	app.Post("/subjects", middlewares.JWTAuthMiddleware, subjectController.Create)
-	app.Delete("/subjects/:id", middlewares.AdminMiddleware, subjectController.Delete)
-	app.Put("/subjects/:id", middlewares.AdminMiddleware, subjectController.Update)
+	app.Delete("/subjects/:id", middlewares.JWTAuthMiddleware, subjectController.Delete)
+	app.Put("/subjects/:id", middlewares.JWTAuthMiddleware, subjectController.Update)
 	app.Get("/subjects", subjectController.GetSubjects)
 }
 
