@@ -98,7 +98,7 @@ class SubjectServices {
     } catch (error, stacktrace) {
       log('Erreur lors de la mise a jour de la matiere',
           error: error, stackTrace: stacktrace);
-      return ResponseRequest(success: true, message: 'Matière mise a jour');
+      return ResponseRequest(success: true, message: 'Erreur lors de la mise a jour.');
     }
   }
 

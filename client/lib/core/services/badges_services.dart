@@ -105,12 +105,12 @@ class BadgeServices {
     }
   }
 
-  static Future<bool> updateBadge(badge, newBadge) async {
+  static Future<ResponseRequest> updateBadge(badge, newBadge) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.put(
@@ -126,15 +126,15 @@ class BadgeServices {
             "svg": newBadge.svg
           })
       );
-      if (response.statusCode == 204) {
-        return true;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ResponseRequest(success: true, message: 'Badge mis a jour');
       } else {
-        return false;
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
-      log('An error occurred while retrieving subjects',
+      log('An error occurred while updating badge',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: true, message: 'Erreur lors de la mise a jour.');
     }
   }
 }

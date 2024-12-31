@@ -8,6 +8,7 @@ import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/models/response.dart';
+import '../../core/models/user.dart';
 import '../../widgets/confirmation_dialog.dart';
 import 'package:client/core/models/user.dart';
 
@@ -55,14 +56,34 @@ class _UserPageState extends State<UserPageAdmin> {
       builder: (context) {
         return EditUserDialog(
           initialUser: user,
-          onSave: (newUser) async {
-            await UserServices.updateAdminUserInfo(newUser);
-            _fetchUsers();
+          onSave: (newUser, callback) async {
+            callback(false, null, true);
+
+            await Future.delayed(const Duration(seconds: 2));
+
+            try {
+              ResponseRequest response =  await UserServices.updateAdminUserInfo(newUser);
+
+              if (response.success) {
+                _fetchUsers();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Utilisateur modifiée avec succès')),
+                );
+
+                callback(true, null, false);
+              } else {
+                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+              }
+            } catch (e) {
+              callback(false, e.toString(), false);
+            }
           },
         );
       },
     );
   }
+
 
   void _showDeleteConfirmation(BuildContext context, User user) {
     bool isDeleting = false;

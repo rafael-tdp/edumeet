@@ -67,6 +67,8 @@ class _SubjectPageState extends State<SubjectPage> {
                   isDeleting = true;
                 });
 
+                await Future.delayed(const Duration(seconds: 2));
+
                 ResponseRequest response = await SubjectServices.deleteSubject(subject.id);
                 setState(() {
                   isDeleting = false;
@@ -99,6 +101,10 @@ class _SubjectPageState extends State<SubjectPage> {
         return EditSubjectDialog(
           initialName: subject.name,
           onSave: (newName, callback) async {
+            callback(false, null, true);
+
+            await Future.delayed(const Duration(seconds: 2));
+
             ResponseRequest response = await SubjectServices.updateSubject(subject, newName);
 
             if (response.success) {
@@ -107,9 +113,10 @@ class _SubjectPageState extends State<SubjectPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Matière modifiée avec succès')),
               );
-              callback(true, null);
+
+              callback(true, null, false);
             } else {
-              callback(false, response.message ?? 'Une erreur s\'est produite');
+              callback(false, response.message ?? 'Une erreur s\'est produite', false);
             }
           },
         );

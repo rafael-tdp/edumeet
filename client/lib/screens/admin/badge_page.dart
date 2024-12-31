@@ -96,28 +96,67 @@ class _BadgePageState extends State<BadgePage> {
       builder: (context) {
         return EditBadgeDialog(
           initialBadge: badge,
-          onSave: (newBadge) async {
-            await BadgeServices.updateBadge(badge, newBadge);
-            _fetchBadges();
+          onSave: (newBadge, callback) async {
+            callback(false, null, true);
+
+            await Future.delayed(const Duration(seconds: 2));
+
+            try {
+              ResponseRequest response = await BadgeServices.updateBadge(badge, newBadge);
+
+
+              if (response.success) {
+                _fetchBadges();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Badge mis a jour')),
+                );
+
+                callback(true, null, false);
+              } else {
+                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+              }
+            } catch (e) {
+              callback(false, e.toString(), false);
+            }
           },
         );
       },
     );
   }
 
+
   void _showCreateBadgeDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return EditBadgeDialog(
-          onSave: (newBadge) async {
-            await BadgeServices.createBadge(newBadge);
-            _fetchBadges();
+          onSave: (newBadge, callback) async {
+            // Activer le loader
+            callback(false, null, true);
+
+            await Future.delayed(const Duration(seconds: 2)); // Simuler un délai
+
+            try {
+              await BadgeServices.createBadge(newBadge);
+              _fetchBadges();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Badge créé avec succès')),
+              );
+
+              // Fermer la modal
+              callback(true, null, false);
+            } catch (e) {
+              // Désactiver le loader et afficher une erreur
+              callback(false, e.toString(), false);
+            }
           },
         );
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

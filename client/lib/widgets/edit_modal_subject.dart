@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class EditSubjectDialog extends StatefulWidget {
   final String initialName;
-  final void Function(String newName, void Function(bool shouldClose, String? errorMessage)) onSave;
+  final void Function(String newName, void Function(bool shouldClose, String? errorMessage, bool isLoading)) onSave;
 
   const EditSubjectDialog({
     Key? key,
@@ -18,6 +18,13 @@ class _EditSubjectDialogState extends State<EditSubjectDialog> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   String? _errorMessage;
+  bool _isLoading = false;
+
+  void _updateLoadingState(bool isLoading) {
+    setState(() {
+      _isLoading = isLoading;
+    });
+  }
 
   @override
   void initState() {
@@ -39,7 +46,12 @@ class _EditSubjectDialogState extends State<EditSubjectDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Modifier le sujet'),
-      content: Form(
+      content: _isLoading
+          ? const SizedBox(
+        height: 50,
+        child: Center(child: CircularProgressIndicator()),
+      )
+          : Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -68,7 +80,9 @@ class _EditSubjectDialogState extends State<EditSubjectDialog> {
           ],
         ),
       ),
-      actions: [
+      actions: _isLoading
+          ? null
+          : [
         TextButton(
           onPressed: _closeDialog,
           child: const Text('Annuler'),
@@ -78,12 +92,13 @@ class _EditSubjectDialogState extends State<EditSubjectDialog> {
             if (_formKey.currentState?.validate() ?? false) {
               widget.onSave(
                 _nameController.text,
-                    (shouldClose, errorMessage) {
+                    (shouldClose, errorMessage, isLoading) {
                   if (shouldClose) {
                     _closeDialog();
                   } else {
                     setState(() {
                       _errorMessage = errorMessage;
+                      _isLoading = isLoading;
                     });
                   }
                 },

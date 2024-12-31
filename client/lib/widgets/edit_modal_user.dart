@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:client/core/models/user.dart' as Model; // Assurez-vous que ce modèle existe dans votre projet
+import 'package:client/core/models/user.dart' as Model;
 
 class EditUserDialog extends StatefulWidget {
   final Model.User? initialUser;
-  final void Function(Model.User newUser) onSave;
+  final void Function(Model.User newUser, void Function(bool shouldClose, String? errorMessage, bool isLoading) callback) onSave;
 
   const EditUserDialog({
     Key? key,
@@ -25,6 +25,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
   bool _isSaving = false;
   String? _selectedRole;
   bool _isActivated = true;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -56,12 +57,23 @@ class _EditUserDialogState extends State<EditUserDialog> {
     super.dispose();
   }
 
+  void _updateState(bool shouldClose, String? errorMessage, bool isLoading) {
+    setState(() {
+      _isSaving = isLoading;
+      _errorMessage = errorMessage;
+
+      if (shouldClose) {
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 40), // Limiter l'espacement horizontal
+      insetPadding: const EdgeInsets.symmetric(horizontal: 40),
       child: SizedBox(
-        width: 600, // Largeur fixe pour la modal
+        width: 600,
         height: 600,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,6 +97,14 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (_errorMessage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Text(
+                          _errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
                     TextFormField(
                       controller: _emailController,
                       decoration: const InputDecoration(
@@ -195,14 +215,8 @@ class _EditUserDialogState extends State<EditUserDialog> {
                     child: const Text('Annuler'),
                   ),
                   TextButton(
-                    onPressed: () async {
+                    onPressed: () {
                       if (_formKey.currentState?.validate() ?? false) {
-                        setState(() {
-                          _isSaving = true;
-                        });
-
-                        await Future.delayed(const Duration(seconds: 2));
-
                         final updatedUser = Model.User(
                           id: widget.initialUser?.id ?? '',
                           email: _emailController.text,
@@ -214,13 +228,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           birthDate: DateTime.now(),
                         );
 
-                        widget.onSave(updatedUser);
-
-                        setState(() {
-                          _isSaving = false;
-                        });
-
-                        Navigator.of(context).pop();
+                        widget.onSave(updatedUser, _updateState);
                       }
                     },
                     child: const Text('Enregistrer'),
