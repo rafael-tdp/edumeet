@@ -57,7 +57,7 @@ func (sr *SubjectRepository) Update(subjectID string, subjectDTO dtos.SubjectDTO
 		SetName(subjectDTO.Name).
 		Save(context.Background())
 	if err != nil {
-		return nil, errors.New("error updating subject")
+		return nil, err
 	}
 	return subject, nil
 }

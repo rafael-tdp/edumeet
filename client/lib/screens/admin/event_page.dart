@@ -94,22 +94,6 @@ class _EventPageState extends State<EventsPageAdmin> {
     );
   }
 
-  void _showEditSubjectDialog(BuildContext context, Subject subject) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return EditSubjectDialog(
-          initialName: subject.name,
-          onSave: (newName) async{
-            await SubjectServices.updateSubject(subject, newName);
-          },
-        );
-      },
-    );
-  }
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

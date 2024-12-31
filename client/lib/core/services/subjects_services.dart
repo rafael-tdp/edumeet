@@ -72,12 +72,12 @@ class SubjectServices {
     }
   }
 
-  static Future<bool> updateSubject(subject, newName) async {
+  static Future<ResponseRequest> updateSubject(subject, newName) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.put(
@@ -90,15 +90,15 @@ class SubjectServices {
             "name": newName
           })
       );
-      if (response.statusCode == 204) {
-        return true;
+      if (response.statusCode == 200) {
+        return ResponseRequest(success: true, message: 'Matière mise a jour');
       } else {
-        return false;
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
-      log('An error occurred while retrieving subjects',
+      log('Erreur lors de la mise a jour de la matiere',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: true, message: 'Matière mise a jour');
     }
   }
 

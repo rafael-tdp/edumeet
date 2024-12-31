@@ -98,14 +98,25 @@ class _SubjectPageState extends State<SubjectPage> {
       builder: (context) {
         return EditSubjectDialog(
           initialName: subject.name,
-          onSave: (newName) async{
-              await SubjectServices.updateSubject(subject, newName);
+          onSave: (newName, callback) async {
+            ResponseRequest response = await SubjectServices.updateSubject(subject, newName);
+
+            if (response.success) {
               _fetchSubjects();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Matière modifiée avec succès')),
+              );
+              callback(true, null);
+            } else {
+              callback(false, response.message ?? 'Une erreur s\'est produite');
+            }
           },
         );
       },
     );
   }
+
 
   void _showCreateSubjectDialog(BuildContext context) {
     showDialog(

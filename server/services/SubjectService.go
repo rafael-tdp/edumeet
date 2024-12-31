@@ -65,7 +65,7 @@ func (sr *SubjectService) GetSubjects() ([]*dtos.SubjectDTO, error) {
 func (sr *SubjectService) Update(subjectID string, subjectDTO dtos.SubjectDTO) (*dtos.SubjectDTO, error) {
 	subject, err := sr.subjectRepository.Update(subjectID, subjectDTO)
 	if err != nil {
-		return nil, errors.New("error updating subject")
+		return nil, err
 	}
 
 	updatedSubject := dtos.SubjectEntToDTO(subject)
