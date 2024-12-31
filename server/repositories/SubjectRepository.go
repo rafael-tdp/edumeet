@@ -31,7 +31,7 @@ func (sr *SubjectRepository) Create(subjectDTO dtos.SubjectDTO) (*ent.Subject, e
 		SetName(subjectDTO.Name).
 		Save(context.Background())
 	if err != nil {
-		return nil, errors.New("error creating subject")
+		return nil, err
 	}
 	return subject, nil
 }
@@ -57,7 +57,7 @@ func (sr *SubjectRepository) Update(subjectID string, subjectDTO dtos.SubjectDTO
 		SetName(subjectDTO.Name).
 		Save(context.Background())
 	if err != nil {
-		return nil, errors.New("error updating subject")
+		return nil, err
 	}
 	return subject, nil
 }

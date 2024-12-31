@@ -228,3 +228,49 @@ func (uc *UserController) UpdateUserAdmin(c *fiber.Ctx) error {
 
 	return c.JSON(updatedUser)
 }
+
+func (uc *UserController) CreateUserAdmin(c *fiber.Ctx) error {
+
+	currentUser := c.Locals("user").(*ent.User)
+
+	if !guards.IsAdmin(currentUser) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
+	var createUserDTO dtos.CreateUserDTO
+	if err := c.BodyParser(&createUserDTO); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	validations := validator.New()
+	err := validations.Struct(createUserDTO)
+	if err != nil {
+		errors := make([]string, 0)
+		for _, err := range err.(validator.ValidationErrors) {
+			errors = append(errors, err.Error())
+		}
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
+	}
+
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	user, err := uc.userService.CreateUserAdmin(ctx, createUserDTO)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(fiber.StatusCreated).JSON(user)
+}
+
+func (uc *UserController) DeleteUser(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+	userID := c.Params("id")
+
+	if !guards.IsAdmin(currentUser) || currentUser.ID == userID {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	err := uc.userService.DeleteUser(ctx, userID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.SendStatus(fiber.StatusNoContent)
+}

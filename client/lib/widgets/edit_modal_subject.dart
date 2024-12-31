@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class EditSubjectDialog extends StatefulWidget {
   final String initialName;
-  final void Function(String newName) onSave;
+  final void Function(String newName, void Function(bool shouldClose, String? errorMessage, bool isLoading)) onSave;
 
   const EditSubjectDialog({
     Key? key,
@@ -17,7 +17,14 @@ class EditSubjectDialog extends StatefulWidget {
 class _EditSubjectDialogState extends State<EditSubjectDialog> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
-  bool _isSaving = false;
+  String? _errorMessage;
+  bool _isLoading = false;
+
+  void _updateLoadingState(bool isLoading) {
+    setState(() {
+      _isLoading = isLoading;
+    });
+  }
 
   @override
   void initState() {
@@ -31,60 +38,75 @@ class _EditSubjectDialogState extends State<EditSubjectDialog> {
     super.dispose();
   }
 
+  void _closeDialog() {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Modifier le sujet'),
-      content: _isSaving
+      content: _isLoading
           ? const SizedBox(
         height: 50,
         child: Center(child: CircularProgressIndicator()),
       )
           : Form(
         key: _formKey,
-        child: TextFormField(
-          controller: _nameController,
-          decoration: const InputDecoration(
-            labelText: 'Nom',
-            border: OutlineInputBorder(),
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Le nom ne peut pas être vide.';
-            }
-            return null;
-          },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: 'Nom',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Le nom ne peut pas être vide.';
+                }
+                return null;
+              },
+            ),
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text(
+                  _errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+          ],
         ),
       ),
-      actions: [
-        if (!_isSaving) ...[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Fermer la modal
-            },
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () async {
-              if (_formKey.currentState?.validate() ?? false) {
-                setState(() {
-                  _isSaving = true; // Activer le loader
-                });
-
-                await Future.delayed(const Duration(seconds: 2)); // Simuler un fetch
-
-                widget.onSave(_nameController.text); // Sauvegarder les modifications
-
-                setState(() {
-                  _isSaving = false;
-                });
-
-                Navigator.of(context).pop(); // Fermer la modal
-              }
-            },
-            child: const Text('Enregistrer'),
-          ),
-        ],
+      actions: _isLoading
+          ? null
+          : [
+        TextButton(
+          onPressed: _closeDialog,
+          child: const Text('Annuler'),
+        ),
+        TextButton(
+          onPressed: () {
+            if (_formKey.currentState?.validate() ?? false) {
+              widget.onSave(
+                _nameController.text,
+                    (shouldClose, errorMessage, isLoading) {
+                  if (shouldClose) {
+                    _closeDialog();
+                  } else {
+                    setState(() {
+                      _errorMessage = errorMessage;
+                      _isLoading = isLoading;
+                    });
+                  }
+                },
+              );
+            }
+          },
+          child: const Text('Enregistrer'),
+        ),
       ],
     );
   }

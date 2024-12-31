@@ -30,7 +30,7 @@ func (sr *SubjectService) GetSubject(subjectID string) (*dtos.SubjectDTO, error)
 func (sr *SubjectService) Create(subjectDTO dtos.SubjectDTO) (*dtos.SubjectDTO, error) {
 	subject, err := sr.subjectRepository.Create(subjectDTO)
 	if err != nil {
-		return nil, errors.New("error creating subject")
+		return nil, err
 	}
 
 	createdSubject := dtos.SubjectEntToDTO(subject)
@@ -65,7 +65,7 @@ func (sr *SubjectService) GetSubjects() ([]*dtos.SubjectDTO, error) {
 func (sr *SubjectService) Update(subjectID string, subjectDTO dtos.SubjectDTO) (*dtos.SubjectDTO, error) {
 	subject, err := sr.subjectRepository.Update(subjectID, subjectDTO)
 	if err != nil {
-		return nil, errors.New("error updating subject")
+		return nil, err
 	}
 
 	updatedSubject := dtos.SubjectEntToDTO(subject)

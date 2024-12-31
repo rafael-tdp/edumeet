@@ -4,7 +4,7 @@ import 'package:client/core/models/badge.dart' as Model;
 
 class EditBadgeDialog extends StatefulWidget {
   final Model.Badge? initialBadge;
-  final void Function(Model.Badge newBadge) onSave;
+  final void Function(Model.Badge newBadge, void Function(bool shouldClose, String? errorMessage, bool isLoading)) onSave;
 
   const EditBadgeDialog({
     Key? key,
@@ -21,8 +21,9 @@ class _EditBadgeDialogState extends State<EditBadgeDialog> {
   late TextEditingController _nameController;
   late TextEditingController _nbRequirementEventController;
   late TextEditingController _svgController;
-  bool _isSaving = false;
   String? _selectedType;
+  String? _errorMessage;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -49,12 +50,16 @@ class _EditBadgeDialogState extends State<EditBadgeDialog> {
     super.dispose();
   }
 
+  void _closeDialog() {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 40), // Limiter l'espacement horizontal
+      insetPadding: const EdgeInsets.symmetric(horizontal: 40),
       child: SizedBox(
-        width: 600, // Largeur fixe pour la modal
+        width: 600,
         height: 600,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +73,7 @@ class _EditBadgeDialogState extends State<EditBadgeDialog> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: _isSaving
+              child: _isLoading
                   ? const SizedBox(
                 height: 50,
                 child: Center(child: CircularProgressIndicator()),
@@ -133,7 +138,7 @@ class _EditBadgeDialogState extends State<EditBadgeDialog> {
                       ),
                       keyboardType: TextInputType.number,
                       inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly, // Filtrer les entrées non numériques
+                        FilteringTextInputFormatter.digitsOnly,
                       ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -160,6 +165,14 @@ class _EditBadgeDialogState extends State<EditBadgeDialog> {
                         return null;
                       },
                     ),
+                    if (_errorMessage != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          _errorMessage!,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -170,20 +183,12 @@ class _EditBadgeDialogState extends State<EditBadgeDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+                    onPressed: _closeDialog,
                     child: const Text('Annuler'),
                   ),
                   TextButton(
-                    onPressed: () async {
+                    onPressed: () {
                       if (_formKey.currentState?.validate() ?? false) {
-                        setState(() {
-                          _isSaving = true;
-                        });
-
-                        await Future.delayed(const Duration(seconds: 2));
-
                         final updatedBadge = Model.Badge(
                           id: widget.initialBadge?.id ?? '',
                           name: _nameController.text,
@@ -192,13 +197,18 @@ class _EditBadgeDialogState extends State<EditBadgeDialog> {
                           svg: _svgController.text,
                         );
 
-                        widget.onSave(updatedBadge);
-
-                        setState(() {
-                          _isSaving = false;
-                        });
-
-                        Navigator.of(context).pop();
+                        widget.onSave(
+                          updatedBadge,
+                              (shouldClose, errorMessage, isLoading) {
+                            setState(() {
+                              _isLoading = isLoading;
+                              _errorMessage = errorMessage;
+                            });
+                            if (shouldClose) {
+                              _closeDialog();
+                            }
+                          },
+                        );
                       }
                     },
                     child: const Text('Enregistrer'),

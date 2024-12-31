@@ -7,6 +7,7 @@ import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/models/response.dart';
 import '../../widgets/confirmation_dialog.dart';
 
 class BadgePage extends StatefulWidget {
@@ -63,19 +64,22 @@ class _BadgePageState extends State<BadgePage> {
                 setState(() {
                   isDeleting = true;
                 });
-                bool isDeleted = await BadgeServices.deleteBadge(badge.id);
+                await Future.delayed(const Duration(seconds: 2));
+
+                ResponseRequest response = await BadgeServices.deleteBadge(badge.id);
+
                 setState(() {
                   isDeleting = false;
                 });
 
-                if (isDeleted) {
+                if (response.success) {
                   _fetchBadges();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Badge supprimé avec succes')),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Une erreur s\'est produite pendant la suppression')),
+                    SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
                   );
                 }
                 Navigator.of(context).pop();
@@ -93,28 +97,67 @@ class _BadgePageState extends State<BadgePage> {
       builder: (context) {
         return EditBadgeDialog(
           initialBadge: badge,
-          onSave: (newBadge) async {
-            await BadgeServices.updateBadge(badge, newBadge);
-            _fetchBadges();
+          onSave: (newBadge, callback) async {
+            callback(false, null, true);
+
+            await Future.delayed(const Duration(seconds: 2));
+
+            try {
+              ResponseRequest response = await BadgeServices.updateBadge(badge, newBadge);
+
+              if (response.success) {
+                _fetchBadges();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Badge mis a jour')),
+                );
+
+                callback(true, null, false);
+              } else {
+                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+              }
+            } catch (e) {
+              callback(false, e.toString(), false);
+            }
           },
         );
       },
     );
   }
 
+
   void _showCreateBadgeDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return EditBadgeDialog(
-          onSave: (newBadge) async {
-            await BadgeServices.createBadge(newBadge);
-            _fetchBadges();
+          onSave: (newBadge, callback) async {
+            callback(false, null, true);
+
+            await Future.delayed(const Duration(seconds: 2));
+            try {
+             ResponseRequest response =  await BadgeServices.createBadge(newBadge);
+
+              if (response.success) {
+                _fetchBadges();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Badge mis a jour')),
+                );
+
+                callback(true, null, false);
+              } else {
+                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+              }
+            } catch (e) {
+              callback(false, e.toString(), false);
+            }
           },
         );
       },
     );
   }
+
 
   @override
   Widget build(BuildContext context) {

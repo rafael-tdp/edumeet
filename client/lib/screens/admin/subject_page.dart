@@ -1,3 +1,4 @@
+import 'package:client/core/models/response.dart';
 import 'package:client/core/models/subject.dart';
 import 'package:client/core/services/subjects_services.dart';
 import 'package:client/screens/admin/admin_page.dart';
@@ -6,7 +7,9 @@ import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/confirmation_dialog.dart';
+import '../../widgets/create_modal_subject.dart';
 import '../../widgets/edit_modal_subject.dart';
+import 'package:flutter/material.dart';
 
 class SubjectPage extends StatefulWidget {
   static const String routeName = '/subjects';
@@ -57,19 +60,21 @@ class _SubjectPageState extends State<SubjectPage> {
               content: 'Êtes-vous sûr de vouloir supprimer le sujet "${subject.name}" ?',
               isLoading: isDeleting,
               onCancel: () {
-                Navigator.of(context).pop(); // Fermer la modal
+                Navigator.of(context).pop();
               },
               onConfirm: () async {
                 setState(() {
-                  isDeleting = true; // Activer le loader
+                  isDeleting = true;
                 });
 
-                bool isDeleted = await SubjectServices.deleteSubject(subject.id);
+                await Future.delayed(const Duration(seconds: 2));
+
+                ResponseRequest response = await SubjectServices.deleteSubject(subject.id);
                 setState(() {
                   isDeleting = false;
                 });
 
-                if(isDeleted) {
+                if(response.success) {
                   _fetchSubjects();
 
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -77,10 +82,10 @@ class _SubjectPageState extends State<SubjectPage> {
                   );
                 } else{
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Une erreur s''est produite pendant la suppression')),
+                     SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
                   );
                 }
-                Navigator.of(context).pop(); // Fermer la modal
+                Navigator.of(context).pop();
               },
             );
           },
@@ -95,16 +100,60 @@ class _SubjectPageState extends State<SubjectPage> {
       builder: (context) {
         return EditSubjectDialog(
           initialName: subject.name,
-          onSave: (newName) async{
-              await SubjectServices.updateSubject(subject, newName);
+          onSave: (newName, callback) async {
+            callback(false, null, true);
+
+            await Future.delayed(const Duration(seconds: 2));
+
+            ResponseRequest response = await SubjectServices.updateSubject(subject, newName);
+
+            if (response.success) {
               _fetchSubjects();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Matière modifiée avec succès')),
+              );
+
+              callback(true, null, false);
+            } else {
+              callback(false, response.message ?? 'Une erreur s\'est produite', false);
+            }
           },
         );
       },
     );
   }
 
+  void _showCreateSubjectDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CreateSubjectModal(
+          onSave: (subjectName, callback) async {
+            callback(false, null, true);
+            await Future.delayed(const Duration(seconds: 2));
 
+            try {
+              ResponseRequest response = await SubjectServices.createSubject(subjectName);
+
+              if (response.success) {
+                _fetchSubjects();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Matière crée avec succès')),
+                );
+
+                callback(true, null, false);
+              } else {
+                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+              }
+            } catch (e) {
+              callback(false, 'Erreur : ${e.toString()}', false);
+            }
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +175,7 @@ class _SubjectPageState extends State<SubjectPage> {
           columns: const [
             DataColumn(label: Text('Id')),
             DataColumn(label: Text('Name')),
-            DataColumn(label: Text('Actions')), // Nouvelle colonne
+            DataColumn(label: Text('Actions')),
           ],
           rowBuilder: (subject) {
             return [
@@ -153,6 +202,13 @@ class _SubjectPageState extends State<SubjectPage> {
             ];
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showCreateSubjectDialog(context);
+        },
+        backgroundColor: AppColors.blue,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
 
     );

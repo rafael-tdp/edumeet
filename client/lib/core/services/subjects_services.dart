@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import 'package:client/core/models/subject.dart';
 
+import '../models/response.dart';
+
 class SubjectServices {
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -42,12 +44,12 @@ class SubjectServices {
     }
   }
 
-  static Future<bool> deleteSubject(subjectId) async {
+  static Future<ResponseRequest> deleteSubject(subjectId) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.delete(
@@ -59,23 +61,23 @@ class SubjectServices {
       );
 
       if (response.statusCode == 204) {
-        return true;
+        return ResponseRequest(success: true, message: "Matière supprimé avec succes.");
       } else {
-        return false;
+        return ResponseRequest(success: true, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
-      log('An error occurred while retrieving subjects',
+      log('An error occurred while deleting subject',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: false, message: "Une erreur s'est produite.");
     }
   }
 
-  static Future<bool> updateSubject(subject, newName) async {
+  static Future<ResponseRequest> updateSubject(subject, newName) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.put(
@@ -88,15 +90,15 @@ class SubjectServices {
             "name": newName
           })
       );
-      if (response.statusCode == 204) {
-        return true;
+      if (response.statusCode == 200) {
+        return ResponseRequest(success: true, message: 'Matière mise a jour');
       } else {
-        return false;
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
-      log('An error occurred while retrieving subjects',
+      log('Erreur lors de la mise a jour de la matiere',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: true, message: 'Erreur lors de la mise a jour.');
     }
   }
 
@@ -122,6 +124,37 @@ class SubjectServices {
     } catch (error, stacktrace) {
       log('An error occurred while subscribing to subject',
           error: error, stackTrace: stacktrace);
+    }
+  }
+
+  static Future<ResponseRequest> createSubject(subjectName) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
+      }
+
+      final response = await http.post(
+        Uri.parse('${Env.BACKEND_URL}/subjects'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          "name": subjectName
+        })
+      );
+
+      if (response.statusCode == 201) {
+        return ResponseRequest(success: true, message: 'Matière crée avec success');
+      } else {
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while creating subject',
+          error: error, stackTrace: stacktrace);
+      return ResponseRequest(success: true, message: 'Erreur lors de la création.');
     }
   }
 }

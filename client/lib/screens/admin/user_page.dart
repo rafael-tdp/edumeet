@@ -7,8 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/models/response.dart';
+import '../../core/models/user.dart';
 import '../../widgets/confirmation_dialog.dart';
 import 'package:client/core/models/user.dart';
+
+import '../../widgets/create_user_modal.dart';
 
 class UserPageAdmin extends StatefulWidget {
   static const String routeName = '/users';
@@ -52,16 +56,35 @@ class _UserPageState extends State<UserPageAdmin> {
       builder: (context) {
         return EditUserDialog(
           initialUser: user,
-          onSave: (newUser) async {
-            await UserServices.updateAdminUserInfo(newUser);
-            _fetchUsers();
+          onSave: (newUser, callback) async {
+            callback(false, null, true);
+
+            await Future.delayed(const Duration(seconds: 2));
+
+            try {
+              ResponseRequest response =  await UserServices.updateAdminUserInfo(newUser);
+
+              if (response.success) {
+                _fetchUsers();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Utilisateur modifiée avec succès')),
+                );
+
+                callback(true, null, false);
+              } else {
+                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+              }
+            } catch (e) {
+              callback(false, e.toString(), false);
+            }
           },
         );
       },
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, Subject subject) {
+  void _showDeleteConfirmation(BuildContext context, User user) {
     bool isDeleting = false;
 
     showDialog(
@@ -71,22 +94,33 @@ class _UserPageState extends State<UserPageAdmin> {
           builder: (context, setState) {
             return ConfirmationDialog(
               title: 'Confirmer la suppression',
-              content: 'Êtes-vous sûr de vouloir supprimer cet utilisateur "${subject.name}" ?',
+              content: 'Êtes-vous sûr de vouloir supprimer cet utilisateur "${user.username}" ?',
               isLoading: isDeleting,
               onCancel: () {
-                Navigator.of(context).pop(); // Fermer la modal
+                Navigator.of(context).pop();
               },
               onConfirm: () async {
                 setState(() {
-                  isDeleting = true; // Activer le loader
+                  isDeleting = true;
                 });
-                await SubjectServices.deleteSubject(subject.id);
+
+                ResponseRequest response = await UserServices.deleteUser(user.id);
                 setState(() {
                   isDeleting = false;
                 });
 
-                Navigator.of(context).pop(); // Fermer la modal
+                if(response.success) {
+                  _fetchUsers();
 
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Utilisateur supprimé avec succes')),
+                  );
+                } else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
+                  );
+                }
+                Navigator.of(context).pop();
               },
             );
           },
@@ -95,6 +129,31 @@ class _UserPageState extends State<UserPageAdmin> {
     );
   }
 
+  void _showCreateUserDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => CreateUserDialog(
+        onCreate: (newUser, callback) async {
+          callback(false, null, true);
+
+          try {
+            await UserServices.createUser(newUser);
+            await _fetchUsers();
+
+            callback(true, null, false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Utilisateur créé avec succès.')),
+            );
+          } catch (error) {
+            callback(false, 'Erreur : $error', false);
+          }
+        },
+      ),
+    );
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,6 +161,13 @@ class _UserPageState extends State<UserPageAdmin> {
       appBar: AppBar(
         title: const Text('Liste des Utilisateurs'),
         backgroundColor: AppColors.transparent,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showCreateUserDialog(context);
+        },
+        backgroundColor: AppColors.blue,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -146,6 +212,7 @@ class _UserPageState extends State<UserPageAdmin> {
                     icon: const Icon(Icons.delete),
                     tooltip: 'Supprimer',
                     onPressed: () {
+                      _showDeleteConfirmation(context, user);
                     },
                   ),
                 ],

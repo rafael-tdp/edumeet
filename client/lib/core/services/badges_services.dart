@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import 'package:client/core/models/badge.dart';
 
+import '../models/response.dart';
+
 class BadgeServices {
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -42,12 +44,12 @@ class BadgeServices {
     }
   }
 
-  static Future<bool> deleteBadge(badgeId) async {
+  static Future<ResponseRequest> deleteBadge(badgeId) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.delete(
@@ -59,23 +61,23 @@ class BadgeServices {
       );
 
       if (response.statusCode == 204) {
-        return true;
+        return ResponseRequest(success: true, message: "Badge supprimé avec succes.");
       } else {
-        return false;
+        return ResponseRequest(success: true, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
       log('An error occurred while deleting badge',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: false, message: "Une erreur s'est produite.");
     }
   }
 
-  static Future<bool> createBadge(newBadge) async {
+  static Future<ResponseRequest> createBadge(newBadge) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.post(
@@ -91,24 +93,24 @@ class BadgeServices {
             "svg": newBadge.svg
           })
       );
-      if (response.statusCode == 204) {
-        return true;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ResponseRequest(success: true, message: 'Badge crée avec succes');
       } else {
-        return false;
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
-      log('An error occurred while retrieving subjects',
+      log('An error occurred while creating badge',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: true, message: 'Erreur lors de la création.');
     }
   }
 
-  static Future<bool> updateBadge(badge, newBadge) async {
+  static Future<ResponseRequest> updateBadge(badge, newBadge) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.put(
@@ -124,15 +126,15 @@ class BadgeServices {
             "svg": newBadge.svg
           })
       );
-      if (response.statusCode == 204) {
-        return true;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ResponseRequest(success: true, message: 'Badge mis a jour');
       } else {
-        return false;
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
-      log('An error occurred while retrieving subjects',
+      log('An error occurred while updating badge',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: true, message: 'Erreur lors de la mise a jour.');
     }
   }
 }

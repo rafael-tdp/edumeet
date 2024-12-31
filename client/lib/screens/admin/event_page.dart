@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/models/response.dart';
 import '../../widgets/confirmation_dialog.dart';
 import '../../widgets/edit_modal_subject.dart';
 
@@ -60,29 +61,31 @@ class _EventPageState extends State<EventsPageAdmin> {
               content: 'Êtes-vous sûr de vouloir supprimer l\'evenement "${event.title}" ?',
               isLoading: isDeleting,
               onCancel: () {
-                Navigator.of(context).pop(); // Fermer la modal
+                Navigator.of(context).pop();
               },
               onConfirm: () async {
                 setState(() {
-                  isDeleting = true; // Activer le loader
+                  isDeleting = true;
                 });
-                bool isDeleted = await EventServices.deleteEvent(event.id);
+
+                ResponseRequest response = await EventServices.deleteEvent(event.id);
+
                 setState(() {
                   isDeleting = false;
                 });
 
-                if(isDeleted) {
+                if(response.success) {
                   _fetchEvents();
 
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Badge supprimé avec succes')),
+                    const SnackBar(content: Text('Evenement supprimé avec succes')),
                   );
                 } else{
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Une erreur s''est produite pendant la suppression')),
+                    SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
                   );
                 }
-                Navigator.of(context).pop(); // Fermer la modal
+                Navigator.of(context).pop();
               },
             );
           },
@@ -90,22 +93,6 @@ class _EventPageState extends State<EventsPageAdmin> {
       },
     );
   }
-
-  void _showEditSubjectDialog(BuildContext context, Subject subject) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return EditSubjectDialog(
-          initialName: subject.name,
-          onSave: (newName) async{
-            await SubjectServices.updateSubject(subject, newName);
-          },
-        );
-      },
-    );
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +118,7 @@ class _EventPageState extends State<EventsPageAdmin> {
             DataColumn(label: Text('Title')),
             DataColumn(label: Text('IsPrivate')),
             DataColumn(label: Text('NbParticipant')),
-            DataColumn(label: Text('Actions')), // Nouvelle colonne
+            DataColumn(label: Text('Actions')),
           ],
           rowBuilder: (event) {
             return [
