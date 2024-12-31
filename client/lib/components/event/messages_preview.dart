@@ -1,9 +1,11 @@
+import 'package:client/core/models/message.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/utils/colors.dart';
+import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 
 class MessagesPreview extends StatelessWidget {
-  final List<Map<String, dynamic>> messages;
+  final List<Message> messages;
   final VoidCallback onSeeAllMessages;
 
   const MessagesPreview({
@@ -62,30 +64,32 @@ class MessagesPreview extends StatelessWidget {
                     )
                   else
                     ...messages.take(3).map((message) {
+                      final Avatar _avatar = DiceBearBuilder(
+                        seed: message.user.username,
+                        sprite: DiceBearSprite.bottts,
+                      ).build();
+
+                      _avatar.toImage(width: 50, height: 50);
+
+                      print(message.user);
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Row(
                           children: [
                             CircleAvatar(
-                              radius: 20,
-                              backgroundImage: NetworkImage(
-                                message['sender']['image'] ?? '',
-                              ),
-                              child: message['sender']['image'] == null ||
-                                      message['sender']['image']!.isEmpty
-                                  ? Text(
-                                      message['sender']['name']![0],
-                                      style: const TextStyle(fontSize: 16),
-                                    )
-                                  : null,
-                            ),
+                                radius: 20,
+                                backgroundColor: Colors.transparent,
+                                child: DiceBearBuilder(
+                                  seed: message.user.username,
+                                  sprite: DiceBearSprite.bottts,
+                                ).build().toImage(width: 40, height: 40)),
                             const SizedBox(width: 10),
                             Expanded(
                               child: RichText(
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: "${message['sender']['name']}: ",
+                                      text: "${message.user.username}: ",
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -93,7 +97,7 @@ class MessagesPreview extends StatelessWidget {
                                       ),
                                     ),
                                     TextSpan(
-                                      text: message['message'],
+                                      text: message.content,
                                       style: const TextStyle(
                                         fontSize: 15,
                                         color: Colors.black,

@@ -128,8 +128,6 @@ class EventServices {
         throw Exception('No token found');
       }
 
-      print(event.toJson());
-
       final response = await http.post(
         Uri.parse('${Env.BACKEND_URL}/events'),
         headers: {

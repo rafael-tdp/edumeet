@@ -122,7 +122,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                                         Row(
                                           children: [
                                             _avatar.toImage(width: 24, height: 24),
-                                            Text(participant['user']['username'] + ' ' + participant['status']),
+                                            Text(participant['user']['username']),
                                           ],
                                         ),
                                     trailing: Row(

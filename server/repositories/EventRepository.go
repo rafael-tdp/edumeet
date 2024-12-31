@@ -308,6 +308,11 @@ func (er *EventRepository) GetLastMessagesByEvent(eventID string) ([]dtos.Messag
 		Where(message.HasEventWith(event.IDEQ(eventID))).
 		Order(ent.Desc(message.FieldCreatedAt)).
 		Limit(5).
+		WithUser(
+			func(uq *ent.UserQuery) {
+				uq.Select(user.FieldID, user.FieldFirstname, user.FieldLastname, user.FieldUsername, user.FieldPicture)
+			},
+		).
 		All(context.Background())
 
 	if err != nil {
@@ -319,6 +324,13 @@ func (er *EventRepository) GetLastMessagesByEvent(eventID string) ([]dtos.Messag
 		messageDTOs = append(messageDTOs, dtos.MessageDTO{
 			ID:      msg.ID,
 			Content: msg.Content,
+			User: dtos.UserDTO{
+				ID:        msg.Edges.User.ID,
+				Firstname: msg.Edges.User.Firstname,
+				Lastname:  msg.Edges.User.Lastname,
+				Username:  msg.Edges.User.Username,
+				Picture:   msg.Edges.User.Picture,
+			},
 		})
 	}
 

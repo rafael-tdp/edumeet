@@ -162,7 +162,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       opacity: 1.0,
                       duration: const Duration(milliseconds: 500),
                       child: MessagesPreview(
-                        messages: const [],
+                        messages: event.lastMessages ?? const [],
                         onSeeAllMessages: () => _navigateToChat(context, event),
                       ),
                     ),
