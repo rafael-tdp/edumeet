@@ -6,11 +6,13 @@ import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import '../core/models/response.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/event_chat_page.dart';
+import 'package:go_router/go_router.dart';
+
 
 class ConversationsPage extends StatefulWidget {
   static const routeName = '/conversations';
   static navigateTo(BuildContext context) {
-    Navigator.of(context).pushNamed(routeName);
+    context.go(routeName);
   }
 
   const ConversationsPage({Key? key}) : super(key: key);
@@ -40,8 +42,10 @@ class _ConversationsPageState extends State<ConversationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Conversations'),
+        backgroundColor: Colors.transparent,
+        title: const Text('Conversations'),
       ),
       body: FutureBuilder<ResponseRequest>(
         future: _conversationsFuture,

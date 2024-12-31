@@ -167,7 +167,7 @@ func (uc *UserController) AcceptFriendship(c *fiber.Ctx) error {
 func (uc *UserController) GetFriendships(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 
-	status := c.Query("status", "pending")
+	status := c.Query("status", "PENDING")
 
 	friendships, err := uc.userService.GetFriendships(currentUser.ID, status)
 	if err != nil {

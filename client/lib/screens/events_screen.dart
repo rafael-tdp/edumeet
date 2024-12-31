@@ -1,4 +1,5 @@
 import 'package:client/core/models/user.dart';
+import 'package:client/core/services/auth_services.dart';
 import 'package:client/core/services/event_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/utils/colors.dart';
@@ -34,11 +35,12 @@ class _EventsPageState extends State<EventsPage> {
   void _fetchCurrentUser() async {
     try {
       final response = await UserServices().getUserInfo();
+      if (!mounted) return;
       setState(() {
         _currentUser = response.data;
       });
     } catch (e) {
-      // ignore: use_build_context_synchronously
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User not loaded")),
       );

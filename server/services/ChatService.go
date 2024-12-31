@@ -7,6 +7,7 @@ import (
 	"edumeet/utils"
 	"errors"
 	"fmt"
+	"log"
 	"strings"
 	"sync"
 
@@ -61,7 +62,8 @@ func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {
 
 func (cs *ChatService) CheckUserHasPermission(participants []dtos.ParticipantDTO, userID string) bool {
 	_, foundParticipant := lo.Find(participants, func(p dtos.ParticipantDTO) bool {
-		return p.UserID == userID && p.Status == "ACCEPTED"
+		println(p.ID, p.UserID, userID)
+		return p.UserID == userID && strings.EqualFold(p.Status, "ACCEPTED")
 	})
 	return foundParticipant
 }
@@ -321,6 +323,21 @@ func (cs *ChatService) GetMessagesEvent(userId, eventId string) ([]dtos.Response
 
 	getChatDtos := make([]dtos.ResponseMessageDTO, 0)
 	for _, message := range messages {
+		if message == nil {
+			log.Println("message is nil")
+			continue
+		}
+
+		if message.CreatedBy == nil {
+			log.Println("message.CreatedBy is nil for message ID:", message.ID)
+			continue
+		}
+
+		if message.Edges.User == nil {
+			log.Println("Edges or User is nil for message ID:", message.ID)
+			continue
+		}
+
 		getChatDtos = append(getChatDtos, dtos.EntToResponseMessageDTO(message.Content, message.ID, *message.CreatedBy, message.CreatedAt.String(), message.Edges.User.Username))
 	}
 

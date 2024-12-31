@@ -1,4 +1,4 @@
-import 'package:dice_bear/dice_bear.dart'; 
+import 'package:dice_bear/dice_bear.dart';
 import 'package:client/core/models/event.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/enums/MessageAction.dart';
@@ -19,7 +19,7 @@ import '../core/models/chat/sendMessageRequest.dart';
 class EventChatPage extends StatefulWidget {
   static const String routeName = '/event-chat';
   static navigateTo(BuildContext context, String eventId) {
-    context.go('$routeName/$eventId');
+    context.push('$routeName/$eventId');
   }
 
   final String eventId;
@@ -41,12 +41,16 @@ class _EventChatPageState extends State<EventChatPage> {
   @override
   void initState() {
     super.initState();
-    _chatManager = ChatManager(Future.value(Provider.of<UserProvider>(context, listen: false).currentUser?.username));
+    _chatManager = ChatManager(Future.value(
+        Provider.of<UserProvider>(context, listen: false)
+            .currentUser
+            ?.username));
     _sseServices.connectToSse();
     _sseServices.messageStream.listen((messageEvent) async {
       if (messageEvent.type == MessageAction.DELETE.name) {
         setState(() {
-          _chatManager.messages.removeWhere((message) => message.id == messageEvent.id);
+          _chatManager.messages
+              .removeWhere((message) => message.id == messageEvent.id);
         });
       } else if (messageEvent.type == MessageAction.CREATE.name) {
         await _chatManager.addMessageEvent(messageEvent);
@@ -57,19 +61,23 @@ class _EventChatPageState extends State<EventChatPage> {
     _loadEvent();
   }
 
-Future<void> _loadEvent() async {
-  try {
-    final event = await EventServices.getEventDetails(widget.eventId);
-    setState(() {
-      _event = event;
-    });
-    _loadMessages();
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Erreur lors du chargement de l\'événement.')),
-    );
+  Future<void> _loadEvent() async {
+    try {
+      final event = await EventServices.getEventDetails(widget.eventId);
+      if (!mounted) return;
+      setState(() {
+        _event = event;
+      });
+      _loadMessages();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Erreur lors du chargement de l\'événement.')),
+        );
+      }
+    }
   }
-}
 
   Future<void> _loadMessages() async {
     try {
@@ -82,7 +90,8 @@ Future<void> _loadEvent() async {
       _scrollToBottom();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erreur lors du chargement des messages.')),
+        const SnackBar(
+            content: Text('Erreur lors du chargement des messages.')),
       );
     }
   }
@@ -110,7 +119,9 @@ Future<void> _loadEvent() async {
       _scrollToBottom();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Une erreur est survenue lors de l\'envoi du message.')),
+        const SnackBar(
+            content:
+                Text('Une erreur est survenue lors de l\'envoi du message.')),
       );
     }
   }
@@ -126,7 +137,9 @@ Future<void> _loadEvent() async {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Une erreur est survenue lors de la suppression du message.')),
+        const SnackBar(
+            content: Text(
+                'Une erreur est survenue lors de la suppression du message.')),
       );
     }
   }
@@ -143,7 +156,9 @@ Future<void> _loadEvent() async {
   Widget build(BuildContext context) {
     if (_event == null) {
       return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          backgroundColor: Colors.transparent,
           title: const Text('Chargement...'),
         ),
         body: const Center(child: CircularProgressIndicator()),
@@ -158,20 +173,27 @@ Future<void> _loadEvent() async {
     ).build();
 
     for (var message in messages) {
-      final date = custom_date_utils.DateUtils.DateTimeToShortDate(message.createdAt);
+      final date =
+          custom_date_utils.DateUtils.DateTimeToShortDate(message.createdAt);
       groupedMessages.putIfAbsent(date, () => []).add(message);
     }
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             _avatar.toImage(height: 25),
             const SizedBox(width: 8),
             Text(
-              _event!.title, 
+              _event!.title,
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 16,
@@ -228,14 +250,21 @@ Future<void> _loadEvent() async {
                         ),
                       ),
                       ...messagesForDate.map((message) {
-                        bool isCurrentUser = message.username == Provider.of<UserProvider>(context, listen: false).currentUser?.username || "Moi" == message.username;
+                        bool isCurrentUser = message.username ==
+                                Provider.of<UserProvider>(context,
+                                        listen: false)
+                                    .currentUser
+                                    ?.username ||
+                            "Moi" == message.username;
                         final Avatar _avatar = DiceBearBuilder(
                           seed: message.username,
                           sprite: DiceBearSprite.bottts,
                         ).build();
 
                         return Row(
-                          mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                          mainAxisAlignment: isCurrentUser
+                              ? MainAxisAlignment.end
+                              : MainAxisAlignment.start,
                           children: [
                             if (!isCurrentUser) _avatar.toImage(height: 25),
                             Expanded(

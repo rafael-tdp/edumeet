@@ -189,7 +189,7 @@ func (us *UserService) UpdateFriendship(friendshipID string, userId string) (*en
 
 func (us *UserService) GetFriendships(userID string, status string) ([]dtos.FriendshipDTO, error) {
 
-	if status == "pending" {
+	if status == "PENDING" {
 		pendingFriendships, err := us.userRepo.GetPendingFriendships(userID)
 
 		if err != nil {

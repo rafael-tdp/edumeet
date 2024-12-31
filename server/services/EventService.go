@@ -16,12 +16,14 @@ import (
 type EventService struct {
 	eventRepository       *repositories.EventRepository
 	participantRepository *repositories.ParticipantRepository
+	messageRepository     *repositories.MessageRepository
 }
 
-func NewEventService(eventRepository *repositories.EventRepository, participantRepository *repositories.ParticipantRepository) *EventService {
+func NewEventService(eventRepository *repositories.EventRepository, participantRepository *repositories.ParticipantRepository, messageRepository *repositories.MessageRepository) *EventService {
 	return &EventService{
 		eventRepository:       eventRepository,
 		participantRepository: participantRepository,
+		messageRepository:     messageRepository,
 	}
 }
 
@@ -281,6 +283,11 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 		return dtos.EventWithDetailsDTO{}, err
 	}
 
+	lastMessages, err := es.messageRepository.GetLastMessagesByEvent(eventID)
+	if err != nil {
+		return dtos.EventWithDetailsDTO{}, err
+	}
+
 	eventDetails := dtos.EventWithDetailsDTO{
 		ID:                event.ID,
 		StartDate:         event.StartDate,
@@ -293,6 +300,7 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 		ParticipantsCount: len(participants),
 		EventDocuments:    dtos.EntToEventDocumentDTO(event.Edges.EventDocuments),
 		CreatedBy:         event.CreatedBy,
+		LastMessages:      lastMessages,
 	}
 
 	if event.Edges.RemoteEvent != nil {
@@ -344,7 +352,7 @@ func (es *EventService) JoinEventByCode(eventCode string, userID string) error {
 		}
 	}
 
-	_, err = es.participantRepository.CreateParticipant(userID, event.ID, "accepted")
+	_, err = es.participantRepository.CreateParticipant(userID, event.ID, "ACCEPTED")
 
 	if err != nil {
 		return err

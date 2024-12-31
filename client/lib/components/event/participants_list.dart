@@ -40,29 +40,29 @@ class _ParticipantsListState extends State<ParticipantsList> {
   }
 
   void _acceptUser(String participantId) {
-    ParticipantServices.processParticipant(participantId, 'accepted');
+    ParticipantServices.processParticipant(participantId, 'ACCEPTED');
     setState(() {
       final participant = participantsList
           .firstWhere((p) => p['id'] == participantId, orElse: () => null);
       if (participant != null) {
-        participant['status'] = 'accepted';
+        participant['status'] = 'ACCEPTED';
       }
     });
   }
 
   void _rejectUser(String participantId) {
-    ParticipantServices.processParticipant(participantId, 'rejected');
+    ParticipantServices.processParticipant(participantId, 'REJECTED');
     setState(() {
       final participant = participantsList
           .firstWhere((p) => p['id'] == participantId, orElse: () => null);
       if (participant != null) {
-        participant['status'] = 'rejected';
+        participant['status'] = 'REJECTED';
       }
     });
   }
 
   void _removeUser(String participantId) {
-    ParticipantServices.processParticipant(participantId, 'rejected');
+    ParticipantServices.processParticipant(participantId, 'REJECTED');
     setState(() {
       participantsList.removeWhere((p) => p['id'] == participantId);
     });
@@ -72,14 +72,12 @@ class _ParticipantsListState extends State<ParticipantsList> {
   Widget build(BuildContext context) {
     final acceptedParticipants = widget.participants
         .where((participant) =>
-            participant['status'] == 'ACCEPTED' ||
-            participant['status'] == 'accepted')
+            participant['status'] == 'ACCEPTED')
         .toList();
 
     final pendingParticipantsCount = widget.participants
         .where((participant) =>
-            participant['status'] == 'PENDING' ||
-            participant['status'] == 'pending')
+            participant['status'] == 'PENDING')
         .length;
 
     return Column(
@@ -130,7 +128,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        if (status == 'pending') ...[
+                                        if (status == 'PENDING') ...[
                                           IconButton(
                                             icon: const Icon(Icons.check),
                                             onPressed: () =>
@@ -142,7 +140,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                                                 _rejectUser(participant['id']),
                                           ),
                                         ],
-                                        if (status == 'accepted') ...[
+                                        if (status == 'ACCEPTED') ...[
                                           IconButton(
                                             icon: const Icon(Icons.delete),
                                             onPressed: () =>
@@ -150,7 +148,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                                           ),
                                         ],
                                         // rejected status
-                                        if (status == 'rejected') ...[
+                                        if (status == 'REJECTED') ...[
                                           const Text(
                                             'Rejeté',
                                             style: TextStyle(
@@ -269,7 +267,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    if (status == 'pending') ...[
+                                    if (status == 'PENDING') ...[
                                       IconButton(
                                         icon: const Icon(Icons.check),
                                         onPressed: () =>
@@ -281,7 +279,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                                             _rejectUser(participant['id']),
                                       ),
                                     ],
-                                    if (status == 'accepted') ...[
+                                    if (status == 'ACCEPTED') ...[
                                       IconButton(
                                         icon: const Icon(Icons.delete),
                                         onPressed: () =>

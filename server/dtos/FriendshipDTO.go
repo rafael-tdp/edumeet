@@ -21,7 +21,7 @@ func FriendshipEntToDTO(friendship *ent.Friendship, friendId string, friendUsern
 func FriendshipsEntToDTO(friendships []*ent.Friendship, currentUserId string, status string) ([]FriendshipDTO, error) {
 	friendshipsDTO := make([]FriendshipDTO, 0)
 	for _, friendship := range friendships {
-		if status == "pending" {
+		if status == "PENDING" {
 			friendshipDTO, err := FriendshipEntToDTO(friendship, friendship.Edges.User.ID, friendship.Edges.User.Username)
 			if err != nil {
 				return nil, err

@@ -66,23 +66,24 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   void _navigateToChat(BuildContext context, Event event) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 150),
-        reverseTransitionDuration: const Duration(milliseconds: 150),
-        pageBuilder: (context, animation, secondaryAnimation) {
-          EventChatPage.navigateTo(context, event.id!);
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1.0, 0.0),
-              end: Offset.zero,
-            ).animate(animation),
-            child:
-            EventChatPage(eventId: event.id!),
-          );
-        },
-      ),
-    );
+    // Navigator.of(context).push(
+    //   PageRouteBuilder(
+    //     transitionDuration: const Duration(milliseconds: 150),
+    //     reverseTransitionDuration: const Duration(milliseconds: 150),
+    //     pageBuilder: (context, animation, secondaryAnimation) {
+    //       EventChatPage.navigateTo(context, event.id!);
+    //       return SlideTransition(
+    //         position: Tween<Offset>(
+    //           begin: const Offset(1.0, 0.0),
+    //           end: Offset.zero,
+    //         ).animate(animation),
+    //         child:
+    //         EventChatPage(eventId: event.id!),
+    //       );
+    //     },
+    //   ),
+    // );
+    EventChatPage.navigateTo(context, event.id!);
   }
 
   @override

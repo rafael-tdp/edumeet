@@ -78,4 +78,5 @@ type EventWithDetailsDTO struct {
 	Participants      []ParticipantWithUserDTO `json:"participants"`
 	EventDocuments    []*EventDocumentDTO      `json:"event_documents"`
 	CreatedBy         *string                  `json:"created_by,omitempty"`
+	LastMessages      []MessageDTO             `json:"last_messages"`
 }
