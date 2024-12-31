@@ -1,4 +1,3 @@
-import 'package:client/screens/conversations_screen.dart';
 import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/messages/chat_message.dart';

@@ -1,4 +1,3 @@
-import 'package:client/core/models/event.dart';
 import 'package:client/main.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/conversations_screen.dart';

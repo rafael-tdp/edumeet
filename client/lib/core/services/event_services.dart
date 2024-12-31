@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:client/core/services/auth_services.dart';
-import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
-import 'package:flutter_client_sse/flutter_client_sse.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import 'package:client/core/models/event.dart';

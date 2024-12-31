@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'package:client/core/models/chat/conversation.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/env/env.dart';
@@ -9,7 +8,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:client/core/enums/MessageType.dart';
-import 'package:client/core/models/chat/messageEvent.dart';
 import 'package:client/core/models/chat/messageRequest.dart';
 import '../models/chat/sendMessageRequest.dart';
 import 'auth_services.dart';

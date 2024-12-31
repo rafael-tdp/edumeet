@@ -3,8 +3,6 @@ import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/welcome/welcome_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../services/auth_services.dart';
-
 class AuthGuard extends StatefulWidget {
   const AuthGuard({Key? key, required this.child}) : super(key: key);
 

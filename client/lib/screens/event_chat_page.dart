@@ -1,10 +1,8 @@
 import 'package:dice_bear/dice_bear.dart'; 
 import 'package:client/core/models/event.dart';
-import 'package:client/screens/events_screen.dart'; 
 import 'package:flutter/material.dart';
 import 'package:client/core/enums/MessageAction.dart';
 import 'package:client/core/models/chat/chatManager.dart';
-import 'package:client/core/models/event.dart';
 import 'package:client/core/services/message_services.dart';
 import 'package:client/core/services/sse_services.dart';
 import 'package:client/components/messages/message_input_field.dart';
@@ -12,7 +10,6 @@ import 'package:client/components/messages/chat_message.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../core/models/chat/chatMessage.dart';
-import '../core/services/cache_service.dart';
 import '../core/services/event_services.dart';
 import '../providers/user_provider.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;

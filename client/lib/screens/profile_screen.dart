@@ -1,7 +1,6 @@
 import 'package:client/bloc/profile_bloc.dart';
 import 'package:client/bloc/profile_event.dart';
 import 'package:client/bloc/profile_state.dart';
-import 'package:client/core/services/sse_services.dart';
 import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';

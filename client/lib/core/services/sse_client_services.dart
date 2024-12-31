@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:client/core/services/auth_services.dart';
-import 'package:flutter/material.dart';
 
 class SSEClient {
   final AuthServices _authServices = AuthServices();

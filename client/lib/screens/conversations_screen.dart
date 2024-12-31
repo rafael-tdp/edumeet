@@ -3,7 +3,6 @@ import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/message_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
-import '../core/models/event.dart';
 import '../core/models/response.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/event_chat_page.dart';

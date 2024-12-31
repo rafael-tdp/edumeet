@@ -1,4 +1,3 @@
-import 'package:client/core/models/response.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/valide_account_screen.dart';
 import 'package:flutter/material.dart';

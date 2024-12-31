@@ -1,4 +1,3 @@
-import 'package:client/core/services/user_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/auth_services.dart';
@@ -7,9 +6,7 @@ import 'package:client/core/models/response.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:client/screens/forgot_password_screen.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import '../main.dart';
-import '../providers/user_provider.dart';
 import '../utils/colors.dart';
 
 class LoginPage extends StatefulWidget {
@@ -26,7 +23,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final AuthServices _authServices = AuthServices();
-  final UserServices _userServices = UserServices();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
