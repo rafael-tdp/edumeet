@@ -7,6 +7,7 @@ import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/models/response.dart';
 import '../../widgets/confirmation_dialog.dart';
 
 class BadgePage extends StatefulWidget {
@@ -63,19 +64,21 @@ class _BadgePageState extends State<BadgePage> {
                 setState(() {
                   isDeleting = true;
                 });
-                bool isDeleted = await BadgeServices.deleteBadge(badge.id);
+
+                ResponseRequest response = await BadgeServices.deleteBadge(badge.id);
+
                 setState(() {
                   isDeleting = false;
                 });
 
-                if (isDeleted) {
+                if (response.success) {
                   _fetchBadges();
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Badge supprimé avec succes')),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Une erreur s\'est produite pendant la suppression')),
+                    SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
                   );
                 }
                 Navigator.of(context).pop();

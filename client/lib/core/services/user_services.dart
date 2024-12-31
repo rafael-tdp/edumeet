@@ -151,12 +151,12 @@ class UserServices {
     }
   }
 
-  static Future<bool> deleteUser(userId) async {
+  static Future<ResponseRequest> deleteUser(userId) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.delete(
@@ -168,14 +168,14 @@ class UserServices {
       );
 
       if (response.statusCode == 204) {
-        return true;
+        return ResponseRequest(success: true, message: "Utilisateur supprimé avec succes.");
       } else {
-        return false;
+        return ResponseRequest(success: true, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
-      log('An error occurred while deleting event',
+      log('An error occurred while deleting user',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: false, message: "Une erreur s'est produite.");
     }
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/models/response.dart';
 import '../../widgets/confirmation_dialog.dart';
 import 'package:client/core/models/user.dart';
 
@@ -76,18 +77,19 @@ class _UserPageState extends State<UserPageAdmin> {
               content: 'Êtes-vous sûr de vouloir supprimer cet utilisateur "${user.username}" ?',
               isLoading: isDeleting,
               onCancel: () {
-                Navigator.of(context).pop(); // Fermer la modal
+                Navigator.of(context).pop();
               },
               onConfirm: () async {
                 setState(() {
-                  isDeleting = true; // Activer le loader
+                  isDeleting = true;
                 });
-                bool isDeleted = await UserServices.deleteUser(user.id);
+
+                ResponseRequest response = await UserServices.deleteUser(user.id);
                 setState(() {
                   isDeleting = false;
                 });
 
-                if(isDeleted) {
+                if(response.success) {
                   _fetchUsers();
 
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -95,7 +97,7 @@ class _UserPageState extends State<UserPageAdmin> {
                   );
                 } else{
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Une erreur s''est produite pendant la suppression')),
+                    SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
                   );
                 }
                 Navigator.of(context).pop();

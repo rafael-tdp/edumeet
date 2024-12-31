@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:client/components/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/models/response.dart';
 import '../../widgets/confirmation_dialog.dart';
 import '../../widgets/edit_modal_subject.dart';
 
@@ -60,29 +61,31 @@ class _EventPageState extends State<EventsPageAdmin> {
               content: 'Êtes-vous sûr de vouloir supprimer l\'evenement "${event.title}" ?',
               isLoading: isDeleting,
               onCancel: () {
-                Navigator.of(context).pop(); // Fermer la modal
+                Navigator.of(context).pop();
               },
               onConfirm: () async {
                 setState(() {
-                  isDeleting = true; // Activer le loader
+                  isDeleting = true;
                 });
-                bool isDeleted = await EventServices.deleteEvent(event.id);
+
+                ResponseRequest response = await EventServices.deleteEvent(event.id);
+
                 setState(() {
                   isDeleting = false;
                 });
 
-                if(isDeleted) {
+                if(response.success) {
                   _fetchEvents();
 
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Badge supprimé avec succes')),
+                    const SnackBar(content: Text('Evenement supprimé avec succes')),
                   );
                 } else{
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Une erreur s''est produite pendant la suppression')),
+                    SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
                   );
                 }
-                Navigator.of(context).pop(); // Fermer la modal
+                Navigator.of(context).pop();
               },
             );
           },

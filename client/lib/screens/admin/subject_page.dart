@@ -80,7 +80,7 @@ class _SubjectPageState extends State<SubjectPage> {
                   );
                 } else{
                   ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(content: Text(response.message ?? 'Message par défaut')),
+                     SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
                   );
                 }
                 Navigator.of(context).pop();
