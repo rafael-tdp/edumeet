@@ -155,7 +155,7 @@ class ProfilePage extends StatelessWidget {
                             backgroundColor: Colors.redAccent,
                             onPressed: () async {
                               await AuthServices().logout();
-                              Provider.of<UserProvider>(context, listen: false).clearUserInfo();
+                              Provider.of<UserProvider>(context, listen: false).clearUser();
                               context.go(LoginPage.routeName);
                             },
                           ),

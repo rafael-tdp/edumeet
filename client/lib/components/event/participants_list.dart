@@ -2,6 +2,7 @@ import 'package:client/core/models/user.dart';
 import 'package:client/core/services/participant_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/providers/user_provider.dart';
+import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -114,9 +115,18 @@ class _ParticipantsListState extends State<ParticipantsList> {
                                 children:
                                     participantsList.map((participant) {
                                   String status = participant['status'];
+                                  final Avatar _avatar = DiceBearBuilder(
+                                    seed: participant['user']['username'],
+                                    sprite: DiceBearSprite.bottts,
+                                  ).build();
                                   return ListTile(
                                     title:
-                                        Text(participant['user']['username']),
+                                        Row(
+                                          children: [
+                                            _avatar.toImage(width: 24, height: 24),
+                                            Text(participant['user']['username'] + ' ' + participant['status']),
+                                          ],
+                                        ),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -194,6 +204,10 @@ class _ParticipantsListState extends State<ParticipantsList> {
             itemCount: acceptedParticipants.length,
             itemBuilder: (context, index) {
               final participant = acceptedParticipants[index];
+              final Avatar _avatar = DiceBearBuilder(
+                seed: participant['user']['username'],
+                sprite: DiceBearSprite.bottts,
+              ).build();
               return GestureDetector(
                 onTap: () {
                   final bool isCurrentUser =
@@ -208,23 +222,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundImage: participant['user']['picture'] != null
-                            ? NetworkImage(participant['user']['picture']!)
-                            : null,
-                        backgroundColor: participant['user']['picture'] == null
-                            ? Colors.grey
-                            : Colors.transparent,
-                        child: participant['user']['picture'] == null
-                            ? Text(
-                                participant['user']['firstname']![0]
-                                    .toUpperCase(),
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 24),
-                              )
-                            : null,
-                      ),
+                      _avatar.toImage(width: 50, height: 50),
                       const SizedBox(height: 8),
                       Text(
                         participant['user']['firstname']! +

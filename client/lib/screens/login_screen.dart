@@ -48,8 +48,6 @@ class _LoginPageState extends State<LoginPage> {
       ResponseRequest response = await _authServices.login(loginRequest, context);
       if (response.success) {
         context.go(HomePage.routeName);
-        await _userServices.getUserInfo();
-        Provider.of<UserProvider>(context, listen: false).loadUserInfo();
       } else {
         setState(() {
           _errorMessage = response.message;

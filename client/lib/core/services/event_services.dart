@@ -125,7 +125,7 @@ class EventServices {
 
   static Future<Event> createEvent(Event event) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -156,7 +156,7 @@ class EventServices {
 
   static Future<String> generateExo(String eventId) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -196,7 +196,7 @@ class EventServices {
   static Future<String> generateCorrection(
       String eventId, String exercise) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -233,7 +233,7 @@ class EventServices {
   static Future<void> saveDocument(
       String eventId, String content, String docType) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -268,7 +268,7 @@ class EventServices {
   // get document content
   static Future<String> getDocumentContent(String documentId) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -296,7 +296,7 @@ class EventServices {
 
   static Future<void> leaveEvent(String participantId) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -321,7 +321,7 @@ class EventServices {
 
   static Future<void> deleteEvent(String eventId) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');

@@ -265,7 +265,7 @@ func (cs *ChatService) GetConversations(userId string) ([]dtos.ConversationDTO, 
 			return nil, err
 		}
 
-		conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(friendship.ID, userNameFriend, "friend", lastMessageFriend.Content, lastMessageFriend.CreatedAt.String(), lastMessageFriend.Edges.User.Username))
+		conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(friendship.ID, userNameFriend, "private", lastMessageFriend.Content, lastMessageFriend.CreatedAt.String(), lastMessageFriend.Edges.User.Username))
 	}
 
 	for _, participant := range conversationsEvents {

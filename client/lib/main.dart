@@ -44,9 +44,8 @@ void main() async {
         providers: [
           ChangeNotifierProvider(create: (_) => LocaleProvider()),
           ChangeNotifierProvider(create: (_) => UserProvider()),
-          ChangeNotifierProvider(create: (_) => TranslationProvider()),
         ],
-        child: const MyApp(),
+        child: TranslationProvider(child: const MyApp()),
       ),
     ),
   );
@@ -121,9 +120,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      Provider.of<UserProvider>(context, listen: false).loadUserInfo();
-    });
     _sseServices.connectToSse();
   }
 

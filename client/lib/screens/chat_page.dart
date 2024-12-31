@@ -40,7 +40,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    _chatManager = ChatManager(Future.value(Provider.of<UserProvider>(context, listen: false).username));
+    _chatManager = ChatManager(Future.value(Provider.of<UserProvider>(context, listen: false).currentUser?.username));
     _sseServices.connectToSse();
     _sseServices.messageStream.listen((messagePrivate) async {
       if (messagePrivate.type == MessageAction.DELETE.name) {
@@ -203,7 +203,7 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                     ),
                     ...messagesForDate.map((message) {
-                      bool isCurrentUser = message.username == Provider.of<UserProvider>(context, listen: false).username || "Moi" == message.username;
+                      bool isCurrentUser = message.username == Provider.of<UserProvider>(context, listen: false).currentUser?.username || "Moi" == message.username;
                       final Avatar _avatar = DiceBearBuilder(
                         seed: message.username,
                         sprite: DiceBearSprite.bottts,
