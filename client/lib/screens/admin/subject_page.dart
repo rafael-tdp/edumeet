@@ -124,18 +124,36 @@ class _SubjectPageState extends State<SubjectPage> {
     );
   }
 
-
   void _showCreateSubjectDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
-        return const CreateSubjectModal();
-      },
-    ).then((_) {
-      _fetchSubjects();
-    });
-  }
+        return CreateSubjectModal(
+          onSave: (subjectName, callback) async {
+            callback(false, null, true);
+            await Future.delayed(const Duration(seconds: 2));
 
+            try {
+              ResponseRequest response = await SubjectServices.createSubject(subjectName);
+
+              if (response.success) {
+                _fetchSubjects();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Matière crée avec succès')),
+                );
+
+                callback(true, null, false);
+              } else {
+                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+              }
+            } catch (e) {
+              callback(false, 'Erreur : ${e.toString()}', false);
+            }
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +175,7 @@ class _SubjectPageState extends State<SubjectPage> {
           columns: const [
             DataColumn(label: Text('Id')),
             DataColumn(label: Text('Name')),
-            DataColumn(label: Text('Actions')), // Nouvelle colonne
+            DataColumn(label: Text('Actions')),
           ],
           rowBuilder: (subject) {
             return [

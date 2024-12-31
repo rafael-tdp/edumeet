@@ -30,7 +30,7 @@ func (sr *SubjectService) GetSubject(subjectID string) (*dtos.SubjectDTO, error)
 func (sr *SubjectService) Create(subjectDTO dtos.SubjectDTO) (*dtos.SubjectDTO, error) {
 	subject, err := sr.subjectRepository.Create(subjectDTO)
 	if err != nil {
-		return nil, errors.New("error creating subject")
+		return nil, err
 	}
 
 	createdSubject := dtos.SubjectEntToDTO(subject)

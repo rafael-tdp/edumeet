@@ -5,7 +5,9 @@ import 'dart:convert';
 import '../core/services/subjects_services.dart';
 
 class CreateSubjectModal extends StatefulWidget {
-  const CreateSubjectModal({Key? key}) : super(key: key);
+  final void Function(String subjectName, void Function(bool shouldClose, String? errorMessage, bool isLoading) callback) onSave;
+
+  const CreateSubjectModal({Key? key, required this.onSave}) : super(key: key);
 
   @override
   _CreateSubjectModalState createState() => _CreateSubjectModalState();
@@ -16,28 +18,15 @@ class _CreateSubjectModalState extends State<CreateSubjectModal> {
   String? _errorMessage;
   bool _isLoading = false;
 
-  Future<void> _createSubject() async {
+  void _updateState(bool shouldClose, String? errorMessage, bool isLoading) {
     setState(() {
-      _isLoading = true;
-      _errorMessage = null;
+      _isLoading = isLoading;
+      _errorMessage = errorMessage;
+
+      if (shouldClose) {
+        Navigator.of(context).pop();
+      }
     });
-
-    bool response = await SubjectServices.createSubject(_nameController.text);
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (response) {
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Matière crée avec succes')),
-      );
-    } else {
-      setState(() {
-        _errorMessage = 'Une erreur est survenue';
-      });
-    }
   }
 
   @override
@@ -63,11 +52,15 @@ class _CreateSubjectModalState extends State<CreateSubjectModal> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
           child: const Text('Annuler'),
         ),
         ElevatedButton(
-          onPressed: _isLoading ? null : _createSubject,
+          onPressed: _isLoading
+              ? null
+              : () {
+            widget.onSave(_nameController.text, _updateState);
+          },
           child: const Text('Valider'),
         ),
       ],

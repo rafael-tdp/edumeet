@@ -127,12 +127,12 @@ class SubjectServices {
     }
   }
 
-  static Future<bool> createSubject(subjectName) async {
+  static Future<ResponseRequest> createSubject(subjectName) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.post(
@@ -147,14 +147,14 @@ class SubjectServices {
       );
 
       if (response.statusCode == 201) {
-        return true;
+        return ResponseRequest(success: true, message: 'Matière crée avec success');
       } else {
-        return false;
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
       log('An error occurred while creating subject',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: true, message: 'Erreur lors de la création.');
     }
   }
 }
