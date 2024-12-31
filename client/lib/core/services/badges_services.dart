@@ -72,12 +72,12 @@ class BadgeServices {
     }
   }
 
-  static Future<bool> createBadge(newBadge) async {
+  static Future<ResponseRequest> createBadge(newBadge) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.post(
@@ -93,15 +93,15 @@ class BadgeServices {
             "svg": newBadge.svg
           })
       );
-      if (response.statusCode == 204) {
-        return true;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ResponseRequest(success: true, message: 'Badge crée avec succes');
       } else {
-        return false;
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
-      log('An error occurred while retrieving subjects',
+      log('An error occurred while creating badge',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: true, message: 'Erreur lors de la création.');
     }
   }
 

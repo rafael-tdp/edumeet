@@ -64,6 +64,7 @@ class _BadgePageState extends State<BadgePage> {
                 setState(() {
                   isDeleting = true;
                 });
+                await Future.delayed(const Duration(seconds: 2));
 
                 ResponseRequest response = await BadgeServices.deleteBadge(badge.id);
 
@@ -104,7 +105,6 @@ class _BadgePageState extends State<BadgePage> {
             try {
               ResponseRequest response = await BadgeServices.updateBadge(badge, newBadge);
 
-
               if (response.success) {
                 _fetchBadges();
 
@@ -132,23 +132,24 @@ class _BadgePageState extends State<BadgePage> {
       builder: (context) {
         return EditBadgeDialog(
           onSave: (newBadge, callback) async {
-            // Activer le loader
             callback(false, null, true);
 
-            await Future.delayed(const Duration(seconds: 2)); // Simuler un délai
-
+            await Future.delayed(const Duration(seconds: 2));
             try {
-              await BadgeServices.createBadge(newBadge);
-              _fetchBadges();
+             ResponseRequest response =  await BadgeServices.createBadge(newBadge);
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Badge créé avec succès')),
-              );
+              if (response.success) {
+                _fetchBadges();
 
-              // Fermer la modal
-              callback(true, null, false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Badge mis a jour')),
+                );
+
+                callback(true, null, false);
+              } else {
+                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+              }
             } catch (e) {
-              // Désactiver le loader et afficher une erreur
               callback(false, e.toString(), false);
             }
           },
