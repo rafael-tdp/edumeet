@@ -57,3 +57,32 @@ func (pc *ParticipantController) ProcessParticipant(c *fiber.Ctx) error {
 
 	return pc.participantService.ProcessParticipant(*participantDetail, statut)
 }
+
+func (pc *ParticipantController) LeaveEventParticipation(c *fiber.Ctx) error {
+
+	participantID := c.Params("participantID")
+
+	user := c.Locals("user").(*ent.User)
+	participantDetail, err := pc.participantService.GetParticipantDetail(participantID)
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid participant ID",
+		})
+	}
+
+	isValidUser := (*participantDetail.Event.CreatedBy == user.ID || user.Role == "admin") || participantDetail.User.ID == user.ID
+
+	if !isValidUser {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	pc.participantService.LeaveEventParticipation(participantID)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Successfully left the event",
+	})
+
+}

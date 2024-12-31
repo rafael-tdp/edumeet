@@ -19,23 +19,40 @@ func NewAuthService(userRepo *repositories.UserRepository) *AuthService {
 	}
 }
 
-func (as *AuthService) Login(requestBody dtos.LoginDTO) (string, error) {
+func (as *AuthService) Login(requestBody dtos.LoginDTO) (string, dtos.UserDTO, error) {
 	user, err := as.userRepo.GetByEmail(requestBody.Email)
 	if err != nil {
-		return "", utils.ErrInvalidCredentials
+		return "", dtos.UserDTO{}, utils.ErrInvalidCredentials
 	}
+
 	bcryptUtil := &utils.Bcrypt{}
 	if !bcryptUtil.CheckPasswordHash(requestBody.Password, user.Password) {
-		return "", utils.ErrInvalidCredentials
+		return "", dtos.UserDTO{}, utils.ErrInvalidCredentials
 	}
+
 	if !user.Activated {
-		return "", utils.ErrAccountNotActivated
+		return "", dtos.UserDTO{}, utils.ErrAccountNotActivated
 	}
+
 	jwtToken, err := utils.GenerateJWT(user.Email, user.ID, user.Role)
 	if err != nil {
-		return "", err
+		return "", dtos.UserDTO{}, err
 	}
-	return jwtToken, nil
+
+	userDTO := dtos.UserDTO{
+		ID:        user.ID,
+		Email:     user.Email,
+		Username:  user.Username,
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+		Role:      user.Role,
+		Activated: user.Activated,
+		Bio:       user.Bio,
+		Picture:   user.Picture,
+		BirthDate: *user.BirthDate,
+	}
+
+	return jwtToken, userDTO, nil
 }
 
 func (as *AuthService) RegisterUser(ctx context.Context, registerDTO dtos.RegisterDTO) (*ent.User, error) {

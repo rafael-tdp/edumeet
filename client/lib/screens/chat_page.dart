@@ -18,7 +18,7 @@ import '../providers/user_provider.dart';
 class ChatPage extends StatefulWidget {
   static const String routeName = '/private-chat';
   static navigateTo(BuildContext context, String userName, String friendId) {
-    context.go('$routeName/$userName', extra: friendId);
+    context.push('$routeName/$userName', extra: friendId);
   }
 
   final String userName;
@@ -36,10 +36,6 @@ class _ChatPageState extends State<ChatPage> {
   late final ChatManager _chatManager;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
-  // final List<Map<String, dynamic>> messages = [
-  //   {'message': "Salut, comment ça va ?", 'isSent': true},
-  //   {'message': "Ça va bien, et toi ?", 'isSent': false},
-  // ];
 
   @override
   void initState() {
@@ -171,24 +167,6 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
       ),
-      // appBar: AppBar(
-      //   title: Text(widget.userName),
-      //   centerTitle: true,
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      //   titleTextStyle: const TextStyle(
-      //     color: Colors.black,
-      //     fontSize: 18,
-      //     fontWeight: FontWeight.bold,
-      //   ),
-      //   bottom: PreferredSize(
-      //     preferredSize: const Size.fromHeight(1),
-      //     child: Container(
-      //       color: Colors.grey[300],
-      //       height: 1,
-      //     ),
-      //   ),
-      // ),
       body: Column(
         children: [
           Expanded(

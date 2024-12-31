@@ -8,11 +8,12 @@ import (
 	"edumeet/utils"
 	customValidator "edumeet/validator"
 	"fmt"
-	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
 	"html/template"
 	"log"
 	"os"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
 )
 
 type AuthController struct {
@@ -32,7 +33,7 @@ func (ac *AuthController) Login(c *fiber.Ctx) error {
 	if err := c.BodyParser(&requestBody); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
-	token, err := ac.authService.Login(requestBody)
+	token, user, err := ac.authService.Login(requestBody)
 	if err != nil {
 		switch err {
 		case utils.ErrInvalidCredentials:
@@ -43,7 +44,7 @@ func (ac *AuthController) Login(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "An error occurred"})
 		}
 	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"token": token})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"token": token, "user": user})
 }
 
 func (uc *AuthController) Register(c *fiber.Ctx) error {

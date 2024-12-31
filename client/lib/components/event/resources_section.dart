@@ -1,11 +1,14 @@
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/screens/document_viewer_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class ResourcesSection extends StatelessWidget {
   final List<dynamic> resources;
+  final String eventId;
 
-  const ResourcesSection({super.key, required this.resources});
+  const ResourcesSection(
+      {super.key, required this.resources, required this.eventId});
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +36,11 @@ class ResourcesSection extends StatelessWidget {
                 subtitle: Text(resource['type'] ?? t.resources.type),
                 trailing: const Icon(Icons.arrow_forward),
                 onTap: () {
-                  // Action à effectuer lors du tap sur une ressource
-                  // Exemple : naviguer vers une page de détails
+                  DocumentViewerPage.navigateTo(
+                    context,
+                    eventId,
+                    resource['document_id'],
+                  );
                 },
               ),
             );

@@ -23,15 +23,16 @@ func NewDocumentService(documentRepo *repositories.DocumentRepository, eventRepo
 	}
 }
 
-func (r *DocumentService) GetDocumentById(documentID string) (dtos.DocumentDTO, error) {
+func (r *DocumentService) GetDocumentById(documentID string) (dtos.DocumentResponseDTO, error) {
 	document, err := r.documentRepo.GetDocumentById(documentID)
 	if err != nil {
-		return dtos.DocumentDTO{}, err
+		return dtos.DocumentResponseDTO{}, err
 	}
 
-	documentDTO := dtos.DocumentDTO{
+	documentDTO := dtos.DocumentResponseDTO{
 		ID:   document.ID,
 		Path: document.Path,
+		Name: document.Name,
 	}
 
 	return documentDTO, nil

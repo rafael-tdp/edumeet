@@ -1,4 +1,6 @@
-import 'package:dice_bear/dice_bear.dart';
+import 'package:dice_bear/dice_bear.dart'; 
+import 'package:client/core/models/event.dart';
+import 'package:client/screens/events_screen.dart'; 
 import 'package:flutter/material.dart';
 import 'package:client/core/enums/MessageAction.dart';
 import 'package:client/core/models/chat/chatManager.dart';
@@ -170,9 +172,9 @@ Future<void> _loadEvent() async {
           mainAxisSize: MainAxisSize.min,
           children: [
             _avatar.toImage(height: 25),
-            const SizedBox(width: 8), // Add some space between the icon and the text
+            const SizedBox(width: 8),
             Text(
-              _event!.title,
+              _event!.title, 
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 16,

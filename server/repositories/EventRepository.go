@@ -30,8 +30,8 @@ func NewEventRepository(client *ent.Client) *EventRepository {
 func (er *EventRepository) CreateEvent(ctx context.Context, event dtos.EventDTO) (*ent.Event, error) {
 	subjects := make([]*ent.Subject, 0)
 
-	for _, subjectDTO := range event.Subjects {
-		entSubject, err := er.client.Subject.Query().Where(subject.IDEQ(subjectDTO.ID)).First(ctx)
+	for _, subjectIds := range event.Subjects {
+		entSubject, err := er.client.Subject.Query().Where(subject.IDEQ(subjectIds)).First(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -130,6 +130,7 @@ func (er *EventRepository) GetEvent(eventID string) (*ent.Event, error) {
 		WithEventDocuments(func(edq *ent.EventDocumentQuery) {
 			edq.WithDocument()
 		}).
+		WithSubjects().
 		First(context.Background())
 
 	if err != nil {
@@ -214,7 +215,15 @@ func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters)
 
 func (er *EventRepository) GetEventsByUser(userID string) ([]*ent.Event, error) {
 	events, err := er.client.Event.Query().
-		Where(event.HasParticipantsWith(participant.HasUserWith(user.IDEQ(userID)))).WithParticipants().WithEventDocuments().All(context.Background())
+		Where(
+			event.Or(
+				event.HasParticipantsWith(participant.HasUserWith(user.IDEQ(userID))),
+				event.CreatedBy(userID),
+			),
+		).
+		WithParticipants().
+		WithEventDocuments().
+		All(context.Background())
 
 	if err != nil {
 		return nil, err

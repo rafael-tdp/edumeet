@@ -45,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      ResponseRequest response = await _authServices.login(loginRequest);
+      ResponseRequest response = await _authServices.login(loginRequest, context);
       if (response.success) {
         context.go(HomePage.routeName);
         await _userServices.getUserInfo();

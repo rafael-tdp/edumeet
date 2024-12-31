@@ -1,8 +1,7 @@
-import 'package:client/core/models/subject.dart';
-import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:client/core/models/subject.dart';
 import 'package:client/core/services/subjects_services.dart';
-import 'package:client/components/profile_button.dart';
+import 'package:client/components/subjects_selection.dart';
 
 class SubjectsPage extends StatefulWidget {
   const SubjectsPage({super.key});
@@ -13,7 +12,6 @@ class SubjectsPage extends StatefulWidget {
 
 class _SubjectsPageState extends State<SubjectsPage> {
   late Future<List<Subject>> _subjectsFuture;
-
   final Set<String> _selectedSubjects = {};
 
   @override
@@ -22,13 +20,10 @@ class _SubjectsPageState extends State<SubjectsPage> {
     _subjectsFuture = SubjectServices.getSubjects();
   }
 
-  void _toggleSelection(String subjectId) {
+  void _onSubjectsSelected(Set<String> selectedSubjects) {
     setState(() {
-      if (_selectedSubjects.contains(subjectId)) {
-        _selectedSubjects.remove(subjectId);
-      } else {
-        _selectedSubjects.add(subjectId);
-      }
+      _selectedSubjects.clear();
+      _selectedSubjects.addAll(selectedSubjects);
     });
   }
 
@@ -67,66 +62,10 @@ class _SubjectsPageState extends State<SubjectsPage> {
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Text('Aucun sujet trouvé.');
               }
-
-              final subjects = snapshot.data!;
-
-              return Column(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Text(
-                      'Sélectionnez vos sujets préférés',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.purple,
-                      ),
-                    ),
-                  ),
-
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        alignment: WrapAlignment.center,
-                        children: subjects.map((subject) {
-                          bool isSelected =
-                              _selectedSubjects.contains(subject.id);
-                          return GestureDetector(
-                            onTap: () => _toggleSelection(subject.id),
-                            child: Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? AppColors.purple
-                                    : AppColors.lightPurple,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                subject.name,
-                                style: TextStyle(
-                                  color:
-                                      isSelected ? Colors.white : Colors.black,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: ProfileButton(
-                      text: 'Confirmer',
-                      onPressed: _confirmSelection,
-                      backgroundColor: AppColors.purple,
-                    ),
-                  ),
-                ],
+              return SubjectsSelection(
+                onSelected:
+                    _onSubjectsSelected,
+                selectedSubjects: _selectedSubjects,
               );
             },
           ),
