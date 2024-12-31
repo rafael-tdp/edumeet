@@ -6,6 +6,7 @@ import (
 	"context"
 	"edumeet/ent/document"
 	"edumeet/ent/event"
+	"edumeet/ent/friendship"
 	"edumeet/ent/message"
 	"edumeet/ent/predicate"
 	"edumeet/ent/user"
@@ -143,6 +144,25 @@ func (mu *MessageUpdate) SetEvent(e *Event) *MessageUpdate {
 	return mu.SetEventID(e.ID)
 }
 
+// SetFriendshipID sets the "friendship" edge to the Friendship entity by ID.
+func (mu *MessageUpdate) SetFriendshipID(id string) *MessageUpdate {
+	mu.mutation.SetFriendshipID(id)
+	return mu
+}
+
+// SetNillableFriendshipID sets the "friendship" edge to the Friendship entity by ID if the given value is not nil.
+func (mu *MessageUpdate) SetNillableFriendshipID(id *string) *MessageUpdate {
+	if id != nil {
+		mu = mu.SetFriendshipID(*id)
+	}
+	return mu
+}
+
+// SetFriendship sets the "friendship" edge to the Friendship entity.
+func (mu *MessageUpdate) SetFriendship(f *Friendship) *MessageUpdate {
+	return mu.SetFriendshipID(f.ID)
+}
+
 // AddDocumentIDs adds the "documents" edge to the Document entity by IDs.
 func (mu *MessageUpdate) AddDocumentIDs(ids ...string) *MessageUpdate {
 	mu.mutation.AddDocumentIDs(ids...)
@@ -172,6 +192,12 @@ func (mu *MessageUpdate) ClearUser() *MessageUpdate {
 // ClearEvent clears the "event" edge to the Event entity.
 func (mu *MessageUpdate) ClearEvent() *MessageUpdate {
 	mu.mutation.ClearEvent()
+	return mu
+}
+
+// ClearFriendship clears the "friendship" edge to the Friendship entity.
+func (mu *MessageUpdate) ClearFriendship() *MessageUpdate {
+	mu.mutation.ClearFriendship()
 	return mu
 }
 
@@ -319,6 +345,35 @@ func (mu *MessageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if mu.mutation.FriendshipCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   message.FriendshipTable,
+			Columns: []string{message.FriendshipColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(friendship.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.FriendshipIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   message.FriendshipTable,
+			Columns: []string{message.FriendshipColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(friendship.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -503,6 +558,25 @@ func (muo *MessageUpdateOne) SetEvent(e *Event) *MessageUpdateOne {
 	return muo.SetEventID(e.ID)
 }
 
+// SetFriendshipID sets the "friendship" edge to the Friendship entity by ID.
+func (muo *MessageUpdateOne) SetFriendshipID(id string) *MessageUpdateOne {
+	muo.mutation.SetFriendshipID(id)
+	return muo
+}
+
+// SetNillableFriendshipID sets the "friendship" edge to the Friendship entity by ID if the given value is not nil.
+func (muo *MessageUpdateOne) SetNillableFriendshipID(id *string) *MessageUpdateOne {
+	if id != nil {
+		muo = muo.SetFriendshipID(*id)
+	}
+	return muo
+}
+
+// SetFriendship sets the "friendship" edge to the Friendship entity.
+func (muo *MessageUpdateOne) SetFriendship(f *Friendship) *MessageUpdateOne {
+	return muo.SetFriendshipID(f.ID)
+}
+
 // AddDocumentIDs adds the "documents" edge to the Document entity by IDs.
 func (muo *MessageUpdateOne) AddDocumentIDs(ids ...string) *MessageUpdateOne {
 	muo.mutation.AddDocumentIDs(ids...)
@@ -532,6 +606,12 @@ func (muo *MessageUpdateOne) ClearUser() *MessageUpdateOne {
 // ClearEvent clears the "event" edge to the Event entity.
 func (muo *MessageUpdateOne) ClearEvent() *MessageUpdateOne {
 	muo.mutation.ClearEvent()
+	return muo
+}
+
+// ClearFriendship clears the "friendship" edge to the Friendship entity.
+func (muo *MessageUpdateOne) ClearFriendship() *MessageUpdateOne {
+	muo.mutation.ClearFriendship()
 	return muo
 }
 
@@ -709,6 +789,35 @@ func (muo *MessageUpdateOne) sqlSave(ctx context.Context) (_node *Message, err e
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(event.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if muo.mutation.FriendshipCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   message.FriendshipTable,
+			Columns: []string{message.FriendshipColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(friendship.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.FriendshipIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   message.FriendshipTable,
+			Columns: []string{message.FriendshipColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(friendship.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

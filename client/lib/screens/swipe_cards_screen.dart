@@ -24,7 +24,7 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
           child: Container(
             alignment: Alignment.bottomLeft,
             child: Image.asset(
-              'images/logo-bold.png',
+              'assets/images/logo-bold.png',
               fit: BoxFit.cover,
               width: 100,
             ),

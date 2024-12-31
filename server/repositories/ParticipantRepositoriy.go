@@ -103,6 +103,19 @@ func (pr *ParticipantRepository) GetPendingParticipantsByEvent(eventId string) (
 	return participants, nil
 }
 
+func (pr *ParticipantRepository) GetParticipationsUser(userId string) ([]*ent.Participant, error) {
+	participants, err := pr.client.Participant.Query().
+		Where(participant.HasUserWith(user.IDEQ(userId))).
+		Where(participant.StatusEQ("ACCEPTED")).
+		WithEvent().
+		All(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return participants, nil
+}
+
 func (pr *ParticipantRepository) DeleteParticipant(participantId string) error {
 	err := pr.client.Participant.DeleteOneID(participantId).Exec(context.Background())
 	if err != nil {

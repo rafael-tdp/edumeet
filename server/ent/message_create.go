@@ -6,6 +6,7 @@ import (
 	"context"
 	"edumeet/ent/document"
 	"edumeet/ent/event"
+	"edumeet/ent/friendship"
 	"edumeet/ent/message"
 	"edumeet/ent/user"
 	"errors"
@@ -135,6 +136,25 @@ func (mc *MessageCreate) SetNillableEventID(id *string) *MessageCreate {
 // SetEvent sets the "event" edge to the Event entity.
 func (mc *MessageCreate) SetEvent(e *Event) *MessageCreate {
 	return mc.SetEventID(e.ID)
+}
+
+// SetFriendshipID sets the "friendship" edge to the Friendship entity by ID.
+func (mc *MessageCreate) SetFriendshipID(id string) *MessageCreate {
+	mc.mutation.SetFriendshipID(id)
+	return mc
+}
+
+// SetNillableFriendshipID sets the "friendship" edge to the Friendship entity by ID if the given value is not nil.
+func (mc *MessageCreate) SetNillableFriendshipID(id *string) *MessageCreate {
+	if id != nil {
+		mc = mc.SetFriendshipID(*id)
+	}
+	return mc
+}
+
+// SetFriendship sets the "friendship" edge to the Friendship entity.
+func (mc *MessageCreate) SetFriendship(f *Friendship) *MessageCreate {
+	return mc.SetFriendshipID(f.ID)
 }
 
 // AddDocumentIDs adds the "documents" edge to the Document entity by IDs.
@@ -311,6 +331,23 @@ func (mc *MessageCreate) createSpec() (*Message, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.event_messages = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := mc.mutation.FriendshipIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   message.FriendshipTable,
+			Columns: []string{message.FriendshipColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(friendship.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.friendship_messages = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := mc.mutation.DocumentsIDs(); len(nodes) > 0 {

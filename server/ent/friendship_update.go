@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"edumeet/ent/friendship"
+	"edumeet/ent/message"
 	"edumeet/ent/predicate"
 	"edumeet/ent/user"
 	"errors"
@@ -80,6 +81,21 @@ func (fu *FriendshipUpdate) SetFriend(u *User) *FriendshipUpdate {
 	return fu.SetFriendID(u.ID)
 }
 
+// AddMessageIDs adds the "messages" edge to the Message entity by IDs.
+func (fu *FriendshipUpdate) AddMessageIDs(ids ...string) *FriendshipUpdate {
+	fu.mutation.AddMessageIDs(ids...)
+	return fu
+}
+
+// AddMessages adds the "messages" edges to the Message entity.
+func (fu *FriendshipUpdate) AddMessages(m ...*Message) *FriendshipUpdate {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return fu.AddMessageIDs(ids...)
+}
+
 // Mutation returns the FriendshipMutation object of the builder.
 func (fu *FriendshipUpdate) Mutation() *FriendshipMutation {
 	return fu.mutation
@@ -95,6 +111,27 @@ func (fu *FriendshipUpdate) ClearUser() *FriendshipUpdate {
 func (fu *FriendshipUpdate) ClearFriend() *FriendshipUpdate {
 	fu.mutation.ClearFriend()
 	return fu
+}
+
+// ClearMessages clears all "messages" edges to the Message entity.
+func (fu *FriendshipUpdate) ClearMessages() *FriendshipUpdate {
+	fu.mutation.ClearMessages()
+	return fu
+}
+
+// RemoveMessageIDs removes the "messages" edge to Message entities by IDs.
+func (fu *FriendshipUpdate) RemoveMessageIDs(ids ...string) *FriendshipUpdate {
+	fu.mutation.RemoveMessageIDs(ids...)
+	return fu
+}
+
+// RemoveMessages removes "messages" edges to Message entities.
+func (fu *FriendshipUpdate) RemoveMessages(m ...*Message) *FriendshipUpdate {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return fu.RemoveMessageIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -194,6 +231,51 @@ func (fu *FriendshipUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if fu.mutation.MessagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   friendship.MessagesTable,
+			Columns: []string{friendship.MessagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fu.mutation.RemovedMessagesIDs(); len(nodes) > 0 && !fu.mutation.MessagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   friendship.MessagesTable,
+			Columns: []string{friendship.MessagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fu.mutation.MessagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   friendship.MessagesTable,
+			Columns: []string{friendship.MessagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, fu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{friendship.Label}
@@ -266,6 +348,21 @@ func (fuo *FriendshipUpdateOne) SetFriend(u *User) *FriendshipUpdateOne {
 	return fuo.SetFriendID(u.ID)
 }
 
+// AddMessageIDs adds the "messages" edge to the Message entity by IDs.
+func (fuo *FriendshipUpdateOne) AddMessageIDs(ids ...string) *FriendshipUpdateOne {
+	fuo.mutation.AddMessageIDs(ids...)
+	return fuo
+}
+
+// AddMessages adds the "messages" edges to the Message entity.
+func (fuo *FriendshipUpdateOne) AddMessages(m ...*Message) *FriendshipUpdateOne {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return fuo.AddMessageIDs(ids...)
+}
+
 // Mutation returns the FriendshipMutation object of the builder.
 func (fuo *FriendshipUpdateOne) Mutation() *FriendshipMutation {
 	return fuo.mutation
@@ -281,6 +378,27 @@ func (fuo *FriendshipUpdateOne) ClearUser() *FriendshipUpdateOne {
 func (fuo *FriendshipUpdateOne) ClearFriend() *FriendshipUpdateOne {
 	fuo.mutation.ClearFriend()
 	return fuo
+}
+
+// ClearMessages clears all "messages" edges to the Message entity.
+func (fuo *FriendshipUpdateOne) ClearMessages() *FriendshipUpdateOne {
+	fuo.mutation.ClearMessages()
+	return fuo
+}
+
+// RemoveMessageIDs removes the "messages" edge to Message entities by IDs.
+func (fuo *FriendshipUpdateOne) RemoveMessageIDs(ids ...string) *FriendshipUpdateOne {
+	fuo.mutation.RemoveMessageIDs(ids...)
+	return fuo
+}
+
+// RemoveMessages removes "messages" edges to Message entities.
+func (fuo *FriendshipUpdateOne) RemoveMessages(m ...*Message) *FriendshipUpdateOne {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return fuo.RemoveMessageIDs(ids...)
 }
 
 // Where appends a list predicates to the FriendshipUpdate builder.
@@ -403,6 +521,51 @@ func (fuo *FriendshipUpdateOne) sqlSave(ctx context.Context) (_node *Friendship,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if fuo.mutation.MessagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   friendship.MessagesTable,
+			Columns: []string{friendship.MessagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fuo.mutation.RemovedMessagesIDs(); len(nodes) > 0 && !fuo.mutation.MessagesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   friendship.MessagesTable,
+			Columns: []string{friendship.MessagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := fuo.mutation.MessagesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   friendship.MessagesTable,
+			Columns: []string{friendship.MessagesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

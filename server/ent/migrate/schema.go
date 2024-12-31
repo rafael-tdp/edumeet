@@ -135,6 +135,7 @@ var (
 		{Name: "updated_by", Type: field.TypeString, Nullable: true},
 		{Name: "content", Type: field.TypeString},
 		{Name: "event_messages", Type: field.TypeString, Nullable: true},
+		{Name: "friendship_messages", Type: field.TypeString, Nullable: true},
 		{Name: "user_messages", Type: field.TypeString, Nullable: true},
 	}
 	// MessagesTable holds the schema information for the "messages" table.
@@ -150,8 +151,14 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:     "messages_users_messages",
+				Symbol:     "messages_friendships_messages",
 				Columns:    []*schema.Column{MessagesColumns[7]},
+				RefColumns: []*schema.Column{FriendshipsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "messages_users_messages",
+				Columns:    []*schema.Column{MessagesColumns[8]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -420,7 +427,8 @@ func init() {
 	FriendshipsTable.ForeignKeys[0].RefTable = UsersTable
 	FriendshipsTable.ForeignKeys[1].RefTable = UsersTable
 	MessagesTable.ForeignKeys[0].RefTable = EventsTable
-	MessagesTable.ForeignKeys[1].RefTable = UsersTable
+	MessagesTable.ForeignKeys[1].RefTable = FriendshipsTable
+	MessagesTable.ForeignKeys[2].RefTable = UsersTable
 	ParticipantsTable.ForeignKeys[0].RefTable = EventsTable
 	ParticipantsTable.ForeignKeys[1].RefTable = UsersTable
 	PhysicalEventsTable.ForeignKeys[0].RefTable = EventsTable

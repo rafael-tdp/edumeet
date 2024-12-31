@@ -5,7 +5,9 @@ import (
 	"edumeet/dtos"
 	"edumeet/repositories"
 	"edumeet/utils"
+	"errors"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/samber/lo"
@@ -18,16 +20,34 @@ type Event struct {
 }
 
 type ChatService struct {
-	chatRepo *repositories.ChatRepository
-	events   map[string]*Event
-	mu       sync.Mutex
+	chatRepo              *repositories.ChatRepository
+	userRepository        *repositories.UserRepository
+	participantRepository *repositories.ParticipantRepository
+	users                 map[string]chan string // Connexions utilisateurs
+	mu                    sync.Mutex
 }
 
-func NewChatService(chatRepo *repositories.ChatRepository) *ChatService {
+func NewChatService(chatRepo *repositories.ChatRepository, userRepository *repositories.UserRepository, participantRepository *repositories.ParticipantRepository) *ChatService {
 	return &ChatService{
-		chatRepo: chatRepo,
-		events:   make(map[string]*Event),
+		chatRepo:              chatRepo,
+		userRepository:        userRepository,
+		participantRepository: participantRepository,
+		users:                 make(map[string]chan string),
 	}
+}
+
+func (cs *ChatService) SubscribeUser(userID string, ch chan string) {
+	cs.mu.Lock()
+	defer cs.mu.Unlock()
+	cs.users[userID] = ch
+	print("User ", userID, " subscribed\n")
+}
+
+func (cs *ChatService) UnsubscribeUser(userID string) {
+	cs.mu.Lock()
+	defer cs.mu.Unlock()
+	delete(cs.users, userID)
+	print("User ", userID, " unsubscribed\n")
 }
 
 func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {
@@ -36,62 +56,7 @@ func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {
 		return nil, err
 	}
 
-	return dtos.EntToGetChatDTO(message.Edges.Event.ID, message.Content, message.ID, message.CreatedAt.String(), message.Edges.User.ID, []string{}), nil
-}
-
-func (cs *ChatService) SubscribeToEvent(eventID, userID string, ch chan string) {
-	cs.mu.Lock()
-	defer cs.mu.Unlock() // Assurez-vous que le verrou est libéré dès que possible
-
-	event, exists := cs.events[eventID]
-	if !exists {
-		event = &Event{
-			ID:        eventID,
-			Listeners: make(map[string]chan string),
-		}
-		cs.events[eventID] = event
-	}
-
-	// Ajoutez l'utilisateur et son canal au bon événement
-	event.mu.Lock()
-	defer event.mu.Unlock()
-
-	event.Listeners[userID] = ch
-}
-
-func (cs *ChatService) BroadcastMessage(ctx context.Context, messageDTO dtos.MessageDTO, eventID string, userID string) (*dtos.ResponseMessageDTO, error) {
-	cs.mu.Lock()
-	event, exists := cs.events[eventID]
-	cs.mu.Unlock()
-
-	if !exists {
-		return nil, fmt.Errorf("event %s not found", eventID)
-	}
-
-	message, err := cs.chatRepo.CreateMessage(ctx, messageDTO, eventID, userID)
-	if err != nil {
-		fmt.Printf("Error creating message: %v\n", err)
-		return nil, err
-	}
-
-	// Envoie de messages à tous les utilisateurs du bon événement
-	event.mu.Lock()
-	defer event.mu.Unlock()
-
-	// TODO : remplacer par la liste des documents
-	documents := []string{}
-
-	responseMessage := dtos.EntToResponseMessageDTO(message, documents, "CREATE", userID)
-
-	for userID, ch := range event.Listeners {
-		select {
-		case ch <- utils.JSONStringify(responseMessage):
-			fmt.Printf("Message sent to %s in event %s\n", userID, eventID)
-		default:
-			fmt.Printf("Unable to send message to %s in event %s\n", userID, eventID)
-		}
-	}
-	return responseMessage, nil
+	return dtos.EntToGetChatDTO(message.Content, message.ID, *message.CreatedBy), nil
 }
 
 func (cs *ChatService) CheckUserHasPermission(participants []dtos.ParticipantDTO, userID string) bool {
@@ -101,50 +66,262 @@ func (cs *ChatService) CheckUserHasPermission(participants []dtos.ParticipantDTO
 	return foundParticipant
 }
 
-//delete message
-
-func (cs *ChatService) DeleteMessage(eventID, messageID, userID string) (*dtos.DeleteMessageDTO, error) {
-
+func (cs *ChatService) SendMessageToUser(userID string, message string) error {
 	cs.mu.Lock()
-	event, exists := cs.events[eventID]
-	cs.mu.Unlock()
+	defer cs.mu.Unlock()
 
+	ch, exists := cs.users[userID]
 	if !exists {
-		return nil, fmt.Errorf("event %s not found", eventID)
+		fmt.Printf("User %s not connected. Skipping message delivery.\n", userID)
+		return nil
 	}
 
+	select {
+	case ch <- message:
+		fmt.Printf("Message sent to user %s\n", userID)
+	default:
+		fmt.Printf("Failed to send message to user %s\n", userID)
+	}
+
+	return nil
+}
+
+func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, participants []dtos.ParticipantDTO, message string, userId string, username string) error {
+	// Create message for event
+	messageCreated, err := cs.chatRepo.CreateMessage(ctx, message, eventID, userId)
+	if err != nil {
+		fmt.Printf("Error creating message: %v\n", err)
+		return err
+	}
+
+	messageResponse := dtos.CreateMessageEventDTO{
+		Type:         "CREATE",
+		Username:     username,
+		MessageId:    messageCreated.ID,
+		EventId:      eventID,
+		CreationDate: messageCreated.CreatedAt,
+		Content:      message,
+	}
+
+	// Send message to all active participants except the sender
+	for _, participant := range participants {
+		if strings.ToUpper(participant.Status) == "ACCEPTED" && participant.UserID != userId {
+			userID := participant.UserID
+			_ = cs.SendMessageToUser(userID, utils.JSONStringify(messageResponse))
+		}
+	}
+	return nil
+}
+
+func (cs *ChatService) DeleteMessage(eventID, messageID, userID string, participants []dtos.ParticipantDTO) (*dtos.DeleteMessageDTO, error) {
+	// Supprimez le message de la base de données
 	err := cs.chatRepo.DeleteMessage(messageID)
 	if err != nil {
 		fmt.Printf("Error deleting message: %v\n", err)
 		return nil, err
 	}
-	// Envoie de messages à tous les utilisateurs du bon événement
-	event.mu.Lock()
-	defer event.mu.Unlock()
 
+	// Construisez l'objet de notification pour les participants
 	deleteMessageDTO := dtos.EntToDeleteMessageDTO(messageID, "DELETE", userID)
 
-	for userID, ch := range event.Listeners {
-		select {
-		case ch <- utils.JSONStringify(deleteMessageDTO):
-			fmt.Printf("Message sent to %s in event %s\n", userID, eventID)
-		default:
-			fmt.Printf("Unable to send message to %s in event %s\n", userID, eventID)
+	deleteMessage := dtos.DeleteMessageEventDTO{
+		Type:      "DELETE",
+		MessageId: messageID,
+		EventId:   eventID,
+	}
+
+	// Envoyer la notification aux participants connectés
+	for _, participant := range participants {
+		if participant.Status == "ACCEPTED" && participant.UserID != userID {
+			_ = cs.SendMessageToUser(participant.UserID, utils.JSONStringify(deleteMessage))
 		}
 	}
 
 	return deleteMessageDTO, nil
 }
 
-func (cs *ChatService) GetChats(eventID string) ([]*dtos.GetChatDTO, error) {
-	chats, err := cs.chatRepo.GetChatsByEventID(eventID)
+func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendId string, userId string, username string) error {
+
+	// Check if friendship exists between the two users
+	friendship, err := cs.userRepository.GetFriendshipById(friendId)
+
+	if friendship == nil {
+		return fmt.Errorf("Vous ne pouvez pas envoyer de message à cet ami car vous n'êtes pas amis")
+	}
+
+	if err != nil {
+		fmt.Printf("Error getting friendship: %v\n", err)
+	}
+
+	if friendship.Status != "ACCEPTED" {
+		return fmt.Errorf("Vous ne pouvez pas envoyer de message à cet ami car la demande d'ami n'a pas été acceptée")
+	}
+
+	if userId != friendship.Edges.User.ID && userId != friendship.Edges.Friend.ID {
+		return fmt.Errorf("Vous n'êtes pas autorisé à envoyer un message à cet ami")
+	}
+
+	// Create message for friend
+	messageCreated, err := cs.chatRepo.CreateMessageFriend(ctx, message, friendId, userId)
+	if err != nil {
+		fmt.Printf("Error creating message: %v\n", err)
+		return err
+	}
+
+	var senderId string
+	var receiverId string
+	if userId == friendship.Edges.User.ID {
+		senderId = friendship.Edges.User.ID
+		receiverId = friendship.Edges.Friend.ID
+	} else {
+		senderId = friendship.Edges.Friend.ID
+		receiverId = friendship.Edges.User.ID
+	}
+
+	messageResponse := dtos.CreateMessageFriendDTO{
+		Type:         "CREATE",
+		Username:     username,
+		MessageId:    messageCreated.ID,
+		SenderId:     senderId,
+		ReceiverId:   receiverId,
+		CreationDate: messageCreated.CreatedAt,
+		Content:      message,
+	}
+
+	// Send message to friend
+	_ = cs.SendMessageToUser(receiverId, utils.JSONStringify(messageResponse))
+
+	return nil
+}
+
+func (cs *ChatService) DeleteMessageFriend(messageID, userID string, friendId string) error {
+
+	// Check if friendship exists between the two users
+	friendship, err := cs.userRepository.GetFriendshipById(friendId)
+
+	if err != nil {
+		fmt.Printf("Error getting friendship: %v\n", err)
+	}
+
+	// Supprimez le message de la base de données
+	errDelete := cs.chatRepo.DeleteMessage(messageID)
+	if errDelete != nil {
+		fmt.Printf("Error deleting message: %v\n", err)
+		return err
+	}
+
+	var senderId string
+	var receiverId string
+
+	if userID == friendship.Edges.User.ID {
+		senderId = friendship.Edges.User.ID
+		receiverId = friendship.Edges.Friend.ID
+	} else {
+		senderId = friendship.Edges.Friend.ID
+		receiverId = friendship.Edges.User.ID
+	}
+
+	deleteMessage := dtos.DeleteMessageFriendDTO{
+		Type:       "DELETE",
+		MessageId:  messageID,
+		FriendId:   friendId,
+		SenderId:   senderId,
+		ReceiverId: receiverId,
+	}
+
+	// Envoyer la notification aux participants connectés
+	_ = cs.SendMessageToUser(senderId, utils.JSONStringify(deleteMessage))
+	_ = cs.SendMessageToUser(receiverId, utils.JSONStringify(deleteMessage))
+
+	return nil
+}
+
+func (cs *ChatService) GetConversations(userId string) ([]dtos.ConversationDTO, error) {
+	var conversationDTOs []dtos.ConversationDTO
+
+	conversationsFriends, err := cs.userRepository.GetFriendshipsByUserId(userId)
+
 	if err != nil {
 		return nil, err
 	}
 
-	var getChatDtos []*dtos.GetChatDTO
-	for _, chat := range chats {
-		getChatDtos = append(getChatDtos, dtos.EntToGetChatDTO(eventID, chat.Content, chat.ID, chat.CreatedAt.String(), chat.Edges.User.ID, []string{}))
+	conversationsEvents, err := cs.participantRepository.GetParticipationsUser(userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, friendship := range conversationsFriends {
+		var userNameFriend string
+		if friendship.Edges.User.ID == userId {
+			userNameFriend = friendship.Edges.Friend.Username
+		} else {
+			userNameFriend = friendship.Edges.User.Username
+		}
+
+		lastMessageFriend, err := cs.chatRepo.GetLastMessageFriend(friendship.ID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(friendship.ID, userNameFriend, "private", lastMessageFriend.Content, lastMessageFriend.CreatedAt.String(), lastMessageFriend.Edges.User.Username))
+	}
+
+	for _, participant := range conversationsEvents {
+
+		lastMessageEvent, err := cs.chatRepo.GetLastMessageEvent(participant.Edges.Event.ID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(participant.Edges.Event.ID, participant.Edges.Event.Title, "event", lastMessageEvent.Content, lastMessageEvent.CreatedAt.String(), lastMessageEvent.Edges.User.Username))
+	}
+
+	return conversationDTOs, nil
+}
+
+func (cs *ChatService) GetMessagesFriend(userId, friendId string) ([]dtos.ResponseMessageDTO, error) {
+
+	// Check if friendship exists between the two users
+	friendship, err := cs.userRepository.GetFriendshipById(friendId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if userId != friendship.Edges.User.ID && userId != friendship.Edges.Friend.ID {
+		return nil, errors.New("Vous n'êtes pas autorisé à voir les messages de cet ami")
+	}
+
+	if friendship.Status != "ACCEPTED" {
+		return nil, errors.New("Vous ne pouvez pas voir les messages de cet ami car la demande d'ami n'a pas été acceptée")
+	}
+
+	messages, err := cs.chatRepo.GetMessagesFriend(friendId)
+	if err != nil {
+		return nil, err
+	}
+
+	getChatDtos := make([]dtos.ResponseMessageDTO, 0)
+	for _, message := range messages {
+		getChatDtos = append(getChatDtos, dtos.EntToResponseMessageDTO(message.Content, message.ID, *message.CreatedBy, message.CreatedAt.String(), message.Edges.User.Username))
+	}
+
+	return getChatDtos, nil
+}
+
+func (cs *ChatService) GetMessagesEvent(userId, eventId string) ([]dtos.ResponseMessageDTO, error) {
+
+	messages, err := cs.chatRepo.GetMessagesEvent(eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	getChatDtos := make([]dtos.ResponseMessageDTO, 0)
+	for _, message := range messages {
+		getChatDtos = append(getChatDtos, dtos.EntToResponseMessageDTO(message.Content, message.ID, *message.CreatedBy, message.CreatedAt.String(), message.Edges.User.Username))
 	}
 
 	return getChatDtos, nil

@@ -1,7 +1,23 @@
+import 'package:client/core/models/event.dart';
+import 'package:client/core/services/sse_services.dart';
+import 'package:client/providers/user_provider.dart';
+import 'package:client/screens/chat_page.dart';
+import 'package:client/core/guard/auth_gard.dart';
+import 'package:client/core/models/user.dart';
+import 'package:client/core/services/auth_services.dart';
+import 'package:client/core/services/message_services.dart';
+import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/providers/locale_provider.dart';
+import 'package:client/screens/edit_profile_page.dart';
+import 'package:client/screens/event_chat_page.dart';
+import 'package:client/screens/event_details_page.dart';
+import 'package:client/screens/valide_account_screen.dart';
 import 'package:client/router.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
+import 'package:flutter_client_sse/flutter_client_sse.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -26,13 +42,15 @@ void main() async {
       enabled: !kReleaseMode,
       builder: (context) => MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context) => UserProvider()),
+          ChangeNotifierProvider(create: (_) => LocaleProvider()),
+          ChangeNotifierProvider(create: (_) => UserProvider()),
         ],
         child: TranslationProvider(child: const MyApp()),
       ),
     ),
   );
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -67,6 +85,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final SseServices _sseServices = SseServices();
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
@@ -96,6 +115,12 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _sseServices.connectToSse();
   }
 
   @override

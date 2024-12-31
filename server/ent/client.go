@@ -1163,6 +1163,22 @@ func (c *FriendshipClient) QueryFriend(f *Friendship) *UserQuery {
 	return query
 }
 
+// QueryMessages queries the messages edge of a Friendship.
+func (c *FriendshipClient) QueryMessages(f *Friendship) *MessageQuery {
+	query := (&MessageClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := f.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(friendship.Table, friendship.FieldID, id),
+			sqlgraph.To(message.Table, message.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, friendship.MessagesTable, friendship.MessagesColumn),
+		)
+		fromV = sqlgraph.Neighbors(f.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *FriendshipClient) Hooks() []Hook {
 	return c.hooks.Friendship
@@ -1321,6 +1337,22 @@ func (c *MessageClient) QueryEvent(m *Message) *EventQuery {
 			sqlgraph.From(message.Table, message.FieldID, id),
 			sqlgraph.To(event.Table, event.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, message.EventTable, message.EventColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryFriendship queries the friendship edge of a Message.
+func (c *MessageClient) QueryFriendship(m *Message) *FriendshipQuery {
+	query := (&FriendshipClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(message.Table, message.FieldID, id),
+			sqlgraph.To(friendship.Table, friendship.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, message.FriendshipTable, message.FriendshipColumn),
 		)
 		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
 		return fromV, nil

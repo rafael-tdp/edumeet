@@ -1,16 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:client/core/services/auth_services.dart';
+import 'package:flutter_client_sse/constants/sse_request_type_enum.dart';
+import 'package:flutter_client_sse/flutter_client_sse.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import 'package:client/core/models/event.dart';
 
 class EventServices {
-  static Future<String?> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('auth_token');
-  }
-
   static dynamic decodeResponse(http.Response response) {
     final utf8DecodedBody = utf8.decode(response.bodyBytes);
     return jsonDecode(utf8DecodedBody);
@@ -24,7 +22,7 @@ class EventServices {
     double? distance,
   ) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();
 
       if (token == null) {
         return [];
@@ -58,7 +56,7 @@ class EventServices {
 
   static Future<List<Event>> getCurrentUserEvents() async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();
 
       if (token == null) {
         return [];
@@ -81,7 +79,7 @@ class EventServices {
 
   static Future<List<Event>> getEventsCreatedByCurrentUser() async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();
 
       if (token == null) {
         return [];
@@ -104,7 +102,7 @@ class EventServices {
 
   static Future<Event> getEventDetails(String eventId) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();
 
       if (token == null) {
         throw Exception('No token found');
@@ -127,7 +125,7 @@ class EventServices {
 
   static Future<Event> createEvent(Event event) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -158,7 +156,7 @@ class EventServices {
 
   static Future<String> generateExo(String eventId) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -198,7 +196,7 @@ class EventServices {
   static Future<String> generateCorrection(
       String eventId, String exercise) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -235,7 +233,7 @@ class EventServices {
   static Future<void> saveDocument(
       String eventId, String content, String docType) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -270,7 +268,7 @@ class EventServices {
   // get document content
   static Future<String> getDocumentContent(String documentId) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -298,7 +296,7 @@ class EventServices {
 
   static Future<void> leaveEvent(String participantId) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');
@@ -323,7 +321,7 @@ class EventServices {
 
   static Future<void> deleteEvent(String eventId) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();;
 
       if (token == null) {
         throw Exception('No token found');

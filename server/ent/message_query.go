@@ -7,6 +7,7 @@ import (
 	"database/sql/driver"
 	"edumeet/ent/document"
 	"edumeet/ent/event"
+	"edumeet/ent/friendship"
 	"edumeet/ent/message"
 	"edumeet/ent/predicate"
 	"edumeet/ent/user"
@@ -22,14 +23,15 @@ import (
 // MessageQuery is the builder for querying Message entities.
 type MessageQuery struct {
 	config
-	ctx           *QueryContext
-	order         []message.OrderOption
-	inters        []Interceptor
-	predicates    []predicate.Message
-	withUser      *UserQuery
-	withEvent     *EventQuery
-	withDocuments *DocumentQuery
-	withFKs       bool
+	ctx            *QueryContext
+	order          []message.OrderOption
+	inters         []Interceptor
+	predicates     []predicate.Message
+	withUser       *UserQuery
+	withEvent      *EventQuery
+	withFriendship *FriendshipQuery
+	withDocuments  *DocumentQuery
+	withFKs        bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -103,6 +105,28 @@ func (mq *MessageQuery) QueryEvent() *EventQuery {
 			sqlgraph.From(message.Table, message.FieldID, selector),
 			sqlgraph.To(event.Table, event.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, message.EventTable, message.EventColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryFriendship chains the current query on the "friendship" edge.
+func (mq *MessageQuery) QueryFriendship() *FriendshipQuery {
+	query := (&FriendshipClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(message.Table, message.FieldID, selector),
+			sqlgraph.To(friendship.Table, friendship.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, message.FriendshipTable, message.FriendshipColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
 		return fromU, nil
@@ -319,14 +343,15 @@ func (mq *MessageQuery) Clone() *MessageQuery {
 		return nil
 	}
 	return &MessageQuery{
-		config:        mq.config,
-		ctx:           mq.ctx.Clone(),
-		order:         append([]message.OrderOption{}, mq.order...),
-		inters:        append([]Interceptor{}, mq.inters...),
-		predicates:    append([]predicate.Message{}, mq.predicates...),
-		withUser:      mq.withUser.Clone(),
-		withEvent:     mq.withEvent.Clone(),
-		withDocuments: mq.withDocuments.Clone(),
+		config:         mq.config,
+		ctx:            mq.ctx.Clone(),
+		order:          append([]message.OrderOption{}, mq.order...),
+		inters:         append([]Interceptor{}, mq.inters...),
+		predicates:     append([]predicate.Message{}, mq.predicates...),
+		withUser:       mq.withUser.Clone(),
+		withEvent:      mq.withEvent.Clone(),
+		withFriendship: mq.withFriendship.Clone(),
+		withDocuments:  mq.withDocuments.Clone(),
 		// clone intermediate query.
 		sql:  mq.sql.Clone(),
 		path: mq.path,
@@ -352,6 +377,17 @@ func (mq *MessageQuery) WithEvent(opts ...func(*EventQuery)) *MessageQuery {
 		opt(query)
 	}
 	mq.withEvent = query
+	return mq
+}
+
+// WithFriendship tells the query-builder to eager-load the nodes that are connected to
+// the "friendship" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MessageQuery) WithFriendship(opts ...func(*FriendshipQuery)) *MessageQuery {
+	query := (&FriendshipClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withFriendship = query
 	return mq
 }
 
@@ -445,13 +481,14 @@ func (mq *MessageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Mess
 		nodes       = []*Message{}
 		withFKs     = mq.withFKs
 		_spec       = mq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			mq.withUser != nil,
 			mq.withEvent != nil,
+			mq.withFriendship != nil,
 			mq.withDocuments != nil,
 		}
 	)
-	if mq.withUser != nil || mq.withEvent != nil {
+	if mq.withUser != nil || mq.withEvent != nil || mq.withFriendship != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -484,6 +521,12 @@ func (mq *MessageQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Mess
 	if query := mq.withEvent; query != nil {
 		if err := mq.loadEvent(ctx, query, nodes, nil,
 			func(n *Message, e *Event) { n.Edges.Event = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := mq.withFriendship; query != nil {
+		if err := mq.loadFriendship(ctx, query, nodes, nil,
+			func(n *Message, e *Friendship) { n.Edges.Friendship = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -554,6 +597,38 @@ func (mq *MessageQuery) loadEvent(ctx context.Context, query *EventQuery, nodes 
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "event_messages" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (mq *MessageQuery) loadFriendship(ctx context.Context, query *FriendshipQuery, nodes []*Message, init func(*Message), assign func(*Message, *Friendship)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*Message)
+	for i := range nodes {
+		if nodes[i].friendship_messages == nil {
+			continue
+		}
+		fk := *nodes[i].friendship_messages
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(friendship.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "friendship_messages" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

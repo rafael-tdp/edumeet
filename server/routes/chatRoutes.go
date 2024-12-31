@@ -11,18 +11,22 @@ import (
 )
 
 func setupRoutesChat(app *fiber.App, chatController *controllers.ChatController) {
-	app.Get("/events/:event_id/messages", middlewares.JWTAuthMiddleware, chatController.GetChats)
-	app.Get("/events/:event_id/connect", middlewares.JWTAuthMiddleware, chatController.ConnectToEvent)
-	app.Post("/events/:event_id/messages", middlewares.JWTAuthMiddleware, chatController.SendMessage)
-	app.Delete("/events/:event_id/messages/:message_id", middlewares.JWTAuthMiddleware, chatController.DeleteMessage)
+	app.Get("/chats/conversations", middlewares.JWTAuthMiddleware, chatController.GetConversations)
+	app.Get("/chats/get-conversation-friend/:friendId", middlewares.JWTAuthMiddleware, chatController.GetMessagesFriend)
+	app.Get("/chats/get-conversation-event/:eventId", middlewares.JWTAuthMiddleware, chatController.GetMessagesEvent)
+	app.Get("/chats/connect", middlewares.JWTAuthMiddleware, chatController.Connect)
+	app.Post("/chats/send-message-to-event/:eventId", middlewares.JWTAuthMiddleware, chatController.SendMessageToEvent)
+	app.Delete("/chats/delete-message-to-event/:eventId/:messageId", middlewares.JWTAuthMiddleware, chatController.DeleteMessageEvent)
+	app.Post("/chats/send-message-to-friend/:friendId", middlewares.JWTAuthMiddleware, chatController.SendMessageToFriend)
+	app.Delete("/chats/delete-message-to-friend/:friendId/:messageId", middlewares.JWTAuthMiddleware, chatController.DeleteMessageFriend)
 }
 
 func initChatController(client *ent.Client) *controllers.ChatController {
 	chatRepo := repositories.NewChatRepository(client)
-	chatService := services.NewChatService(chatRepo)
-
-	eventRepository := repositories.NewEventRepository(client)
+	userRepository := repositories.NewUserRepository(client)
 	participantRepository := repositories.NewParticipantRepository(client)
+	chatService := services.NewChatService(chatRepo, userRepository, participantRepository)
+	eventRepository := repositories.NewEventRepository(client)
 	eventService := services.NewEventService(eventRepository, participantRepository)
 
 	return controllers.NewChatController(chatService, eventService)

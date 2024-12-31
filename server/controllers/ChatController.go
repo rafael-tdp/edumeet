@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/oklog/ulid/v2"
 	"github.com/valyala/fasthttp"
@@ -28,29 +27,8 @@ func NewChatController(chatService *services.ChatService, eventService *services
 	}
 }
 
-func (cc *ChatController) ConnectToEvent(c *fiber.Ctx) error {
+func (cc *ChatController) Connect(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
-
-	eventID, err := ulid.Parse(c.Params("event_id"))
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
-	}
-
-	// Vérifiez si l'event existe
-	event, err := cc.eventService.GetEvent(eventID.String())
-	if err != nil {
-		return c.Status(http.StatusNotFound).JSON(fiber.Map{
-
-			"error": "Event not found",
-		})
-	}
-
-	// Vérifiez si l'utilisateur est autorisé à accéder à l'événement
-	if !cc.chatService.CheckUserHasPermission(event.Participants, user.ID) {
-		return c.Status(http.StatusForbidden).JSON(fiber.Map{
-			"error": "You don't have permission to access this event",
-		})
-	}
 
 	c.Set("Content-Type", "text/event-stream")
 	c.Set("Cache-Control", "no-cache")
@@ -58,10 +36,10 @@ func (cc *ChatController) ConnectToEvent(c *fiber.Ctx) error {
 	c.Set("Transfer-Encoding", "chunked")
 
 	messageChannel := make(chan string)
-	cc.chatService.SubscribeToEvent(eventID.String(), user.ID, messageChannel)
+	cc.chatService.SubscribeUser(user.ID, messageChannel)
 
 	c.Status(fiber.StatusOK).Context().SetBodyStreamWriter(fasthttp.StreamWriter(func(w *bufio.Writer) {
-
+		defer cc.chatService.UnsubscribeUser(user.ID) // Nettoyage après déconnexion
 		for {
 			select {
 			case message := <-messageChannel:
@@ -79,30 +57,9 @@ func (cc *ChatController) ConnectToEvent(c *fiber.Ctx) error {
 	return nil
 }
 
-func (cc *ChatController) SendMessage(c *fiber.Ctx) error {
-
-	user := c.Locals("user").(*ent.User)
-
-	eventID, err := ulid.Parse(c.Params("event_id"))
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
-	}
-
-	// Vérifiez si l'event existe
-	event, errEvent := cc.eventService.GetEvent(eventID.String())
-	if errEvent != nil {
-		return c.Status(http.StatusNotFound).JSON(fiber.Map{
-
-			"error": "Event not found",
-		})
-	}
-
-	// Vérifiez si l'utilisateur est autorisé à accéder à l'événement
-	if !cc.chatService.CheckUserHasPermission(event.Participants, user.ID) {
-		return c.Status(http.StatusForbidden).JSON(fiber.Map{
-			"error": "You don't have permission to access this event",
-		})
-	}
+func (cc *ChatController) SendMessageToFriend(c *fiber.Ctx) error {
+	friendId := c.Params("friendId")
+	currentUser := c.Locals("user").(*ent.User)
 
 	var messageDTO dtos.MessageDTO
 
@@ -110,41 +67,55 @@ func (cc *ChatController) SendMessage(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	validations := validator.New()
-	errValidations := validations.Struct(messageDTO)
-	if errValidations != nil {
-		errors := make([]string, 0)
-		if validationErrors, ok := errValidations.(validator.ValidationErrors); ok {
-			for _, err := range validationErrors {
-				errors = append(errors, err.Error())
-			}
-		} else {
-			errors = append(errors, errValidations.Error())
-		}
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	if err := cc.chatService.SendMessageToFriend(ctx, messageDTO.Message, friendId, currentUser.ID, currentUser.Username); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	ctx := context.WithValue(c.Context(), "user_id", user.ID)
-
-	responseMessage, err := cc.chatService.BroadcastMessage(ctx, messageDTO, eventID.String(), user.ID)
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
-	}
-
-	return c.JSON(responseMessage)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Message sent successfully"})
 }
 
-func (cc *ChatController) DeleteMessage(c *fiber.Ctx) error {
+func (cc *ChatController) SendMessageToEvent(c *fiber.Ctx) error {
+
+	eventId := c.Params("eventId")
+
+	var messageDTO dtos.MessageDTO
+
+	if err := c.BodyParser(&messageDTO); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
 	user := c.Locals("user").(*ent.User)
 
-	messageID, err := ulid.Parse(c.Params("message_id"))
+	// Vérifiez si l'événement existe
+	event, err := cc.eventService.GetEvent(eventId)
+	if err != nil {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Event not found"})
+	}
+
+	if !cc.chatService.CheckUserHasPermission(event.Participants, user.ID) {
+		return c.Status(http.StatusForbidden).JSON(fiber.Map{"error": "You don't have permission to access this event"})
+	}
+
+	// Envoyez le message à tous les utilisateurs de cet événement
+	ctx := context.WithValue(c.Context(), "user_id", user.ID)
+	err = cc.chatService.SendMessageToEvent(ctx, eventId, event.Participants, messageDTO.Message, user.ID, user.Username)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Message sent to event successfully"})
+}
+
+func (cc *ChatController) DeleteMessageEvent(c *fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	messageID, err := ulid.Parse(c.Params("messageId"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
 
-	eventID, err := ulid.Parse(c.Params("event_id"))
+	eventID, err := ulid.Parse(c.Params("eventId"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
@@ -176,7 +147,8 @@ func (cc *ChatController) DeleteMessage(c *fiber.Ctx) error {
 		})
 	}
 
-	deleteMessage, err := cc.chatService.DeleteMessage(eventID.String(), messageID.String(), user.ID)
+	deleteMessage, err := cc.chatService.DeleteMessage(eventID.String(), messageID.String(), user.ID, event.Participants)
+
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
@@ -186,35 +158,84 @@ func (cc *ChatController) DeleteMessage(c *fiber.Ctx) error {
 	return c.JSON(deleteMessage)
 }
 
-func (cc *ChatController) GetChats(c *fiber.Ctx) error {
+func (cc *ChatController) DeleteMessageFriend(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
-	eventID, err := ulid.Parse(c.Params("event_id"))
+	friendId, err := ulid.Parse(c.Params("friendId"))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid Friend ID"})
+	}
+
+	messageID, err := ulid.Parse(c.Params("messageId"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
 
-	// Vérifiez si l'event existe
-	event, errEvent := cc.eventService.GetEvent(eventID.String())
-	if errEvent != nil {
+	// Vérifiez si le message existe
+	msg, errMessage := cc.chatService.GetChat(messageID.String())
+	if errMessage != nil {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{
-
-			"error": "Event not found",
+			"error": "Message not found",
 		})
 	}
 
-	if !cc.chatService.CheckUserHasPermission(event.Participants, user.ID) {
-		return c.Status(http.StatusForbidden).JSON(fiber.Map{
-			"error": "You don't have permission to access this event",
-		})
+	if !guards.CanAuthorize(user, msg) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
 	}
 
-	chats, err := cc.chatService.GetChats(eventID.String())
-	if err != nil {
+	errDelete := cc.chatService.DeleteMessageFriend(messageID.String(), user.ID, friendId.String())
+
+	if errDelete != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
 			"error": err.Error(),
 		})
 	}
 
-	return c.JSON(chats)
+	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{})
+}
+
+func (cc *ChatController) GetConversations(c *fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	conversationDTOs, err := cc.chatService.GetConversations(user.ID)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(conversationDTOs)
+}
+
+func (cc *ChatController) GetMessagesFriend(c *fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	friendId := c.Params("friendId")
+
+	messages, err := cc.chatService.GetMessagesFriend(user.ID, friendId)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(messages)
+}
+
+func (cc *ChatController) GetMessagesEvent(c *fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+
+	eventId := c.Params("eventId")
+
+	event, err := cc.eventService.GetEvent(eventId)
+	if err != nil {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{"error": "Event not found"})
+	}
+
+	if !cc.chatService.CheckUserHasPermission(event.Participants, user.ID) {
+		return c.Status(http.StatusForbidden).JSON(fiber.Map{"error": "You don't have permission to access this event"})
+	}
+
+	messages, err := cc.chatService.GetMessagesEvent(user.ID, eventId)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(messages)
 }

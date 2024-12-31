@@ -33,9 +33,11 @@ type FriendshipEdges struct {
 	User *User `json:"user,omitempty"`
 	// Friend holds the value of the friend edge.
 	Friend *User `json:"friend,omitempty"`
+	// Messages holds the value of the messages edge.
+	Messages []*Message `json:"messages,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // UserOrErr returns the User value or an error if the edge
@@ -58,6 +60,15 @@ func (e FriendshipEdges) FriendOrErr() (*User, error) {
 		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "friend"}
+}
+
+// MessagesOrErr returns the Messages value or an error if the edge
+// was not loaded in eager-loading.
+func (e FriendshipEdges) MessagesOrErr() ([]*Message, error) {
+	if e.loadedTypes[2] {
+		return e.Messages, nil
+	}
+	return nil, &NotLoadedError{edge: "messages"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -133,6 +144,11 @@ func (f *Friendship) QueryUser() *UserQuery {
 // QueryFriend queries the "friend" edge of the Friendship entity.
 func (f *Friendship) QueryFriend() *UserQuery {
 	return NewFriendshipClient(f.config).QueryFriend(f)
+}
+
+// QueryMessages queries the "messages" edge of the Friendship entity.
+func (f *Friendship) QueryMessages() *MessageQuery {
+	return NewFriendshipClient(f.config).QueryMessages(f)
 }
 
 // Update returns a builder for updating this Friendship.
