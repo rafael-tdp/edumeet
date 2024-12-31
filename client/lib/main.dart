@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
     const EventsPage(),
     const ConversationsPage(),
     const ProfilePage(
-      isCurrentUser: true,
+      userId: null,
     ),
   ];
 

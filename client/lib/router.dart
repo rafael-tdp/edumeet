@@ -10,7 +10,6 @@ import 'package:client/screens/events_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/valide_account_screen.dart';
 import 'package:flutter/material.dart';
-import 'components/event/participants_list.dart';
 import 'core/models/user.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/register_screen.dart';
@@ -71,7 +70,7 @@ final _router =
                   parentNavigatorKey: _rootNavigatorKey,
                   builder: (context, state) {
                     final documentId = state.pathParameters['documentId']!;
-                    const documentName = 'Document'; 
+                    const documentName = 'Document';
                     return DocumentViewerPage(
                       documentId: documentId,
                       documentName: documentName,
@@ -89,7 +88,9 @@ final _router =
       GoRoute(
           path: ProfilePage.routeName,
           parentNavigatorKey: _shellNavigatorKey,
-          builder: (context, state) => const ProfilePage(isCurrentUser: true),
+          builder: (context, state) => const ProfilePage(
+                userId: null,
+              ),
           routes: [
             GoRoute(
               path: EditProfilePage.routeName,
@@ -135,22 +136,12 @@ final _router =
     ),
   ),
   GoRoute(
-    path: ProfilePage.routeName,
-    parentNavigatorKey: _rootNavigatorKey,
-    name: ProfilePage.routeName.replaceAll("/", ""),
-    builder: (context, state) => const ProfilePage(
-      isCurrentUser: false,
-    ),
-  ),
-  GoRoute(
-      path: UserProfileWrapper.routeName,
+      path: '${ProfilePage.routeName}/:userId',
       parentNavigatorKey: _rootNavigatorKey,
-      name: UserProfileWrapper.routeName.replaceAll("/", ""),
-      builder: (context, state) => UserProfileWrapper(
-            user: state.pathParameters['user'] as Map<String, String>,
-            isCurrentUser: state.pathParameters['isCurrentUser'] as bool,
-      )
-  ),
+      builder: (context, state) {
+        final userId = state.pathParameters['userId'];
+        return ProfilePage(userId: userId);
+      }),
   GoRoute(
     path: '${ChatPage.routeName}/:userName',
     parentNavigatorKey: _rootNavigatorKey,

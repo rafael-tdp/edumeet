@@ -1,10 +1,10 @@
 class User {
-  final String id;
-  final String email;
+  final String? id;
+  final String? email;
   final String username;
-  final String lastname;
-  final String firstname;
-  final DateTime birthDate;
+  final String? lastname;
+  final String? firstname;
+  final DateTime? birthDate;
   final String? bio;
   final String? picture;
   final int? reportNumber;
@@ -13,11 +13,11 @@ class User {
 
   User({
     required this.id,
-    required this.email,
+    this.email,
     required this.username,
-    required this.lastname,
-    required this.firstname,
-    required this.birthDate,
+    this.lastname,
+    this.firstname,
+    this.birthDate,
     this.bio,
     this.picture,
     this.reportNumber,
@@ -27,17 +27,17 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
-      email: json['email'],
+      id: json['id'] ?? '',
+      email: json['email'] ?? '',
       username: json['username'],
-      lastname: json['lastname'],
-      firstname: json['firstname'],
-      birthDate: DateTime.parse(json['birthDate']),
+      lastname: json['lastname'] ?? '',
+      firstname: json['firstname'] ?? '',
+      birthDate: DateTime.parse(json['birthDate'] ?? ''),
       bio: json['bio'] ?? '',
       picture: json['picture'] ?? '',
       reportNumber: json['reportNumber'] ?? 0,
-      address: json['address'],
-      role: json['role'],
+      address: json['address'] ?? '',
+      role: json['role'] ?? '',
     );
   }
 
@@ -48,7 +48,7 @@ class User {
       'username': username,
       'lastname': lastname,
       'firstname': firstname,
-      'birthDate': '${birthDate.toIso8601String()}Z',
+      'birthDate': '${birthDate?.toIso8601String()}Z',
       'bio': bio,
       'picture': picture,
       'reportNumber': reportNumber,

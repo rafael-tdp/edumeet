@@ -71,7 +71,6 @@ class MessagesPreview extends StatelessWidget {
 
                       _avatar.toImage(width: 50, height: 50);
 
-                      print(message.user);
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Row(

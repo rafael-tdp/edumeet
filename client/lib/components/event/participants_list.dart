@@ -1,12 +1,8 @@
-import 'package:client/core/models/user.dart';
 import 'package:client/core/services/participant_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
-import 'package:client/providers/user_provider.dart';
 import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/screens/profile_screen.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 class ParticipantsList extends StatefulWidget {
   final List<dynamic> participants;
@@ -24,12 +20,9 @@ class ParticipantsList extends StatefulWidget {
 
 class _ParticipantsListState extends State<ParticipantsList> {
   late List<dynamic> participantsList;
-  User? _currentUser;
 
   Future<void> _loadCurrentUser() async {
     if (!mounted) return;
-    _currentUser =
-        await Provider.of<UserProvider>(context, listen: false).getUser();
   }
 
   @override
@@ -71,13 +64,11 @@ class _ParticipantsListState extends State<ParticipantsList> {
   @override
   Widget build(BuildContext context) {
     final acceptedParticipants = widget.participants
-        .where((participant) =>
-            participant['status'] == 'ACCEPTED')
+        .where((participant) => participant['status'] == 'ACCEPTED')
         .toList();
 
     final pendingParticipantsCount = widget.participants
-        .where((participant) =>
-            participant['status'] == 'PENDING')
+        .where((participant) => participant['status'] == 'PENDING')
         .length;
 
     return Column(
@@ -110,21 +101,19 @@ class _ParticipantsListState extends State<ParticipantsList> {
                               title: const Text("Gestion des utilisateurs"),
                               content: Column(
                                 mainAxisSize: MainAxisSize.min,
-                                children:
-                                    participantsList.map((participant) {
+                                children: participantsList.map((participant) {
                                   String status = participant['status'];
                                   final Avatar _avatar = DiceBearBuilder(
                                     seed: participant['user']['username'],
                                     sprite: DiceBearSprite.bottts,
                                   ).build();
                                   return ListTile(
-                                    title:
-                                        Row(
-                                          children: [
-                                            _avatar.toImage(width: 24, height: 24),
-                                            Text(participant['user']['username']),
-                                          ],
-                                        ),
+                                    title: Row(
+                                      children: [
+                                        _avatar.toImage(width: 24, height: 24),
+                                        Text(participant['user']['username']),
+                                      ],
+                                    ),
                                     trailing: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -208,13 +197,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
               ).build();
               return GestureDetector(
                 onTap: () {
-                  final bool isCurrentUser =
-                      participant['user']['id'] == _currentUser!.id;
-                  // go router
-                  context.go(UserProfileWrapper.routeName, extra: {
-                    'user': participant,
-                    'isCurrentUser': isCurrentUser,
-                  });
+                  ProfilePage.navigateTo(context, participant['user']['id']);
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -314,52 +297,6 @@ class _ParticipantsListState extends State<ParticipantsList> {
           ),
         ],
       ],
-    );
-  }
-}
-
-class UserProfileWrapper extends StatelessWidget {
-  static const routeName = '/user-profile';
-  static navigateTo(BuildContext context,
-      {required Map<String, String> user, required bool isCurrentUser}) {
-    Navigator.pushNamed(
-      context,
-      routeName,
-      arguments: {
-        'user': user,
-        'isCurrentUser': isCurrentUser,
-      },
-    );
-  }
-
-  final Map<String, String> user;
-  final bool isCurrentUser;
-
-  const UserProfileWrapper({
-    super.key,
-    required this.user,
-    required this.isCurrentUser,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: isCurrentUser
-          ? null
-          : AppBar(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.black,
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-      body: ProfilePage(
-        isCurrentUser: isCurrentUser,
-      ),
     );
   }
 }
