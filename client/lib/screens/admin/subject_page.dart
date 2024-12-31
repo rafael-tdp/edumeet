@@ -1,3 +1,4 @@
+import 'package:client/core/models/response.dart';
 import 'package:client/core/models/subject.dart';
 import 'package:client/core/services/subjects_services.dart';
 import 'package:client/screens/admin/admin_page.dart';
@@ -59,19 +60,19 @@ class _SubjectPageState extends State<SubjectPage> {
               content: 'Êtes-vous sûr de vouloir supprimer le sujet "${subject.name}" ?',
               isLoading: isDeleting,
               onCancel: () {
-                Navigator.of(context).pop(); // Fermer la modal
+                Navigator.of(context).pop();
               },
               onConfirm: () async {
                 setState(() {
-                  isDeleting = true; // Activer le loader
+                  isDeleting = true;
                 });
 
-                bool isDeleted = await SubjectServices.deleteSubject(subject.id);
+                ResponseRequest response = await SubjectServices.deleteSubject(subject.id);
                 setState(() {
                   isDeleting = false;
                 });
 
-                if(isDeleted) {
+                if(response.success) {
                   _fetchSubjects();
 
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -79,10 +80,10 @@ class _SubjectPageState extends State<SubjectPage> {
                   );
                 } else{
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Une erreur s''est produite pendant la suppression')),
+                     SnackBar(content: Text(response.message ?? 'Message par défaut')),
                   );
                 }
-                Navigator.of(context).pop(); // Fermer la modal
+                Navigator.of(context).pop();
               },
             );
           },

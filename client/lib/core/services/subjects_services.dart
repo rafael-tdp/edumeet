@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import 'package:client/core/models/subject.dart';
 
+import '../models/response.dart';
+
 class SubjectServices {
   static Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -42,12 +44,12 @@ class SubjectServices {
     }
   }
 
-  static Future<bool> deleteSubject(subjectId) async {
+  static Future<ResponseRequest> deleteSubject(subjectId) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return false;
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.delete(
@@ -59,14 +61,14 @@ class SubjectServices {
       );
 
       if (response.statusCode == 204) {
-        return true;
+        return ResponseRequest(success: true, message: "Matière supprimé avec succes.");
       } else {
-        return false;
+        return ResponseRequest(success: true, message: json.decode(response.body)['error']);
       }
     } catch (error, stacktrace) {
-      log('An error occurred while retrieving subjects',
+      log('An error occurred while deleting subject',
           error: error, stackTrace: stacktrace);
-      return false;
+      return ResponseRequest(success: false, message: "Une erreur s'est produite.");
     }
   }
 
