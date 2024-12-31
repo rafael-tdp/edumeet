@@ -16,14 +16,12 @@ import (
 type EventService struct {
 	eventRepository       *repositories.EventRepository
 	participantRepository *repositories.ParticipantRepository
-	messageRepository     *repositories.MessageRepository
 }
 
-func NewEventService(eventRepository *repositories.EventRepository, participantRepository *repositories.ParticipantRepository, messageRepository *repositories.MessageRepository) *EventService {
+func NewEventService(eventRepository *repositories.EventRepository, participantRepository *repositories.ParticipantRepository) *EventService {
 	return &EventService{
 		eventRepository:       eventRepository,
 		participantRepository: participantRepository,
-		messageRepository:     messageRepository,
 	}
 }
 
@@ -283,7 +281,7 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 		return dtos.EventWithDetailsDTO{}, err
 	}
 
-	lastMessages, err := es.messageRepository.GetLastMessagesByEvent(eventID)
+	lastMessages, err := es.eventRepository.GetLastMessagesByEvent(eventID)
 	if err != nil {
 		return dtos.EventWithDetailsDTO{}, err
 	}

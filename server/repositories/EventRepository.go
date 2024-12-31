@@ -5,6 +5,7 @@ import (
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/ent/event"
+	"edumeet/ent/message"
 	"edumeet/ent/participant"
 	"edumeet/ent/remoteevent"
 	"edumeet/ent/subject"
@@ -299,4 +300,27 @@ func (er *EventRepository) UpdateEventSubjects(ctx context.Context, eventId stri
 	}
 
 	return event, nil
+}
+
+func (er *EventRepository) GetLastMessagesByEvent(eventID string) ([]dtos.MessageDTO, error) {
+	messages, err := er.client.Message.
+		Query().
+		Where(message.HasEventWith(event.IDEQ(eventID))).
+		Order(ent.Desc(message.FieldCreatedAt)).
+		Limit(5).
+		All(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	var messageDTOs []dtos.MessageDTO
+	for _, msg := range messages {
+		messageDTOs = append(messageDTOs, dtos.MessageDTO{
+			ID:      msg.ID,
+			Content: msg.Content,
+		})
+	}
+
+	return messageDTOs, nil
 }
