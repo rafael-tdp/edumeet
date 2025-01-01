@@ -37,6 +37,7 @@ func (ur *UserRepository) CreateUser(ctx context.Context, registerDTO dtos.Regis
 		SetPassword(hashedPassword).
 		SetBirthDate(registerDTO.BirthDate).
 		SetActivated(false).
+		SetAddress(registerDTO.Address).
 		SetLat(lat).
 		SetLng(lng).
 		Save(ctx)
@@ -80,6 +81,14 @@ func (ur *UserRepository) GetById(userID string) (*ent.User, error) {
 
 func (ur *UserRepository) GetByEmail(email string) (*ent.User, error) {
 	u, err := ur.client.User.Query().Where(user.Email(email)).Only(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
+}
+
+func (ur *UserRepository) GetByUsername(username string) (*ent.User, error) {
+	u, err := ur.client.User.Query().Where(user.Username(username)).Only(context.Background())
 	if err != nil {
 		return nil, err
 	}

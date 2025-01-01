@@ -191,6 +191,7 @@ class TranslationsFormFr {
 	String get confirmPassword => 'Confirmer le mot de passe';
 	String get pleaseConfirmPassword => 'Veuillez confirmer votre mot de passe';
 	String get passwordNotMatch => 'Les mots de passe ne correspondent pas';
+	String get invalidUsername => 'Le nom d\'utilisateur doit : \n- contenir entre 3 et 20 caractères \n - commencer par une lettre \n- ne pas contenir de caractères spéciaux';
 }
 
 // Path: swipe_cards
@@ -486,6 +487,7 @@ extension on Translations {
 			case 'form.confirmPassword': return 'Confirmer le mot de passe';
 			case 'form.pleaseConfirmPassword': return 'Veuillez confirmer votre mot de passe';
 			case 'form.passwordNotMatch': return 'Les mots de passe ne correspondent pas';
+			case 'form.invalidUsername': return 'Le nom d\'utilisateur doit : \n- contenir entre 3 et 20 caractères \n - commencer par une lettre \n- ne pas contenir de caractères spéciaux';
 			case 'swipe_cards.loading_error': return 'Erreur de chargement des événements';
 			case 'swipe_cards.end_of_list': return 'Vous avez atteint la fin de la liste !';
 			case 'swipe_cards.nope': return ({required Object title}) => 'Non à ${title}';

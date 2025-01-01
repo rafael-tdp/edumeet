@@ -187,6 +187,7 @@ class _TranslationsFormIt implements TranslationsFormFr {
 	@override String get confirmPassword => 'Conferma la password';
 	@override String get pleaseConfirmPassword => 'Per favore conferma la tua password';
 	@override String get passwordNotMatch => 'Le password non corrispondono';
+	@override String get invalidUsername => 'Il nome utente deve : \n- contenere tra 3 e 20 caratteri \n- iniziare con una lettera \n- non contenere caratteri speciali';
 }
 
 // Path: swipe_cards
@@ -482,6 +483,7 @@ extension on TranslationsIt {
 			case 'form.confirmPassword': return 'Conferma la password';
 			case 'form.pleaseConfirmPassword': return 'Per favore conferma la tua password';
 			case 'form.passwordNotMatch': return 'Le password non corrispondono';
+			case 'form.invalidUsername': return 'Il nome utente deve : \n- contenere tra 3 e 20 caratteri \n- iniziare con una lettera \n- non contenere caratteri speciali';
 			case 'swipe_cards.loading_error': return 'Errore nel caricamento degli eventi';
 			case 'swipe_cards.end_of_list': return 'Hai raggiunto la fine della lista!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'No a ${title}';

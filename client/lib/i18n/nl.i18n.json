@@ -93,7 +93,8 @@
     "haveToAcceptConditions": "Je moet de gebruiksvoorwaarden en het privacybeleid accepteren",
     "confirmPassword": "Bevestig het wachtwoord",
     "pleaseConfirmPassword": "Bevestig je wachtwoord",
-    "passwordNotMatch": "Wachtwoorden komen niet overeen"
+    "passwordNotMatch": "Wachtwoorden komen niet overeen",
+    "invalidUsername": "De gebruikersnaam moet: \n- tussen de 3 en 20 tekens bevatten \n- beginnen met een letter \n- geen speciale tekens bevatten"
   },
   "swipe_cards": {
     "loading_error": "Fout bij het laden van de evenementen",

@@ -289,6 +289,7 @@ var (
 		{Name: "picture", Type: field.TypeString, Nullable: true},
 		{Name: "activated", Type: field.TypeBool, Default: false},
 		{Name: "report_number", Type: field.TypeInt, Default: 0},
+		{Name: "address", Type: field.TypeString, Nullable: true},
 		{Name: "lng", Type: field.TypeFloat64, Nullable: true},
 		{Name: "lat", Type: field.TypeFloat64, Nullable: true},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"SUPER ADMIN", "ADMIN", "USER"}, Default: "USER"},

@@ -93,7 +93,8 @@
     "haveToAcceptConditions": "Trebuie să accepți condițiile de utilizare și politica de confidențialitate",
     "confirmPassword": "Confirmă parola",
     "pleaseConfirmPassword": "Te rugăm să confirmi parola",
-    "passwordNotMatch": "Parolele nu se potrivesc"
+    "passwordNotMatch": "Parolele nu se potrivesc",
+    "invalidUsername": "Numele de utilizator trebuie să: \n- conțină între 3 și 20 de caractere \n- înceapă cu o literă \n- nu conțină caractere speciale"
   },
   "swipe_cards": {
     "loading_error": "Eroare la încărcarea evenimentelor",

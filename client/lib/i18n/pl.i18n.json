@@ -93,7 +93,8 @@
     "haveToAcceptConditions": "Musisz zaakceptować warunki korzystania i politykę prywatności",
     "confirmPassword": "Potwierdź hasło",
     "pleaseConfirmPassword": "Proszę potwierdzić hasło",
-    "passwordNotMatch": "Hasła się nie zgadzają"
+    "passwordNotMatch": "Hasła się nie zgadzają",
+    "invalidUsername": "Nazwa użytkownika musi:\n- mieć od 3 do 20 znaków\n- zaczynać się od litery\n- nie zawierać znaków specjalnych"
   },
   "swipe_cards": {
     "loading_error": "Błąd ładowania wydarzeń",

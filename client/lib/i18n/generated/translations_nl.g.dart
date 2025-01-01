@@ -187,6 +187,7 @@ class _TranslationsFormNl implements TranslationsFormFr {
 	@override String get confirmPassword => 'Bevestig het wachtwoord';
 	@override String get pleaseConfirmPassword => 'Bevestig je wachtwoord';
 	@override String get passwordNotMatch => 'Wachtwoorden komen niet overeen';
+	@override String get invalidUsername => 'De gebruikersnaam moet: \n- tussen de 3 en 20 tekens bevatten \n- beginnen met een letter \n- geen speciale tekens bevatten';
 }
 
 // Path: swipe_cards
@@ -482,6 +483,7 @@ extension on TranslationsNl {
 			case 'form.confirmPassword': return 'Bevestig het wachtwoord';
 			case 'form.pleaseConfirmPassword': return 'Bevestig je wachtwoord';
 			case 'form.passwordNotMatch': return 'Wachtwoorden komen niet overeen';
+			case 'form.invalidUsername': return 'De gebruikersnaam moet: \n- tussen de 3 en 20 tekens bevatten \n- beginnen met een letter \n- geen speciale tekens bevatten';
 			case 'swipe_cards.loading_error': return 'Fout bij het laden van de evenementen';
 			case 'swipe_cards.end_of_list': return 'Je hebt het einde van de lijst bereikt!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'Nee tegen ${title}';

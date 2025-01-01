@@ -33,6 +33,7 @@ func (User) Fields() []ent.Field {
 		field.String("picture").Optional().Nillable(),
 		field.Bool("activated").Default(false),
 		field.Int("reportNumber").Default(0),
+		field.String("address").Optional().Nillable(),
 		field.Float("lng").Optional().Nillable(),
 		field.Float("lat").Optional().Nillable(),
 		field.Enum("role").Values("SUPER ADMIN", "ADMIN", "USER").Default("USER"),

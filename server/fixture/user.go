@@ -39,6 +39,7 @@ func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 			SetBirthDate(dateUtils.GenerateBirthDate()).
 			SetBio(gofakeit.Sentence(10)).
 			SetActivated(true).
+			SetAddress(physicalAddress[i]).
 			SetLng(lng).
 			SetLat(lat).
 			SetCreatedBy(id).

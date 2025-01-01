@@ -93,7 +93,8 @@
     "haveToAcceptConditions": "Vous devez accepter les conditions d'utilisation et la politique de confidentialité",
     "confirmPassword": "Confirmer le mot de passe",
     "pleaseConfirmPassword": "Veuillez confirmer votre mot de passe",
-    "passwordNotMatch": "Les mots de passe ne correspondent pas"
+    "passwordNotMatch": "Les mots de passe ne correspondent pas",
+    "invalidUsername": "Le nom d'utilisateur doit débuter par une lettre et contenir : \n- Au moins 3 caractères \n- Au maximum 20 caractères \n- Aucun caractères spéciaul"
   },
   "swipe_cards": {
     "loading_error": "Erreur de chargement des événements",

@@ -1,16 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:client/core/services/auth_services.dart';
+import 'package:client/utils/http_utils.dart';
 import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import 'package:client/core/models/event.dart';
 
 class EventServices {
-  static dynamic decodeResponse(http.Response response) {
-    final utf8DecodedBody = utf8.decode(response.bodyBytes);
-    return jsonDecode(utf8DecodedBody);
-  }
-
   static Future<List<Event>> getEvents(
     List<String> subjects,
     double? latitude,
@@ -43,7 +39,7 @@ class EventServices {
           'Authorization': 'Bearer $token',
         },
       );
-      final events = decodeResponse(response) as List<dynamic>;
+      final events = HttpUtils.decodeResponse(response) as List<dynamic>;
       return events.map((event) => Event.fromJson(event)).toList();
     } catch (error) {
       log('An error occurred while retrieving events', error: error);
@@ -66,7 +62,7 @@ class EventServices {
           'Authorization': 'Bearer $token',
         },
       );
-      final events = decodeResponse(response) as List<dynamic>;
+      final events = HttpUtils.decodeResponse(response) as List<dynamic>;
       return events.map((event) => Event.fromJson(event)).toList();
     } catch (error) {
       log('An error occurred while retrieving events', error: error);
@@ -89,7 +85,7 @@ class EventServices {
           'Authorization': 'Bearer $token',
         },
       );
-      final events = decodeResponse(response) as List<dynamic>;
+      final events = HttpUtils.decodeResponse(response) as List<dynamic>;
       return events.map((event) => Event.fromJson(event)).toList();
     } catch (error) {
       log('An error occurred while retrieving events', error: error);
@@ -112,7 +108,7 @@ class EventServices {
           'Authorization': 'Bearer $token',
         },
       );
-      final event = decodeResponse(response);
+      final event = HttpUtils.decodeResponse(response);
       return Event.fromJson(event);
     } catch (error) {
       log('An error occurred while retrieving event details', error: error);

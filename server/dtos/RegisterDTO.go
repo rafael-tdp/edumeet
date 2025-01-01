@@ -4,10 +4,10 @@ import "time"
 
 type RegisterDTO struct {
 	Email     string    `json:"email" validate:"required,email"`
-	Username  string    `json:"username" validate:"required"`
+	Username  string    `json:"username" validate:"required,IsUsernameValid"`
 	Lastname  string    `json:"lastname" validate:"required"`
 	Firstname string    `json:"firstname" validate:"required"`
-	Password  string    `json:"password" validate:"required"`
+	Password  string    `json:"password" validate:"required,IsPasswordValid"`
 	BirthDate time.Time `json:"birthDate" validate:"required"`
 	Bio       *string   `json:"bio,omitempty"`
 	Picture   *string   `json:"picture,omitempty"`

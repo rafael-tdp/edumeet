@@ -3,7 +3,6 @@ package dtos
 import (
 	"edumeet/ent"
 	"edumeet/ent/user"
-	"edumeet/utils"
 	"time"
 )
 
@@ -23,12 +22,6 @@ type UserDTO struct {
 }
 
 func UserEntToDto(user *ent.User) (*UserDTO, error) {
-	address, err := utils.GetAddress(*user.Lat, *user.Lng)
-
-	if err != nil {
-		return nil, err
-	}
-
 	userDTO := &UserDTO{
 		ID:        user.ID,
 		Email:     user.Email,
@@ -40,7 +33,7 @@ func UserEntToDto(user *ent.User) (*UserDTO, error) {
 		Picture:   user.Picture,
 		Activated: user.Activated,
 		ReportNum: user.ReportNumber,
-		Address:   address,
+		Address:   *user.Address,
 		Role:      user.Role,
 	}
 
@@ -50,11 +43,6 @@ func UserEntToDto(user *ent.User) (*UserDTO, error) {
 func EntToUserDTO(user *ent.User) *UserDTO {
 	if user == nil {
 		return nil
-	}
-
-	var address string
-	if user.Lat != nil || user.Lng != nil {
-		address, _ = utils.GetAddress(*user.Lat, *user.Lng)
 	}
 
 	return &UserDTO{
@@ -68,7 +56,7 @@ func EntToUserDTO(user *ent.User) *UserDTO {
 		Picture:   user.Picture,
 		Activated: user.Activated,
 		ReportNum: user.ReportNumber,
-		Address:   address,
+		Address:   *user.Address,
 		Role:      user.Role,
 	}
 }

@@ -41,6 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool get _isEmailValid =>
       RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(_emailController.text);
+  bool get _isUsernameValid => _usernameController.text.contains(RegExp(r'^[a-zA-Z][a-zA-Z0-9_-]{2,19}$'));
   bool get _hasMinLength => _passwordController.text.length >= 8;
   bool get _hasUpperCase => _passwordController.text.contains(RegExp(r'[A-Z]'));
   bool get _hasDigit => _passwordController.text.contains(RegExp(r'\d'));
@@ -158,6 +159,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return t.form.emptyUsername;
+                      }
+                      if (!_isUsernameValid) {
+                        return t.form.invalidUsername;
                       }
                       return null;
                     },

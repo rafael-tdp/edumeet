@@ -20,9 +20,15 @@ func NewAuthService(userRepo *repositories.UserRepository) *AuthService {
 }
 
 func (as *AuthService) Login(requestBody dtos.LoginDTO) (string, dtos.UserDTO, error) {
-	user, err := as.userRepo.GetByEmail(requestBody.Email)
+	var user *ent.User
+	var err error
+
+	user, err = as.userRepo.GetByEmail(requestBody.Email)
 	if err != nil {
-		return "", dtos.UserDTO{}, utils.ErrInvalidCredentials
+		user, err = as.userRepo.GetByUsername(requestBody.Email)
+		if err != nil {
+			return "", dtos.UserDTO{}, utils.ErrInvalidCredentials
+		}
 	}
 
 	bcryptUtil := &utils.Bcrypt{}
@@ -47,6 +53,7 @@ func (as *AuthService) Login(requestBody dtos.LoginDTO) (string, dtos.UserDTO, e
 		Lastname:  user.Lastname,
 		Role:      user.Role,
 		Activated: user.Activated,
+		Address:   *user.Address,
 		Bio:       user.Bio,
 		Picture:   user.Picture,
 		BirthDate: *user.BirthDate,
@@ -59,6 +66,10 @@ func (as *AuthService) RegisterUser(ctx context.Context, registerDTO dtos.Regist
 	existingUser, err := as.userRepo.GetByEmail(registerDTO.Email)
 	if err == nil && existingUser != nil {
 		return nil, errors.New("Cet email est déjà utilisé")
+	}
+	existingUser, err = as.userRepo.GetByUsername(registerDTO.Username)
+	if err == nil && existingUser != nil {
+		return nil, errors.New("Ce nom d'utilisateur est déjà utilisé")
 	}
 	bcryptUtils := utils.Bcrypt{}
 	hashedPassword := bcryptUtils.HashPassword(registerDTO.Password)

@@ -93,7 +93,8 @@
     "haveToAcceptConditions": "Du måste godkänna användarvillkoren och integritetspolicyn",
     "confirmPassword": "Bekräfta lösenord",
     "pleaseConfirmPassword": "Vänligen bekräfta ditt lösenord",
-    "passwordNotMatch": "Lösenorden matchar inte"
+    "passwordNotMatch": "Lösenorden matchar inte",
+    "invalidUsername": "Användarnamnet måste: \n- innehålla mellan 3 och 20 tecken \n- börja med en bokstav \n- inte innehålla specialtecken"
   },
   "swipe_cards": {
     "loading_error": "Fel vid inläsning av evenemang",

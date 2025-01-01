@@ -93,7 +93,8 @@
     "haveToAcceptConditions": "You must accept the terms of use and privacy policy",
     "confirmPassword": "Confirm password",
     "pleaseConfirmPassword": "Please confirm your password",
-    "passwordNotMatch": "Passwords do not match"
+    "passwordNotMatch": "Passwords do not match",
+    "invalidUsername": "The username must: \n- be between 3 and 20 characters long \n- start with a letter \n- not contain special characters"
   },
   "swipe_cards": {
     "loading_error": "Error loading events",

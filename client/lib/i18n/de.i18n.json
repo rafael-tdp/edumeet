@@ -93,7 +93,8 @@
     "haveToAcceptConditions": "Du musst die Nutzungsbedingungen und die Datenschutzerklärung akzeptieren",
     "confirmPassword": "Passwort bestätigen",
     "pleaseConfirmPassword": "Bitte bestätige dein Passwort",
-    "passwordNotMatch": "Die Passwörter stimmen nicht überein"
+    "passwordNotMatch": "Die Passwörter stimmen nicht überein",
+    "invalidUsername": "Der Benutzername muss:\n- zwischen 3 und 20 Zeichen lang sein\n- mit einem Buchstaben beginnen\n- keine Sonderzeichen enthalten"
   },
   "swipe_cards": {
     "loading_error": "Fehler beim Laden der Ereignisse",

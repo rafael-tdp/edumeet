@@ -45,6 +45,8 @@ type User struct {
 	Activated bool `json:"activated,omitempty"`
 	// ReportNumber holds the value of the "reportNumber" field.
 	ReportNumber int `json:"reportNumber,omitempty"`
+	// Address holds the value of the "address" field.
+	Address *string `json:"address,omitempty"`
 	// Lng holds the value of the "lng" field.
 	Lng *float64 `json:"lng,omitempty"`
 	// Lat holds the value of the "lat" field.
@@ -152,7 +154,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case user.FieldReportNumber:
 			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldEmail, user.FieldUsername, user.FieldLastname, user.FieldFirstname, user.FieldPassword, user.FieldBio, user.FieldPicture, user.FieldRole:
+		case user.FieldID, user.FieldCreatedBy, user.FieldUpdatedBy, user.FieldEmail, user.FieldUsername, user.FieldLastname, user.FieldFirstname, user.FieldPassword, user.FieldBio, user.FieldPicture, user.FieldAddress, user.FieldRole:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldBirthDate:
 			values[i] = new(sql.NullTime)
@@ -265,6 +267,13 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field reportNumber", values[i])
 			} else if value.Valid {
 				u.ReportNumber = int(value.Int64)
+			}
+		case user.FieldAddress:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field address", values[i])
+			} else if value.Valid {
+				u.Address = new(string)
+				*u.Address = value.String
 			}
 		case user.FieldLng:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
@@ -407,6 +416,11 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("reportNumber=")
 	builder.WriteString(fmt.Sprintf("%v", u.ReportNumber))
+	builder.WriteString(", ")
+	if v := u.Address; v != nil {
+		builder.WriteString("address=")
+		builder.WriteString(*v)
+	}
 	builder.WriteString(", ")
 	if v := u.Lng; v != nil {
 		builder.WriteString("lng=")

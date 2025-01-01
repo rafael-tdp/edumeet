@@ -52,26 +52,37 @@ func (uc *AuthController) Register(c *fiber.Ctx) error {
 	if err := c.BodyParser(&registerDTO); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
 	}
+
 	validations := validator.New()
-	err := validations.Struct(registerDTO)
+	validations.RegisterValidation("IsUsernameValid", customValidator.IsUsernameValid)
+	validations.RegisterValidation("IsPasswordValid", customValidator.IsPasswordValid)
+
+	errors, err := customValidator.ValidateDTO(validations, &registerDTO)
+
 	if err != nil {
-		errors := make([]string, 0)
-		for _, err := range err.(validator.ValidationErrors) {
-			errors = append(errors, err.Error())
-		}
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": errors})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Erreur de validation interne",
+		})
 	}
+	if len(errors) > 0 {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"errors": errors,
+		})
+	}
+
 	ctx := context.WithValue(c.Context(), "user_id", "register")
 	user, err := uc.authService.RegisterUser(ctx, registerDTO)
 	if err != nil {
 		log.Printf("Error creating user: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
+
 	tmpl, err := template.ParseFiles("./email/register.html")
 	if err != nil {
 		log.Fatalf("Error loading email template: %v", err)
 		return err
 	}
+
 	ulid := utils.ULID{}
 	verificationCode := ulid.GenerateUlid()()
 	utils.StoreValidationCodeInRedis(user.ID, verificationCode, 30)
@@ -89,6 +100,7 @@ func (uc *AuthController) Register(c *fiber.Ctx) error {
 		log.Printf("Error sending email: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Could not send confirmation email"})
 	}
+	
 	return c.Status(fiber.StatusCreated).JSON(user)
 }
 

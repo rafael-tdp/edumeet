@@ -187,6 +187,7 @@ class _TranslationsFormEn implements TranslationsFormFr {
 	@override String get confirmPassword => 'Confirm password';
 	@override String get pleaseConfirmPassword => 'Please confirm your password';
 	@override String get passwordNotMatch => 'Passwords do not match';
+	@override String get invalidUsername => 'The username must: \n- be between 3 and 20 characters long \n- start with a letter \n- not contain special characters';
 }
 
 // Path: swipe_cards
@@ -482,6 +483,7 @@ extension on TranslationsEn {
 			case 'form.confirmPassword': return 'Confirm password';
 			case 'form.pleaseConfirmPassword': return 'Please confirm your password';
 			case 'form.passwordNotMatch': return 'Passwords do not match';
+			case 'form.invalidUsername': return 'The username must: \n- be between 3 and 20 characters long \n- start with a letter \n- not contain special characters';
 			case 'swipe_cards.loading_error': return 'Error loading events';
 			case 'swipe_cards.end_of_list': return 'You have reached the end of the list!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'No to ${title}';
