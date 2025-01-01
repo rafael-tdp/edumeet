@@ -270,17 +270,17 @@ func (ac *AuthController) GoogleCallback(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Code not provided"})
 	}
 
-	ctx := context.Background()
+	ctx := context.WithValue(c.Context(), "user_id", "register")
 	userInfo, err := ac.oauthService.GetUserInfo(ctx, code)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
 	email := userInfo["email"].(string)
-	user, err := ac.authService.HandleOAuthUser(email, userInfo)
+	token, user, err := ac.authService.HandleOAuthUser(email, userInfo)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{"message": "Logged in successfully", "user": user})
+	return c.JSON(fiber.Map{"token": token, "user": user})
 }
