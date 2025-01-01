@@ -118,6 +118,10 @@ func (cr *ChatRepository) GetLastMessageEvent(eventId string) (*ent.Message, err
 		Order(ent.Desc(message.FieldCreatedAt)).
 		First(context.Background())
 
+	if ent.IsNotFound(err) {
+		return nil, nil
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -131,6 +135,10 @@ func (cr *ChatRepository) GetLastMessageFriend(friendId string) (*ent.Message, e
 		WithUser().
 		Order(ent.Desc(message.FieldCreatedAt)).
 		First(context.Background())
+
+	if ent.IsNotFound(err) {
+		return nil, nil
+	}
 
 	if err != nil {
 		return nil, err
