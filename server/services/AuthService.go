@@ -134,3 +134,24 @@ func (as *AuthService) ResetPassword(requestBody dtos.ResetPasswordDTO) error {
 	utils.DeleteValidationCodeFromRedis(user.ID)
 	return nil
 }
+
+func (as *AuthService) HandleOAuthUser(email string, userInfo map[string]interface{}) (*ent.User, error) {
+	existingUser, err := as.userRepo.GetByEmail(email)
+	if err == nil && existingUser != nil {
+		return existingUser, nil
+	}
+
+	userDTO := dtos.RegisterDTO{
+		Email:     email,
+		Firstname: userInfo["given_name"].(string),
+		Lastname:  userInfo["family_name"].(string),
+		Username:  userInfo["given_name"].(string) + userInfo["family_name"].(string),
+	}
+	ctx := context.Background()
+	newUser, err := as.RegisterUser(ctx, userDTO)
+	if err != nil {
+		return nil, err
+	}
+
+	return newUser, nil
+}

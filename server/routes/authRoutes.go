@@ -15,11 +15,14 @@ func setupRoutesAuth(app *fiber.App, authController *controllers.AuthController,
 	app.Post("/forgot-password", authController.ForgotPassword)
 	app.Post("/reset-password", authController.ResetPassword)
 	app.Get("/resend-verify-email/:email", userController.ResendEmailValidateUser)
+	app.Get("/auth/google/login", authController.GoogleLogin)
+	app.Get("/auth/google/callback", authController.GoogleCallback)
 }
 
 func initAuthController(client *ent.Client) *controllers.AuthController {
 	userRepo := repositories.NewUserRepository(client)
 	authService := services.NewAuthService(userRepo)
 	emailService := services.NewEmailService()
-	return controllers.NewAuthController(authService, emailService)
+	oauthService := services.NewOAuthService()
+	return controllers.NewAuthController(authService, emailService, oauthService)
 }
