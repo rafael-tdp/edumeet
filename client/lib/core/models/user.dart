@@ -1,3 +1,5 @@
+import 'package:diacritic/diacritic.dart';
+
 class User {
   final String? id;
   final String? email;
@@ -52,7 +54,7 @@ class User {
       'bio': bio,
       'picture': picture,
       'reportNumber': reportNumber,
-      'address': address,
+      'address': removeDiacritics(address!),
       'role': role,
     };
   }

@@ -56,28 +56,24 @@ class _LanguageSelectionState extends State<LanguageSelection> {
     final localeProvider = Provider.of<LocaleProvider>(widget.parentContext);
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.only(left:20, right: 20),
       child: Column(
         children: [
-          TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              labelText: t.app.searchLanguage,
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+          Container(
+            width: double.infinity,
+            child: Image.asset(
+              'assets/images/welcome/flags_banner.jpg',
+              fit: BoxFit.cover,
             ),
           ),
-          const SizedBox(height: 16),
           Column(
             children: [
               GridView.builder(
                 shrinkWrap: true,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 20,
+                  crossAxisSpacing: 5,
                   childAspectRatio: 3,
                 ),
                 itemCount: _filteredLanguages.length,
@@ -90,24 +86,30 @@ class _LanguageSelectionState extends State<LanguageSelection> {
                         color: isSelected
                             ? AppColors.purple.withOpacity(0.5)
                             : AppColors.purple.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
                         child: ListTile(
-                          leading: Flag.fromString(
-                            languageCode == "en"
-                                ? "gb"
-                                : languageCode == "uk"
+                          title: Column(
+                            children: [
+                              Flag.fromString(
+                                languageCode == "en"
+                                    ? "gb"
+                                    : languageCode == "uk"
                                     ? "ua"
                                     : languageCode,
-                            height: 20,
-                            width: 40,
-                            fit: BoxFit.fill,
+                                height: 20,
+                                width: 40,
+                                fit: BoxFit.fill,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(languageNames[languageCode]!),
+                            ],
                           ),
-                          title: Text(languageNames[languageCode]!),
                           onTap: () {
                             final locale = AppLocale.values.firstWhere(
-                                (locale) =>
-                                    locale.languageCode == languageCode);
+                                    (locale) =>
+                                locale.languageCode == languageCode);
                             localeProvider.setLocale(locale);
                             _selectedLanguageCode = languageCode;
                             CacheService.saveDataToCache('locale', languageCode);

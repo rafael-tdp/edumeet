@@ -51,7 +51,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
       if (widget.userId != null) {
         final response = await UserServices().getUserById(widget.userId);
-        print("response: $response");
         if (response.success && response.data is User) {
           setState(() {
             _user = response.data as User;
@@ -78,7 +77,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  @override
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -122,7 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

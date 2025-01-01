@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:diacritic/diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import 'package:client/core/models/subject.dart';
+
+import '../models/response.dart';
 
 class SubjectServices {
   static Future<String?> getToken() async {
@@ -29,8 +32,12 @@ class SubjectServices {
 
       if (response.statusCode == 200) {
         final responseBody = utf8.decode(response.bodyBytes);
-        final subjects = jsonDecode(responseBody) as List<dynamic>; 
-        return subjects.map((subject) => Subject.fromJson(subject)).toList();
+        final subjects = jsonDecode(responseBody) as List<dynamic>;
+        final subjectList = subjects.map((subject) => Subject.fromJson(subject)).toList();
+
+        subjectList.sort((a, b) => removeDiacritics(a.name).compareTo(removeDiacritics(b.name)));
+
+        return subjectList;
       } else {
         log('Failed to load subjects: ${response.statusCode} - ${response.body}');
         return [];
@@ -42,28 +49,33 @@ class SubjectServices {
     }
   }
 
-  static Future<void> subscribeToSubject(String subjectId) async {
+  static Future<ResponseRequest> subscribeToSubjects(List<String> subjectsId) async {
     try {
       final token = await getToken();
 
       if (token == null) {
-        return;
+        return ResponseRequest(success: false, message: 'Veillez vous connecter');
       }
 
-      final response = await http.post(
-        Uri.parse('${Env.BACKEND_URL}/subjects/$subjectId/subscribe'),
+      final response = await http.put(
+        Uri.parse('${Env.BACKEND_URL}/user/subjects/update'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
+        body: jsonEncode(subjectsId),
       );
 
-      if (response.statusCode != 200) {
+      if (response.statusCode == 200) {
+        return ResponseRequest(success: true, message: 'Souscription réussie');
+      } else {
         log('Failed to subscribe to subject: ${response.statusCode} - ${response.body}');
+        return ResponseRequest(success: false, message: 'Erreur lors de la souscription');
       }
     } catch (error, stacktrace) {
       log('An error occurred while subscribing to subject',
           error: error, stackTrace: stacktrace);
+      return ResponseRequest(success: false, message: 'Erreur lors de la souscription');
     }
   }
 }
