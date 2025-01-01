@@ -3,7 +3,8 @@ package fixture
 import (
 	"context"
 	"edumeet/ent"
-
+	"edumeet/ent/friendship"
+	"edumeet/ent/user"
 	"github.com/brianvoe/gofakeit/v7"
 )
 
@@ -52,6 +53,53 @@ func (m *Message) GenerateMessagesForEvents(ctx context.Context, client *ent.Cli
 
 				if err != nil {
 					panic("error creating message for event: " + err.Error())
+				}
+			}
+		}
+	}
+}
+
+func (m *Message) GenerateMessagesForFriends(ctx context.Context, client *ent.Client) {
+	users, err := client.User.Query().All(ctx)
+	if err != nil {
+		panic("error fetching users to create messages for friends: " + err.Error())
+	}
+
+	if len(users) == 0 {
+		panic("No users found to create messages for friends")
+	}
+
+	for _, currentUser := range users {
+		friends, err := client.Friendship.Query().
+			Where(friendship.HasUserWith(user.IDEQ(currentUser.ID))).
+			WithFriend().
+			All(ctx)
+		if err != nil {
+			panic("error fetching friends for user: " + err.Error())
+		}
+
+		if len(friends) == 0 {
+			continue
+		}
+
+		for _, friend := range friends {
+			if friend.Status != "ACCEPTED" {
+				continue
+			}
+
+			numMessages := gofakeit.Number(0, 3)
+			for i := 0; i < numMessages; i++ {
+				content := gofakeit.Sentence(10)
+
+				_, err := client.Message.Create().
+					SetContent(content).
+					SetUserID(currentUser.ID).
+					SetFriendshipID(friend.ID).
+					SetCreatedBy(currentUser.ID).
+					Save(ctx)
+
+				if err != nil {
+					panic("error creating message for friend: " + err.Error())
 				}
 			}
 		}

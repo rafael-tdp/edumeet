@@ -53,9 +53,14 @@ func migrateFixture() {
 	eventDocumentFixture := fixture.EventDocument{}
 	eventDocumentFixture.GenerateEventDocument(ctx, client)
 
+	client.Friendship.Delete().ExecX(ctx)
+	friendshipFixture := fixture.FriendShip{}
+	friendshipFixture.GenerateFriendship(ctx, client)
+
 	client.Message.Delete().ExecX(ctx)
 	messageFixture := fixture.Message{}
 	messageFixture.GenerateMessagesForEvents(ctx, client)
+	messageFixture.GenerateMessagesForFriends(ctx, client)
 
 	log.Println("Fixtures applied successfully.")
 }
