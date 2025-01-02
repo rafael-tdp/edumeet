@@ -5,6 +5,7 @@ import (
 	"edumeet/ent"
 	"edumeet/ent/friendship"
 	"edumeet/ent/user"
+	"edumeet/enums"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/sirupsen/logrus"
@@ -40,7 +41,7 @@ func (m *Message) GenerateMessagesForEvents(ctx context.Context, client *ent.Cli
 
 			user := participant.Edges.User
 
-			if participant.Status != "ACCEPTED" {
+			if participant.Status != string(enums.ParticipantAccepted) {
 				continue
 			}
 
@@ -91,7 +92,7 @@ func (m *Message) GenerateMessagesForFriends(ctx context.Context, client *ent.Cl
 		}
 
 		for _, friend := range friends {
-			if friend.Status != "ACCEPTED" {
+			if friend.Status != string(enums.FriendAccepted) {
 				continue
 			}
 

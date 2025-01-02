@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"edumeet/dtos"
+	"edumeet/enums"
 	"edumeet/repositories"
 	"edumeet/utils"
 	"errors"
@@ -67,7 +68,7 @@ func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {
 func (cs *ChatService) CheckUserHasPermission(participants []dtos.ParticipantDTO, userID string) bool {
 	_, foundParticipant := lo.Find(participants, func(p dtos.ParticipantDTO) bool {
 		println(p.ID, p.UserID, userID)
-		return p.UserID == userID && strings.EqualFold(p.Status, "ACCEPTED")
+		return p.UserID == userID && strings.EqualFold(p.Status, string(enums.ParticipantAccepted))
 	})
 	return foundParticipant
 }
@@ -115,7 +116,7 @@ func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, p
 
 	// Send message to all active participants except the sender
 	for _, participant := range participants {
-		if strings.ToUpper(participant.Status) == "ACCEPTED" && participant.UserID != userId {
+		if strings.ToUpper(participant.Status) == string(enums.ParticipantAccepted) && participant.UserID != userId {
 			userID := participant.UserID
 			_ = cs.SendMessageToUser(userID, utils.JSONStringify(messageResponse))
 		}
@@ -143,7 +144,7 @@ func (cs *ChatService) DeleteMessage(eventID, messageID, userID string, particip
 
 	// Envoyer la notification aux participants connectés
 	for _, participant := range participants {
-		if participant.Status == "ACCEPTED" && participant.UserID != userID {
+		if participant.Status == string(enums.ParticipantAccepted) && participant.UserID != userID {
 			_ = cs.SendMessageToUser(participant.UserID, utils.JSONStringify(deleteMessage))
 		}
 	}
@@ -166,7 +167,7 @@ func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendI
 		fmt.Printf("Error getting friendship: %v\n", err)
 	}
 
-	if friendship.Status != "ACCEPTED" {
+	if friendship.Status != string(enums.FriendAccepted) {
 		return fmt.Errorf("Vous ne pouvez pas envoyer de message à cet ami car la demande d'ami n'a pas été acceptée")
 	}
 
@@ -320,7 +321,7 @@ func (cs *ChatService) GetMessagesFriend(userId, friendId string) ([]dtos.Respon
 		return nil, errors.New("Vous n'êtes pas autorisé à voir les messages de cet ami")
 	}
 
-	if friendship.Status != "ACCEPTED" {
+	if friendship.Status != string(enums.FriendAccepted) {
 		return nil, errors.New("Vous ne pouvez pas voir les messages de cet ami car la demande d'ami n'a pas été acceptée")
 	}
 

@@ -6,6 +6,7 @@ import (
 	"edumeet/ent/event"
 	"edumeet/ent/participant"
 	"edumeet/ent/user"
+	"edumeet/enums"
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
@@ -26,7 +27,7 @@ func (e *Participant) GenerateParticipant(ctx context.Context, client *ent.Clien
 
 	for _, ev := range events {
 		_, err := client.Participant.Create().
-			SetStatus("ACCEPTED").
+			SetStatus(string(enums.ParticipantAccepted)).
 			SetRequestedAt(time.Now()).
 			SetJoinedAt(time.Now()).
 			SetUserID(*ev.CreatedBy).
@@ -56,9 +57,9 @@ func (e *Participant) GenerateParticipant(ctx context.Context, client *ent.Clien
 			_, err = client.Participant.Create().
 				SetStatus(func() string {
 					if i == 2 {
-						return "PENDING"
+						return string(enums.ParticipantPending)
 					}
-					return "ACCEPTED"
+					return string(enums.ParticipantAccepted)
 				}()).
 				SetRequestedAt(time.Now()).
 				SetJoinedAt(time.Now()).
