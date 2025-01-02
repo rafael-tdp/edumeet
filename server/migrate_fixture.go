@@ -9,16 +9,19 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 )
 
 func migrateFixture() {
 	err := godotenv.Load()
 	if err != nil {
+		logrus.Error("Error loading .env file: %v", err)
 		log.Fatalf("Error loading .env file")
 	}
 
 	client, err := ent.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
+		logrus.Error("failed opening connection to PostgreSQL: %v", err)
 		log.Fatalf("failed opening connection to PostgreSQL: %v", err)
 	}
 	defer client.Close()
@@ -62,5 +65,6 @@ func migrateFixture() {
 	messageFixture.GenerateMessagesForEvents(ctx, client)
 	messageFixture.GenerateMessagesForFriends(ctx, client)
 
+	logrus.Info("Fixtures applied successfully.")
 	log.Println("Fixtures applied successfully.")
 }

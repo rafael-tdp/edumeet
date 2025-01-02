@@ -12,6 +12,7 @@ import (
 	"sync"
 
 	"github.com/samber/lo"
+	"github.com/sirupsen/logrus"
 )
 
 type Event struct {
@@ -41,6 +42,7 @@ func (cs *ChatService) SubscribeUser(userID string, ch chan string) {
 	cs.mu.Lock()
 	defer cs.mu.Unlock()
 	cs.users[userID] = ch
+	logrus.Info("User ", userID, " subscribed")
 	print("User ", userID, " subscribed\n")
 }
 
@@ -48,12 +50,14 @@ func (cs *ChatService) UnsubscribeUser(userID string) {
 	cs.mu.Lock()
 	defer cs.mu.Unlock()
 	delete(cs.users, userID)
+	logrus.Info("User ", userID, " unsubscribed")
 	print("User ", userID, " unsubscribed\n")
 }
 
 func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {
 	message, err := cs.chatRepo.GetChat(messageID)
 	if err != nil {
+		logrus.Error("Error ChatService function GetChat: ", err)
 		return nil, err
 	}
 
@@ -74,14 +78,17 @@ func (cs *ChatService) SendMessageToUser(userID string, message string) error {
 
 	ch, exists := cs.users[userID]
 	if !exists {
+		logrus.Warn("User ", userID, " not connected. Skipping message delivery.")
 		fmt.Printf("User %s not connected. Skipping message delivery.\n", userID)
 		return nil
 	}
 
 	select {
 	case ch <- message:
+		logrus.Info("Message sent to user ", userID)
 		fmt.Printf("Message sent to user %s\n", userID)
 	default:
+		logrus.Warn("Failed to send message to user ", userID)
 		fmt.Printf("Failed to send message to user %s\n", userID)
 	}
 
@@ -92,6 +99,7 @@ func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, p
 	// Create message for event
 	messageCreated, err := cs.chatRepo.CreateMessage(ctx, message, eventID, userId)
 	if err != nil {
+		logrus.Error("Error ChatService function SendMessageToEvent: ", err)
 		fmt.Printf("Error creating message: %v\n", err)
 		return err
 	}
@@ -119,6 +127,7 @@ func (cs *ChatService) DeleteMessage(eventID, messageID, userID string, particip
 	// Supprimez le message de la base de données
 	err := cs.chatRepo.DeleteMessage(messageID)
 	if err != nil {
+		logrus.Error("Error ChatService function DeleteMessage: ", err)
 		fmt.Printf("Error deleting message: %v\n", err)
 		return nil, err
 	}
@@ -148,10 +157,12 @@ func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendI
 	friendship, err := cs.userRepository.GetFriendshipById(friendId)
 
 	if friendship == nil {
+		logrus.Warn("Vous ne pouvez pas envoyer de message à cet ami car vous n'êtes pas amis")
 		return fmt.Errorf("Vous ne pouvez pas envoyer de message à cet ami car vous n'êtes pas amis")
 	}
 
 	if err != nil {
+		logrus.Error("Error ChatService function SendMessageToFriend: ", err)
 		fmt.Printf("Error getting friendship: %v\n", err)
 	}
 
@@ -166,6 +177,7 @@ func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendI
 	// Create message for friend
 	messageCreated, err := cs.chatRepo.CreateMessageFriend(ctx, message, friendId, userId)
 	if err != nil {
+		logrus.Error("Error ChatService function SendMessageToFriend: ", err)
 		fmt.Printf("Error creating message: %v\n", err)
 		return err
 	}
@@ -202,12 +214,14 @@ func (cs *ChatService) DeleteMessageFriend(messageID, userID string, friendId st
 	friendship, err := cs.userRepository.GetFriendshipById(friendId)
 
 	if err != nil {
+		logrus.Error("Error ChatService function DeleteMessageFriend: ", err)
 		fmt.Printf("Error getting friendship: %v\n", err)
 	}
 
 	// Supprimez le message de la base de données
 	errDelete := cs.chatRepo.DeleteMessage(messageID)
 	if errDelete != nil {
+		logrus.Error("Error ChatService function DeleteMessageFriend: ", err)
 		fmt.Printf("Error deleting message: %v\n", err)
 		return err
 	}
@@ -244,12 +258,14 @@ func (cs *ChatService) GetConversations(userId string) ([]dtos.ConversationDTO, 
 	conversationsFriends, err := cs.userRepository.GetFriendshipsByUserId(userId)
 
 	if err != nil {
+		logrus.Error("Error ChatService function GetConversations: ", err)
 		return nil, err
 	}
 
 	conversationsEvents, err := cs.participantRepository.GetParticipationsUser(userId)
 
 	if err != nil {
+		logrus.Error("Error ChatService function GetConversations: ", err)
 		return nil, err
 	}
 
@@ -264,6 +280,7 @@ func (cs *ChatService) GetConversations(userId string) ([]dtos.ConversationDTO, 
 		lastMessageFriend, err := cs.chatRepo.GetLastMessageFriend(friendship.ID)
 
 		if err != nil {
+			logrus.Error("Error ChatService function GetConversations: ", err)
 			return nil, err
 		}
 
@@ -277,6 +294,7 @@ func (cs *ChatService) GetConversations(userId string) ([]dtos.ConversationDTO, 
 		lastMessageEvent, err := cs.chatRepo.GetLastMessageEvent(participant.Edges.Event.ID)
 
 		if err != nil {
+			logrus.Error("Error ChatService function GetConversations: ", err)
 			return nil, err
 		}
 
@@ -294,6 +312,7 @@ func (cs *ChatService) GetMessagesFriend(userId, friendId string) ([]dtos.Respon
 	friendship, err := cs.userRepository.GetFriendshipById(friendId)
 
 	if err != nil {
+		logrus.Error("Error ChatService function GetMessagesFriend: ", err)
 		return nil, err
 	}
 
@@ -307,6 +326,7 @@ func (cs *ChatService) GetMessagesFriend(userId, friendId string) ([]dtos.Respon
 
 	messages, err := cs.chatRepo.GetMessagesFriend(friendId)
 	if err != nil {
+		logrus.Error("Error ChatService function GetMessagesFriend: ", err)
 		return nil, err
 	}
 
@@ -322,6 +342,7 @@ func (cs *ChatService) GetMessagesEvent(userId, eventId string) ([]dtos.Response
 
 	messages, err := cs.chatRepo.GetMessagesEvent(eventId)
 	if err != nil {
+		logrus.Error("Error ChatService function GetMessagesEvent: ", err)
 		return nil, err
 	}
 

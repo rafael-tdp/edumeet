@@ -11,6 +11,8 @@ import (
 	"fmt"
 	"sort"
 	"strconv"
+
+	"github.com/sirupsen/logrus"
 )
 
 type EventService struct {
@@ -30,6 +32,7 @@ func (es *EventService) CreateEvent(ctx context.Context, eventDTO dtos.EventDTO,
 	event, err := es.eventRepository.CreateEvent(ctx, eventDTO)
 
 	if err != nil {
+		logrus.Error("Error EventService.CreateEvent: ", err)
 		return nil, err
 	}
 
@@ -41,6 +44,7 @@ func (es *EventService) CreateEvent(ctx context.Context, eventDTO dtos.EventDTO,
 	} else {
 		_, err := es.eventRepository.CreatePhysicalEvent(ctx, *eventDTO.PhysicalEventDTO, event.ID)
 		if err != nil {
+			logrus.Error("Error EventService.CreateEvent: ", err)
 			return nil, err
 		}
 	}
@@ -49,6 +53,7 @@ func (es *EventService) CreateEvent(ctx context.Context, eventDTO dtos.EventDTO,
 
 	eventCreatedWithEdge, err := es.eventRepository.GetEvent(event.ID)
 	if err != nil {
+		logrus.Error("Error EventService.CreateEvent: ", err)
 		return nil, err
 	}
 	return dtos.EntToEventDTO(eventCreatedWithEdge), nil
@@ -57,6 +62,7 @@ func (es *EventService) CreateEvent(ctx context.Context, eventDTO dtos.EventDTO,
 func (es *EventService) DeleteEvent(eventID string) error {
 	err := es.eventRepository.DeleteEvent(eventID)
 	if err != nil {
+		logrus.Error("Error EventService.DeleteEvent: ", err)
 		return err
 	}
 
@@ -68,6 +74,7 @@ func (es *EventService) GetEvent(eventID string) (*dtos.EventDTO, error) {
 	event, err := es.eventRepository.GetEvent(eventID)
 
 	if err != nil {
+		logrus.Error("Error EventService.GetEvent: ", err)
 		return nil, err
 	}
 
@@ -79,29 +86,34 @@ func (es *EventService) UpdateEvent(ctx context.Context, event dtos.EventDTO, ev
 	currentEvent, errGetEvent := es.eventRepository.GetEvent(eventID)
 
 	if errGetEvent != nil {
+		logrus.Error("Error EventService.UpdateEvent: ", errGetEvent)
 		return nil, errGetEvent
 	}
 
 	_, errUpdateEvent := es.eventRepository.UpdateEvent(ctx, event, eventID)
 
 	if errUpdateEvent != nil {
+		logrus.Error("Error EventService.UpdateEvent: ", errUpdateEvent)
 		return nil, errUpdateEvent
 	}
 
 	if currentEvent.Edges.RemoteEvent != nil {
 		_, err := es.eventRepository.UpdateRemoteEvent(ctx, *event.RemoteEventDTO, currentEvent.Edges.RemoteEvent.ID)
 		if err != nil {
+			logrus.Error("Error EventService.UpdateEvent: ", err)
 			return nil, err
 		}
 	} else {
 		_, err := es.eventRepository.UpdatePhysicalEvent(ctx, *event.PhysicalEventDTO, currentEvent.Edges.PhysicalEvent.ID)
 		if err != nil {
+			logrus.Error("Error EventService.UpdateEvent: ", err)
 			return nil, err
 		}
 	}
 
 	eventCreatedWithEdge, err := es.eventRepository.GetEvent(currentEvent.ID)
 	if err != nil {
+		logrus.Error("Error EventService.UpdateEvent: ", err)
 		return nil, err
 	}
 	return dtos.EntToEventDTO(eventCreatedWithEdge), nil
@@ -110,6 +122,7 @@ func (es *EventService) UpdateEvent(ctx context.Context, event dtos.EventDTO, ev
 func (es *EventService) GetFilteredEvents(filters structures.EventFilters) ([]dtos.EventWithTypeDTO, error) {
 	events, err := es.eventRepository.GetEventsWithFilters(filters)
 	if err != nil {
+		logrus.Error("Error EventService.GetFilteredEvents: ", err)
 		return nil, err
 	}
 
@@ -119,16 +132,19 @@ func (es *EventService) GetFilteredEvents(filters structures.EventFilters) ([]dt
 
 		dist, err := strconv.ParseFloat(filters.Distance, 64)
 		if err != nil {
+			logrus.Error("Error EventService.GetFilteredEvents: ", err)
 			return nil, fmt.Errorf("invalid distance value: %v", err)
 		}
 
 		longitude, err := strconv.ParseFloat(filters.Longitude, 64)
 		if err != nil {
+			logrus.Error("Error EventService.GetFilteredEvents: ", err)
 			return nil, fmt.Errorf("invalid longitude value: %v", err)
 		}
 
 		latitude, err := strconv.ParseFloat(filters.Latitude, 64)
 		if err != nil {
+			logrus.Error("Error EventService.GetFilteredEvents: ", err)
 			return nil, fmt.Errorf("invalid latitude value: %v", err)
 		}
 
@@ -185,12 +201,14 @@ func (es *EventService) GetFilteredEvents(filters structures.EventFilters) ([]dt
 		return eventsWithType[i].StartDate.Before(eventsWithType[j].StartDate)
 	})
 
+	logrus.Info("Filtered events: ", eventsWithType)
 	return eventsWithType, nil
 }
 
 func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO, error) {
 	events, err := es.eventRepository.GetEventsByUser(userID)
 	if err != nil {
+		logrus.Error("Error EventService.GetEventsByUser: ", err)
 		return nil, err
 	}
 
@@ -226,12 +244,14 @@ func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO,
 		}
 	}
 
+	logrus.Info("Events by user: ", eventsWithType)
 	return eventsWithType, nil
 }
 
 func (es *EventService) GetEventsCreatedByUser(userID string) ([]dtos.EventWithTypeDTO, error) {
 	events, err := es.eventRepository.GetEventsCreatedByUser(userID)
 	if err != nil {
+		logrus.Error("Error EventService.GetEventsCreatedByUser: ", err)
 		return nil, err
 	}
 
@@ -267,22 +287,26 @@ func (es *EventService) GetEventsCreatedByUser(userID string) ([]dtos.EventWithT
 		}
 	}
 
+	logrus.Info("Events created by user: ", eventsWithType)
 	return eventsWithType, nil
 }
 
 func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetailsDTO, error) {
 	event, err := es.eventRepository.GetEvent(eventID)
 	if err != nil {
+		logrus.Error("Error EventService.GetEventWithDetails: ", err)
 		return dtos.EventWithDetailsDTO{}, err
 	}
 
 	participants, err := es.participantRepository.GetParticipantsByEvent(eventID)
 	if err != nil {
+		logrus.Error("Error EventService.GetEventWithDetails: ", err)
 		return dtos.EventWithDetailsDTO{}, err
 	}
 
 	lastMessages, err := es.eventRepository.GetLastMessagesByEvent(eventID)
 	if err != nil {
+		logrus.Error("Error EventService.GetEventWithDetails: ", err)
 		return dtos.EventWithDetailsDTO{}, err
 	}
 
@@ -307,6 +331,7 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 		eventDetails.PhysicalEventDTO = dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent)
 	}
 
+	logrus.Info("Event with details: ", eventDetails)
 	return eventDetails, nil
 }
 
@@ -315,6 +340,7 @@ func (es *EventService) GetParticipantPending(eventID string) ([]dtos.PendingPar
 	participants, err := es.participantRepository.GetPendingParticipantsByEvent(eventID)
 
 	if err != nil {
+		logrus.Error("Error EventService.GetParticipantPending: ", err)
 		return nil, err
 	}
 
@@ -324,12 +350,14 @@ func (es *EventService) GetParticipantPending(eventID string) ([]dtos.PendingPar
 		pendingParticipantsDTO = append(pendingParticipantsDTO, *dtos.EntToPendingParticipantDTO(participant))
 	}
 
+	logrus.Info("Pending participants: ", pendingParticipantsDTO)
 	return pendingParticipantsDTO, nil
 }
 
 func (es *EventService) UpdateEventSubjects(ctx context.Context, eventID string, subjects []string) error {
 	_, err := es.eventRepository.UpdateEventSubjects(ctx, eventID, subjects)
 	if err != nil {
+		logrus.Error("Error EventService.UpdateEventSubjects: ", err)
 		return err
 	}
 	return nil
@@ -339,6 +367,7 @@ func (es *EventService) JoinEventByCode(eventCode string, userID string) error {
 	event, err := es.eventRepository.GetEventByCode(eventCode)
 
 	if err != nil {
+		logrus.Error("Error EventService.JoinEventByCode: ", err)
 		return err
 	}
 
@@ -353,6 +382,7 @@ func (es *EventService) JoinEventByCode(eventCode string, userID string) error {
 	_, err = es.participantRepository.CreateParticipant(userID, event.ID, "ACCEPTED")
 
 	if err != nil {
+		logrus.Error("Error EventService.JoinEventByCode: ", err)
 		return err
 	}
 
@@ -362,7 +392,10 @@ func (es *EventService) JoinEventByCode(eventCode string, userID string) error {
 func (es *EventService) GetEventCode(eventId string) (*dtos.EventCodeDTO, error) {
 	event, err := es.eventRepository.GetEventCode(eventId)
 	if err != nil {
+		logrus.Error("Error EventService.GetEventCode: ", err)
 		return nil, err
 	}
+
+	logrus.Info("Event code: ", event)
 	return dtos.EntToEventCodeDTO(event), nil
 }

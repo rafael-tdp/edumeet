@@ -9,6 +9,8 @@ import (
 
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	_ "edumeet/ent/runtime"
 
@@ -32,10 +34,12 @@ import (
 // @host localhost:3000
 // @BasePath /
 func main() {
+	// Initialiser le logger
+	initLogger()
 	// Utilisation de flag pour choisir le mode (normal, fixture ou migrate)
 	mode := flag.String("mode", "normal", "Choose the mode: normal, fixture or migrate")
 	flag.Parse()
-
+	logrus.Info(("Application started in mode: " + *mode))
 	// Vérifier le mode sélectionné et appeler les fonctions appropriées
 	if *mode == "migrate" {
 		drop()
@@ -45,6 +49,7 @@ func main() {
 	} else {
 		err := godotenv.Load()
 		if err != nil {
+			logrus.Error("Error loading .env file: %v", err)
 			log.Printf("Error loading .env file: %v", err)
 		}
 
@@ -68,4 +73,16 @@ func main() {
 		app.Listen(":3000")
 
 	}
+}
+
+func initLogger() {
+	logrus.SetFormatter(&logrus.JSONFormatter{})
+	logrus.SetOutput(&lumberjack.Logger{
+		Filename:   "logs/app.log",
+		MaxSize:    10, // megabytes
+		MaxBackups: 3,
+		MaxAge:     28,   //days
+		Compress:   true, // disabled by default
+	})
+	logrus.SetLevel(logrus.InfoLevel)
 }

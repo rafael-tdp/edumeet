@@ -8,6 +8,8 @@ import (
 	"edumeet/utils"
 	"errors"
 	"fmt"
+
+	"github.com/sirupsen/logrus"
 )
 
 type UserService struct {
@@ -23,10 +25,12 @@ func NewUserService(userRepo *repositories.UserRepository) *UserService {
 func (us *UserService) GetUser(userID string) (*dtos.UserDTO, error) {
 	user, err := us.userRepo.GetById(userID)
 	if err != nil {
+		logrus.Error("Error UserService GetUser: ", err)
 		return nil, errors.New("user not found in service")
 	}
 	userDTO, err := dtos.UserEntToDto(user)
 	if err != nil {
+		logrus.Error("Error UserService GetUser: ", err)
 		return nil, fmt.Errorf("error parsing user DTO: %w", err)
 	}
 	return userDTO, nil
@@ -35,10 +39,12 @@ func (us *UserService) GetUser(userID string) (*dtos.UserDTO, error) {
 func (us *UserService) GetUserProfile(userID string) (*dtos.UserProfileDTO, error) {
 	user, err := us.userRepo.GetById(userID)
 	if err != nil {
+		logrus.Error("Error UserService GetUserProfile: ", err)
 		return nil, errors.New("user not found in service")
 	}
 	userProfileDTO, err := dtos.UserProfileEntToDto(user)
 	if err != nil {
+		logrus.Error("Error UserService GetUserProfile: ", err)
 		return nil, fmt.Errorf("error parsing user profile DTO: %w", err)
 	}
 	return userProfileDTO, nil
@@ -47,6 +53,7 @@ func (us *UserService) GetUserProfile(userID string) (*dtos.UserProfileDTO, erro
 func (us *UserService) GetUserByEmail(email string) (*ent.User, error) {
 	user, err := us.userRepo.GetByEmail(email)
 	if err != nil {
+		logrus.Error("Error UserService GetUserByEmail: ", err)
 		return nil, errors.New("user not found in service")
 	}
 	return user, nil
@@ -55,18 +62,22 @@ func (us *UserService) GetUserByEmail(email string) (*ent.User, error) {
 func (us *UserService) Verify(ctx context.Context, requestBody dtos.VerifyCodeDTO) (dtos.UserDTO, error) {
 	user, err := us.userRepo.GetByEmail(requestBody.Email)
 	if err != nil {
+		logrus.Error("Error UserService Verify: ", err)
 		return dtos.UserDTO{}, errors.New("user not found")
 	}
 	code := utils.GetValidationCodeFromRedis(user.ID)
 	if code != requestBody.Code {
+		logrus.Error("Error UserService Verify: ", err)
 		return dtos.UserDTO{}, errors.New("invalid code")
 	}
 	user, err = us.userRepo.ValidateUser(ctx, user.ID)
 	if err != nil {
+		logrus.Error("Error UserService Verify: ", err)
 		return dtos.UserDTO{}, err
 	}
 	userDTO, err := dtos.UserEntToDto(user)
 	if err != nil {
+		logrus.Error("Error UserService Verify: ", err)
 		return dtos.UserDTO{}, err
 	}
 	return *userDTO, nil
@@ -75,6 +86,7 @@ func (us *UserService) Verify(ctx context.Context, requestBody dtos.VerifyCodeDT
 func (us *UserService) ValidateUser(ctx context.Context, requestBody dtos.ValidateUserDTO) (bool, error) {
 	user, err := us.userRepo.GetByEmail(requestBody.Email)
 	if err != nil {
+		logrus.Error("Error UserService ValidateUser: ", err)
 		return false, err
 	}
 
@@ -99,6 +111,7 @@ func (us *UserService) ValidateUser(ctx context.Context, requestBody dtos.Valida
 func (us *UserService) UpdateUser(ctx context.Context, userID string, updateUserDTO dtos.UpdateUserDTO) (*ent.User, error) {
 	_, err := us.userRepo.GetById(userID)
 	if err != nil {
+		logrus.Error("Error UserService UpdateUser: ", err)
 		return nil, errors.New("user not found")
 	}
 
@@ -114,6 +127,7 @@ func (us *UserService) GetUserSubjects(userID string) ([]dtos.SubjectDTO, error)
 	subjects, err := us.userRepo.GetUserSubjecs(userID)
 
 	if err != nil {
+		logrus.Error("Error UserService GetUserSubjects: ", err)
 		return nil, err
 	}
 
@@ -129,11 +143,13 @@ func (us *UserService) GetUserSubjects(userID string) ([]dtos.SubjectDTO, error)
 func (us *UserService) UpdateUserSubjects(ctx context.Context, userID string, subjects []string) error {
 	_, err := us.userRepo.GetById(userID)
 	if err != nil {
+		logrus.Error("Error UserService UpdateUserSubjects: ", err)
 		return errors.New("user not found")
 	}
 
 	_, err = us.userRepo.UpdateUserSubjects(ctx, userID, subjects)
 	if err != nil {
+		logrus.Error("Error UserService UpdateUserSubjects: ", err)
 		return err
 	}
 
@@ -143,21 +159,25 @@ func (us *UserService) UpdateUserSubjects(ctx context.Context, userID string, su
 func (us *UserService) CreateFriendship(ctx context.Context, userID string, friendship dtos.CreateFriendshipDTO) (*ent.Friendship, error) {
 	user, err := us.userRepo.GetById(userID)
 	if err != nil {
+		logrus.Error("Error UserService CreateFriendship: ", err)
 		return nil, errors.New("user not found")
 	}
 
 	friend, err := us.userRepo.GetById(friendship.FriendID)
 	if err != nil {
+		logrus.Error("Error UserService CreateFriendship: ", err)
 		return nil, errors.New("friend not found")
 	}
 
 	// Check if friendship already exists
 	friendshipExists, err := us.userRepo.IsFriendshipExist(user.ID, friend.ID)
 	if err != nil {
+		logrus.Error("Error UserService CreateFriendship: ", err)
 		return nil, err
 	}
 
 	if friendshipExists {
+		logrus.Warn("Error UserService CreateFriendship: friendship already exists")
 		return nil, errors.New("friendship already exists")
 	}
 
@@ -172,10 +192,12 @@ func (us *UserService) CreateFriendship(ctx context.Context, userID string, frie
 func (us *UserService) UpdateFriendship(friendshipID string, userId string) (*ent.Friendship, error) {
 	friendship, err := us.userRepo.GetFriendshipById(friendshipID)
 	if err != nil {
+		logrus.Error("Error UserService UpdateFriendship: ", err)
 		return nil, errors.New("friendship not found")
 	}
 
 	if friendship.Edges.Friend.ID != userId {
+		logrus.Warn("Error UserService UpdateFriendship: user is not authorized to accept this friendship")
 		return nil, errors.New("user is not authorized to accept this friendship")
 	}
 
@@ -193,11 +215,13 @@ func (us *UserService) GetFriendships(userID string, status string) ([]dtos.Frie
 		pendingFriendships, err := us.userRepo.GetPendingFriendships(userID)
 
 		if err != nil {
+			logrus.Error("Error UserService GetFriendships: ", err)
 			return nil, err
 		}
 
 		pendingFriendshipsDTO, err := dtos.FriendshipsEntToDTO(pendingFriendships, userID, status)
 		if err != nil {
+			logrus.Error("Error UserService GetFriendships: ", err)
 			return nil, err
 		}
 
@@ -206,11 +230,13 @@ func (us *UserService) GetFriendships(userID string, status string) ([]dtos.Frie
 
 		friendships, err := us.userRepo.GetFriendshipsByUserId(userID)
 		if err != nil {
+			logrus.Error("Error UserService GetFriendships: ", err)
 			return nil, err
 		}
 
 		acceptedFriendshipDTO, err := dtos.FriendshipsEntToDTO(friendships, userID, status)
 		if err != nil {
+			logrus.Error("Error UserService GetFriendships: ", err)
 			return nil, err
 		}
 
@@ -221,6 +247,7 @@ func (us *UserService) GetFriendships(userID string, status string) ([]dtos.Frie
 func (us *UserService) DeleteFriendship(friendshipID string, userId string) error {
 	friendship, err := us.userRepo.GetFriendshipById(friendshipID)
 	if err != nil {
+		logrus.Error("Error UserService DeleteFriendship: ", err)
 		return errors.New("friendship not found")
 	}
 
@@ -230,6 +257,7 @@ func (us *UserService) DeleteFriendship(friendshipID string, userId string) erro
 
 	err = us.userRepo.DeleteFriendship(friendshipID)
 	if err != nil {
+		logrus.Error("Error UserService DeleteFriendship: ", err)
 		return err
 	}
 

@@ -7,6 +7,8 @@ import (
 	"edumeet/utils"
 	"os"
 	"path"
+
+	"github.com/sirupsen/logrus"
 )
 
 type AIService struct {
@@ -24,18 +26,22 @@ func NewAIService(documentRepo *repositories.DocumentRepository, eventRepo *repo
 func (ai *AIService) GenerateExo(statement string) (string, error) {
 	exo, err := utils.GenerateExercisePrompt(statement)
 	if err != nil {
+		logrus.Error("Error AIService function GenerateExo: ", err)
 		return "", err
 	}
 
+	logrus.Info("AIService function GenerateExo: ", exo)
 	return exo, nil
 }
 
 func (ai *AIService) GenerateCorrection(exercice string) (string, error) {
 	exo, err := utils.GenerateCorrectionPrompt(exercice)
 	if err != nil {
+		logrus.Error("Error AIService function GenerateCorrection: ", err)
 		return "", err
 	}
 
+	logrus.Info("AIService function GenerateCorrection: ", exo)
 	return exo, nil
 }
 
@@ -45,17 +51,20 @@ func (ai *AIService) SaveGenerateDocument(ctx context.Context, aiDocumentDTO dto
 	path := path.Join("documentUpload", filename)
 	file, err := os.Create(path)
 	if err != nil {
+		logrus.Error("Error AIService function SaveGenerateDocument: ", err)
 		return err
 	}
 	defer file.Close()
 
 	_, err = file.WriteString(aiDocumentDTO.Content)
 	if err != nil {
+		logrus.Error("Error AIService function SaveGenerateDocument: ", err)
 		return err
 	}
 
 	_, err = ai.eventRepo.GetEvent(aiDocumentDTO.EventID)
 	if err != nil {
+		logrus.Error("Error AIService function SaveGenerateDocument: ", err)
 		return err
 	}
 
@@ -68,6 +77,7 @@ func (ai *AIService) SaveGenerateDocument(ctx context.Context, aiDocumentDTO dto
 
 	_, err = ai.documentRepo.CreateDocument(ctx, documentDTO)
 	if err != nil {
+		logrus.Error("Error AIService function SaveGenerateDocument: ", err)
 		return err
 	}
 
