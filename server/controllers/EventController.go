@@ -27,6 +27,18 @@ func NewEventController(eventservice *services.EventService, emailService *servi
 	}
 }
 
+// CreateEvent creates a new event
+// @Summary Create a new event
+// @Description Create a new event with the given details
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param event body dtos.EventDTO true "Event Details"
+// @Success 201 {object} dtos.EventDTO "Event Created Successfully"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Failure 422 {object} map[string]interface{} "Validation Errors"
+// @Failure 500 {object} map[string]string "Internal Server Error"
+// @Router /events [post]
 func (ec *EventController) CreateEvent(c *fiber.Ctx) error {
 
 	var eventDTO dtos.EventDTO
@@ -65,6 +77,18 @@ func (ec *EventController) CreateEvent(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(remoteEvent)
 }
 
+// DeleteEvent deletes an event by ID
+// @Summary Delete an event
+// @Description Deletes an event based on the provided ID
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param id path string true "Event ID"
+// @Success 204 {object} map[string]string "Success: No Content"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Failure 403 {object} map[string]string "Forbidden"
+// @Failure 404 {object} map[string]string "Event Not Found"
+// @Router /events/{id} [delete]
 func (ec *EventController) DeleteEvent(c *fiber.Ctx) error {
 
 	eventID, errParse := ulid.Parse(c.Params("id"))
@@ -94,6 +118,17 @@ func (ec *EventController) DeleteEvent(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
+// GetEvent retrieves an event by ID
+// @Summary Get an event
+// @Description Get an event's details based on the provided ID
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param id path string true "Event ID"
+// @Success 200 {object} dtos.EventDTO "Event Found"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Failure 404 {object} map[string]string "Event Not Found"
+// @Router /events/{id} [get]
 func (ec *EventController) GetEvent(c *fiber.Ctx) error {
 
 	eventID, err := ulid.Parse(c.Params("id"))
@@ -111,6 +146,20 @@ func (ec *EventController) GetEvent(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(event)
 }
 
+// UpdateEvent updates an existing event by ID
+// @Summary Update an event
+// @Description Update the details of an event
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param id path string true "Event ID"
+// @Param event body dtos.EventDTO true "Updated Event Details"
+// @Success 200 {object} dtos.EventDTO "Event Updated Successfully"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Failure 403 {object} map[string]string "Forbidden"
+// @Failure 404 {object} map[string]string "Event Not Found"
+// @Failure 422 {object} map[string]interface{} "Validation Errors"
+// @Router /events/{id} [put]
 func (ec *EventController) UpdateEvent(c *fiber.Ctx) error {
 	eventID, errParse := ulid.Parse(c.Params("id"))
 
@@ -164,6 +213,20 @@ func (ec *EventController) UpdateEvent(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(remoteEvent)
 }
 
+// GetAllEvents retrieves a list of events with optional filters
+// @Summary Get all events
+// @Description Get a list of all events with optional filters
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param type query string false "Event Type" default("all")
+// @Param distance query string false "Distance Filter"
+// @Param longitude query string false "Longitude Filter"
+// @Param latitude query string false "Latitude Filter"
+// @Param subjects query string false "Subjects Filter"
+// @Success 200 {array} dtos.EventDTO "List of Events"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Router /events [get]
 func (ec *EventController) GetAllEvents(c *fiber.Ctx) error {
 	eventType := c.Query("type", "all")
 	distance := c.Query("distance", "")
@@ -187,6 +250,15 @@ func (ec *EventController) GetAllEvents(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(events)
 }
 
+// GetCurrentUserEvents retrieves events of the current user
+// @Summary Get current user's events
+// @Description Get a list of events associated with the current user
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Success 200 {array} dtos.EventDTO "List of Current User's Events"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Router /events/users/current [get]
 func (ec *EventController) GetCurrentUserEvents(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 
@@ -197,6 +269,15 @@ func (ec *EventController) GetCurrentUserEvents(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(events)
 }
 
+// GetEventsCreatedByCurrentUser retrieves events created by the current user
+// @Summary Get events created by the current user
+// @Description Get a list of events created by the current user
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Success 200 {array} dtos.EventDTO "List of Created Events"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Router /events/created-by/current [get]
 func (ec *EventController) GetEventsCreatedByCurrentUser(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 
@@ -207,6 +288,17 @@ func (ec *EventController) GetEventsCreatedByCurrentUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(events)
 }
 
+// GetEventWithDetails retrieves an event with its detailed information
+// @Summary Get event with details
+// @Description Get event details by ID including additional information
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param id path string true "Event ID"
+// @Success 200 {object} dtos.EventDTO "Event Details"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Failure 404 {object} map[string]string "Event Not Found"
+// @Router /events/{id}/details [get]
 func (ec *EventController) GetEventWithDetails(c *fiber.Ctx) error {
 	eventID, err := ulid.Parse(c.Params("id"))
 	if err != nil {
@@ -220,6 +312,17 @@ func (ec *EventController) GetEventWithDetails(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(event)
 }
 
+// GetPendingParticipant retrieves the pending participants of an event
+// @Summary Get pending participants for an event
+// @Description Get a list of participants who are pending approval for an event
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param eventID path string true "Event ID"
+// @Success 200 {array} dtos.UserDTO "List of Pending Participants"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Failure 403 {object} map[string]string "Forbidden"
+// @Router /events/{eventID}/participants/pending [get]
 func (ec *EventController) GetPendingParticipant(c *fiber.Ctx) error {
 
 	eventID, err := ulid.Parse(c.Params("eventID"))
@@ -257,6 +360,16 @@ func (ec *EventController) GetPendingParticipant(c *fiber.Ctx) error {
 
 }
 
+// JoinEventByCode allows a user to join an event by entering a code
+// @Summary Join an event by code
+// @Description Allows a user to join an event by using the provided join code
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param code path string true "Join Code"
+// @Success 200 {object} map[string]string "Successfully Joined Event"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Router /events/join/{code} [get]
 func (ec *EventController) JoinEventByCode(c *fiber.Ctx) error {
 
 	code := c.Params("code")
@@ -278,6 +391,17 @@ func (ec *EventController) JoinEventByCode(c *fiber.Ctx) error {
 	)
 }
 
+// GetEventCode retrieves the event code for an event
+// @Summary Get event code
+// @Description Retrieves the event code required to join the event
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param eventId path string true "Event ID"
+// @Success 200 {object} map[string]string "Event Code"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Failure 403 {object} map[string]string "Forbidden"
+// @Router /events/code/{eventId} [get]
 func (ec *EventController) GetEventCode(c *fiber.Ctx) error {
 	eventID := c.Params("eventId")
 
@@ -300,6 +424,19 @@ func (ec *EventController) GetEventCode(c *fiber.Ctx) error {
 	})
 }
 
+// UpdateEventSubjects updates the subjects of an event
+// @Summary Update event subjects
+// @Description Update the list of subjects associated with the event
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param id path string true "Event ID"
+// @Param subjects body []string true "List of Subjects"
+// @Success 200 {object} map[string]string "Subjects Updated Successfully"
+// @Failure 400 {object} map[string]string "Bad Request"
+// @Failure 403 {object} map[string]string "Forbidden"
+// @Failure 500 {object} map[string]string "Internal Server Error"
+// @Router /events/subjects/update/{id} [put]
 func (ec *EventController) UpdateEventSubjects(c *fiber.Ctx) error {
 	eventID, errParse := ulid.Parse(c.Params("id"))
 	if errParse != nil {

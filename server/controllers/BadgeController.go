@@ -21,6 +21,15 @@ func NewBadgeController(badgeService *services.BadgeService) *BadgeController {
 	}
 }
 
+// GetBadges returns all badges
+// @Summary Get all badges
+// @Description Retrieve a list of all badges
+// @Tags Badge
+// @Accept json
+// @Produce json
+// @Success 200 {array} dtos.BadgeDTO "Success: List of badges"
+// @Failure 404 {object} map[string]string "Error: Badges not found"
+// @Router /badge [get]
 func (uc *BadgeController) GetBadges(c *fiber.Ctx) error {
 	badges, err := uc.badgeService.GetBadges()
 	if err != nil {
@@ -29,6 +38,17 @@ func (uc *BadgeController) GetBadges(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(badges)
 }
 
+// GetBadge returns a single badge by ID
+// @Summary Get a single badge by ID
+// @Description Retrieve a badge by its ID
+// @Tags Badge
+// @Accept json
+// @Produce json
+// @Param id path string true "Badge ID"
+// @Success 200 {object} dtos.BadgeDTO "Success: Badge data"
+// @Failure 400 {object} map[string]string "Error: Invalid ID"
+// @Failure 404 {object} map[string]string "Error: Badge not found"
+// @Router /badge/{id} [get]
 func (uc *BadgeController) GetBadge(c *fiber.Ctx) error {
 	badgeId, err := ulid.Parse(c.Params("id"))
 	if err != nil {
@@ -41,6 +61,20 @@ func (uc *BadgeController) GetBadge(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusNotImplemented).JSON(badge)
 }
 
+// DeleteBadge deletes a badge by ID
+// @Summary Delete a badge by ID
+// @Description Delete a badge from the system by its ID
+// @Tags Badge
+// @Accept json
+// @Produce json
+// @Param id path string true "Badge ID"
+// @Security BearerAuth
+// @Success 204 {object} map[string]string "Success: No Content"
+// @Failure 400 {object} map[string]string "Error: Invalid ID"
+// @Failure 403 {object} map[string]string "Error: Forbidden"
+// @Failure 404 {object} map[string]string "Error: Badge not found"
+// @Failure 401 {object} map[string]string "Error: Unauthorized"
+// @Router /badge/{id} [delete]
 func (uc *BadgeController) DeleteBadge(c *fiber.Ctx) error {
 	badgeId, err := ulid.Parse(c.Params("id"))
 	currentUser := c.Locals("user").(*ent.User)
@@ -70,6 +104,19 @@ func (uc *BadgeController) DeleteBadge(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{})
 }
 
+// CreateBadge creates a new badge
+// @Summary Create a new badge
+// @Description Create a new badge and add it to the system
+// @Tags Badge
+// @Accept json
+// @Produce json
+// @Param badge body dtos.BadgeDTO true "Badge Data"
+// @Security BearerAuth
+// @Success 201 {object} dtos.BadgeDTO "Success: Badge created"
+// @Failure 400 {object} map[string]string "Error: Invalid data"
+// @Failure 401 {object} map[string]string "Error: Unauthorized"
+// @Failure 422 {object} map[string]interface{} "Error: Validation failed"
+// @Router /badge [post]
 func (uc *BadgeController) CreateBadge(c *fiber.Ctx) error {
 	var badgeDTO dtos.BadgeDTO
 	badgeUser := c.Locals("user").(*ent.User)
@@ -103,6 +150,20 @@ func (uc *BadgeController) CreateBadge(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(badge)
 }
 
+// UpdateBadge updates an existing badge by ID
+// @Summary Update a badge by ID
+// @Description Update the details of an existing badge
+// @Tags Badge
+// @Accept json
+// @Produce json
+// @Param id path string true "Badge ID"
+// @Param badge body dtos.BadgeDTO true "Updated Badge Data"
+// @Security BearerAuth
+// @Success 200 {object} dtos.BadgeDTO "Success: Badge updated"
+// @Failure 400 {object} map[string]string "Error: Invalid ID or data"
+// @Failure 401 {object} map[string]string "Error: Unauthorized"
+// @Failure 404 {object} map[string]string "Error: Badge not found"
+// @Router /badge/{id} [put]
 func (uc *BadgeController) UpdateBadge(c *fiber.Ctx) error {
 	badgeId, err := ulid.Parse(c.Params("id"))
 	if err != nil {

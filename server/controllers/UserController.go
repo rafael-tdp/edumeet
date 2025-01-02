@@ -23,6 +23,14 @@ func NewUserController(userService *services.UserService, emailService *services
 	}
 }
 
+// @Summary Get current user information
+// @Description Retrieve the information of the currently authenticated user
+// @Tags User
+// @Accept json
+// @Produce json
+// @Success 200 {object} dtos.UserDTO "Success: Current user information"
+// @Failure 401 {object} map[string]string "Unauthorized: Invalid token or user not found"
+// @Router /me [get]
 func (uc *UserController) Me(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 	userDTO, err := uc.userService.GetUser(currentUser.ID)
@@ -32,6 +40,16 @@ func (uc *UserController) Me(c *fiber.Ctx) error {
 	return c.JSON(userDTO)
 }
 
+// @Summary Get user information by ID
+// @Description Retrieve the information of a user by their ID
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Success 200 {object} dtos.UserDTO "Success: User information"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid ID format"
+// @Failure 404 {object} map[string]string "Not Found: User not found"
+// @Router /user/information/{id} [get]
 func (uc *UserController) GetUser(c *fiber.Ctx) error {
 	c.Set("Content-Type", "application/json; charset=utf-8")
 
@@ -55,6 +73,16 @@ func (uc *UserController) GetUser(c *fiber.Ctx) error {
 	}
 }
 
+// @Summary Verify user email code
+// @Description Verify the user email using the provided verification code
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param body body dtos.VerifyCodeDTO true "Verification Code"
+// @Success 200 {object} map[string]string "Success: Id verified successfully"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid verification code"
+// @Failure 500 {object} map[string]string "Internal Server Error: Error processing verification"
+// @Router /user/verify [post]
 func (uc *UserController) Verify(c *fiber.Ctx) error {
 	var requestBody dtos.VerifyCodeDTO
 	if err := c.BodyParser(&requestBody); err != nil {
@@ -69,6 +97,16 @@ func (uc *UserController) Verify(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Id verified successfully", "user": user})
 }
 
+// @Summary Validate user activation code
+// @Description Validate user activation code for account activation
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param body body dtos.ValidateUserDTO true "Activation Code"
+// @Success 200 {object} map[string]string "Success: User activated successfully"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid activation code"
+// @Failure 500 {object} map[string]string "Internal Server Error: Error processing validation"
+// @Router /user/validate-user [post]
 func (uc *UserController) ValidateUser(c *fiber.Ctx) error {
 	var requestBody dtos.ValidateUserDTO
 	if err := c.BodyParser(&requestBody); err != nil {
@@ -87,6 +125,18 @@ func (uc *UserController) ValidateUser(c *fiber.Ctx) error {
 	}
 }
 
+// @Summary Update user information
+// @Description Update the information of a user based on their ID
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param id path string true "User ID"
+// @Param body body dtos.UpdateUserDTO true "User Information"
+// @Success 200 {object} dtos.UserDTO "Success: User information updated"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid ID or data"
+// @Failure 422 {object} map[string]interface{} "Unprocessable Entity: Validation errors"
+// @Failure 500 {object} map[string]string "Internal Server Error: Error updating user"
+// @Router /user/{id} [put]
 func (uc *UserController) UpdateUser(c *fiber.Ctx) error {
 	var updateUserDTO dtos.UpdateUserDTO
 	if err := c.BodyParser(&updateUserDTO); err != nil {
@@ -113,6 +163,14 @@ func (uc *UserController) UpdateUser(c *fiber.Ctx) error {
 	return c.JSON(updatedUser)
 }
 
+// @Summary Get user subjects
+// @Description Retrieve subjects associated with the currently authenticated user
+// @Tags User
+// @Accept json
+// @Produce json
+// @Success 200 {array} dtos.SubjectDTO "Success: List of user subjects"
+// @Failure 500 {object} map[string]string "Internal Server Error: Error retrieving subjects"
+// @Router /user/subjects [get]
 func (uc *UserController) GetUserSubjects(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 	subjects, err := uc.userService.GetUserSubjects(currentUser.ID)
@@ -122,6 +180,16 @@ func (uc *UserController) GetUserSubjects(c *fiber.Ctx) error {
 	return c.JSON(subjects)
 }
 
+// @Summary Update user subjects
+// @Description Update the subjects associated with the currently authenticated user
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param body body []string true "List of subjects"
+// @Success 200 {object} map[string]string "Success: Subjects updated"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid subjects"
+// @Failure 500 {object} map[string]string "Internal Server Error: Error updating subjects"
+// @Router /user/subjects/update [put]
 func (uc *UserController) UpdateUserSubjects(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 	var subjects []string
@@ -137,6 +205,15 @@ func (uc *UserController) UpdateUserSubjects(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"message": "Subjects updated successfully"})
 }
 
+// @Summary Create friendship
+// @Description Create a friendship between users
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param body body dtos.CreateFriendshipDTO true "Friendship details"
+// @Success 201 {object} dtos.FriendshipDTO "Success: Friendship created"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid friendship data"
+// @Router /user/friendship [post]
 func (uc *UserController) CreateFriendship(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 	var friendshipDTO dtos.CreateFriendshipDTO
@@ -153,6 +230,15 @@ func (uc *UserController) CreateFriendship(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(friendship)
 }
 
+// @Summary Accept friendship
+// @Description Accept a pending friendship request
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param id path string true "Friendship ID"
+// @Success 200 {object} dtos.FriendshipDTO "Success: Friendship accepted"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid friendship ID"
+// @Router /user/friendship/{id} [put]
 func (uc *UserController) AcceptFriendship(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 	friendshipID := c.Params("id")
@@ -164,6 +250,15 @@ func (uc *UserController) AcceptFriendship(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(friendship)
 }
 
+// @Summary Get friendships
+// @Description Retrieve a list of the user's friendships
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param status query string false "Friendship status" (default: "PENDING")
+// @Success 200 {array} dtos.FriendshipDTO "Success: List of friendships"
+// @Failure 500 {object} map[string]string "Internal Server Error: Error retrieving friendships"
+// @Router /user/friendships [get]
 func (uc *UserController) GetFriendships(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 
@@ -176,6 +271,15 @@ func (uc *UserController) GetFriendships(c *fiber.Ctx) error {
 	return c.JSON(friendships)
 }
 
+// @Summary Delete friendship
+// @Description Delete a friendship between users
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param id path string true "Friendship ID"
+// @Success 204 {object} map[string]string "Success: Friendship deleted"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid friendship ID"
+// @Router /user/friendship/{id} [delete]
 func (uc *UserController) DeleteFriendship(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 	friendshipID := c.Params("id")
