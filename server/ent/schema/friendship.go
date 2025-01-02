@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"edumeet/enums"
 	"edumeet/utils"
 
 	"entgo.io/ent"
@@ -16,7 +17,7 @@ func (Friendship) Fields() []ent.Field {
 	ulid := utils.ULID{}
 	return []ent.Field{
 		field.String("id").DefaultFunc(ulid.GenerateUlid()).Unique(),
-		field.String("status").Default("PENDING"),
+		field.String("status").Default(string(enums.FriendPending)),
 	}
 }
 

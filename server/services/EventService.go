@@ -4,6 +4,7 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
+	"edumeet/enums"
 	"edumeet/repositories"
 	"edumeet/structures"
 	"edumeet/utils"
@@ -49,7 +50,7 @@ func (es *EventService) CreateEvent(ctx context.Context, eventDTO dtos.EventDTO,
 		}
 	}
 
-	_, err = es.participantRepository.CreateParticipant(userId, event.ID, "ACCEPTED")
+	_, err = es.participantRepository.CreateParticipant(userId, event.ID, string(enums.ParticipantAccepted))
 
 	eventCreatedWithEdge, err := es.eventRepository.GetEvent(event.ID)
 	if err != nil {
@@ -379,7 +380,7 @@ func (es *EventService) JoinEventByCode(eventCode string, userID string) error {
 		}
 	}
 
-	_, err = es.participantRepository.CreateParticipant(userID, event.ID, "ACCEPTED")
+	_, err = es.participantRepository.CreateParticipant(userID, event.ID, string(enums.ParticipantAccepted))
 
 	if err != nil {
 		logrus.Error("Error EventService.JoinEventByCode: ", err)

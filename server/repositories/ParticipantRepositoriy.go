@@ -6,6 +6,7 @@ import (
 	"edumeet/ent/event"
 	"edumeet/ent/participant"
 	"edumeet/ent/user"
+	"edumeet/enums"
 )
 
 type ParticipantRepository struct {
@@ -93,7 +94,7 @@ func (pr *ParticipantRepository) GetParticipantsByEvent(eventId string) ([]*ent.
 func (pr *ParticipantRepository) GetPendingParticipantsByEvent(eventId string) ([]*ent.Participant, error) {
 	participants, err := pr.client.Participant.Query().
 		Where(participant.HasEventWith(event.IDEQ(eventId))).
-		Where(participant.StatusEQ("PENDING")).
+		Where(participant.StatusEQ(string(enums.ParticipantPending))).
 		WithUser().
 		All(context.Background())
 	if err != nil {
@@ -106,7 +107,7 @@ func (pr *ParticipantRepository) GetPendingParticipantsByEvent(eventId string) (
 func (pr *ParticipantRepository) GetParticipationsUser(userId string) ([]*ent.Participant, error) {
 	participants, err := pr.client.Participant.Query().
 		Where(participant.HasUserWith(user.IDEQ(userId))).
-		Where(participant.StatusEQ("ACCEPTED")).
+		Where(participant.StatusEQ(string(enums.ParticipantAccepted))).
 		WithEvent().
 		All(context.Background())
 	if err != nil {

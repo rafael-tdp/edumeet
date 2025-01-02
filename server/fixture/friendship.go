@@ -3,6 +3,8 @@ package fixture
 import (
 	"context"
 	"edumeet/ent"
+	"edumeet/enums"
+
 	"github.com/brianvoe/gofakeit/v7"
 )
 
@@ -24,7 +26,7 @@ func (m *FriendShip) GenerateFriendship(ctx context.Context, client *ent.Client)
 		gofakeit.ShuffleAnySlice(usersShuffled)
 		for i := 0; i < numFriends; i++ {
 			friend := usersShuffled[i]
-			
+
 			if currentUser.ID == friend.ID {
 				continue
 			}
@@ -32,7 +34,7 @@ func (m *FriendShip) GenerateFriendship(ctx context.Context, client *ent.Client)
 			_, err = client.Friendship.Create().
 				SetUser(currentUser).
 				SetFriend(friend).
-				SetStatus("ACCEPTED").
+				SetStatus(string(enums.FriendAccepted)).
 				Save(ctx)
 			if err != nil {
 				panic("error creating friendship: " + err.Error())

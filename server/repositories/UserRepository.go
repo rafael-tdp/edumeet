@@ -7,6 +7,7 @@ import (
 	"edumeet/ent/friendship"
 	"edumeet/ent/subject"
 	"edumeet/ent/user"
+	"edumeet/enums"
 	"edumeet/utils"
 	"errors"
 )
@@ -176,7 +177,7 @@ func (ur *UserRepository) CreateFriendship(ctx context.Context, userID string, f
 
 	friendship, err := ur.client.Friendship.
 		Create().
-		SetStatus("PENDING").
+		SetStatus(string(enums.FriendPending)).
 		SetUser(currentUser).
 		SetFriend(friend).
 		Save(ctx)
@@ -193,7 +194,7 @@ func (ur *UserRepository) UpdateFriendship(friendshipID string) (*ent.Friendship
 		return nil, errors.New("friendship not found")
 	}
 
-	friendshipUpdated, err := friendship.Update().SetStatus("ACCEPTED").Save(context.Background())
+	friendshipUpdated, err := friendship.Update().SetStatus(string(enums.FriendAccepted)).Save(context.Background())
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +219,7 @@ func (ur *UserRepository) GetFriendshipsByUserId(userID string) ([]*ent.Friendsh
 	friendships, err := ur.client.Friendship.Query().
 		Where(
 			friendship.And(
-				friendship.StatusEQ("ACCEPTED"),
+				friendship.StatusEQ(string(enums.FriendAccepted)),
 				friendship.Or(
 					friendship.HasUserWith(user.IDEQ(userID)),
 					friendship.HasFriendWith(user.IDEQ(userID)),
@@ -275,7 +276,7 @@ func (ur *UserRepository) GetPendingFriendships(userID string) ([]*ent.Friendshi
 		Where(
 			friendship.And(
 				friendship.HasFriendWith(user.IDEQ(userID)),
-				friendship.StatusEQ("PENDING"),
+				friendship.StatusEQ(string(enums.FriendPending)),
 			),
 		).
 		WithUser().

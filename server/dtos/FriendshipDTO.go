@@ -1,6 +1,9 @@
 package dtos
 
-import "edumeet/ent"
+import (
+	"edumeet/ent"
+	"edumeet/enums"
+)
 
 type FriendshipDTO struct {
 	ID             string `json:"id"`
@@ -21,7 +24,7 @@ func FriendshipEntToDTO(friendship *ent.Friendship, friendId string, friendUsern
 func FriendshipsEntToDTO(friendships []*ent.Friendship, currentUserId string, status string) ([]FriendshipDTO, error) {
 	friendshipsDTO := make([]FriendshipDTO, 0)
 	for _, friendship := range friendships {
-		if status == "PENDING" {
+		if status == string(enums.FriendPending) {
 			friendshipDTO, err := FriendshipEntToDTO(friendship, friendship.Edges.User.ID, friendship.Edges.User.Username)
 			if err != nil {
 				return nil, err

@@ -4,6 +4,7 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
+	"edumeet/enums"
 	"edumeet/services"
 
 	"github.com/go-playground/validator/v10"
@@ -262,7 +263,7 @@ func (uc *UserController) AcceptFriendship(c *fiber.Ctx) error {
 func (uc *UserController) GetFriendships(c *fiber.Ctx) error {
 	currentUser := c.Locals("user").(*ent.User)
 
-	status := c.Query("status", "PENDING")
+	status := c.Query("status", string(enums.FriendPending))
 
 	friendships, err := uc.userService.GetFriendships(currentUser.ID, status)
 	if err != nil {
