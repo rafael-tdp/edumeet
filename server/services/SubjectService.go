@@ -52,8 +52,8 @@ func (sr *SubjectService) Delete(subjectID string) error {
 	return nil
 }
 
-func (sr *SubjectService) GetSubjects() ([]*dtos.SubjectDTO, error) {
-	subjects, err := sr.subjectRepository.GetSubjects()
+func (sr *SubjectService) GetSubjects(perPage, offset int) ([]*dtos.SubjectDTO, error) {
+	subjects, err := sr.subjectRepository.GetSubjects(perPage, offset)
 	if err != nil {
 		logrus.Error("Error SubjectService.GetSubjects: ", err)
 		return nil, errors.New("error getting subjects")

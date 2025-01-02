@@ -158,7 +158,19 @@ func (sc *SubjectController) Delete(c *fiber.Ctx) error {
 // @Failure 404 {object} map[string]string "Not Found"
 // @Router /subjects [get]
 func (sc *SubjectController) GetSubjects(c *fiber.Ctx) error {
-	subjects, err := sc.subjectService.GetSubjects()
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid page parameter"})
+	}
+
+	perPage := c.QueryInt("per_page", 99999)
+	if perPage <= 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid per_page parameter"})
+	}
+
+	offset := (page - 1) * perPage
+	subjects, err := sc.subjectService.GetSubjects(perPage, offset)
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})

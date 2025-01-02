@@ -44,8 +44,11 @@ func (sr *SubjectRepository) Delete(subjectID string) error {
 	return nil
 }
 
-func (sr *SubjectRepository) GetSubjects() ([]*ent.Subject, error) {
-	subjects, err := sr.client.Subject.Query().All(context.Background())
+func (sr *SubjectRepository) GetSubjects(limit, offset int) ([]*ent.Subject, error) {
+	subjects, err := sr.client.Subject.Query().
+		Limit(limit).
+		Offset(offset).
+		All(context.Background())
 	if err != nil {
 		return nil, errors.New("error getting subjects")
 	}

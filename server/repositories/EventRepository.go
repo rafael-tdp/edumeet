@@ -186,7 +186,7 @@ func (er *EventRepository) UpdateEvent(ctx context.Context, event dtos.EventDTO,
 	return updatedEvent, nil
 }
 
-func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters) ([]*ent.Event, error) {
+func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters, limit, offset int) ([]*ent.Event, error) {
 	query := er.client.Event.Query().
 		WithRemoteEvent().
 		WithPhysicalEvent().
@@ -206,7 +206,10 @@ func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters)
 	}
 
 	// Exécuter la requête
-	events, err := query.All(context.Background())
+	events, err := query.
+		Limit(limit).
+		Offset(offset).
+		All(context.Background())
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch events: %v", err)
 	}
