@@ -38,9 +38,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = false;
 
   Future<bool> _isFirstLogin() async {
-    final isFirstLogin = await CacheService.getDataFromCache("first_login");
+    final isFirstLogin = await CacheService.getDataFromCache("first_launch");
     if (isFirstLogin == null) {
-      await CacheService.saveDataToCache("first_login", "false");
       return true;
     }
     return false;

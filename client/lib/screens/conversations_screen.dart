@@ -75,7 +75,22 @@ class _ConversationsPageState extends State<ConversationsPage> {
                     ListTile(
                       leading: _avatar.toImage(height: 50),
                       title: Text(conversation.name),
-                      subtitle: Text('${conversation.lastMessageUsername}: ${conversation.lastMessage}'),
+                      subtitle: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '${conversation.lastMessageUsername}: ',
+                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                            ),
+                            TextSpan(
+                              text: conversation.lastMessage,
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ],
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       trailing: Text(custom_date_utils.DateUtils.isoToFormattedTime(conversation.lastMessageDate.toIso8601String())),
                       onTap: () => _navigateToConversation(context, conversation),
                     ),

@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Already have an account?",
     "loadingIndicator": "Loading...",
     "errorOccurred": "An error occurred",
-    "backTo": "Back to "
+    "backTo": "Back to ",
+    "unknown": "Unknown"
   },
   "user": {
     "email": "Email",
@@ -135,6 +136,7 @@
   "error": {
     "details": "Error: {{error}}",
     "general": "An error occurred",
+    "no_results": "No results found",
     "no_internet": "No internet connection",
     "no_internet_description": "Please check your internet connection and try again",
     "no_events": "No events found",
@@ -193,6 +195,17 @@
   "common": {
     "sender": "Sender",
     "message": "Message"
+  },
+  "settings": {
+    "account": "Account",
+    "settings": "Settings",
+    "language": "Language",
+    "manageSubjects": "Manage Subjects",
+    "notifications": "Notifications",
+    "about": "About",
+    "contact": "Contact",
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy"
   },
   "page": {
     "home": "Home",

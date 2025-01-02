@@ -48,6 +48,7 @@ class TranslationsNl implements Translations {
 	@override late final _TranslationsResourcesNl resources = _TranslationsResourcesNl._(_root);
 	@override late final _TranslationsMessagesNl messages = _TranslationsMessagesNl._(_root);
 	@override late final _TranslationsCommonNl common = _TranslationsCommonNl._(_root);
+	@override late final _TranslationsSettingsNl settings = _TranslationsSettingsNl._(_root);
 	@override late final _TranslationsPageNl page = _TranslationsPageNl._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppNl implements TranslationsAppFr {
 	@override String get loadingIndicator => 'Laden...';
 	@override String get errorOccurred => 'Er is een fout opgetreden';
 	@override String get backTo => 'Terug naar ';
+	@override String get unknown => 'Onbekend';
 }
 
 // Path: user
@@ -249,6 +251,7 @@ class _TranslationsErrorNl implements TranslationsErrorFr {
 	// Translations
 	@override String details({required Object error}) => 'Fout: ${error}';
 	@override String get general => 'Er is een fout opgetreden';
+	@override String get no_results => 'Geen resultaten gevonden';
 	@override String get no_internet => 'Geen internetverbinding';
 	@override String get no_internet_description => 'Controleer je internetverbinding en probeer het opnieuw';
 	@override String get no_events => 'Geen evenementen gevonden';
@@ -351,6 +354,24 @@ class _TranslationsCommonNl implements TranslationsCommonFr {
 	@override String get message => 'Bericht';
 }
 
+// Path: settings
+class _TranslationsSettingsNl implements TranslationsSettingsFr {
+	_TranslationsSettingsNl._(this._root);
+
+	final TranslationsNl _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Account';
+	@override String get settings => 'Instellingen';
+	@override String get language => 'Taal';
+	@override String get manageSubjects => 'Beheer vakken';
+	@override String get notifications => 'Meldingen';
+	@override String get about => 'Over';
+	@override String get contact => 'Contact';
+	@override String get terms => 'Voorwaarden';
+	@override String get privacy => 'Privacybeleid';
+}
+
 // Path: page
 class _TranslationsPageNl implements TranslationsPageFr {
 	_TranslationsPageNl._(this._root);
@@ -430,6 +451,7 @@ extension on TranslationsNl {
 			case 'app.loadingIndicator': return 'Laden...';
 			case 'app.errorOccurred': return 'Er is een fout opgetreden';
 			case 'app.backTo': return 'Terug naar ';
+			case 'app.unknown': return 'Onbekend';
 			case 'user.email': return 'E-mail';
 			case 'user.username': return 'Gebruikersnaam';
 			case 'user.name': return 'Naam';
@@ -518,6 +540,7 @@ extension on TranslationsNl {
 			case 'event.eventNotStarted': return 'De inloglink zal hier beschikbaar zijn wanneer het evenement begint.';
 			case 'error.details': return ({required Object error}) => 'Fout: ${error}';
 			case 'error.general': return 'Er is een fout opgetreden';
+			case 'error.no_results': return 'Geen resultaten gevonden';
 			case 'error.no_internet': return 'Geen internetverbinding';
 			case 'error.no_internet_description': return 'Controleer je internetverbinding en probeer het opnieuw';
 			case 'error.no_events': return 'Geen evenementen gevonden';
@@ -564,6 +587,15 @@ extension on TranslationsNl {
 			case 'messages.sendMessage': return 'Verstuur';
 			case 'common.sender': return 'Afzender';
 			case 'common.message': return 'Bericht';
+			case 'settings.account': return 'Account';
+			case 'settings.settings': return 'Instellingen';
+			case 'settings.language': return 'Taal';
+			case 'settings.manageSubjects': return 'Beheer vakken';
+			case 'settings.notifications': return 'Meldingen';
+			case 'settings.about': return 'Over';
+			case 'settings.contact': return 'Contact';
+			case 'settings.terms': return 'Voorwaarden';
+			case 'settings.privacy': return 'Privacybeleid';
 			case 'page.home': return 'Startpagina';
 			case 'page.homePage': return 'Startpagina';
 			case 'page.profile': return 'Profiel';

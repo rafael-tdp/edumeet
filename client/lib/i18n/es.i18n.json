@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
     "loadingIndicator": "Cargando...",
     "errorOccurred": "Ocurrió un error",
-    "backTo": "Regresar a "
+    "backTo": "Regresar a ",
+    "unknown": "Desconocido"
   },
   "user": {
     "email": "Correo electrónico",
@@ -135,6 +136,7 @@
   "error": {
     "details": "Error: {{error}}",
     "general": "Se ha producido un error",
+    "no_results": "Ningún resultado encontrado",
     "no_internet": "Sin conexión a Internet",
     "no_internet_description": "Por favor verifica tu conexión a Internet y vuelve a intentarlo",
     "no_events": "No se encontraron eventos",
@@ -193,6 +195,17 @@
   "common": {
     "sender": "Remitente",
     "message": "Mensaje"
+  },
+  "settings": {
+    "account": "Cuenta",
+    "settings": "Ajustes",
+    "language": "Idioma",
+    "manageSubjects": "Gestión de materias",
+    "notifications": "Notificaciones",
+    "about": "Acerca de",
+    "contact": "Contacto",
+    "terms": "Términos de uso",
+    "privacy": "Política de privacidad"
   },
   "page": {
     "home": "Inicio",

@@ -15,10 +15,13 @@ func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 	physicalUser := []string{"Zaid", "Jugurtha", "Rafael", "Makan"}
 	physicalAddress := []string{"242 Rue du Faubourg Saint-Antoine, 75012 Paris", "105 Stoke Newington Church St, London N16 0UD, Royaume-Uni", "44 Rue des Clottins, 95560 Montsoult", "14 Rue Édouard-Grimaux, 86000 Poitiers"}
 	pictures := []string{
-		"https://api.dicebear.com/5.x/identicon/svg?seed=zaid@user.com",
-		"https://api.dicebear.com/5.x/identicon/svg?seed=jugurtha@user.com",
-		"https://api.dicebear.com/5.x/identicon/svg?seed=rafael@user.com",
-		"https://api.dicebear.com/5.x/identicon/svg?seed=makan@user.com",
+		"adventurer",
+		"avaraaars",
+		"bigSmile",
+		"bottts",
+		"bigEars",
+		"identicon",
+		"initials",
 	}
 	dateUtils := utils.Date{}
 	bcryptUtils := utils.Bcrypt{}
@@ -44,7 +47,7 @@ func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 			SetLat(lat).
 			SetCreatedBy(id).
 			SetUpdatedBy(id).
-			SetPicture(pictures[i]).
+			SetPicture(pictures[gofakeit.Number(0, len(pictures)-1)]).
 			SaveX(ctx)
 	}
 }

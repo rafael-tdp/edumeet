@@ -3,6 +3,7 @@ import 'package:client/providers/user_provider.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/providers/locale_provider.dart';
 import 'package:client/router.dart';
+import 'package:client/screens/settings_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:client/screens/profile_screen.dart';
+import 'core/services/cache_service.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
 import 'screens/conversations_screen.dart';
@@ -59,7 +61,7 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatefulWidget {
   static const String routeName = '/home';
   static navigateTo(BuildContext context) {
-    context.go(routeName);
+    context.go(HomePage.routeName);
   }
 
   final Widget? child;
@@ -77,9 +79,10 @@ class _HomePageState extends State<HomePage> {
     const SwipeCardsPage(),
     const EventsPage(),
     const ConversationsPage(),
-    const ProfilePage(
-      userId: null,
-    ),
+    // const ProfilePage(
+    //   userId: null,
+    // ),
+    const SettingsPage(),
   ];
 
   void _onTabTapped(int index) {
@@ -94,7 +97,7 @@ class _HomePageState extends State<HomePage> {
         context.go(ConversationsPage.routeName);
         break;
       case 3:
-        context.go(ProfilePage.routeName);
+        context.go(SettingsPage.routeName);
         break;
     }
     setState(() {
@@ -102,10 +105,18 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<void> _isFirstLaunch() async {
+    final isFirstLaunch = await CacheService.getDataFromCache("first_launch");
+    if (isFirstLaunch == null) {
+      await CacheService.saveDataToCache("first_launch", "false");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     _sseServices.connectToSse();
+    _isFirstLaunch();
   }
 
   @override
@@ -141,18 +152,6 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       backgroundColor: Colors.white,
-    );
-  }
-}
-
-// Exemple de page 3 (Paramètres)
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(t.page.settingsPage),
     );
   }
 }

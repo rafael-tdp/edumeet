@@ -2,6 +2,7 @@ import 'package:client/core/models/response.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/profile_screen.dart';
+import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/colors.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
@@ -9,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../components/profile_button.dart';
+import '../components/avatar_selector.dart';
 import '../core/models/user.dart';
 import '../providers/user_provider.dart';
 
@@ -22,7 +24,6 @@ class EditProfilePage extends StatefulWidget {
   final User user;
 
   @override
-  // ignore: library_private_types_in_public_api
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
@@ -35,6 +36,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _emailController;
   late TextEditingController _birthDateController;
   late TextEditingController _addressController;
+  String? _selectedAvatar;
+  late String _currentUsername;
+  late Avatar _avatar;
 
   @override
   void initState() {
@@ -48,6 +52,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
         text: custom_date_utils.DateUtils.isoToFormattedDate(
             widget.user.birthDate.toString()));
     _addressController = TextEditingController(text: widget.user.address);
+    _selectedAvatar = widget.user.picture; // Initialize with the current avatar
+    _currentUsername = widget.user.username;
+    // _avatar = DiceBearBuilder(
+    //   seed: widget.user.username,
+    //   sprite: DiceBearSprite.bottts,
+    // ).build();
+    _avatar = DiceBearBuilder(
+      seed: widget.user.username,
+      sprite: DiceBearSprite.values.firstWhere(
+            (sprite) => sprite.name == widget.user.picture,
+      ),
+    ).build();
+
+    _usernameController.addListener(() {
+      setState(() {
+        if (_currentUsername == _usernameController.text) return;
+        _currentUsername = _usernameController.text;
+        _avatar = DiceBearBuilder(
+          seed: _currentUsername,
+          sprite: DiceBearSprite.values.firstWhere(
+            (sprite) => sprite.name == _selectedAvatar,
+          ),
+        ).build();
+      });
+    });
   }
 
   @override
@@ -63,34 +92,39 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _saveProfile() async {
-  if (_formKey.currentState?.validate() == true) {
-    final User updatedUser = User(
-      id: widget.user.id,
-      email: _emailController.text,
-      username: _usernameController.text,
-      lastname: _lastnameController.text,
-      firstname: _firstnameController.text,
-      birthDate: custom_date_utils.DateUtils.stringToFomattedDateTime(
-          _birthDateController.text),
-      bio: _bioController.text,
-      picture: widget.user.picture,
-      address: _addressController.text,
-    );
-    ResponseRequest response =
-        await UserServices().updateUserInfo(updatedUser);
-    if (response.success) {
-      Provider.of<UserProvider>(context, listen: false).setUser(response.data);
-      context.go(ProfilePage.routeName);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response.message!),
-          backgroundColor: Colors.red,
-        ),
+    if (_formKey.currentState?.validate() == true) {
+      final User updatedUser = User(
+        id: widget.user.id,
+        email: _emailController.text,
+        username: _usernameController.text,
+        lastname: _lastnameController.text,
+        firstname: _firstnameController.text,
+        birthDate: custom_date_utils.DateUtils.stringToFomattedDateTime(
+            _birthDateController.text),
+        bio: _bioController.text,
+        picture: _selectedAvatar,
+        address: _addressController.text,
       );
+      ResponseRequest response =
+          await UserServices().updateUserInfo(updatedUser);
+      if (response.success) {
+        Provider.of<UserProvider>(context, listen: false).setUser(response.data);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfilePage(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message!),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +149,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  radius: 60,
-                  backgroundImage: NetworkImage(widget.user.picture ?? ''),
+                _avatar.toImage(height: 100),
+                const SizedBox(height: 20),
+                AvatarSelector(
+                  username: _currentUsername,
+                  onAvatarSelected: (String avatar) {
+                    setState(() {
+                      _selectedAvatar = avatar;
+                      _avatar = DiceBearBuilder(
+                        seed: _currentUsername,
+                        sprite: DiceBearSprite.values.firstWhere(
+                          (sprite) => sprite.name == avatar,
+                        ),
+                      ).build();
+                    });
+                  },
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
@@ -157,7 +203,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 TextFormField(
                   controller: _usernameController,
                   decoration: InputDecoration(
-                    labelText: "Nom d'utilisateur",
+                    labelText: t.user.username,
                     border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
@@ -165,7 +211,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Entrez un nom d'utilisateur";
+                      return t.form.emptyUsername;
                     }
                     return null;
                   },
@@ -243,7 +289,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       text: t.profile.cancel,
                       backgroundColor: Colors.redAccent,
                       onPressed: () {
-                        context.go(ProfilePage.routeName);
+                        ProfilePage.navigateTo(context);
                       },
                     ),
                   ],

@@ -48,6 +48,7 @@ class TranslationsDe implements Translations {
 	@override late final _TranslationsResourcesDe resources = _TranslationsResourcesDe._(_root);
 	@override late final _TranslationsMessagesDe messages = _TranslationsMessagesDe._(_root);
 	@override late final _TranslationsCommonDe common = _TranslationsCommonDe._(_root);
+	@override late final _TranslationsSettingsDe settings = _TranslationsSettingsDe._(_root);
 	@override late final _TranslationsPageDe page = _TranslationsPageDe._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppDe implements TranslationsAppFr {
 	@override String get loadingIndicator => 'Laden...';
 	@override String get errorOccurred => 'Ein Fehler ist aufgetreten';
 	@override String get backTo => 'Zurück zu ';
+	@override String get unknown => 'Unbekannt';
 }
 
 // Path: user
@@ -249,6 +251,7 @@ class _TranslationsErrorDe implements TranslationsErrorFr {
 	// Translations
 	@override String details({required Object error}) => 'Fehler: ${error}';
 	@override String get general => 'Es ist ein Fehler aufgetreten';
+	@override String get no_results => 'Keine Ergebnisse gefunden';
 	@override String get no_internet => 'Keine Internetverbindung';
 	@override String get no_internet_description => 'Bitte überprüfe deine Internetverbindung und versuche es erneut';
 	@override String get no_events => 'Keine Ereignisse gefunden';
@@ -351,6 +354,24 @@ class _TranslationsCommonDe implements TranslationsCommonFr {
 	@override String get message => 'Nachricht';
 }
 
+// Path: settings
+class _TranslationsSettingsDe implements TranslationsSettingsFr {
+	_TranslationsSettingsDe._(this._root);
+
+	final TranslationsDe _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Konto';
+	@override String get settings => 'Einstellungen';
+	@override String get language => 'Sprache';
+	@override String get manageSubjects => 'Fächer verwalten';
+	@override String get notifications => 'Benachrichtigungen';
+	@override String get about => 'Über';
+	@override String get contact => 'Kontakt';
+	@override String get terms => 'Nutzungsbedingungen';
+	@override String get privacy => 'Datenschutzrichtlinie';
+}
+
 // Path: page
 class _TranslationsPageDe implements TranslationsPageFr {
 	_TranslationsPageDe._(this._root);
@@ -430,6 +451,7 @@ extension on TranslationsDe {
 			case 'app.loadingIndicator': return 'Laden...';
 			case 'app.errorOccurred': return 'Ein Fehler ist aufgetreten';
 			case 'app.backTo': return 'Zurück zu ';
+			case 'app.unknown': return 'Unbekannt';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Benutzername';
 			case 'user.name': return 'Name';
@@ -518,6 +540,7 @@ extension on TranslationsDe {
 			case 'event.eventNotStarted': return 'Der Verbindungslink wird hier verfügbar sein, wenn das Ereignis beginnt.';
 			case 'error.details': return ({required Object error}) => 'Fehler: ${error}';
 			case 'error.general': return 'Es ist ein Fehler aufgetreten';
+			case 'error.no_results': return 'Keine Ergebnisse gefunden';
 			case 'error.no_internet': return 'Keine Internetverbindung';
 			case 'error.no_internet_description': return 'Bitte überprüfe deine Internetverbindung und versuche es erneut';
 			case 'error.no_events': return 'Keine Ereignisse gefunden';
@@ -564,6 +587,15 @@ extension on TranslationsDe {
 			case 'messages.sendMessage': return 'Nachricht senden';
 			case 'common.sender': return 'Absender';
 			case 'common.message': return 'Nachricht';
+			case 'settings.account': return 'Konto';
+			case 'settings.settings': return 'Einstellungen';
+			case 'settings.language': return 'Sprache';
+			case 'settings.manageSubjects': return 'Fächer verwalten';
+			case 'settings.notifications': return 'Benachrichtigungen';
+			case 'settings.about': return 'Über';
+			case 'settings.contact': return 'Kontakt';
+			case 'settings.terms': return 'Nutzungsbedingungen';
+			case 'settings.privacy': return 'Datenschutzrichtlinie';
 			case 'page.home': return 'Startseite';
 			case 'page.homePage': return 'Startseite';
 			case 'page.profile': return 'Profil';

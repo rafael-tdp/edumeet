@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Heb je al een account?",
     "loadingIndicator": "Laden...",
     "errorOccurred": "Er is een fout opgetreden",
-    "backTo": "Terug naar "
+    "backTo": "Terug naar ",
+    "unknown": "Onbekend"
   },
   "user": {
     "email": "E-mail",
@@ -135,6 +136,7 @@
   "error": {
     "details": "Fout: {{error}}",
     "general": "Er is een fout opgetreden",
+    "no_results": "Geen resultaten gevonden",
     "no_internet": "Geen internetverbinding",
     "no_internet_description": "Controleer je internetverbinding en probeer het opnieuw",
     "no_events": "Geen evenementen gevonden",
@@ -193,6 +195,17 @@
   "common": {
     "sender": "Afzender",
     "message": "Bericht"
+  },
+  "settings": {
+    "account": "Account",
+    "settings": "Instellingen",
+    "language": "Taal",
+    "manageSubjects": "Beheer vakken",
+    "notifications": "Meldingen",
+    "about": "Over",
+    "contact": "Contact",
+    "terms": "Voorwaarden",
+    "privacy": "Privacybeleid"
   },
   "page": {
     "home": "Startpagina",

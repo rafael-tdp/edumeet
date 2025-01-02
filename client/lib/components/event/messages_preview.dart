@@ -104,6 +104,8 @@ class MessagesPreview extends StatelessWidget {
                                     ),
                                   ],
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],

@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Masz już konto?",
     "loadingIndicator": "Ładowanie...",
     "errorOccurred": "Wystąpił błąd",
-    "backTo": "Powrót do "
+    "backTo": "Powrót do ",
+    "unknown": "Nieznane"
   },
   "user": {
     "email": "Email",
@@ -135,6 +136,7 @@
   "error": {
     "details": "Błąd: {{error}}",
     "general": "Wystąpił błąd",
+    "no_results": "Nie znaleziono żadnych wyników",
     "no_internet": "Brak połączenia z internetem",
     "no_internet_description": "Proszę sprawdzić połączenie z internetem i spróbować ponownie",
     "no_events": "Brak wydarzeń",
@@ -193,6 +195,17 @@
   "common": {
     "sender": "Nadawca",
     "message": "Wiadomość"
+  },
+  "settings": {
+    "account": "Konto",
+    "settings": "Ustawienia",
+    "language": "Język",
+    "manageSubjects": "Zarządzanie przedmiotami",
+    "notifications": "Powiadomienia",
+    "about": "O aplikacji",
+    "contact": "Kontakt",
+    "terms": "Warunki użytkowania",
+    "privacy": "Polityka prywatności"
   },
   "page": {
     "home": "Strona główna",

@@ -38,6 +38,7 @@ func (ur *UserRepository) CreateUser(ctx context.Context, registerDTO dtos.Regis
 		SetPassword(hashedPassword).
 		SetBirthDate(registerDTO.BirthDate).
 		SetActivated(false).
+		SetPicture("initials").
 		SetAddress(registerDTO.Address).
 		SetLat(lat).
 		SetLng(lng).

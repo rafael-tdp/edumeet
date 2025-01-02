@@ -1,11 +1,9 @@
+import 'package:client/core/models/response.dart';
 import 'package:client/core/models/user.dart';
-import 'package:client/providers/user_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:client/screens/settings_screen.dart';
 import 'package:dice_bear/dice_bear.dart';
-import 'package:client/widgets/language_dropdown.dart';
+import 'package:flutter/material.dart';
 import 'package:client/core/services/user_services.dart';
-import 'package:client/screens/login_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:client/components/profile_button.dart';
 import 'package:client/screens/edit_profile_page.dart';
@@ -13,25 +11,32 @@ import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/user_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   static const String routeName = '/profile';
   final String? userId;
 
-  static navigateTo(BuildContext context, String userId) {
-    context.push('$routeName/$userId');
+  static navigateTo(BuildContext context, [String? userId]) {
+    context.push('$routeName/${userId ?? ''}');
   }
 
-  const ProfilePage({super.key, required this.userId});
+  const ProfilePage({
+    super.key,
+    this.userId,
+  });
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  User? _user;
+  final UserServices _userServices = UserServices();
   bool _isCurrentUser = false;
   bool _isLoading = true;
+  User? _user;
   String? _errorMessage;
 
   @override
@@ -42,29 +47,30 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUser() async {
     try {
-      final currentUser =
-          await Provider.of<UserProvider>(context, listen: false).getUser();
-
-      setState(() {
-        _isCurrentUser = (currentUser?.id == widget.userId);
-      });
-
-      if (widget.userId != null) {
-        final response = await UserServices().getUserById(widget.userId);
-        if (response.success && response.data is User) {
+      if(widget.userId == null) {
+        ResponseRequest response = await _userServices.getUserInfo();
+        if (response.success) {
           setState(() {
+            _isCurrentUser = true;
             _user = response.data as User;
           });
         } else {
           setState(() {
-            _errorMessage = response.message ?? 'Failed to fetch user';
+            _errorMessage = response.message ?? t.error.general;
           });
         }
       } else {
-        setState(() {
-          _user = currentUser;
-          _isCurrentUser = true;
-        });
+        ResponseRequest response = await _userServices.getUserById(widget.userId);
+        if (response.success) {
+          setState(() {
+            _isCurrentUser = Provider.of<UserProvider>(context, listen: false).currentUser?.id == widget.userId;
+            _user = response.data as User;
+          });
+        } else {
+          setState(() {
+            _errorMessage = response.message ?? t.error.general;
+          });
+        }
       }
     } catch (e) {
       setState(() {
@@ -78,85 +84,89 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (_errorMessage != null) {
-      return Scaffold(
-        body: Center(
-          child: Text('Erreur : $_errorMessage'),
-        ),
-      );
-    }
-
-    if (_user == null) {
-      return const Scaffold(
-        body: Center(child: Text('Utilisateur non trouvé.')),
-      );
-    }
-
-    final Avatar avatar = DiceBearBuilder(
-      seed: _user!.username,
-      sprite: DiceBearSprite.bottts,
-    ).build();
-
+Widget build(BuildContext context) {
+  if (_isLoading) {
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
+    );
+  }
+  if (_errorMessage != null) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text('Profile'),
-        leading: _isCurrentUser
-            ? null
-            : IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-      ),
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              avatar.toImage(height: 100),
-              const SizedBox(height: 20),
-              Text(
-                _user?.username ?? t.user.anonymous,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                _user!.bio != null && _user!.bio!.isNotEmpty
-                    ? _user!.bio!
-                    : t.user.noDescription,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 20),
-              LanguageDropdown(parentContext: context),
-              const SizedBox(height: 20),
-              _buildUserInfoCard(),
-              const SizedBox(height: 20),
-              if (_isCurrentUser) _buildProfileActions(),
-            ],
-          ),
-        ),
+      body: Center(
+        child: Text(t.error.details(error: _errorMessage!)),
       ),
     );
   }
+
+  if (_user == null) {
+    return Scaffold(
+      body: Center(
+        child: Text(t.error.no_results),
+      ),
+    );
+  }
+
+  final Avatar avatar = DiceBearBuilder(
+    seed: _user!.username,
+    sprite: DiceBearSprite.values.firstWhere(
+          (sprite) => sprite.name == _user!.picture,
+    ),
+  ).build();
+
+  return Scaffold(
+    appBar: AppBar(
+      backgroundColor: Colors.transparent,
+      title: Text(t.page.profile),
+      leading: _isCurrentUser
+          ? null
+          : IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          context.go(SettingsPage.routeName);
+        },
+      ),
+    ),
+    backgroundColor: Colors.white,
+    body: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20, bottom: 40, left: 20, right: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Hero(
+              tag: 'avatar_${_user!.id}',
+              child: avatar.toImage(height: 100),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              _user?.username ?? t.user.anonymous,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              _user!.bio != null && _user!.bio!.isNotEmpty
+                  ? _user!.bio!
+                  : t.user.noDescription,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 20),
+            _buildUserInfoCard(),
+            const SizedBox(height: 20),
+            if (_isCurrentUser) _buildProfileActions(),
+          ],
+        ),
+      ),
+    ),
+  );
+}
 
   Widget _buildUserInfoCard() {
     return Container(
@@ -172,7 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
             leading: const Icon(Icons.email, color: AppColors.purple),
             title: Text(t.user.email),
             subtitle:
-                Text(_user != null ? _user!.email! : "Aucun email renseigné"),
+            Text(_user != null ? _user!.email! : t.app.unknown),
           ),
           const Divider(),
           ListTile(
@@ -187,9 +197,9 @@ class _ProfilePageState extends State<ProfilePage> {
             subtitle: Text(
               _user != null && _user?.birthDate != null
                   ? custom_date_utils.DateUtils.isoToFormattedDate(
-                      _user!.birthDate.toString(),
-                    )
-                  : "Aucune date de naissance renseignée",
+                _user!.birthDate.toString(),
+              )
+                  : t.app.unknown,
             ),
           ),
           const Divider(),
@@ -222,15 +232,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 _user = updatedUser;
               });
             }
-          },
-        ),
-        ProfileButton(
-          text: t.profile.logout,
-          backgroundColor: Colors.redAccent,
-          onPressed: () async {
-            await AuthServices().logout();
-            Provider.of<UserProvider>(context, listen: false).clearUser();
-            context.go(LoginPage.routeName);
           },
         ),
       ],

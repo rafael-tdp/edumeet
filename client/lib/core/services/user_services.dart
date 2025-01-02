@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:client/core/models/response.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/core/services/cache_service.dart';
+import 'package:client/utils/http_utils.dart';
 import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import '../models/subject.dart';
@@ -25,7 +26,7 @@ class UserServices {
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body) as Map<String, dynamic>;
+      final data = HttpUtils.decodeResponse(response);
       final User user = User.fromJson(data);
       await CacheService.saveDataToCache("user_username", user.username);
       await CacheService.saveDataToCache("user_email", user.email!);
@@ -50,7 +51,7 @@ class UserServices {
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body) as Map<String, dynamic>;
+      final data = HttpUtils.decodeResponse(response);
       final User user = User.fromJson(data);
       return ResponseRequest(success: true, data: user);
     } else {

@@ -1,3 +1,4 @@
+import 'package:client/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/models/subject.dart';
 import 'package:client/utils/colors.dart';
@@ -7,6 +8,7 @@ import 'package:client/core/services/subjects_services.dart';
 import 'package:client/components/profile_button.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/services/cache_service.dart';
 import '../core/services/user_services.dart';
 import '../main.dart';
 import 'package:client/components/profile_button.dart';
@@ -67,24 +69,34 @@ class _SubjectsPageState extends State<SubjectsPage> {
     });
   }
 
-  void _confirmSelection() {
-    SubjectServices.subscribeToSubjects(_selectedSubjects.toList())
-        .then((response) {
-      if (response.success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Vos matières ont été mises à jour")),
-        );
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+Future<bool> _isFirstLaunch() async {
+  final isFirstLaunch = await CacheService.getDataFromCache("first_launch");
+  return isFirstLaunch == null || isFirstLaunch == "true";
+}
+
+void _confirmSelection() async {
+  final isFirstLaunch = await _isFirstLaunch();
+  SubjectServices.subscribeToSubjects(_selectedSubjects.toList())
+      .then((response) {
+    if (response.success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Vos matières ont été mises à jour")),
+      );
+      if (isFirstLaunch) {
+        context.go(HomePage.routeName);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.message!),
-            backgroundColor: AppColors.purple,
-          ),
-        );
+        context.go(SettingsPage.routeName);
       }
-    });
-  }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(response.message!),
+          backgroundColor: AppColors.purple,
+        ),
+      );
+    }
+  });
+}
 
   @override
   Widget build(BuildContext context) {

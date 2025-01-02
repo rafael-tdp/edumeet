@@ -9,6 +9,7 @@ class UserProvider with ChangeNotifier {
 
   void setUser(User user) {
     _currentUser = user;
+    CacheService.saveUserToCache(user);
     notifyListeners();
   }
 

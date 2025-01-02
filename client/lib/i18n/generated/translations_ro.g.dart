@@ -48,6 +48,7 @@ class TranslationsRo implements Translations {
 	@override late final _TranslationsResourcesRo resources = _TranslationsResourcesRo._(_root);
 	@override late final _TranslationsMessagesRo messages = _TranslationsMessagesRo._(_root);
 	@override late final _TranslationsCommonRo common = _TranslationsCommonRo._(_root);
+	@override late final _TranslationsSettingsRo settings = _TranslationsSettingsRo._(_root);
 	@override late final _TranslationsPageRo page = _TranslationsPageRo._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppRo implements TranslationsAppFr {
 	@override String get loadingIndicator => 'Încărcare...';
 	@override String get errorOccurred => 'A apărut o eroare';
 	@override String get backTo => 'Înapoi la ';
+	@override String get unknown => 'Necunoscut';
 }
 
 // Path: user
@@ -249,6 +251,7 @@ class _TranslationsErrorRo implements TranslationsErrorFr {
 	// Translations
 	@override String details({required Object error}) => 'Eroare: ${error}';
 	@override String get general => 'A apărut o eroare';
+	@override String get no_results => 'Niciun rezultat găsit';
 	@override String get no_internet => 'Fără conexiune la Internet';
 	@override String get no_internet_description => 'Te rugăm să verifici conexiunea ta la Internet și să încerci din nou';
 	@override String get no_events => 'Niciun eveniment găsit';
@@ -351,6 +354,24 @@ class _TranslationsCommonRo implements TranslationsCommonFr {
 	@override String get message => 'Mesaj';
 }
 
+// Path: settings
+class _TranslationsSettingsRo implements TranslationsSettingsFr {
+	_TranslationsSettingsRo._(this._root);
+
+	final TranslationsRo _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Cont';
+	@override String get settings => 'Setări';
+	@override String get language => 'Limba';
+	@override String get manageSubjects => 'Gestionarea materiilor';
+	@override String get notifications => 'Notificări';
+	@override String get about => 'Despre';
+	@override String get contact => 'Contact';
+	@override String get terms => 'Termeni și condiții';
+	@override String get privacy => 'Politica de confidențialitate';
+}
+
 // Path: page
 class _TranslationsPageRo implements TranslationsPageFr {
 	_TranslationsPageRo._(this._root);
@@ -430,6 +451,7 @@ extension on TranslationsRo {
 			case 'app.loadingIndicator': return 'Încărcare...';
 			case 'app.errorOccurred': return 'A apărut o eroare';
 			case 'app.backTo': return 'Înapoi la ';
+			case 'app.unknown': return 'Necunoscut';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Nume de utilizator';
 			case 'user.name': return 'Nume';
@@ -518,6 +540,7 @@ extension on TranslationsRo {
 			case 'event.eventNotStarted': return 'Linkul de conectare va fi disponibil aici când evenimentul va începe.';
 			case 'error.details': return ({required Object error}) => 'Eroare: ${error}';
 			case 'error.general': return 'A apărut o eroare';
+			case 'error.no_results': return 'Niciun rezultat găsit';
 			case 'error.no_internet': return 'Fără conexiune la Internet';
 			case 'error.no_internet_description': return 'Te rugăm să verifici conexiunea ta la Internet și să încerci din nou';
 			case 'error.no_events': return 'Niciun eveniment găsit';
@@ -564,6 +587,15 @@ extension on TranslationsRo {
 			case 'messages.sendMessage': return 'Trimite';
 			case 'common.sender': return 'Expeditor';
 			case 'common.message': return 'Mesaj';
+			case 'settings.account': return 'Cont';
+			case 'settings.settings': return 'Setări';
+			case 'settings.language': return 'Limba';
+			case 'settings.manageSubjects': return 'Gestionarea materiilor';
+			case 'settings.notifications': return 'Notificări';
+			case 'settings.about': return 'Despre';
+			case 'settings.contact': return 'Contact';
+			case 'settings.terms': return 'Termeni și condiții';
+			case 'settings.privacy': return 'Politica de confidențialitate';
 			case 'page.home': return 'Acasă';
 			case 'page.homePage': return 'Pagina principală';
 			case 'page.profile': return 'Profil';

@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Ai deja un cont?",
     "loadingIndicator": "Încărcare...",
     "errorOccurred": "A apărut o eroare",
-    "backTo": "Înapoi la "
+    "backTo": "Înapoi la ",
+    "unknown": "Necunoscut"
   },
   "user": {
     "email": "Email",
@@ -135,6 +136,7 @@
   "error": {
     "details": "Eroare: {{error}}",
     "general": "A apărut o eroare",
+    "no_results": "Niciun rezultat găsit",
     "no_internet": "Fără conexiune la Internet",
     "no_internet_description": "Te rugăm să verifici conexiunea ta la Internet și să încerci din nou",
     "no_events": "Niciun eveniment găsit",
@@ -193,6 +195,17 @@
   "common": {
     "sender": "Expeditor",
     "message": "Mesaj"
+  },
+  "settings": {
+    "account": "Cont",
+    "settings": "Setări",
+    "language": "Limba",
+    "manageSubjects": "Gestionarea materiilor",
+    "notifications": "Notificări",
+    "about": "Despre",
+    "contact": "Contact",
+    "terms": "Termeni și condiții",
+    "privacy": "Politica de confidențialitate"
   },
   "page": {
     "home": "Acasă",

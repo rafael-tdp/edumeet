@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Har du redan ett konto?",
     "loadingIndicator": "Laddar...",
     "errorOccurred": "Ett fel har inträffat",
-    "backTo": "Tillbaka till "
+    "backTo": "Tillbaka till ",
+    "unknown": "Okänd"
   },
   "user": {
     "email": "E-post",
@@ -135,6 +136,7 @@
   "error": {
     "details": "Fel: {{error}}",
     "general": "Ett fel har inträffat",
+    "no_results": "Inga resultat hittades",
     "no_internet": "Ingen internetanslutning",
     "no_internet_description": "Vänligen kontrollera din internetanslutning och försök igen",
     "no_events": "Inga evenemang hittades",
@@ -193,6 +195,17 @@
   "common": {
     "sender": "Avsändare",
     "message": "Meddelande"
+  },
+  "settings": {
+    "account": "Konto",
+    "settings": "Inställningar",
+    "language": "Språk",
+    "manageSubjects": "Hantera ämnen",
+    "notifications": "Notifikationer",
+    "about": "Om",
+    "contact": "Kontakt",
+    "terms": "Användarvillkor",
+    "privacy": "Integritetspolicy"
   },
   "page": {
     "home": "Startsida",

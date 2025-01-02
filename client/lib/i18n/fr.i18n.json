@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "loadingIndicator": "Chargement...",
     "errorOccurred": "Une erreur est survenue",
-    "backTo": "Retour à "
+    "backTo": "Retour à ",
+    "unknown": "Inconnu"
   },
   "user": {
     "email": "Email",
@@ -135,6 +136,7 @@
   "error": {
     "details": "Erreur : {{error}}",
     "general": "Une erreur est survenue",
+    "no_results": "Aucun résultat trouvé",
     "no_internet": "Pas de connexion Internet",
     "no_internet_description": "Veuillez vérifier votre connexion Internet et réessayer",
     "no_events": "Aucun événement trouvé",
@@ -193,6 +195,17 @@
   "common": {
     "sender": "Expéditeur",
     "message": "Message"
+  },
+  "settings": {
+    "account": "Compte",
+    "settings": "Paramètres",
+    "language": "Langue",
+    "manageSubjects": "Gestion des matières",
+    "notifications": "Notifications",
+    "about": "À propos",
+    "contact": "Contact",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité"
   },
   "page": {
     "home": "Accueil",
