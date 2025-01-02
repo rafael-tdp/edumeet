@@ -23,6 +23,7 @@ func setupEventRoutes(app *fiber.App, eventController *controllers.EventControll
 	app.Get("/events/join/:code", middlewares.JWTAuthMiddleware, eventController.JoinEventByCode)
 	app.Get("/events/code/:eventId", middlewares.JWTAuthMiddleware, eventController.GetEventCode)
 	app.Put("/events/subjects/update/:id", middlewares.JWTAuthMiddleware, eventController.UpdateEventSubjects)
+	app.Put("/events/update/admin/:id", middlewares.JWTAuthMiddleware, eventController.UpdateEventAdmin)
 }
 
 func initEventController(client *ent.Client) *controllers.EventController {

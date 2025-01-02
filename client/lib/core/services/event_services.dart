@@ -160,4 +160,38 @@ class EventServices {
       return ResponseRequest(success: false, message: "Une erreur s'est produite.");
     }
   }
+
+  static Future<ResponseRequest> updateEventAdmin(eventId, updatedEvent) async {
+    try {
+      final token = await getToken();
+
+      print(updatedEvent);
+
+      if (token == null) {
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
+      }
+
+      final response = await http.put(
+          Uri.parse('${Env.BACKEND_URL}/events/update/admin/' + eventId),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            "title": updatedEvent["title"],
+            "isPrivate": updatedEvent["isPrivate"],
+          })
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ResponseRequest(success: true, message: 'Event mis a jour');
+      } else {
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while updating event',
+          error: error, stackTrace: stacktrace);
+      return ResponseRequest(success: false, message: 'Erreur lors de la mise a jour.');
+    }
+  }
+
 }

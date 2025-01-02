@@ -315,3 +315,18 @@ func (er *EventRepository) GetEvents() ([]*ent.Event, error) {
 
 	return events, nil
 }
+
+func (er *EventRepository) UpdateEventAdmin(ctx context.Context, event dtos.UpdateEventAdminDTO, eventID string) (*ent.Event, error) {
+
+	updatedEvent, err := er.client.Event.
+		UpdateOneID(eventID).
+		SetTitle(event.Title).
+		SetIsPrivate(event.IsPrivate).
+		Save(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return updatedEvent, nil
+}

@@ -9,6 +9,7 @@ import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/models/response.dart';
 import '../../widgets/confirmation_dialog.dart';
+import '../../widgets/edit_modal_event.dart';
 import '../../widgets/edit_modal_subject.dart';
 
 class EventsPageAdmin extends StatefulWidget {
@@ -94,6 +95,37 @@ class _EventPageState extends State<EventsPageAdmin> {
     );
   }
 
+  void _showEditEventDialog(BuildContext context, Event event) {
+    showDialog(
+      context: context,
+      builder: (context) => EditEventDialog(
+        event: event,
+        onUpdate: (updatedEvent, callback) async {
+          callback(false, null, true);
+
+          try {
+            await Future.delayed(const Duration(seconds: 2));
+
+            ResponseRequest response =  await EventServices.updateEventAdmin(event.id, updatedEvent);
+
+            if (response.success) {
+              _fetchEvents();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Evenement mis a jour')),
+              );
+              callback(true, null, false);
+            } else {
+              callback(false, response.message ?? 'Une erreur s\'est produite', false);
+            }
+          } catch (error) {
+            callback(false, 'Erreur : $error', false);
+          }
+        },
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,6 +166,7 @@ class _EventPageState extends State<EventsPageAdmin> {
                     icon: const Icon(Icons.edit),
                     tooltip: 'Modifier',
                     onPressed: () {
+                      _showEditEventDialog(context, event);
                     },
                   ),
                   IconButton(

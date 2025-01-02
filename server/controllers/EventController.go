@@ -330,3 +330,35 @@ func (ec *EventController) UpdateEventSubjects(c *fiber.Ctx) error {
 	}
 	return c.JSON(fiber.Map{"message": "Subjects updated successfully"})
 }
+
+func (ec *EventController) UpdateEventAdmin(c *fiber.Ctx) error {
+	eventID, errParse := ulid.Parse(c.Params("id"))
+	if errParse != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
+	}
+
+	currentUser := c.Locals("user").(*ent.User)
+
+	_, errGetEvent := ec.eventservice.GetEvent(eventID.String())
+
+	if errGetEvent != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": errGetEvent.Error()})
+	}
+
+	if !guards.IsAdmin(currentUser) {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
+	}
+
+	var eventDTO dtos.UpdateEventAdminDTO
+	if err := c.BodyParser(&eventDTO); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid request"})
+	}
+
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	err := ec.eventservice.UpdateEventAdmin(ctx, eventID.String(), eventDTO)
+
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"message": "Event updated successfully"})
+}
