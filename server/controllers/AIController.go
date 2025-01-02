@@ -26,6 +26,19 @@ func NewAIController(aiService *services.AIService, eventService *services.Event
 	}
 }
 
+// @Summary Generate Exercise
+// @Description Generate an exercise based on the event's title, description, and subjects
+// @Tags AI
+// @Accept json
+// @Produce json
+// @Param id path string true "Event ID"
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{} "Success: Generated exercise"
+// @Failure 400 {object} map[string]interface{} "Bad Request: Invalid ID"
+// @Failure 403 {object} map[string]interface{} "Forbidden: Not authorized"
+// @Failure 404 {object} map[string]interface{} "Not Found: Event not found"
+// @Failure 500 {object} map[string]interface{} "Internal Server Error: Unable to generate exercise"
+// @Router /ai/generate-exo/{id} [post]
 func (ai *AIController) GenerateExo(c *fiber.Ctx) error {
 	eventID, errParse := ulid.Parse(c.Params("id"))
 	if errParse != nil {
@@ -64,6 +77,21 @@ func (ai *AIController) GenerateExo(c *fiber.Ctx) error {
 	})
 }
 
+// @Summary Generate Correction
+// @Description Generate a correction for a given exercise from the event
+// @Tags AI
+// @Accept json
+// @Produce json
+// @Param id path string true "Event ID"
+// @Param exercise body dtos.AICorrectionDTO true "Exercise for correction"
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{} "Success: Generated correction"
+// @Failure 400 {object} map[string]interface{} "Bad Request: Invalid ID or body parsing error"
+// @Failure 422 {object} map[string]interface{} "Unprocessable Entity: Validation errors"
+// @Failure 403 {object} map[string]interface{} "Forbidden: Not authorized"
+// @Failure 404 {object} map[string]interface{} "Not Found: Event not found"
+// @Failure 500 {object} map[string]interface{} "Internal Server Error: Unable to generate correction"
+// @Router /ai/generate-correction/{id} [post]
 func (ai *AIController) GenerateCorrection(c *fiber.Ctx) error {
 	var aiDTO dtos.AICorrectionDTO
 	eventID, errParse := ulid.Parse(c.Params("id"))
@@ -105,6 +133,19 @@ func (ai *AIController) GenerateCorrection(c *fiber.Ctx) error {
 	})
 }
 
+// @Summary Save Generated Document
+// @Description Save the generated document from an AI operation
+// @Tags AI
+// @Accept json
+// @Produce json
+// @Param document body dtos.AIDocumentSaveDTO true "Document information for saving"
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{} "Success: Document saved"
+// @Failure 400 {object} map[string]interface{} "Bad Request: Body parsing error"
+// @Failure 422 {object} map[string]interface{} "Unprocessable Entity: Validation errors"
+// @Failure 403 {object} map[string]interface{} "Forbidden: Not authorized"
+// @Failure 500 {object} map[string]interface{} "Internal Server Error: Unable to save document"
+// @Router /ai/save-document [post]
 func (ai *AIController) SaveGenerateDocument(c *fiber.Ctx) error {
 	var aiDocumentDTO dtos.AIDocumentSaveDTO
 

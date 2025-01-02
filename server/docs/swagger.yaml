@@ -1,0 +1,3133 @@
+basePath: /
+definitions:
+  dtos.AICorrectionDTO:
+    properties:
+      exercise:
+        type: string
+    required:
+    - exercise
+    type: object
+  dtos.AIDocumentSaveDTO:
+    properties:
+      content:
+        type: string
+      doc_type:
+        enum:
+        - EXERCISE
+        - CORRECTION
+        type: string
+      event_id:
+        type: string
+    required:
+    - content
+    - doc_type
+    - event_id
+    type: object
+  dtos.BadgeDTO:
+    properties:
+      id:
+        type: string
+      name:
+        minLength: 3
+        type: string
+      nbRequirementEvent:
+        minimum: 1
+        type: integer
+      svg:
+        type: string
+      type:
+        enum:
+        - EVENT
+        - USER
+        - MESSAGE
+        type: string
+    required:
+    - name
+    - nbRequirementEvent
+    - svg
+    - type
+    type: object
+  dtos.ConversationDTO:
+    properties:
+      conversationId:
+        type: string
+      conversationName:
+        type: string
+      lastMessage:
+        type: string
+      lastMessageDate:
+        type: string
+      lastMessageUsername:
+        type: string
+      type:
+        type: string
+    type: object
+  dtos.CreateFriendshipDTO:
+    properties:
+      friendID:
+        type: string
+      id:
+        type: string
+    type: object
+  dtos.EventDTO:
+    properties:
+      created_by:
+        type: string
+      description:
+        minLength: 3
+        type: string
+      end_date:
+        type: string
+      id:
+        type: string
+      is_private:
+        type: boolean
+      participants:
+        items:
+          $ref: '#/definitions/dtos.ParticipantDTO'
+        type: array
+      physical_event:
+        $ref: '#/definitions/dtos.PhysicalEventDTO'
+      remote_event:
+        $ref: '#/definitions/dtos.RemoteEventDTO'
+      start_date:
+        type: string
+      subjects:
+        items:
+          type: string
+        type: array
+      title:
+        minLength: 3
+        type: string
+    required:
+    - description
+    - end_date
+    - start_date
+    - title
+    type: object
+  dtos.ForgotPasswordDTO:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  dtos.FriendshipDTO:
+    properties:
+      friendID:
+        type: string
+      friendUsername:
+        type: string
+      id:
+        type: string
+      status:
+        type: string
+    type: object
+  dtos.LoginDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dtos.MessageDTO:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      message:
+        type: string
+      user:
+        $ref: '#/definitions/dtos.UserDTO'
+    required:
+    - message
+    type: object
+  dtos.ParticipantDTO:
+    properties:
+      event_id:
+        type: string
+      id:
+        type: string
+      joined_at:
+        type: string
+      requested_at:
+        type: string
+      status:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dtos.PhysicalEventDTO:
+    properties:
+      id:
+        type: string
+      lat:
+        type: number
+      lng:
+        type: number
+      location:
+        type: string
+    type: object
+  dtos.RegisterDTO:
+    properties:
+      address:
+        type: string
+      bio:
+        type: string
+      birthDate:
+        type: string
+      email:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      password:
+        type: string
+      picture:
+        type: string
+      username:
+        type: string
+    required:
+    - birthDate
+    - email
+    - firstname
+    - lastname
+    - password
+    - username
+    type: object
+  dtos.RemoteEventDTO:
+    properties:
+      id:
+        type: string
+      url:
+        type: string
+    required:
+    - url
+    type: object
+  dtos.ReportingDTO:
+    properties:
+      entity: {}
+      entity_id:
+        type: string
+      id:
+        type: string
+      reason:
+        minLength: 5
+        type: string
+      type:
+        enum:
+        - USER
+        - MESSAGE
+        - EVENT
+        type: string
+      user: {}
+      user_id:
+        type: string
+    required:
+    - entity_id
+    - reason
+    - type
+    type: object
+  dtos.ResetPasswordDTO:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dtos.SubjectDTO:
+    properties:
+      id:
+        type: string
+      name:
+        minLength: 3
+        type: string
+    required:
+    - name
+    type: object
+  dtos.UpdateUserDTO:
+    properties:
+      address:
+        type: string
+      bio:
+        type: string
+      birthdate:
+        type: string
+      email:
+        type: string
+      firstname:
+        type: string
+      id:
+        type: string
+      lastname:
+        type: string
+      picture:
+        type: string
+      reportNumber:
+        type: integer
+      role:
+        $ref: '#/definitions/user.Role'
+      username:
+        type: string
+    required:
+    - email
+    - firstname
+    - lastname
+    - username
+    type: object
+  dtos.UserDTO:
+    properties:
+      activated:
+        type: boolean
+      address:
+        type: string
+      bio:
+        type: string
+      birthDate:
+        type: string
+      email:
+        type: string
+      firstname:
+        type: string
+      id:
+        type: string
+      lastname:
+        type: string
+      picture:
+        type: string
+      reportNumber:
+        type: integer
+      role:
+        allOf:
+        - $ref: '#/definitions/user.Role'
+        enum:
+        - SUPERADMIN
+        - ADMIN
+        - USER
+      username:
+        minLength: 3
+        type: string
+    required:
+    - email
+    - id
+    - role
+    - username
+    type: object
+  dtos.ValidateUserDTO:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+    required:
+    - code
+    - email
+    type: object
+  dtos.VerifyCodeDTO:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+    required:
+    - code
+    - email
+    type: object
+  ent.Badge:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      created_by:
+        description: CreatedBy holds the value of the "created_by" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.BadgeEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the BadgeQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      nbRequirementEvent:
+        description: NbRequirementEvent holds the value of the "nbRequirementEvent"
+          field.
+        type: integer
+      svg:
+        description: Svg holds the value of the "svg" field.
+        type: string
+      type:
+        description: Type holds the value of the "type" field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      updated_by:
+        description: UpdatedBy holds the value of the "updated_by" field.
+        type: string
+    type: object
+  ent.BadgeEdges:
+    properties:
+      users:
+        description: Users holds the value of the users edge.
+        items:
+          $ref: '#/definitions/ent.User'
+        type: array
+    type: object
+  ent.Document:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      created_by:
+        description: CreatedBy holds the value of the "created_by" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.DocumentEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the DocumentQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      path:
+        description: Path holds the value of the "path" field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      updated_by:
+        description: UpdatedBy holds the value of the "updated_by" field.
+        type: string
+    type: object
+  ent.DocumentEdges:
+    properties:
+      event_documents:
+        description: EventDocuments holds the value of the event_documents edge.
+        items:
+          $ref: '#/definitions/ent.EventDocument'
+        type: array
+      message:
+        description: Message holds the value of the message edge.
+        items:
+          $ref: '#/definitions/ent.Message'
+        type: array
+    type: object
+  ent.Event:
+    properties:
+      code:
+        description: Code holds the value of the "code" field.
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      created_by:
+        description: CreatedBy holds the value of the "created_by" field.
+        type: string
+      description:
+        description: Description holds the value of the "description" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.EventEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the EventQuery when eager-loading is set.
+      end_date:
+        description: EndDate holds the value of the "end_date" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      image:
+        description: Image holds the value of the "image" field.
+        type: string
+      isPrivate:
+        description: IsPrivate holds the value of the "isPrivate" field.
+        type: boolean
+      start_date:
+        description: StartDate holds the value of the "start_date" field.
+        type: string
+      title:
+        description: Title holds the value of the "title" field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      updated_by:
+        description: UpdatedBy holds the value of the "updated_by" field.
+        type: string
+    type: object
+  ent.EventDocument:
+    properties:
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.EventDocumentEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the EventDocumentQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      type:
+        description: Type holds the value of the "type" field.
+        type: string
+    type: object
+  ent.EventDocumentEdges:
+    properties:
+      document:
+        allOf:
+        - $ref: '#/definitions/ent.Document'
+        description: Document holds the value of the document edge.
+      event:
+        allOf:
+        - $ref: '#/definitions/ent.Event'
+        description: Event holds the value of the event edge.
+    type: object
+  ent.EventEdges:
+    properties:
+      event_documents:
+        description: EventDocuments holds the value of the event_documents edge.
+        items:
+          $ref: '#/definitions/ent.EventDocument'
+        type: array
+      messages:
+        description: Messages holds the value of the messages edge.
+        items:
+          $ref: '#/definitions/ent.Message'
+        type: array
+      participants:
+        description: Participants holds the value of the participants edge.
+        items:
+          $ref: '#/definitions/ent.Participant'
+        type: array
+      physical_event:
+        allOf:
+        - $ref: '#/definitions/ent.PhysicalEvent'
+        description: PhysicalEvent holds the value of the physical_event edge.
+      remote_event:
+        allOf:
+        - $ref: '#/definitions/ent.RemoteEvent'
+        description: RemoteEvent holds the value of the remote_event edge.
+      subjects:
+        description: Subjects holds the value of the subjects edge.
+        items:
+          $ref: '#/definitions/ent.Subject'
+        type: array
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
+    type: object
+  ent.Friendship:
+    properties:
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.FriendshipEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the FriendshipQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      status:
+        description: Status holds the value of the "status" field.
+        type: string
+    type: object
+  ent.FriendshipEdges:
+    properties:
+      friend:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: Friend holds the value of the friend edge.
+      messages:
+        description: Messages holds the value of the messages edge.
+        items:
+          $ref: '#/definitions/ent.Message'
+        type: array
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
+    type: object
+  ent.Message:
+    properties:
+      content:
+        description: Content holds the value of the "content" field.
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      created_by:
+        description: CreatedBy holds the value of the "created_by" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.MessageEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the MessageQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      updated_by:
+        description: UpdatedBy holds the value of the "updated_by" field.
+        type: string
+    type: object
+  ent.MessageEdges:
+    properties:
+      documents:
+        description: Documents holds the value of the documents edge.
+        items:
+          $ref: '#/definitions/ent.Document'
+        type: array
+      event:
+        allOf:
+        - $ref: '#/definitions/ent.Event'
+        description: Event holds the value of the event edge.
+      friendship:
+        allOf:
+        - $ref: '#/definitions/ent.Friendship'
+        description: Friendship holds the value of the friendship edge.
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
+    type: object
+  ent.Participant:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      created_by:
+        description: CreatedBy holds the value of the "created_by" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.ParticipantEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the ParticipantQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      joined_at:
+        description: JoinedAt holds the value of the "joined_at" field.
+        type: string
+      requested_at:
+        description: RequestedAt holds the value of the "requested_at" field.
+        type: string
+      status:
+        description: Status holds the value of the "status" field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      updated_by:
+        description: UpdatedBy holds the value of the "updated_by" field.
+        type: string
+    type: object
+  ent.ParticipantEdges:
+    properties:
+      event:
+        allOf:
+        - $ref: '#/definitions/ent.Event'
+        description: Event holds the value of the event edge.
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
+    type: object
+  ent.PhysicalEvent:
+    properties:
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.PhysicalEventEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the PhysicalEventQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      lat:
+        description: Lat holds the value of the "lat" field.
+        type: number
+      lng:
+        description: Lng holds the value of the "lng" field.
+        type: number
+      location:
+        description: Location holds the value of the "location" field.
+        type: string
+    type: object
+  ent.PhysicalEventEdges:
+    properties:
+      event:
+        allOf:
+        - $ref: '#/definitions/ent.Event'
+        description: Event holds the value of the event edge.
+    type: object
+  ent.RemoteEvent:
+    properties:
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.RemoteEventEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the RemoteEventQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      url:
+        description: URL holds the value of the "url" field.
+        type: string
+    type: object
+  ent.RemoteEventEdges:
+    properties:
+      event:
+        allOf:
+        - $ref: '#/definitions/ent.Event'
+        description: Event holds the value of the event edge.
+    type: object
+  ent.Reporting:
+    properties:
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.ReportingEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the ReportingQuery when eager-loading is set.
+      entity_id:
+        description: EntityID holds the value of the "entity_id" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      reason:
+        description: Reason holds the value of the "reason" field.
+        type: string
+      type:
+        description: Type holds the value of the "type" field.
+        type: string
+    type: object
+  ent.ReportingEdges:
+    properties:
+      user:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: User holds the value of the user edge.
+    type: object
+  ent.Subject:
+    properties:
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.SubjectEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the SubjectQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+    type: object
+  ent.SubjectEdges:
+    properties:
+      events:
+        description: Events holds the value of the events edge.
+        items:
+          $ref: '#/definitions/ent.Event'
+        type: array
+      users:
+        description: Users holds the value of the users edge.
+        items:
+          $ref: '#/definitions/ent.User'
+        type: array
+    type: object
+  ent.User:
+    properties:
+      activated:
+        description: Activated holds the value of the "activated" field.
+        type: boolean
+      address:
+        description: Address holds the value of the "address" field.
+        type: string
+      bio:
+        description: Bio holds the value of the "bio" field.
+        type: string
+      birthDate:
+        description: BirthDate holds the value of the "birthDate" field.
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      created_by:
+        description: CreatedBy holds the value of the "created_by" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.UserEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the UserQuery when eager-loading is set.
+      email:
+        description: Email holds the value of the "email" field.
+        type: string
+      firstname:
+        description: Firstname holds the value of the "firstname" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      lastname:
+        description: Lastname holds the value of the "lastname" field.
+        type: string
+      lat:
+        description: Lat holds the value of the "lat" field.
+        type: number
+      lng:
+        description: Lng holds the value of the "lng" field.
+        type: number
+      picture:
+        description: Picture holds the value of the "picture" field.
+        type: string
+      reportNumber:
+        description: ReportNumber holds the value of the "reportNumber" field.
+        type: integer
+      role:
+        allOf:
+        - $ref: '#/definitions/user.Role'
+        description: Role holds the value of the "role" field.
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      updated_by:
+        description: UpdatedBy holds the value of the "updated_by" field.
+        type: string
+      username:
+        description: Username holds the value of the "username" field.
+        type: string
+    type: object
+  ent.UserEdges:
+    properties:
+      badges:
+        description: Badges holds the value of the badges edge.
+        items:
+          $ref: '#/definitions/ent.Badge'
+        type: array
+      events:
+        description: Events holds the value of the events edge.
+        items:
+          $ref: '#/definitions/ent.Event'
+        type: array
+      friendships:
+        description: Friendships holds the value of the friendships edge.
+        items:
+          $ref: '#/definitions/ent.Friendship'
+        type: array
+      messages:
+        description: Messages holds the value of the messages edge.
+        items:
+          $ref: '#/definitions/ent.Message'
+        type: array
+      participants:
+        description: Participants holds the value of the participants edge.
+        items:
+          $ref: '#/definitions/ent.Participant'
+        type: array
+      reports:
+        description: Reports holds the value of the reports edge.
+        items:
+          $ref: '#/definitions/ent.Reporting'
+        type: array
+      subjects:
+        description: Subjects holds the value of the subjects edge.
+        items:
+          $ref: '#/definitions/ent.Subject'
+        type: array
+    type: object
+  user.Role:
+    enum:
+    - USER
+    - SUPER ADMIN
+    - ADMIN
+    - USER
+    type: string
+    x-enum-varnames:
+    - DefaultRole
+    - RoleSUPERADMIN
+    - RoleADMIN
+    - RoleUSER
+host: localhost:3000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is the API documentation for the EduMeet project.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: EduMeet API Documentation
+  version: "1.0"
+paths:
+  /address:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve address based on a given latitude and longitude
+      parameters:
+      - description: Latitude
+        in: query
+        name: lat
+        required: true
+        type: string
+      - description: Longitude
+        in: query
+        name: lng
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Address'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Missing or invalid latitude or longitude'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Address
+      tags:
+      - Address
+  /address/reverse:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve latitude and longitude based on a given address
+      parameters:
+      - description: Address
+        in: query
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Latitude and Longitude'
+          schema:
+            additionalProperties:
+              type: number
+            type: object
+        "400":
+          description: 'Bad Request: Address is required'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Lat/Lng
+      tags:
+      - Address
+  /ai/generate-correction/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Generate a correction for a given exercise from the event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Exercise for correction
+        in: body
+        name: exercise
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.AICorrectionDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Generated correction'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid ID or body parsing error'
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: 'Forbidden: Not authorized'
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: 'Not Found: Event not found'
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: 'Unprocessable Entity: Validation errors'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Internal Server Error: Unable to generate correction'
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Generate Correction
+      tags:
+      - AI
+  /ai/generate-exo/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Generate an exercise based on the event's title, description, and
+        subjects
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Generated exercise'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid ID'
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: 'Forbidden: Not authorized'
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: 'Not Found: Event not found'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Internal Server Error: Unable to generate exercise'
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Generate Exercise
+      tags:
+      - AI
+  /ai/save-document:
+    post:
+      consumes:
+      - application/json
+      description: Save the generated document from an AI operation
+      parameters:
+      - description: Document information for saving
+        in: body
+        name: document
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.AIDocumentSaveDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Document saved'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Body parsing error'
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: 'Forbidden: Not authorized'
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: 'Unprocessable Entity: Validation errors'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Internal Server Error: Unable to save document'
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Save Generated Document
+      tags:
+      - AI
+  /badge:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all badges
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: List of badges'
+          schema:
+            items:
+              $ref: '#/definitions/dtos.BadgeDTO'
+            type: array
+        "404":
+          description: 'Error: Badges not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all badges
+      tags:
+      - Badge
+    post:
+      consumes:
+      - application/json
+      description: Create a new badge and add it to the system
+      parameters:
+      - description: Badge Data
+        in: body
+        name: badge
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.BadgeDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'Success: Badge created'
+          schema:
+            $ref: '#/definitions/dtos.BadgeDTO'
+        "400":
+          description: 'Error: Invalid data'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: 'Error: Unauthorized'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: 'Error: Validation failed'
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new badge
+      tags:
+      - Badge
+  /badge/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a badge from the system by its ID
+      parameters:
+      - description: Badge ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: 'Success: No Content'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Error: Invalid ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: 'Error: Unauthorized'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: 'Error: Forbidden'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Error: Badge not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a badge by ID
+      tags:
+      - Badge
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a badge by its ID
+      parameters:
+      - description: Badge ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Badge data'
+          schema:
+            $ref: '#/definitions/dtos.BadgeDTO'
+        "400":
+          description: 'Error: Invalid ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Error: Badge not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a single badge by ID
+      tags:
+      - Badge
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an existing badge
+      parameters:
+      - description: Badge ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Badge Data
+        in: body
+        name: badge
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.BadgeDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Badge updated'
+          schema:
+            $ref: '#/definitions/dtos.BadgeDTO'
+        "400":
+          description: 'Error: Invalid ID or data'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: 'Error: Unauthorized'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Error: Badge not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update a badge by ID
+      tags:
+      - Badge
+  /chats/connect:
+    get:
+      consumes:
+      - application/json
+      description: Establish a connection to receive real-time chat messages
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Connection established
+          schema:
+            type: string
+        "400":
+          description: 'Bad Request: Failed to connect'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Connect to the chat
+      tags:
+      - Chat
+  /chats/conversations:
+    get:
+      consumes:
+      - application/json
+      description: Get all conversations for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of conversations
+          schema:
+            items:
+              $ref: '#/definitions/dtos.ConversationDTO'
+            type: array
+        "500":
+          description: 'Internal Server Error: Failed to retrieve conversations'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get conversations of the user
+      tags:
+      - Chat
+  /chats/delete-message-to-event/{eventId}/{messageId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a specific message in an event by message ID
+      parameters:
+      - description: Event's ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      - description: Message's ID
+        in: path
+        name: messageId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Message deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: 'Forbidden: Not authorized'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Message or Event not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: Failed to delete message'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a message in an event
+      tags:
+      - Chat
+  /chats/delete-message-to-friend/{friendId}/{messageId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a specific message in a chat with a friend
+      parameters:
+      - description: Friend's ID
+        in: path
+        name: friendId
+        required: true
+        type: string
+      - description: Message's ID
+        in: path
+        name: messageId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Message deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: 'Forbidden: Not authorized'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Message or Friend not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: Failed to delete message'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a message to a friend
+      tags:
+      - Chat
+  /chats/get-conversation-event/{eventId}:
+    get:
+      consumes:
+      - application/json
+      description: Get all messages related to a specific event
+      parameters:
+      - description: Event's ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of messages
+          schema:
+            items:
+              $ref: '#/definitions/dtos.MessageDTO'
+            type: array
+        "400":
+          description: 'Bad Request: Failed to retrieve messages'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: 'Forbidden: Not authorized'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Event not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get messages from an event
+      tags:
+      - Chat
+  /chats/get-conversation-friend/{friendId}:
+    get:
+      consumes:
+      - application/json
+      description: Get all messages between the user and a specific friend
+      parameters:
+      - description: Friend's ID
+        in: path
+        name: friendId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of messages
+          schema:
+            items:
+              $ref: '#/definitions/dtos.MessageDTO'
+            type: array
+        "400":
+          description: 'Bad Request: Failed to retrieve messages'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Friend not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get messages from a friend
+      tags:
+      - Chat
+  /chats/send-message-to-event/{eventId}:
+    post:
+      consumes:
+      - application/json
+      description: Send a message to all participants of an event
+      parameters:
+      - description: Event's ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      - description: Message to send
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.MessageDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Message sent to event successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid message format'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Event not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: Failed to send message'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Send message to an event
+      tags:
+      - Chat
+  /chats/send-message-to-friend/{friendId}:
+    post:
+      consumes:
+      - application/json
+      description: Send a message to a specific friend by their ID
+      parameters:
+      - description: Friend's ID
+        in: path
+        name: friendId
+        required: true
+        type: string
+      - description: Message to send
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.MessageDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Message sent successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid message format'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Friend not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: Failed to send message'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Send message to a friend
+      tags:
+      - Chat
+  /document:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Create a new document
+      parameters:
+      - description: File
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Event ID
+        in: formData
+        name: event_id
+        required: true
+        type: string
+      - description: Message ID
+        in: formData
+        name: message_id
+        required: true
+        type: string
+      - description: Document Type
+        in: formData
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'Success: Document created'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Missing or invalid data'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: 'Unprocessable Entity: Validation errors'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create Document
+      tags:
+      - Document
+  /document/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a document by its ID
+      parameters:
+      - description: Document ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: 'Success: Document deleted'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Document not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete Document
+      tags:
+      - Document
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a document by its ID
+      parameters:
+      - description: Document ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Document file'
+          schema:
+            type: file
+        "400":
+          description: 'Bad Request: Invalid ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Document not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Document
+      tags:
+      - Document
+  /document/details/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve details of a document by its ID
+      parameters:
+      - description: Document ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Document details'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Document not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Document Details
+      tags:
+      - Document
+  /event/{id}/documents:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all documents related to an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Event documents'
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+        "400":
+          description: 'Bad Request: Invalid ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Documents not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Event Documents
+      tags:
+      - Document
+  /events:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all events with optional filters
+      parameters:
+      - default: '"all"'
+        description: Event Type
+        in: query
+        name: type
+        type: string
+      - description: Distance Filter
+        in: query
+        name: distance
+        type: string
+      - description: Longitude Filter
+        in: query
+        name: longitude
+        type: string
+      - description: Latitude Filter
+        in: query
+        name: latitude
+        type: string
+      - description: Subjects Filter
+        in: query
+        name: subjects
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of Events
+          schema:
+            items:
+              $ref: '#/definitions/dtos.EventDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all events
+      tags:
+      - Events
+    post:
+      consumes:
+      - application/json
+      description: Create a new event with the given details
+      parameters:
+      - description: Event Details
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.EventDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Event Created Successfully
+          schema:
+            $ref: '#/definitions/dtos.EventDTO'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Validation Errors
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new event
+      tags:
+      - Events
+  /events/{eventID}/participants/pending:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of participants who are pending approval for an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of Pending Participants
+          schema:
+            items:
+              $ref: '#/definitions/dtos.UserDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get pending participants for an event
+      tags:
+      - Events
+  /events/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes an event based on the provided ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: 'Success: No Content'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Event Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete an event
+      tags:
+      - Events
+    get:
+      consumes:
+      - application/json
+      description: Get an event's details based on the provided ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Event Found
+          schema:
+            $ref: '#/definitions/dtos.EventDTO'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Event Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get an event
+      tags:
+      - Events
+    put:
+      consumes:
+      - application/json
+      description: Update the details of an event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated Event Details
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.EventDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Event Updated Successfully
+          schema:
+            $ref: '#/definitions/dtos.EventDTO'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Event Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Validation Errors
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update an event
+      tags:
+      - Events
+  /events/{id}/details:
+    get:
+      consumes:
+      - application/json
+      description: Get event details by ID including additional information
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Event Details
+          schema:
+            $ref: '#/definitions/dtos.EventDTO'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Event Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get event with details
+      tags:
+      - Events
+  /events/code/{eventId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves the event code required to join the event
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Event Code
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get event code
+      tags:
+      - Events
+  /events/created-by/current:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of events created by the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of Created Events
+          schema:
+            items:
+              $ref: '#/definitions/dtos.EventDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get events created by the current user
+      tags:
+      - Events
+  /events/join/{code}:
+    get:
+      consumes:
+      - application/json
+      description: Allows a user to join an event by using the provided join code
+      parameters:
+      - description: Join Code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully Joined Event
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Join an event by code
+      tags:
+      - Events
+  /events/subjects/update/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update the list of subjects associated with the event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: List of Subjects
+        in: body
+        name: subjects
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Subjects Updated Successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update event subjects
+      tags:
+      - Events
+  /events/users/current:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of events associated with the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of Current User's Events
+          schema:
+            items:
+              $ref: '#/definitions/dtos.EventDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get current user's events
+      tags:
+      - Events
+  /forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Send a password reset verification code to the user's email
+      parameters:
+      - description: Email for password reset
+        in: body
+        name: forgotPasswordDTO
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ForgotPasswordDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Message sent'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid email'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: An error occurred'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Forgot Password
+      tags:
+      - Authentication
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate the user and return a token
+      parameters:
+      - description: User credentials
+        in: body
+        name: loginDTO
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.LoginDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: {token: string, user: object}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid request'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: 'Unauthorized: Invalid credentials'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: 'Forbidden: Account not activated'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: An error occurred'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User Login
+      tags:
+      - Authentication
+  /me:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the information of the currently authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Current user information'
+          schema:
+            $ref: '#/definitions/dtos.UserDTO'
+        "401":
+          description: 'Unauthorized: Invalid token or user not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get current user information
+      tags:
+      - User
+  /participants/{participantID}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a participant from an event
+      parameters:
+      - description: Participant ID
+        in: path
+        name: participantID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Left the event'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid participant ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: 'Unauthorized: User not authorized to leave this event'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - JWT: []
+      summary: Leave an event participation
+      tags:
+      - Participant
+  /participants/process/{participantID}/{status}:
+    get:
+      consumes:
+      - application/json
+      description: Change the status of a participant in an event
+      parameters:
+      - description: Participant ID
+        in: path
+        name: participantID
+        required: true
+        type: string
+      - description: Status to be applied (e.g. accepted, rejected)
+        in: path
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Participant status processed'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid participant ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: 'Unauthorized: User not allowed to process this participant'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - JWT: []
+      summary: Process participant status
+      tags:
+      - Participant
+  /participants/request/{eventID}:
+    get:
+      consumes:
+      - application/json
+      description: Request to participate in an event using the event ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: eventID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Requested participation'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid event ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - JWT: []
+      summary: Request to join an event as a participant
+      tags:
+      - Participant
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user and send an email verification
+      parameters:
+      - description: User registration details
+        in: body
+        name: registerDTO
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.RegisterDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'Created: User object'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid request'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: 'Unprocessable Entity: Validation errors'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Internal Server Error: An error occurred'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User Registration
+      tags:
+      - Authentication
+  /reporting:
+    post:
+      consumes:
+      - application/json
+      description: Create a new reporting based on the provided data
+      parameters:
+      - description: Reporting DTO
+        in: body
+        name: reporting
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ReportingDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'Success: Reporting created'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid input data'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: 'Unprocessable Entity: Validation errors'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new Reporting
+      tags:
+      - Reporting
+  /reporting/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete reporting based on a given ID
+      parameters:
+      - description: Reporting ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: 'Success: Reporting deleted'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: 'Unauthorized: Unauthorized access'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Reporting not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a Reporting by ID
+      tags:
+      - Reporting
+    get:
+      consumes:
+      - application/json
+      description: Retrieve reporting details based on a given ID
+      parameters:
+      - description: Reporting ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Reporting details'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: Reporting not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Reporting by ID
+      tags:
+      - Reporting
+  /resend-verify-email/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Resend the email verification link for the user
+      parameters:
+      - description: User's email address
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: User activated'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: User already activated'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: User not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: Could not send email'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Resend Email Verification
+      tags:
+      - Authentication
+  /reset-password:
+    post:
+      consumes:
+      - application/json
+      description: Reset the user's password using the verification code
+      parameters:
+      - description: New password details
+        in: body
+        name: resetPasswordDTO
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ResetPasswordDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Password reset successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid request'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: 'Unprocessable Entity: Validation errors'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Internal Server Error: An error occurred'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Reset Password
+      tags:
+      - Authentication
+  /subjects:
+    get:
+      description: Retrieves all subjects in the system.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of Subjects
+          schema:
+            items:
+              $ref: '#/definitions/ent.Subject'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Subjects
+      tags:
+      - Subjects
+    post:
+      consumes:
+      - application/json
+      description: Creates a new subject after validating the data.
+      parameters:
+      - description: Subject Data
+        in: body
+        name: subject
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.SubjectDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created Subject
+          schema:
+            $ref: '#/definitions/ent.Subject'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Validation errors
+          schema:
+            additionalProperties:
+              items:
+                type: string
+              type: array
+            type: object
+      security:
+      - AdminAuth: []
+      summary: Create Subject
+      tags:
+      - Subjects
+  /subjects/{id}:
+    delete:
+      description: Deletes an existing subject identified by ID.
+      parameters:
+      - description: Subject ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - AdminAuth: []
+      summary: Delete Subject
+      tags:
+      - Subjects
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing subject identified by ID.
+      parameters:
+      - description: Subject ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Subject Data
+        in: body
+        name: subject
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.SubjectDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated Subject
+          schema:
+            $ref: '#/definitions/ent.Subject'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - AdminAuth: []
+      summary: Update Subject
+      tags:
+      - Subjects
+  /user/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Update the information of a user based on their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User Information
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: User information updated'
+          schema:
+            $ref: '#/definitions/dtos.UserDTO'
+        "400":
+          description: 'Bad Request: Invalid ID or data'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: 'Unprocessable Entity: Validation errors'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Internal Server Error: Error updating user'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update user information
+      tags:
+      - User
+  /user/friendship:
+    post:
+      consumes:
+      - application/json
+      description: Create a friendship between users
+      parameters:
+      - description: Friendship details
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateFriendshipDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'Success: Friendship created'
+          schema:
+            $ref: '#/definitions/dtos.FriendshipDTO'
+        "400":
+          description: 'Bad Request: Invalid friendship data'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create friendship
+      tags:
+      - User
+  /user/friendship/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a friendship between users
+      parameters:
+      - description: Friendship ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: 'Success: Friendship deleted'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid friendship ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete friendship
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Accept a pending friendship request
+      parameters:
+      - description: Friendship ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Friendship accepted'
+          schema:
+            $ref: '#/definitions/dtos.FriendshipDTO'
+        "400":
+          description: 'Bad Request: Invalid friendship ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Accept friendship
+      tags:
+      - User
+  /user/friendships:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of the user's friendships
+      parameters:
+      - description: Friendship status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: List of friendships'
+          schema:
+            items:
+              $ref: '#/definitions/dtos.FriendshipDTO'
+            type: array
+        "500":
+          description: 'Internal Server Error: Error retrieving friendships'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get friendships
+      tags:
+      - User
+  /user/information/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the information of a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: User information'
+          schema:
+            $ref: '#/definitions/dtos.UserDTO'
+        "400":
+          description: 'Bad Request: Invalid ID format'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: User not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user information by ID
+      tags:
+      - User
+  /user/subjects:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve subjects associated with the currently authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: List of user subjects'
+          schema:
+            items:
+              $ref: '#/definitions/dtos.SubjectDTO'
+            type: array
+        "500":
+          description: 'Internal Server Error: Error retrieving subjects'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user subjects
+      tags:
+      - User
+  /user/subjects/update:
+    put:
+      consumes:
+      - application/json
+      description: Update the subjects associated with the currently authenticated
+        user
+      parameters:
+      - description: List of subjects
+        in: body
+        name: body
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Subjects updated'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid subjects'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: Error updating subjects'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update user subjects
+      tags:
+      - User
+  /user/validate-user:
+    post:
+      consumes:
+      - application/json
+      description: Validate user activation code for account activation
+      parameters:
+      - description: Activation Code
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ValidateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: User activated successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid activation code'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: Error processing validation'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Validate user activation code
+      tags:
+      - User
+  /user/verify:
+    post:
+      consumes:
+      - application/json
+      description: Verify the user email using the provided verification code
+      parameters:
+      - description: Verification Code
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.VerifyCodeDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Id verified successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid verification code'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: Error processing verification'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Verify user email code
+      tags:
+      - User
+swagger: "2.0"

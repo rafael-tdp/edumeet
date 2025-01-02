@@ -27,6 +27,14 @@ func NewChatController(chatService *services.ChatService, eventService *services
 	}
 }
 
+// @Summary Connect to the chat
+// @Description Establish a connection to receive real-time chat messages
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Success 200 {string} string "Connection established"
+// @Failure 400 {object} map[string]string "Bad Request: Failed to connect"
+// @Router /chats/connect [get]
 func (cc *ChatController) Connect(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
@@ -57,6 +65,18 @@ func (cc *ChatController) Connect(c *fiber.Ctx) error {
 	return nil
 }
 
+// @Summary Send message to a friend
+// @Description Send a message to a specific friend by their ID
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Param friendId path string true "Friend's ID"
+// @Param message body dtos.MessageDTO true "Message to send"
+// @Success 200 {object} map[string]string "Message sent successfully"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid message format"
+// @Failure 404 {object} map[string]string "Not Found: Friend not found"
+// @Failure 500 {object} map[string]string "Internal Server Error: Failed to send message"
+// @Router /chats/send-message-to-friend/{friendId} [post]
 func (cc *ChatController) SendMessageToFriend(c *fiber.Ctx) error {
 	friendId := c.Params("friendId")
 	currentUser := c.Locals("user").(*ent.User)
@@ -75,6 +95,18 @@ func (cc *ChatController) SendMessageToFriend(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Message sent successfully"})
 }
 
+// @Summary Send message to an event
+// @Description Send a message to all participants of an event
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Param eventId path string true "Event's ID"
+// @Param message body dtos.MessageDTO true "Message to send"
+// @Success 200 {object} map[string]string "Message sent to event successfully"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid message format"
+// @Failure 404 {object} map[string]string "Not Found: Event not found"
+// @Failure 500 {object} map[string]string "Internal Server Error: Failed to send message"
+// @Router /chats/send-message-to-event/{eventId} [post]
 func (cc *ChatController) SendMessageToEvent(c *fiber.Ctx) error {
 
 	eventId := c.Params("eventId")
@@ -107,6 +139,19 @@ func (cc *ChatController) SendMessageToEvent(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Message sent to event successfully"})
 }
 
+// @Summary Delete a message in an event
+// @Description Delete a specific message in an event by message ID
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Param eventId path string true "Event's ID"
+// @Param messageId path string true "Message's ID"
+// @Success 200 {object} map[string]string "Message deleted successfully"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid ID"
+// @Failure 404 {object} map[string]string "Not Found: Message or Event not found"
+// @Failure 403 {object} map[string]string "Forbidden: Not authorized"
+// @Failure 500 {object} map[string]string "Internal Server Error: Failed to delete message"
+// @Router /chats/delete-message-to-event/{eventId}/{messageId} [delete]
 func (cc *ChatController) DeleteMessageEvent(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
@@ -158,6 +203,19 @@ func (cc *ChatController) DeleteMessageEvent(c *fiber.Ctx) error {
 	return c.JSON(deleteMessage)
 }
 
+// @Summary Delete a message to a friend
+// @Description Delete a specific message in a chat with a friend
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Param friendId path string true "Friend's ID"
+// @Param messageId path string true "Message's ID"
+// @Success 204 {object} map[string]string "Message deleted successfully"
+// @Failure 400 {object} map[string]string "Bad Request: Invalid ID"
+// @Failure 404 {object} map[string]string "Not Found: Message or Friend not found"
+// @Failure 403 {object} map[string]string "Forbidden: Not authorized"
+// @Failure 500 {object} map[string]string "Internal Server Error: Failed to delete message"
+// @Router /chats/delete-message-to-friend/{friendId}/{messageId} [delete]
 func (cc *ChatController) DeleteMessageFriend(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
@@ -194,6 +252,14 @@ func (cc *ChatController) DeleteMessageFriend(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{})
 }
 
+// @Summary Get conversations of the user
+// @Description Get all conversations for the authenticated user
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Success 200 {array} dtos.ConversationDTO "List of conversations"
+// @Failure 500 {object} map[string]string "Internal Server Error: Failed to retrieve conversations"
+// @Router /chats/conversations [get]
 func (cc *ChatController) GetConversations(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
@@ -205,6 +271,16 @@ func (cc *ChatController) GetConversations(c *fiber.Ctx) error {
 	return c.JSON(conversationDTOs)
 }
 
+// @Summary Get messages from a friend
+// @Description Get all messages between the user and a specific friend
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Param friendId path string true "Friend's ID"
+// @Success 200 {array} dtos.MessageDTO "List of messages"
+// @Failure 400 {object} map[string]string "Bad Request: Failed to retrieve messages"
+// @Failure 404 {object} map[string]string "Not Found: Friend not found"
+// @Router /chats/get-conversation-friend/{friendId} [get]
 func (cc *ChatController) GetMessagesFriend(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
@@ -218,6 +294,17 @@ func (cc *ChatController) GetMessagesFriend(c *fiber.Ctx) error {
 	return c.JSON(messages)
 }
 
+// @Summary Get messages from an event
+// @Description Get all messages related to a specific event
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Param eventId path string true "Event's ID"
+// @Success 200 {array} dtos.MessageDTO "List of messages"
+// @Failure 400 {object} map[string]string "Bad Request: Failed to retrieve messages"
+// @Failure 404 {object} map[string]string "Not Found: Event not found"
+// @Failure 403 {object} map[string]string "Forbidden: Not authorized"
+// @Router /chats/get-conversation-event/{eventId} [get]
 func (cc *ChatController) GetMessagesEvent(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
