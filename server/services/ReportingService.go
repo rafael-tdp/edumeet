@@ -3,6 +3,8 @@ package services
 import (
 	"edumeet/dtos"
 	"edumeet/repositories"
+
+	"github.com/sirupsen/logrus"
 )
 
 type ReportingService struct {
@@ -18,11 +20,13 @@ func NewReportingService(reportingRepo *repositories.ReportingRepository) *Repor
 func (r *ReportingService) GetReportingById(reportingID string) (dtos.ReportingDTO, error) {
 	reporting, err := r.reportingRepo.GetReportingById(reportingID)
 	if err != nil {
+		logrus.Error("Error ReportingService.GetReportingById: ", err)
 		return dtos.ReportingDTO{}, err
 	}
 
 	entity, err := r.reportingRepo.GetEntity(reporting.Type, reporting.EntityID)
 	if err != nil {
+		logrus.Error("Error ReportingService.GetReportingById: ", err)
 		return dtos.ReportingDTO{}, err
 	}
 	reportingDTO := dtos.ReportingEntToDTO(reporting, entity)
@@ -33,6 +37,7 @@ func (r *ReportingService) GetReportingById(reportingID string) (dtos.ReportingD
 func (r *ReportingService) DeleteReporting(reportingID string) error {
 	err := r.reportingRepo.DeleteReporting(reportingID)
 	if err != nil {
+		logrus.Error("Error ReportingService.DeleteReporting: ", err)
 		return err
 	}
 
@@ -42,14 +47,17 @@ func (r *ReportingService) DeleteReporting(reportingID string) error {
 func (r *ReportingService) CreateReporting(reportingDTO dtos.ReportingDTO) (dtos.ReportingDTO, error) {
 	reporting, err := r.reportingRepo.CreateReporting(reportingDTO)
 	if err != nil {
+		logrus.Error("Error ReportingService.CreateReporting: ", err)
 		return dtos.ReportingDTO{}, err
 	}
 
 	entity, err := r.reportingRepo.GetEntity(reporting.Type, reporting.EntityID)
 	if err != nil {
+		logrus.Error("Error ReportingService.CreateReporting: ", err)
 		return dtos.ReportingDTO{}, err
 	}
 	reportingDTO = dtos.ReportingEntToDTO(reporting, entity)
 
+	logrus.Info("ReportingService.CreateReporting: Reporting created successfully")
 	return reportingDTO, nil
 }
