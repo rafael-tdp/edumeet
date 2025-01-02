@@ -31,11 +31,29 @@ func NewBadgeController(badgeService *services.BadgeService) *BadgeController {
 // @Failure 404 {object} map[string]string "Error: Badges not found"
 // @Router /badge [get]
 func (uc *BadgeController) GetBadges(c *fiber.Ctx) error {
-	badges, err := uc.badgeService.GetBadges()
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid page parameter"})
+	}
+
+	perPage := c.QueryInt("per_page", 99999)
+	if perPage <= 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid per_page parameter"})
+	}
+
+	offset := (page - 1) * perPage
+
+	badges, err := uc.badgeService.GetBadges(perPage, offset)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Badges not found"})
 	}
-	return c.Status(fiber.StatusOK).JSON(badges)
+
+	if len(badges) == 0 {
+		return c.JSON([]dtos.BadgeDTO{})
+	}
+
+	return c.JSON(badges)
 }
 
 // GetBadge returns a single badge by ID

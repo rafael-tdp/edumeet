@@ -28,9 +28,12 @@ func (r *BadgeRepository) GetBadgeById(badgeID string) (*ent.Badge, error) {
 	return badge, nil
 }
 
-func (r *BadgeRepository) GetBadges() ([]*ent.Badge, error) {
-
-	badges, err := r.client.Badge.Query().All(context.Background())
+func (r *BadgeRepository) GetBadges(limit, offset int) ([]*ent.Badge, error) {
+	badges, err := r.client.Badge.
+		Query().
+		Limit(limit).
+		Offset(offset).
+		All(context.Background())
 	if err != nil {
 		return nil, errors.New("error getting badges")
 	}

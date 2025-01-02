@@ -54,8 +54,8 @@ func (r *BadgeService) CreateBadge(badgeDTO dtos.BadgeDTO) (dtos.BadgeDTO, error
 	return dtos.BadgeEntToDTO(badge), nil
 }
 
-func (r *BadgeService) GetBadges() ([]dtos.BadgeDTO, error) {
-	badges, err := r.badgeRepo.GetBadges()
+func (r *BadgeService) GetBadges(perPage, offset int) ([]dtos.BadgeDTO, error) {
+	badges, err := r.badgeRepo.GetBadges(perPage, offset)
 	if err != nil {
 		logrus.Error("Error BadgeService function GetBadges: ", err)
 		return nil, err
