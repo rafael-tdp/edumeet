@@ -228,6 +228,19 @@ func (ec *EventController) UpdateEvent(c *fiber.Ctx) error {
 // @Failure 400 {object} map[string]string "Bad Request"
 // @Router /events [get]
 func (ec *EventController) GetAllEvents(c *fiber.Ctx) error {
+
+	page := c.QueryInt("page", 1)
+	if page <= 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid page parameter"})
+	}
+
+	perPage := c.QueryInt("per_page", 99999)
+	if perPage <= 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid per_page parameter"})
+	}
+
+	offset := (page - 1) * perPage
+
 	eventType := c.Query("type", "all")
 	distance := c.Query("distance", "")
 	longitude := c.Query("longitude", "")
@@ -242,7 +255,7 @@ func (ec *EventController) GetAllEvents(c *fiber.Ctx) error {
 		Subjects:  subjects,
 	}
 
-	events, err := ec.eventservice.GetFilteredEvents(filters)
+	events, err := ec.eventservice.GetFilteredEvents(filters, perPage, offset)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}

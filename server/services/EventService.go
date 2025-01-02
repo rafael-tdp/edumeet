@@ -119,8 +119,8 @@ func (es *EventService) UpdateEvent(ctx context.Context, event dtos.EventDTO, ev
 	return dtos.EntToEventDTO(eventCreatedWithEdge), nil
 }
 
-func (es *EventService) GetFilteredEvents(filters structures.EventFilters) ([]dtos.EventWithTypeDTO, error) {
-	events, err := es.eventRepository.GetEventsWithFilters(filters)
+func (es *EventService) GetFilteredEvents(filters structures.EventFilters, perPage, offset int) ([]dtos.EventWithTypeDTO, error) {
+	events, err := es.eventRepository.GetEventsWithFilters(filters, perPage, offset)
 	if err != nil {
 		logrus.Error("Error EventService.GetFilteredEvents: ", err)
 		return nil, err
