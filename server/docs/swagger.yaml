@@ -1,0 +1,78 @@
+basePath: /
+host: localhost:3000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is the API documentation for the EduMeet project.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: EduMeet API Documentation
+  version: "1.0"
+paths:
+  /address:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve address based on a given latitude and longitude
+      parameters:
+      - description: Latitude
+        in: query
+        name: lat
+        required: true
+        type: string
+      - description: Longitude
+        in: query
+        name: lng
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Address'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Missing or invalid latitude or longitude'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Address
+      tags:
+      - Address
+  /address/reverse:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve latitude and longitude based on a given address
+      parameters:
+      - description: Address
+        in: query
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Latitude and Longitude'
+          schema:
+            additionalProperties:
+              type: number
+            type: object
+        "400":
+          description: 'Bad Request: Address is required'
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get Lat/Lng
+      tags:
+      - Address
+swagger: "2.0"

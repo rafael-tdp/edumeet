@@ -17,6 +17,17 @@ func NewAddressController(addressService *services.AddressService) *AddressContr
 	}
 }
 
+// GetAddress returns the address based on the latitude and longitude
+// @Summary Get Address
+// @Description Retrieve address based on a given latitude and longitude
+// @Tags Address
+// @Accept json
+// @Produce json
+// @Param lat query string true "Latitude"
+// @Param lng query string true "Longitude"
+// @Success 200 {object} map[string]string "Success: Address"
+// @Failure 400 {object} map[string]string "Bad Request: Missing or invalid latitude or longitude"
+// @Router /address [get]
 func (ac *AddressController) GetAddress() func(*fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		queryLat := c.Query("lat")
@@ -42,6 +53,15 @@ func (ac *AddressController) GetAddress() func(*fiber.Ctx) error {
 	}
 }
 
+// @Summary Get Lat/Lng
+// @Description Retrieve latitude and longitude based on a given address
+// @Tags Address
+// @Accept json
+// @Produce json
+// @Param address query string true "Address"
+// @Success 200 {object} map[string]float64 "Success: Latitude and Longitude"
+// @Failure 400 {object} map[string]interface{} "Bad Request: Address is required"
+// @Router /address/reverse [get]
 func (ac *AddressController) GetLatLng() func(*fiber.Ctx) error {
 	return func(c *fiber.Ctx) error {
 		queryAddress := c.Query("address")
