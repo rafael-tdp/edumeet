@@ -1,4 +1,82 @@
 basePath: /
+definitions:
+  dtos.AICorrectionDTO:
+    properties:
+      exercise:
+        type: string
+    required:
+    - exercise
+    type: object
+  dtos.AIDocumentSaveDTO:
+    properties:
+      content:
+        type: string
+      doc_type:
+        enum:
+        - EXERCISE
+        - CORRECTION
+        type: string
+      event_id:
+        type: string
+    required:
+    - content
+    - doc_type
+    - event_id
+    type: object
+  dtos.ForgotPasswordDTO:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  dtos.LoginDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dtos.RegisterDTO:
+    properties:
+      address:
+        type: string
+      bio:
+        type: string
+      birthDate:
+        type: string
+      email:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      password:
+        type: string
+      picture:
+        type: string
+      username:
+        type: string
+    required:
+    - birthDate
+    - email
+    - firstname
+    - lastname
+    - password
+    - username
+    type: object
+  dtos.ResetPasswordDTO:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+    type: object
 host: localhost:3000
 info:
   contact:
@@ -75,4 +153,353 @@ paths:
       summary: Get Lat/Lng
       tags:
       - Address
+  /ai/generate-correction/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Generate a correction for a given exercise from the event
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Exercise for correction
+        in: body
+        name: exercise
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.AICorrectionDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Generated correction'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid ID or body parsing error'
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: 'Forbidden: Not authorized'
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: 'Not Found: Event not found'
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: 'Unprocessable Entity: Validation errors'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Internal Server Error: Unable to generate correction'
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Generate Correction
+      tags:
+      - AI
+  /ai/generate-exo/{id}:
+    post:
+      consumes:
+      - application/json
+      description: Generate an exercise based on the event's title, description, and
+        subjects
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Generated exercise'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid ID'
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: 'Forbidden: Not authorized'
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: 'Not Found: Event not found'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Internal Server Error: Unable to generate exercise'
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Generate Exercise
+      tags:
+      - AI
+  /ai/save-document:
+    post:
+      consumes:
+      - application/json
+      description: Save the generated document from an AI operation
+      parameters:
+      - description: Document information for saving
+        in: body
+        name: document
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.AIDocumentSaveDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Document saved'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Body parsing error'
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: 'Forbidden: Not authorized'
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: 'Unprocessable Entity: Validation errors'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Internal Server Error: Unable to save document'
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Save Generated Document
+      tags:
+      - AI
+  /forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Send a password reset verification code to the user's email
+      parameters:
+      - description: Email for password reset
+        in: body
+        name: forgotPasswordDTO
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ForgotPasswordDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Message sent'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid email'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: An error occurred'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Forgot Password
+      tags:
+      - Authentication
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate the user and return a token
+      parameters:
+      - description: User credentials
+        in: body
+        name: loginDTO
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.LoginDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: {token: string, user: object}'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid request'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: 'Unauthorized: Invalid credentials'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: 'Forbidden: Account not activated'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: An error occurred'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User Login
+      tags:
+      - Authentication
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user and send an email verification
+      parameters:
+      - description: User registration details
+        in: body
+        name: registerDTO
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.RegisterDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'Created: User object'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: Invalid request'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: 'Unprocessable Entity: Validation errors'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Internal Server Error: An error occurred'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User Registration
+      tags:
+      - Authentication
+  /resend-verify-email/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Resend the email verification link for the user
+      parameters:
+      - description: User's email address
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: User activated'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'Bad Request: User already activated'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'Not Found: User not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Internal Server Error: Could not send email'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Resend Email Verification
+      tags:
+      - Authentication
+  /reset-password:
+    post:
+      consumes:
+      - application/json
+      description: Reset the user's password using the verification code
+      parameters:
+      - description: New password details
+        in: body
+        name: resetPasswordDTO
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.ResetPasswordDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'Success: Password reset successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Bad Request: Invalid request'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: 'Unprocessable Entity: Validation errors'
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: 'Internal Server Error: An error occurred'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Reset Password
+      tags:
+      - Authentication
 swagger: "2.0"
