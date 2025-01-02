@@ -158,6 +158,8 @@ Widget build(BuildContext context) {
               ),
             ),
             const SizedBox(height: 20),
+            _buildUserStats(),
+            const SizedBox(height: 20),
             _buildUserInfoCard(),
             const SizedBox(height: 20),
             if (_isCurrentUser) _buildProfileActions(),
@@ -233,6 +235,60 @@ Widget build(BuildContext context) {
               });
             }
           },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserStats() {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        SizedBox(
+          width: 125,
+          height: 80,
+          child: Card(
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '12',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text('Amis'),
+                ],
+              ),
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 125,
+          height: 80,
+          child: Card(
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '36',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text('Evenements'),
+                ],
+              ),
+            ),
+          ),
         ),
       ],
     );
