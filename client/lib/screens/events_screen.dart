@@ -1,5 +1,4 @@
 import 'package:client/core/models/user.dart';
-import 'package:client/core/services/auth_services.dart';
 import 'package:client/core/services/event_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/utils/colors.dart';
@@ -30,6 +29,7 @@ class _EventsPageState extends State<EventsPage> {
   void initState() {
     super.initState();
     _fetchCurrentUser();
+    _fetchEvents();
   }
 
   void _fetchCurrentUser() async {
@@ -64,7 +64,7 @@ class _EventsPageState extends State<EventsPage> {
       );
       return;
     }
-    context.go(
+    context.push(
       '${EventsPage.routeName}/$eventId/details',
       extra: _currentUser,
     );

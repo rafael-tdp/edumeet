@@ -49,7 +49,7 @@ class EventDetailsSection extends StatelessWidget {
               const Icon(Icons.event, color: AppColors.purple, size: 24),
               const SizedBox(width: 8),
               Text(
-                custom_date_utils.DateUtils.isoToFormattedDate(eventDate),
+                custom_date_utils.DateUtils.isoToFormattedDateAndTime(eventDate),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

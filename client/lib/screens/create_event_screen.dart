@@ -28,8 +28,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final _descriptionController = TextEditingController();
   DateTime? _startDate;
   DateTime? _endDate;
+  TimeOfDay? _startTime;
+  TimeOfDay? _endTime;
   final _locationController = TextEditingController();
-  // final _maxParticipantsController = TextEditingController();
   final _onlineLinkController = TextEditingController();
 
   bool _isDisposed = false;
@@ -37,7 +38,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
   bool _isPhysical = true;
   Set<String> _selectedSubjects = {};
 
-  // Liste pour stocker les suggestions d'adresses
   List<String> _addressSuggestions = [];
 
   @override
@@ -46,7 +46,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
     _nameController.dispose();
     _descriptionController.dispose();
     _locationController.dispose();
-    // _maxParticipantsController.dispose();
     _onlineLinkController.dispose();
     super.dispose();
   }
@@ -70,7 +69,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
   }
 
   void _createEvent(context) async {
-
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -78,21 +76,18 @@ class _CreateEventPageState extends State<CreateEventPage> {
     Event event = Event(
       title: _nameController.text,
       description: _descriptionController.text,
-      startDate: _startDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
-      endDate: _endDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
+      startDate: _startDate!
+          .add(Duration(hours: _startTime!.hour, minutes: _startTime!.minute))
+          .toIso8601String()
+          .replaceFirst(RegExp(r'\.000$'), 'Z'),
+      endDate: _endDate!
+          .add(Duration(hours: _endTime!.hour, minutes: _endTime!.minute))
+          .toIso8601String()
+          .replaceFirst(RegExp(r'\.000$'), 'Z'),
       isPrivate: _isPrivate,
-      // nbMaxParticipants: int.parse(_maxParticipantsController.text),
-      physicalEvent: _isPhysical
-          ? {
-              'location':
-                  "1 Rue Lecourbe 75015 Paris" //_locationController.text,
-            }
-          : null,
-      remoteEvent: !_isPhysical
-          ? {
-              'url': _onlineLinkController.text,
-            }
-          : null,
+      physicalEvent:
+          _isPhysical ? {'location': "1 Rue Lecourbe 75015 Paris"} : null,
+      remoteEvent: !_isPhysical ? {'url': _onlineLinkController.text} : null,
       subjects: _selectedSubjects.toList(),
     );
 
@@ -120,6 +115,24 @@ class _CreateEventPageState extends State<CreateEventPage> {
           _startDate = selectedDate;
         } else {
           _endDate = selectedDate;
+        }
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context, bool isStartTime) async {
+    TimeOfDay initialTime = TimeOfDay.now();
+    TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+
+    if (selectedTime != null) {
+      setState(() {
+        if (isStartTime) {
+          _startTime = selectedTime;
+        } else {
+          _endTime = selectedTime;
         }
       });
     }
@@ -185,21 +198,16 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 label: "Date de fin",
                 isStartDate: false,
               ),
-              // _buildTextFormField(
-              //   controller: _maxParticipantsController,
-              //   label: t.event.maxParticipants,
-              //   icon: Icons.people,
-              //   keyboardType: TextInputType.number,
-              //   validator: (value) {
-              //     if (value == null || value.isEmpty) {
-              //       return t.event.enterMaxParticipants;
-              //     }
-              //     if (int.tryParse(value) == null) {
-              //       return t.event.invalidMaxParticipants;
-              //     }
-              //     return null;
-              //   },
-              // ),
+              _buildTimeField(
+                context,
+                label: "Heure de début",
+                isStartTime: true,
+              ),
+              _buildTimeField(
+                context,
+                label: "Heure de fin",
+                isStartTime: false,
+              ),
               const SizedBox(height: 20),
               SwitchListTile(
                 title: const Text("Événement physique"),
@@ -244,7 +252,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         return null;
                       },
                     ),
-              // Affichage des suggestions d'adresses
               if (_addressSuggestions.isNotEmpty)
                 Column(
                   children: _addressSuggestions.map((suggestion) {
@@ -341,6 +348,39 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
               prefixIcon: const Icon(Icons.calendar_today),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimeField(
+    BuildContext context, {
+    required String label,
+    required bool isStartTime,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: GestureDetector(
+        onTap: () {
+          _selectTime(context, isStartTime);
+        },
+        child: AbsorbPointer(
+          child: TextFormField(
+            controller: isStartTime
+                ? TextEditingController(
+                    text: _startTime == null ? '' : _startTime!.format(context),
+                  )
+                : TextEditingController(
+                    text: _endTime == null ? '' : _endTime!.format(context),
+                  ),
+            decoration: InputDecoration(
+              labelText: label,
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              prefixIcon: const Icon(Icons.access_time),
             ),
           ),
         ),

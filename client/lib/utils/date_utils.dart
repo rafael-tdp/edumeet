@@ -24,6 +24,16 @@ class DateUtils {
     }
   }
 
+  // iso to time (dd/MM/yyyy à HH:mm)
+  static String isoToFormattedDateAndTime(String isoDate) {
+    try {
+      final dateTime = DateTime.parse(isoDate);
+      return DateFormat('dd/MM/yyyy à HH:mm').format(dateTime);
+    } catch (e) {
+      return 'Invalid date';
+    }
+  }
+
   static String isoToFormattedTime(String isoDate) {
     try {
       final dateTime = DateTime.parse(isoDate);

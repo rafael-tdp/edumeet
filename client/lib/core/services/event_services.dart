@@ -116,6 +116,34 @@ class EventServices {
     }
   }
 
+  static Future<Event> getEvent(String eventId) async {
+    try {
+      final token = await AuthServices().getToken();;
+
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      final response = await http.get(
+        Uri.parse('${Env.BACKEND_URL}/events/$eventId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to get event');
+      }
+
+      final event = jsonDecode(response.body);
+      return Event.fromJson(event);
+    } catch (error) {
+      log('An error occurred while getting event', error: error);
+      rethrow;
+    }
+  }
+
   static Future<Event> createEvent(Event event) async {
     try {
       final token = await AuthServices().getToken();;
@@ -141,6 +169,32 @@ class EventServices {
       return Event.fromJson(createdEvent);
     } catch (error) {
       log('An error occurred while creating event', error: error);
+      rethrow;
+    }
+  }
+
+  static Future<void> updateEvent(Event event) async {
+    try {
+      final token = await AuthServices().getToken();;
+
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      final response = await http.put(
+        Uri.parse('${Env.BACKEND_URL}/events/${event.id}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(event.toJson()),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update event');
+      }
+    } catch (error) {
+      log('An error occurred while updating event', error: error);
       rethrow;
     }
   }

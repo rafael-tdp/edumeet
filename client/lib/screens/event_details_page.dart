@@ -1,6 +1,7 @@
 import 'package:client/core/models/event.dart';
 import 'package:client/core/models/user.dart';
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/screens/edit_event_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/event_services.dart';
 import 'package:client/components/event/event_header.dart';
@@ -40,6 +41,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   bool _isAppBarExpanded = false;
   late Future<Event> _eventFuture;
   late bool isCurrentUserEvent;
+  bool shouldRefresh = false;
 
   @override
   void initState() {
@@ -134,9 +136,29 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     weight: 30,
                   ),
                   onPressed: () {
-                    EventsPage.navigateTo(context);
+                    Navigator.of(context).pop(shouldRefresh);
                   },
                 ),
+                actions: [
+                  if (isCurrentUserEvent)
+                    IconButton(
+                      icon: Icon(
+                        Icons.edit,
+                        color: _isAppBarExpanded ? Colors.black : Colors.white,
+                      ),
+                      onPressed: () async {
+                        shouldRefresh = await context.push(
+                          '${EventsPage.routeName}/${event.id}${EditEventPage.routeName}',
+                        ) as bool;
+                        print('shouldRefresh: $shouldRefresh');
+                        if (shouldRefresh == true) {
+                          setState(() {
+                            _eventFuture = EventServices.getEventDetails(event.id!);
+                          });
+                        }
+                      },
+                    ),
+                ],
               ),
               SliverToBoxAdapter(
                 child: Column(
