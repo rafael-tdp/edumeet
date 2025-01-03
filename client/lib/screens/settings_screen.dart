@@ -1,10 +1,8 @@
-import 'package:client/main.dart';
 import 'package:client/screens/language_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/subjects_screen.dart';
 import 'package:client/utils/language.dart';
 import 'package:dice_bear/dice_bear.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -61,6 +59,7 @@ class _SettingsPageState extends State<SettingsPage> {
           }
 
           final User user = snapshot.data!;
+
           final Avatar _avatar = DiceBearBuilder(
             seed: user.username,
             sprite: DiceBearSprite.values.firstWhere(
@@ -88,10 +87,17 @@ class _SettingsPageState extends State<SettingsPage> {
                 ListTile(
                   leading: _avatar.toImage(height: 40),
                   title: Text(user.firstname ?? t.user.anonymous),
-                  subtitle: Text(user.username ?? t.user.anonymous),
+                  subtitle: Text(user.username),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-                  onTap: () {
-                    ProfilePage.navigateTo(context);
+                  onTap: () async {
+                    await context.push(
+                      ProfilePage.routeName,
+                    );
+                    setState(() {
+                      _userFuture =
+                          Provider.of<UserProvider>(context, listen: false)
+                              .getUser();
+                    });
                   },
                 ),
                 Padding(
@@ -135,7 +141,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     backgroundColor: Colors.redAccent,
                     onPressed: () async {
                       await _authServices.logout();
-                      Provider.of<UserProvider>(context, listen: false).clearUser();
+                      Provider.of<UserProvider>(context, listen: false)
+                          .clearUser();
                       context.go(LoginPage.routeName);
                     },
                   ),

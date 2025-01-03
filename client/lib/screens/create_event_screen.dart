@@ -210,6 +210,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   });
                 },
               ),
+              SwitchListTile(
+                title: const Text("Événement privé"),
+                value: _isPrivate,
+                onChanged: (bool value) {
+                  setState(() {
+                    _isPrivate = value;
+                  });
+                },
+              ),
               const SizedBox(height: 10),
               _isPhysical
                   ? _buildTextFormField(

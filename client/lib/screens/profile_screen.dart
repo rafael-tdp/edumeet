@@ -122,7 +122,7 @@ Widget build(BuildContext context) {
           : IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () {
-          context.go(SettingsPage.routeName);
+          context.pop(true);
         },
       ),
     ),
@@ -225,14 +225,12 @@ Widget build(BuildContext context) {
           text: t.profile.editProfile,
           backgroundColor: AppColors.purple,
           onPressed: () async {
-            final updatedUser = await context.push(
+            final needsToRefresh = await context.push(
               '${ProfilePage.routeName}${EditProfilePage.routeName}',
               extra: _user,
-            ) as dynamic;
-            if (updatedUser != null) {
-              setState(() {
-                _user = updatedUser;
-              });
+            );
+            if (needsToRefresh == true) {
+              _loadUser();
             }
           },
         ),
