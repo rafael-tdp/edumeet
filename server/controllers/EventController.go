@@ -389,7 +389,7 @@ func (ec *EventController) JoinEventByCode(c *fiber.Ctx) error {
 
 	user := c.Locals("user").(*ent.User)
 
-	err := ec.eventservice.JoinEventByCode(code, user.ID)
+	event, err := ec.eventservice.JoinEventByCode(code, user.ID)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -397,11 +397,10 @@ func (ec *EventController) JoinEventByCode(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(
-		fiber.Map{
-			"message": "Successfully joined event",
-		},
-	)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Successfully joined event",
+		"event":   event,
+	})
 }
 
 // GetEventCode retrieves the event code for an event

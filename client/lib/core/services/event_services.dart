@@ -388,4 +388,31 @@ class EventServices {
       rethrow;
     }
   }
+
+  static Future<dynamic> joinEventWithCode(String code) async {
+    try {
+      final token = await AuthServices().getToken();
+
+      if (token == null) {
+        throw Exception('No token found');
+      }
+
+      final response = await http.get(
+        Uri.parse('${Env.BACKEND_URL}/events/join/$code'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to join event');
+      }
+
+      return jsonDecode(response.body);
+    } catch (error) {
+      log('An error occurred while joining event', error: error);
+      rethrow;
+    }
+  }
 }
