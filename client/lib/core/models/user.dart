@@ -28,13 +28,17 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
+    var bd = json['birthDate'] ?? '';
+    var birthDate = bd.endsWith('ZZ')
+        ? DateTime.parse(bd.substring(0, bd.length - 1))
+        : DateTime.parse(bd);
     return User(
       id: json['id'] ?? '',
       email: json['email'] ?? '',
       username: json['username'],
       lastname: json['lastname'] ?? '',
       firstname: json['firstname'] ?? '',
-      birthDate: DateTime.parse(json['birthDate'] ?? ''),
+      birthDate: birthDate,
       bio: json['bio'] ?? '',
       picture: json['picture'] ?? '',
       reportNumber: json['reportNumber'] ?? 0,
@@ -50,7 +54,11 @@ class User {
       'username': username,
       'lastname': lastname,
       'firstname': firstname,
-      'birthDate': '${birthDate?.toIso8601String()}Z',
+      'birthDate': birthDate != null
+          ? (birthDate!.toIso8601String().endsWith('Z')
+              ? birthDate!.toIso8601String()
+              : '${birthDate!.toIso8601String()}Z')
+          : null,
       'bio': bio,
       'picture': picture,
       'reportNumber': reportNumber,

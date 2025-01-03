@@ -36,6 +36,7 @@ class UserProvider with ChangeNotifier {
 
   void clearUser() {
     _currentUser = null;
+    CacheService.removeDataFromCache('user_data');
     notifyListeners();
   }
 
