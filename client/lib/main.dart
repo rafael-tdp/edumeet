@@ -21,6 +21,8 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 void main() async {
   setUrlStrategy(PathUrlStrategy());
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   final userProvider = UserProvider();
   await userProvider.loadUserFromCache();
 
