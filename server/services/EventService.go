@@ -324,6 +324,7 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 		EventDocuments:    dtos.EntToEventDocumentDTO(event.Edges.EventDocuments),
 		CreatedBy:         event.CreatedBy,
 		LastMessages:      lastMessages,
+		Code:              event.Code,
 	}
 
 	if event.Edges.RemoteEvent != nil {

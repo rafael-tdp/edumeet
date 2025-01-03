@@ -150,7 +150,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         shouldRefresh = await context.push(
                           '${EventsPage.routeName}/${event.id}${EditEventPage.routeName}',
                         ) as bool;
-                        print('shouldRefresh: $shouldRefresh');
                         if (shouldRefresh == true) {
                           setState(() {
                             _eventFuture = EventServices.getEventDetails(event.id!);
@@ -169,6 +168,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       eventDate: event.startDate,
                       address: event.physicalEvent?['location'],
                       link: event.remoteEvent?['url'],
+                      code: isCurrentUserEvent ? event.code : null,
                     ),
                     const SizedBox(height: 20),
                     AnimatedOpacity(
