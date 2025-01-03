@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'package:client/core/services/auth_services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:googleapis/servicecontrol/v2.dart';
 import 'package:http/http.dart' as http;
 import 'package:client/firebase_options.dart';
+
+import '../../env/env.dart';
 
 class PushNotificationService {
   static FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -82,14 +86,13 @@ class PushNotificationService {
 
   static Future<void> sendTokenToServer(String token) async {
     try {
+      final userToken = await AuthServices().getToken();
       final response = await http.post(
-        Uri.parse('https://your-server-url.com/api/register-token'),
+        Uri.parse('${Env.BACKEND_URL}/store-fcm-token/$token'),
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $userToken',
         },
-        body: jsonEncode({
-          'token': token,
-        }),
       );
 
       if (response.statusCode == 200) {
