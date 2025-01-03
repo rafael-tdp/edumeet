@@ -187,6 +187,7 @@ class _TranslationsFormDe implements TranslationsFormEn {
 	@override String get confirmPassword => 'Passwort bestätigen';
 	@override String get pleaseConfirmPassword => 'Bitte bestätige dein Passwort';
 	@override String get passwordNotMatch => 'Die Passwörter stimmen nicht überein';
+	@override String get invalidUsername => 'Der Benutzername muss:\n- zwischen 3 und 20 Zeichen lang sein\n- mit einem Buchstaben beginnen\n- keine Sonderzeichen enthalten';
 }
 
 // Path: swipe_cards
@@ -482,6 +483,7 @@ extension on TranslationsDe {
 			case 'form.confirmPassword': return 'Passwort bestätigen';
 			case 'form.pleaseConfirmPassword': return 'Bitte bestätige dein Passwort';
 			case 'form.passwordNotMatch': return 'Die Passwörter stimmen nicht überein';
+			case 'form.invalidUsername': return 'Der Benutzername muss:\n- zwischen 3 und 20 Zeichen lang sein\n- mit einem Buchstaben beginnen\n- keine Sonderzeichen enthalten';
 			case 'swipe_cards.loading_error': return 'Fehler beim Laden der Ereignisse';
 			case 'swipe_cards.end_of_list': return 'Du hast das Ende der Liste erreicht!';
 			case 'swipe_cards.nope': return 'Nein zu {{title}}';

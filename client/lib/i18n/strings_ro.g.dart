@@ -187,6 +187,7 @@ class _TranslationsFormRo implements TranslationsFormEn {
 	@override String get confirmPassword => 'Confirmă parola';
 	@override String get pleaseConfirmPassword => 'Te rugăm să confirmi parola';
 	@override String get passwordNotMatch => 'Parolele nu se potrivesc';
+	@override String get invalidUsername => 'Numele de utilizator trebuie să: \n- conțină între 3 și 20 de caractere \n- înceapă cu o literă \n- nu conțină caractere speciale';
 }
 
 // Path: swipe_cards
@@ -482,6 +483,7 @@ extension on TranslationsRo {
 			case 'form.confirmPassword': return 'Confirmă parola';
 			case 'form.pleaseConfirmPassword': return 'Te rugăm să confirmi parola';
 			case 'form.passwordNotMatch': return 'Parolele nu se potrivesc';
+			case 'form.invalidUsername': return 'Numele de utilizator trebuie să: \n- conțină între 3 și 20 de caractere \n- înceapă cu o literă \n- nu conțină caractere speciale';
 			case 'swipe_cards.loading_error': return 'Eroare la încărcarea evenimentelor';
 			case 'swipe_cards.end_of_list': return 'Ai ajuns la sfârșitul listei!';
 			case 'swipe_cards.nope': return 'Nu pentru {{title}}';

@@ -4,6 +4,8 @@ import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/providers/locale_provider.dart';
 import 'package:client/router.dart';
 import 'package:client/utils/colors.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,13 +17,14 @@ import 'screens/events_screen.dart';
 import 'screens/conversations_screen.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:client/core/services/push_notification_service.dart';
+import 'firebase_options.dart';
 
 void main() async {
   setUrlStrategy(PathUrlStrategy());
-
+  WidgetsFlutterBinding.ensureInitialized();
   final userProvider = UserProvider();
   await userProvider.loadUserFromCache();
-
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
@@ -105,6 +108,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    PushNotificationService.initialize();
     _sseServices.connectToSse();
   }
 

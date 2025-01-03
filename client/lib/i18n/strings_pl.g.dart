@@ -187,6 +187,7 @@ class _TranslationsFormPl implements TranslationsFormEn {
 	@override String get confirmPassword => 'Potwierdź hasło';
 	@override String get pleaseConfirmPassword => 'Proszę potwierdzić hasło';
 	@override String get passwordNotMatch => 'Hasła się nie zgadzają';
+	@override String get invalidUsername => 'Nazwa użytkownika musi:\n- mieć od 3 do 20 znaków\n- zaczynać się od litery\n- nie zawierać znaków specjalnych';
 }
 
 // Path: swipe_cards
@@ -482,6 +483,7 @@ extension on TranslationsPl {
 			case 'form.confirmPassword': return 'Potwierdź hasło';
 			case 'form.pleaseConfirmPassword': return 'Proszę potwierdzić hasło';
 			case 'form.passwordNotMatch': return 'Hasła się nie zgadzają';
+			case 'form.invalidUsername': return 'Nazwa użytkownika musi:\n- mieć od 3 do 20 znaków\n- zaczynać się od litery\n- nie zawierać znaków specjalnych';
 			case 'swipe_cards.loading_error': return 'Błąd ładowania wydarzeń';
 			case 'swipe_cards.end_of_list': return 'Osiągnąłeś koniec listy!';
 			case 'swipe_cards.nope': return 'Nie dla {{title}}';

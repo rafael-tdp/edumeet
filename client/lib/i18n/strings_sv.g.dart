@@ -187,6 +187,7 @@ class _TranslationsFormSv implements TranslationsFormEn {
 	@override String get confirmPassword => 'Bekräfta lösenord';
 	@override String get pleaseConfirmPassword => 'Vänligen bekräfta ditt lösenord';
 	@override String get passwordNotMatch => 'Lösenorden matchar inte';
+	@override String get invalidUsername => 'Användarnamnet måste: \n- innehålla mellan 3 och 20 tecken \n- börja med en bokstav \n- inte innehålla specialtecken';
 }
 
 // Path: swipe_cards
@@ -482,6 +483,7 @@ extension on TranslationsSv {
 			case 'form.confirmPassword': return 'Bekräfta lösenord';
 			case 'form.pleaseConfirmPassword': return 'Vänligen bekräfta ditt lösenord';
 			case 'form.passwordNotMatch': return 'Lösenorden matchar inte';
+			case 'form.invalidUsername': return 'Användarnamnet måste: \n- innehålla mellan 3 och 20 tecken \n- börja med en bokstav \n- inte innehålla specialtecken';
 			case 'swipe_cards.loading_error': return 'Fel vid inläsning av evenemang';
 			case 'swipe_cards.end_of_list': return 'Du har nått slutet av listan!';
 			case 'swipe_cards.nope': return 'Nej till {{title}}';
