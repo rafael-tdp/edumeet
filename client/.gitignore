@@ -45,3 +45,5 @@ app.*.map.json
 # Environment configuration
 /lib/env/env.g.dart
 .env
+
+/android/app/google-services.json
