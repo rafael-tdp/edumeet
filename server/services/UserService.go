@@ -4,6 +4,7 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
+	"edumeet/firebase"
 	"edumeet/repositories"
 	"edumeet/utils"
 	"errors"
@@ -184,6 +185,12 @@ func (us *UserService) CreateFriendship(ctx context.Context, userID string, frie
 	friendshipCreated, err := us.userRepo.CreateFriendship(ctx, user.ID, friend.ID)
 	if err != nil {
 		return nil, err
+	}
+
+	// Send notification to friend
+	fcm_token := utils.GetTokenFromRedis(friend.ID + "_FCM")
+	if fcm_token != "null" {
+		firebase.SendNotification(fcm_token, "New friend request", user.Username+" wants to be your friend")
 	}
 
 	return friendshipCreated, nil

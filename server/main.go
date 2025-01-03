@@ -1,8 +1,6 @@
 package main
 
 import (
-	"edumeet/routes"
-	"edumeet/utils"
 	"flag"
 	"fmt"
 	"log"
@@ -13,6 +11,8 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 
 	_ "edumeet/ent/runtime"
+	"edumeet/routes"
+	"edumeet/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/gofiber/fiber/v2"
@@ -34,6 +34,7 @@ import (
 // @host localhost:3000
 // @BasePath /
 func main() {
+
 	// Initialiser le logger
 	initLogger()
 	// Utilisation de flag pour choisir le mode (normal, fixture ou migrate)
