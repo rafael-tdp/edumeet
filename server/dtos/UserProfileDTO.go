@@ -6,13 +6,15 @@ import (
 )
 
 type UserProfileDTO struct {
-	Username  string     `json:"username" validate:"required,min=3"`
-	Bio       *string    `json:"bio,omitempty"`
-	Picture   *string    `json:"picture,omitempty"`
-	Address   string     `json:"address,omitempty"`
-	Email     string     `json:"email,omitempty"`
-	Birthdate string     `json:"birthDate,omitempty"`
-	Badges    []BadgeDTO `json:"badges,omitempty"`
+	Username             string     `json:"username" validate:"required,min=3"`
+	Bio                  *string    `json:"bio,omitempty"`
+	Picture              *string    `json:"picture,omitempty"`
+	Address              string     `json:"address,omitempty"`
+	Email                string     `json:"email,omitempty"`
+	Birthdate            string     `json:"birthDate,omitempty"`
+	Badges               []BadgeDTO `json:"badges,omitempty"`
+	NbFriends            int        `json:"nbFriends,omitempty"`
+	NbParticipatedEvents int        `json:"nbParticipatedEvents,omitempty"`
 }
 
 func UserProfileEntToDto(user *ent.User) (*UserProfileDTO, error) {

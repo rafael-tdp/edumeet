@@ -255,7 +255,7 @@ Widget build(BuildContext context) {
   }
 
   Widget _buildUserStats() {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         SizedBox(
@@ -263,19 +263,19 @@ Widget build(BuildContext context) {
           height: 80,
           child: Card(
             child: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '12',
-                    style: TextStyle(
+                   _user!.nbFriends.toString(),
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Text('Amis'),
+                  const SizedBox(height: 8),
+                  const Text('Amis'),
                 ],
               ),
             ),
@@ -291,7 +291,7 @@ Widget build(BuildContext context) {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '36',
+                    _user!.nbParticpatedEvents.toString(),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -384,7 +384,7 @@ Widget build(BuildContext context) {
 
   Widget _buildUserBadges() {
     Future<List<custom_badge.Badge>> allBadgesFuture = BadgeServices.getBadges();
-    List<custom_badge.Badge> unlockedBadges = _user!.badges as List<custom_badge.Badge>;
+    List<custom_badge.Badge> unlockedBadges = _user!.badges ?? [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

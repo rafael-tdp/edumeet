@@ -288,3 +288,7 @@ func (ur *UserRepository) GetPendingFriendships(userID string) ([]*ent.Friendshi
 
 	return friendships, nil
 }
+
+func (ur *UserRepository) GetClient() *ent.Client {
+	return ur.client
+}
