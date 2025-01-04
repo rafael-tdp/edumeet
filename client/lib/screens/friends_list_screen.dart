@@ -146,7 +146,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
                         IconButton(
                           icon: const Icon(Icons.chat),
                           onPressed: () {
-                            ChatPage.navigateTo(context, friend.friendUsername, friend.friendId);
+                            ChatPage.navigateTo(context, friend.friendUsername, friend.id);
                           },
                         ),
                         IconButton(
