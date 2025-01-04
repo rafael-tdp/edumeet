@@ -131,37 +131,28 @@ class _ProfilePageState extends State<ProfilePage> {
           },
         ),
       ),
-    ),
-    floatingActionButton: _isCurrentUser
-        ? null
-        : FloatingActionButton(
-      onPressed: () {
-        _showReportDialog(context);
-      },
-      child: const Icon(Icons.report_problem),
-    ),
-    floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-    backgroundColor: Colors.white,
-    body: SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20, bottom: 40, left: 20, right: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Hero(
-              tag: 'avatar_${_user!.id}',
-              child: avatar.toImage(height: 100),
-            ),
-            const SizedBox(height: 5),
-            _buildUserBadges(),
-            const SizedBox(height: 20),
-            Text(
-              _user?.username ?? t.user.anonymous,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+      floatingActionButton: _isCurrentUser
+          ? null
+          : FloatingActionButton(
+        onPressed: () {
+          _showReportDialog(context);
+        },
+        child: const Icon(Icons.report_problem),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20, bottom: 40, left: 20, right: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Hero(
+                tag: 'avatar_${_user!.id}',
+                child: avatar.toImage(height: 100),
               ),
+              const SizedBox(height: 5),
+              _buildUserBadges(),
               const SizedBox(height: 20),
               Text(
                 _user?.username ?? t.user.anonymous,
@@ -277,7 +268,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                   _user!.nbFriends.toString(),
+                    _user!.nbFriends.toString(),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
