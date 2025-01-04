@@ -261,7 +261,7 @@ func (us *UserService) GetFriendships(userID string, status string) ([]dtos.Frie
 		}
 
 		return pendingFriendshipsDTO, nil
-	} else {
+	} else if status == string(enums.FriendAccepted) {
 
 		friendships, err := us.userRepo.GetFriendshipsByUserId(userID)
 		if err != nil {
@@ -276,6 +276,30 @@ func (us *UserService) GetFriendships(userID string, status string) ([]dtos.Frie
 		}
 
 		return acceptedFriendshipDTO, nil
+	} else if status == string(enums.FriendAll) {
+
+		pendingFriendships, err := us.userRepo.GetPendingFriendships(userID)
+		if err != nil {
+			logrus.Error("Error UserService GetFriendships: ", err)
+			return nil, err
+		}
+
+		acceptedFriendships, err := us.userRepo.GetFriendshipsByUserId(userID)
+		if err != nil {
+			logrus.Error("Error UserService GetFriendships: ", err)
+			return nil, err
+		}
+
+		friendships := append(pendingFriendships, acceptedFriendships...)
+		friendshipsDTO, err := dtos.FriendshipsEntToDTO(friendships, userID, status)
+		if err != nil {
+			logrus.Error("Error UserService GetFriendships: ", err)
+			return nil, err
+		}
+
+		return friendshipsDTO, nil
+	} else {
+		return nil, errors.New("invalid status")
 	}
 }
 

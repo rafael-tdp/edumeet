@@ -89,46 +89,47 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
-Widget build(BuildContext context) {
-  if (_isLoading) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
-  }
-  if (_errorMessage != null) {
-    return Scaffold(
-      body: Center(
-        child: Text(t.error.details(error: _errorMessage!)),
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (_errorMessage != null) {
+      return Scaffold(
+        body: Center(
+          child: Text(t.error.details(error: _errorMessage!)),
+        ),
+      );
+    }
+
+    if (_user == null) {
+      return Scaffold(
+        body: Center(
+          child: Text(t.error.no_results),
+        ),
+      );
+    }
+
+    final Avatar avatar = DiceBearBuilder(
+      seed: _user!.username,
+      sprite: DiceBearSprite.values.firstWhere(
+            (sprite) => sprite.name == _user!.picture,
       ),
-    );
-  }
+    ).build();
 
-  if (_user == null) {
     return Scaffold(
-      body: Center(
-        child: Text(t.error.no_results),
-      ),
-    );
-  }
-
-  final Avatar avatar = DiceBearBuilder(
-    seed: _user!.username,
-    sprite: DiceBearSprite.values.firstWhere(
-          (sprite) => sprite.name == _user!.picture,
-    ),
-  ).build();
-
-  return Scaffold(
-    appBar: AppBar(
-      backgroundColor: Colors.transparent,
-      title: Text(t.page.profile),
-      leading: _isCurrentUser
-          ? null
-          : IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () {
-          context.pop(true);
-        },
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: Text(t.page.profile),
+        leading: _isCurrentUser
+            ? null
+            : IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.pop(true);
+          },
+        ),
       ),
     ),
     floatingActionButton: _isCurrentUser
@@ -161,30 +162,38 @@ Widget build(BuildContext context) {
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              _user!.bio != null && _user!.bio!.isNotEmpty
-                  ? _user!.bio!
-                  : t.user.noDescription,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
+              const SizedBox(height: 20),
+              Text(
+                _user?.username ?? t.user.anonymous,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            _buildUserStats(),
-            const SizedBox(height: 20),
-            _buildUserInfoCard(),
-            const SizedBox(height: 20),
-            if (_isCurrentUser) _buildProfileActions(),
-          ],
+              const SizedBox(height: 10),
+              Text(
+                _user!.bio != null && _user!.bio!.isNotEmpty
+                    ? _user!.bio!
+                    : t.user.noDescription,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildUserStats(),
+              const SizedBox(height: 20),
+              _buildUserInfoCard(),
+              const SizedBox(height: 20),
+              if (_isCurrentUser) _buildProfileActions(),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildUserInfoCard() {
     return Container(
