@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"edumeet/dtos"
+	"edumeet/metrics"
 	"edumeet/services"
 	"edumeet/utils"
 	customValidator "edumeet/validator"
@@ -50,6 +51,7 @@ func (ac *AuthController) Login(c *fiber.Ctx) error {
 	if err != nil {
 		switch err {
 		case utils.ErrInvalidCredentials:
+			metrics.LoginAttempts.WithLabelValues("failure").Inc()
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid username or password"})
 		case utils.ErrAccountNotActivated:
 			return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Account not activated"})
@@ -57,6 +59,7 @@ func (ac *AuthController) Login(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "An error occurred"})
 		}
 	}
+	metrics.LoginAttempts.WithLabelValues("success").Inc()
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"token": token, "user": user})
 }
 
