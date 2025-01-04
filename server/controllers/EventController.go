@@ -5,6 +5,7 @@ import (
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/guards"
+	"edumeet/metrics"
 	"edumeet/services"
 	"edumeet/structures"
 
@@ -71,9 +72,11 @@ func (ec *EventController) CreateEvent(c *fiber.Ctx) error {
 	remoteEvent, err := ec.eventservice.CreateEvent(ctx, eventDTO, currentUser.ID)
 
 	if err != nil {
+		metrics.EventAttempts.WithLabelValues("failure").Inc()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
+	metrics.EventAttempts.WithLabelValues("success").Inc()
 	return c.Status(fiber.StatusCreated).JSON(remoteEvent)
 }
 
