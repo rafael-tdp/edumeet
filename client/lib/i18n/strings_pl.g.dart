@@ -48,6 +48,7 @@ class TranslationsPl implements Translations {
 	@override late final _TranslationsResourcesPl resources = _TranslationsResourcesPl._(_root);
 	@override late final _TranslationsMessagesPl messages = _TranslationsMessagesPl._(_root);
 	@override late final _TranslationsCommonPl common = _TranslationsCommonPl._(_root);
+	@override late final _TranslationsSettingsPl settings = _TranslationsSettingsPl._(_root);
 	@override late final _TranslationsPagePl page = _TranslationsPagePl._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppPl implements TranslationsAppEn {
 	@override String get loadingIndicator => 'Ładowanie...';
 	@override String get errorOccurred => 'Wystąpił błąd';
 	@override String get backTo => 'Powrót do ';
+	@override String get unknown => 'Nieznane';
 }
 
 // Path: user
@@ -187,6 +189,7 @@ class _TranslationsFormPl implements TranslationsFormEn {
 	@override String get confirmPassword => 'Potwierdź hasło';
 	@override String get pleaseConfirmPassword => 'Proszę potwierdzić hasło';
 	@override String get passwordNotMatch => 'Hasła się nie zgadzają';
+	@override String get invalidUsername => 'Nazwa użytkownika musi:\n- mieć od 3 do 20 znaków\n- zaczynać się od litery\n- nie zawierać znaków specjalnych';
 }
 
 // Path: swipe_cards
@@ -248,6 +251,7 @@ class _TranslationsErrorPl implements TranslationsErrorEn {
 	// Translations
 	@override String get details => 'Błąd: {{error}}';
 	@override String get general => 'Wystąpił błąd';
+	@override String get no_results => 'Nie znaleziono żadnych wyników';
 	@override String get no_internet => 'Brak połączenia z internetem';
 	@override String get no_internet_description => 'Proszę sprawdzić połączenie z internetem i spróbować ponownie';
 	@override String get no_events => 'Brak wydarzeń';
@@ -350,6 +354,24 @@ class _TranslationsCommonPl implements TranslationsCommonEn {
 	@override String get message => 'Wiadomość';
 }
 
+// Path: settings
+class _TranslationsSettingsPl implements TranslationsSettingsEn {
+	_TranslationsSettingsPl._(this._root);
+
+	final TranslationsPl _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Konto';
+	@override String get settings => 'Ustawienia';
+	@override String get language => 'Język';
+	@override String get manageSubjects => 'Zarządzanie przedmiotami';
+	@override String get notifications => 'Powiadomienia';
+	@override String get about => 'O aplikacji';
+	@override String get contact => 'Kontakt';
+	@override String get terms => 'Warunki użytkowania';
+	@override String get privacy => 'Polityka prywatności';
+}
+
 // Path: page
 class _TranslationsPagePl implements TranslationsPageEn {
 	_TranslationsPagePl._(this._root);
@@ -429,6 +451,7 @@ extension on TranslationsPl {
 			case 'app.loadingIndicator': return 'Ładowanie...';
 			case 'app.errorOccurred': return 'Wystąpił błąd';
 			case 'app.backTo': return 'Powrót do ';
+			case 'app.unknown': return 'Nieznane';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Nazwa użytkownika';
 			case 'user.name': return 'Nazwisko';
@@ -482,6 +505,7 @@ extension on TranslationsPl {
 			case 'form.confirmPassword': return 'Potwierdź hasło';
 			case 'form.pleaseConfirmPassword': return 'Proszę potwierdzić hasło';
 			case 'form.passwordNotMatch': return 'Hasła się nie zgadzają';
+			case 'form.invalidUsername': return 'Nazwa użytkownika musi:\n- mieć od 3 do 20 znaków\n- zaczynać się od litery\n- nie zawierać znaków specjalnych';
 			case 'swipe_cards.loading_error': return 'Błąd ładowania wydarzeń';
 			case 'swipe_cards.end_of_list': return 'Osiągnąłeś koniec listy!';
 			case 'swipe_cards.nope': return 'Nie dla {{title}}';
@@ -516,6 +540,7 @@ extension on TranslationsPl {
 			case 'event.eventNotStarted': return 'Link do połączenia będzie dostępny tutaj, gdy wydarzenie się rozpocznie.';
 			case 'error.details': return 'Błąd: {{error}}';
 			case 'error.general': return 'Wystąpił błąd';
+			case 'error.no_results': return 'Nie znaleziono żadnych wyników';
 			case 'error.no_internet': return 'Brak połączenia z internetem';
 			case 'error.no_internet_description': return 'Proszę sprawdzić połączenie z internetem i spróbować ponownie';
 			case 'error.no_events': return 'Brak wydarzeń';
@@ -562,6 +587,15 @@ extension on TranslationsPl {
 			case 'messages.sendMessage': return 'Wyślij';
 			case 'common.sender': return 'Nadawca';
 			case 'common.message': return 'Wiadomość';
+			case 'settings.account': return 'Konto';
+			case 'settings.settings': return 'Ustawienia';
+			case 'settings.language': return 'Język';
+			case 'settings.manageSubjects': return 'Zarządzanie przedmiotami';
+			case 'settings.notifications': return 'Powiadomienia';
+			case 'settings.about': return 'O aplikacji';
+			case 'settings.contact': return 'Kontakt';
+			case 'settings.terms': return 'Warunki użytkowania';
+			case 'settings.privacy': return 'Polityka prywatności';
 			case 'page.home': return 'Strona główna';
 			case 'page.homePage': return 'Strona główna';
 			case 'page.profile': return 'Profil';

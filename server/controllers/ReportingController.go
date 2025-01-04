@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/services"
@@ -100,9 +101,10 @@ func (uc *ReportingController) CreateReporting(c *fiber.Ctx) error {
 	}
 
 	reportingUser := c.Locals("user").(*ent.User)
+	ctx := context.WithValue(c.Context(), "user_id", reportingUser.ID)
 	reportingDTO.UserID = reportingUser.ID
 
-	reporting, err := uc.reportingService.CreateReporting(reportingDTO)
+	reporting, err := uc.reportingService.CreateReporting(ctx, reportingDTO)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}

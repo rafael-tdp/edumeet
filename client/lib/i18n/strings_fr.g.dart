@@ -48,6 +48,7 @@ class TranslationsFr implements Translations {
 	@override late final _TranslationsResourcesFr resources = _TranslationsResourcesFr._(_root);
 	@override late final _TranslationsMessagesFr messages = _TranslationsMessagesFr._(_root);
 	@override late final _TranslationsCommonFr common = _TranslationsCommonFr._(_root);
+	@override late final _TranslationsSettingsFr settings = _TranslationsSettingsFr._(_root);
 	@override late final _TranslationsPageFr page = _TranslationsPageFr._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppFr implements TranslationsAppEn {
 	@override String get loadingIndicator => 'Chargement...';
 	@override String get errorOccurred => 'Une erreur est survenue';
 	@override String get backTo => 'Retour à ';
+	@override String get unknown => 'Inconnu';
 }
 
 // Path: user
@@ -187,6 +189,7 @@ class _TranslationsFormFr implements TranslationsFormEn {
 	@override String get confirmPassword => 'Confirmer le mot de passe';
 	@override String get pleaseConfirmPassword => 'Veuillez confirmer votre mot de passe';
 	@override String get passwordNotMatch => 'Les mots de passe ne correspondent pas';
+	@override String get invalidUsername => 'Le nom d\'utilisateur doit débuter par une lettre et contenir : \n- Au moins 3 caractères \n- Au maximum 20 caractères \n- Aucun caractères spéciaul';
 }
 
 // Path: swipe_cards
@@ -248,6 +251,7 @@ class _TranslationsErrorFr implements TranslationsErrorEn {
 	// Translations
 	@override String get details => 'Erreur : {{error}}';
 	@override String get general => 'Une erreur est survenue';
+	@override String get no_results => 'Aucun résultat trouvé';
 	@override String get no_internet => 'Pas de connexion Internet';
 	@override String get no_internet_description => 'Veuillez vérifier votre connexion Internet et réessayer';
 	@override String get no_events => 'Aucun événement trouvé';
@@ -350,6 +354,24 @@ class _TranslationsCommonFr implements TranslationsCommonEn {
 	@override String get message => 'Message';
 }
 
+// Path: settings
+class _TranslationsSettingsFr implements TranslationsSettingsEn {
+	_TranslationsSettingsFr._(this._root);
+
+	final TranslationsFr _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Compte';
+	@override String get settings => 'Paramètres';
+	@override String get language => 'Langue';
+	@override String get manageSubjects => 'Gestion des matières';
+	@override String get notifications => 'Notifications';
+	@override String get about => 'À propos';
+	@override String get contact => 'Contact';
+	@override String get terms => 'Conditions d\'utilisation';
+	@override String get privacy => 'Politique de confidentialité';
+}
+
 // Path: page
 class _TranslationsPageFr implements TranslationsPageEn {
 	_TranslationsPageFr._(this._root);
@@ -429,6 +451,7 @@ extension on TranslationsFr {
 			case 'app.loadingIndicator': return 'Chargement...';
 			case 'app.errorOccurred': return 'Une erreur est survenue';
 			case 'app.backTo': return 'Retour à ';
+			case 'app.unknown': return 'Inconnu';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Nom d\'utilisateur';
 			case 'user.name': return 'Nom';
@@ -482,6 +505,7 @@ extension on TranslationsFr {
 			case 'form.confirmPassword': return 'Confirmer le mot de passe';
 			case 'form.pleaseConfirmPassword': return 'Veuillez confirmer votre mot de passe';
 			case 'form.passwordNotMatch': return 'Les mots de passe ne correspondent pas';
+			case 'form.invalidUsername': return 'Le nom d\'utilisateur doit débuter par une lettre et contenir : \n- Au moins 3 caractères \n- Au maximum 20 caractères \n- Aucun caractères spéciaul';
 			case 'swipe_cards.loading_error': return 'Erreur de chargement des événements';
 			case 'swipe_cards.end_of_list': return 'Vous avez atteint la fin de la liste !';
 			case 'swipe_cards.nope': return 'Non à {{title}}';
@@ -516,6 +540,7 @@ extension on TranslationsFr {
 			case 'event.eventNotStarted': return 'Le lien de connexion sera disponible ici lorsque l\'événement commencera.';
 			case 'error.details': return 'Erreur : {{error}}';
 			case 'error.general': return 'Une erreur est survenue';
+			case 'error.no_results': return 'Aucun résultat trouvé';
 			case 'error.no_internet': return 'Pas de connexion Internet';
 			case 'error.no_internet_description': return 'Veuillez vérifier votre connexion Internet et réessayer';
 			case 'error.no_events': return 'Aucun événement trouvé';
@@ -562,6 +587,15 @@ extension on TranslationsFr {
 			case 'messages.sendMessage': return 'Envoyer';
 			case 'common.sender': return 'Expéditeur';
 			case 'common.message': return 'Message';
+			case 'settings.account': return 'Compte';
+			case 'settings.settings': return 'Paramètres';
+			case 'settings.language': return 'Langue';
+			case 'settings.manageSubjects': return 'Gestion des matières';
+			case 'settings.notifications': return 'Notifications';
+			case 'settings.about': return 'À propos';
+			case 'settings.contact': return 'Contact';
+			case 'settings.terms': return 'Conditions d\'utilisation';
+			case 'settings.privacy': return 'Politique de confidentialité';
 			case 'page.home': return 'Accueil';
 			case 'page.homePage': return 'Page d\'accueil';
 			case 'page.profile': return 'Profil';

@@ -1,5 +1,7 @@
+import 'package:client/core/models/reporting.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/core/models/user.dart';
+import 'package:client/core/services/reporting_services.dart';
 import 'package:client/screens/settings_screen.dart';
 import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
@@ -126,6 +128,15 @@ Widget build(BuildContext context) {
         },
       ),
     ),
+    floatingActionButton: _isCurrentUser
+        ? null
+        : FloatingActionButton(
+      onPressed: () {
+        _showReportDialog(context);
+      },
+      child: const Icon(Icons.report_problem),
+    ),
+    floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
     backgroundColor: Colors.white,
     body: SingleChildScrollView(
       child: Padding(
@@ -290,5 +301,79 @@ Widget build(BuildContext context) {
         ),
       ],
     );
+  }
+
+  void _showReportDialog(BuildContext context) {
+    final TextEditingController _controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Signaler ${_user!.username} ?"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Motif du signalement",
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                controller: _controller,
+                maxLines: 4, // Permet d'avoir plusieurs lignes de texte
+                decoration: InputDecoration(
+                  hintText: "Raison du signalement",
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(10),
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(t.app.cancel),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Signaler"),
+              onPressed: () {
+                String reason = _controller.text;
+                _reportUser(reason, widget.userId!);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _reportUser(String reason, String userId) {
+    Reporting createReporting = Reporting(
+      reason: reason,
+      type: "USER",
+      entityId: userId!,
+    );
+
+    ReportingServices.createReporting(createReporting).then((response) {
+      if (response.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message!),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message!),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
   }
 }
