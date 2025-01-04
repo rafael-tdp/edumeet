@@ -3,6 +3,7 @@ import 'package:client/providers/user_provider.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/providers/locale_provider.dart';
 import 'package:client/router.dart';
+import 'package:client/screens/search_event_screen.dart';
 import 'package:client/screens/settings_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/foundation.dart';
@@ -78,7 +79,8 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const SwipeCardsPage(),
+    const SearchEventPage(),
+    // const SwipeCardsPage(),
     const EventsPage(),
     const ConversationsPage(),
     // const ProfilePage(

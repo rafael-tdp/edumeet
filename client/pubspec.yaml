@@ -59,6 +59,9 @@ dependencies:
   timezone: ^0.10.0
   dice_bear: ^0.1.7
   diacritic: ^0.1.6
+  google_maps_flutter: ^2.10.0
+  google_maps_flutter_web: ^0.5.10
+  geocoding: ^3.0.0
 
 dev_dependencies:
   flutter_test:

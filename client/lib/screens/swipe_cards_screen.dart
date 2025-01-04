@@ -19,17 +19,6 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
         surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.transparent,
         leadingWidth: 150,
-        leading: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Container(
-            alignment: Alignment.bottomLeft,
-            child: Image.asset(
-              'assets/images/logo-bold.png',
-              fit: BoxFit.cover,
-              width: 100,
-            ),
-          ),
-        ),
         actions: [
           IconButton(
             icon: Icon(
