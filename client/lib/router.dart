@@ -8,6 +8,7 @@ import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/screens/event_chat_page.dart';
 import 'package:client/screens/event_details_page.dart';
 import 'package:client/screens/events_screen.dart';
+import 'package:client/screens/friends_list_screen.dart';
 import 'package:client/screens/language_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/settings_screen.dart';
@@ -102,6 +103,12 @@ final _router =
         name: SettingsPage.routeName.replaceAll("/", ""),
         parentNavigatorKey: _shellNavigatorKey,
         builder: (context, state) => const SettingsPage(),
+      ),
+      GoRoute(
+        path: FriendsListPage.routeName,
+        name: FriendsListPage.routeName.replaceAll("/", ""),
+        parentNavigatorKey: _shellNavigatorKey,
+        builder: (context, state) => const FriendsListPage(),
       ),
       // GoRoute(
       //     path: ProfilePage.routeName,

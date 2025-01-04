@@ -3,6 +3,7 @@ import 'package:client/providers/user_provider.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/providers/locale_provider.dart';
 import 'package:client/router.dart';
+import 'package:client/screens/friends_list_screen.dart';
 import 'package:client/screens/settings_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/foundation.dart';
@@ -81,9 +82,7 @@ class _HomePageState extends State<HomePage> {
     const SwipeCardsPage(),
     const EventsPage(),
     const ConversationsPage(),
-    // const ProfilePage(
-    //   userId: null,
-    // ),
+    const FriendsListPage(),
     const SettingsPage(),
   ];
 
@@ -99,6 +98,9 @@ class _HomePageState extends State<HomePage> {
         context.go(ConversationsPage.routeName);
         break;
       case 3:
+        context.go(FriendsListPage.routeName);
+        break;
+      case 4:
         context.go(SettingsPage.routeName);
         break;
     }
@@ -136,11 +138,11 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: AppColors.purple,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.favorite),
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
+            icon: Icon(Icons.event),
             label: '',
           ),
           BottomNavigationBarItem(
@@ -148,7 +150,12 @@ class _HomePageState extends State<HomePage> {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.groups),
+            label: '',
+          ),
+          //Sous menu pour les amis
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
             label: '',
           ),
         ],
