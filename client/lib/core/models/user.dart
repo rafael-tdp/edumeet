@@ -1,3 +1,4 @@
+import 'package:client/core/models/badge.dart';
 import 'package:diacritic/diacritic.dart';
 
 class User {
@@ -12,6 +13,7 @@ class User {
   final int? reportNumber;
   final String? address;
   final String? role;
+  final List<Badge>? badges;
 
   User({
     required this.id,
@@ -25,6 +27,7 @@ class User {
     this.reportNumber,
     this.address,
     this.role,
+    this.badges
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -44,6 +47,7 @@ class User {
       reportNumber: json['reportNumber'] ?? 0,
       address: json['address'] ?? '',
       role: json['role'] ?? '',
+      badges: json['badges'] != null ? (json['badges'] as List).map((badge) => Badge.fromJson(badge)).toList() : null,
     );
   }
 

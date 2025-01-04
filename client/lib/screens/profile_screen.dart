@@ -1,6 +1,7 @@
 import 'package:client/core/models/reporting.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/core/models/user.dart';
+import 'package:client/core/services/badges_service.dart';
 import 'package:client/core/services/reporting_services.dart';
 import 'package:client/screens/settings_screen.dart';
 import 'package:dice_bear/dice_bear.dart';
@@ -12,10 +13,12 @@ import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/user_provider.dart';
+import 'package:client/core/models/badge.dart' as custom_badge;
 
 class ProfilePage extends StatefulWidget {
   static const String routeName = '/profile';
@@ -148,6 +151,8 @@ Widget build(BuildContext context) {
               tag: 'avatar_${_user!.id}',
               child: avatar.toImage(height: 100),
             ),
+            const SizedBox(height: 5),
+            _buildUserBadges(),
             const SizedBox(height: 20),
             Text(
               _user?.username ?? t.user.anonymous,
@@ -375,5 +380,66 @@ Widget build(BuildContext context) {
         );
       }
     });
+  }
+
+  Widget _buildUserBadges() {
+    Future<List<custom_badge.Badge>> allBadgesFuture = BadgeServices.getBadges();
+    List<custom_badge.Badge> unlockedBadges = _user!.badges as List<custom_badge.Badge>;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FutureBuilder<List<custom_badge.Badge>>(
+          future: allBadgesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+
+            if (snapshot.hasError) {
+              return const Icon(Icons.error);
+            }
+
+            if (snapshot.hasData) {
+              List<custom_badge.Badge> allBadges = snapshot.data!;
+
+              return Wrap(
+                spacing: 10,
+                children: allBadges.map((badge) {
+                  bool isUnlocked = unlockedBadges.any((unlockedBadge) => unlockedBadge.id == badge.id);
+
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SvgPicture.string(
+                          badge.svg,
+                          width: 35,
+                          height: 35,
+                          colorFilter: isUnlocked
+                              ? null
+                              : ColorFilter.mode(Colors.black.withOpacity(0.8), BlendMode.srcIn),
+                        ),
+                        if (!isUnlocked)
+                          Positioned(
+                            child: Icon(
+                              Icons.lock,
+                              color: Colors.red.withOpacity(0.8),
+                              size: 25,
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              );
+            }
+
+            return const Icon(Icons.error);
+          },
+        ),
+      ],
+    );
   }
 }
