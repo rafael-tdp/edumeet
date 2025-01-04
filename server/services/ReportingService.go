@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"edumeet/dtos"
 	"edumeet/repositories"
 
@@ -44,8 +45,8 @@ func (r *ReportingService) DeleteReporting(reportingID string) error {
 	return nil
 }
 
-func (r *ReportingService) CreateReporting(reportingDTO dtos.ReportingDTO) (dtos.ReportingDTO, error) {
-	reporting, err := r.reportingRepo.CreateReporting(reportingDTO)
+func (r *ReportingService) CreateReporting(ctx context.Context, reportingDTO dtos.ReportingDTO) (dtos.ReportingDTO, error) {
+	reporting, err := r.reportingRepo.CreateReporting(ctx, reportingDTO)
 	if err != nil {
 		logrus.Error("Error ReportingService.CreateReporting: ", err)
 		return dtos.ReportingDTO{}, err

@@ -1,31 +1,47 @@
 import 'dart:convert';
-
-import 'package:client/core/services/auth_services.dart';
+import 'dart:developer';
+import 'package:client/core/models/reporting.dart';
+import 'package:diacritic/diacritic.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
 import '../../env/env.dart';
+import 'package:client/core/models/subject.dart';
+
 import '../models/response.dart';
 
 class ReportingServices {
-  AuthServices _authServices = AuthServices();
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token');
+  }
 
-  Future<ResponseRequest> reportUser(String userId) async {
-    final token = await _authServices.getToken();
+  static Future<ResponseRequest> createReporting(Reporting reporting) async {
+    try {
+      final token = await getToken();
 
-    if (token == null) return ResponseRequest(success: false, message: 'Veuillez vous connecter');
+      if (token == null) {
+        return ResponseRequest(success: false, message: 'Veillez vous connecter');
+      }
 
-    final response = await http.post(
-      Uri.parse('${Env.BACKEND_URL}/reporting'),
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $token',
-      },
-    );
+      final response = await http.post(
+        Uri.parse('${Env.BACKEND_URL}/reporting'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(reporting.toJson()),
+      );
 
-    if (response.statusCode == 200) {
-      return ResponseRequest(success: true);
-    } else {
-      return ResponseRequest(success: false, message: json.decode(response.body)['error']);
+      if (response.statusCode == 201) {
+        return ResponseRequest(success: true, message: "L'utilisateur a été signalé");
+      } else {
+        log('Failed to report user: ${response.statusCode} - ${response.body}');
+        return ResponseRequest(success: false, message: 'Une  erreur est survenue lors du signalement');
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while reportin user',
+          error: error, stackTrace: stacktrace);
+      return ResponseRequest(success: false, message: 'Une  erreur est survenue lors du signalement');
     }
   }
 }

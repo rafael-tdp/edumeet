@@ -52,6 +52,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	late final TranslationsResourcesEn resources = TranslationsResourcesEn._(_root);
 	late final TranslationsMessagesEn messages = TranslationsMessagesEn._(_root);
 	late final TranslationsCommonEn common = TranslationsCommonEn._(_root);
+	late final TranslationsSettingsEn settings = TranslationsSettingsEn._(_root);
 	late final TranslationsPageEn page = TranslationsPageEn._(_root);
 }
 
@@ -93,6 +94,7 @@ class TranslationsAppEn {
 	String get loadingIndicator => 'Loading...';
 	String get errorOccurred => 'An error occurred';
 	String get backTo => 'Back to ';
+	String get unknown => 'Unknown';
 }
 
 // Path: user
@@ -191,6 +193,7 @@ class TranslationsFormEn {
 	String get confirmPassword => 'Confirm password';
 	String get pleaseConfirmPassword => 'Please confirm your password';
 	String get passwordNotMatch => 'Passwords do not match';
+	String get invalidUsername => 'The username must: \n- be between 3 and 20 characters long \n- start with a letter \n- not contain special characters';
 }
 
 // Path: swipe_cards
@@ -252,6 +255,7 @@ class TranslationsErrorEn {
 	// Translations
 	String get details => 'Error: {{error}}';
 	String get general => 'An error occurred';
+	String get no_results => 'No results found';
 	String get no_internet => 'No internet connection';
 	String get no_internet_description => 'Please check your internet connection and try again';
 	String get no_events => 'No events found';
@@ -354,6 +358,24 @@ class TranslationsCommonEn {
 	String get message => 'Message';
 }
 
+// Path: settings
+class TranslationsSettingsEn {
+	TranslationsSettingsEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	String get account => 'Account';
+	String get settings => 'Settings';
+	String get language => 'Language';
+	String get manageSubjects => 'Manage Subjects';
+	String get notifications => 'Notifications';
+	String get about => 'About';
+	String get contact => 'Contact';
+	String get terms => 'Terms of Use';
+	String get privacy => 'Privacy Policy';
+}
+
 // Path: page
 class TranslationsPageEn {
 	TranslationsPageEn._(this._root);
@@ -433,6 +455,7 @@ extension on Translations {
 			case 'app.loadingIndicator': return 'Loading...';
 			case 'app.errorOccurred': return 'An error occurred';
 			case 'app.backTo': return 'Back to ';
+			case 'app.unknown': return 'Unknown';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Username';
 			case 'user.name': return 'Name';
@@ -486,6 +509,7 @@ extension on Translations {
 			case 'form.confirmPassword': return 'Confirm password';
 			case 'form.pleaseConfirmPassword': return 'Please confirm your password';
 			case 'form.passwordNotMatch': return 'Passwords do not match';
+			case 'form.invalidUsername': return 'The username must: \n- be between 3 and 20 characters long \n- start with a letter \n- not contain special characters';
 			case 'swipe_cards.loading_error': return 'Error loading events';
 			case 'swipe_cards.end_of_list': return 'You have reached the end of the list!';
 			case 'swipe_cards.nope': return 'No to {{title}}';
@@ -520,6 +544,7 @@ extension on Translations {
 			case 'event.eventNotStarted': return 'The connection link will be available here when the event starts.';
 			case 'error.details': return 'Error: {{error}}';
 			case 'error.general': return 'An error occurred';
+			case 'error.no_results': return 'No results found';
 			case 'error.no_internet': return 'No internet connection';
 			case 'error.no_internet_description': return 'Please check your internet connection and try again';
 			case 'error.no_events': return 'No events found';
@@ -566,6 +591,15 @@ extension on Translations {
 			case 'messages.sendMessage': return 'Send';
 			case 'common.sender': return 'Sender';
 			case 'common.message': return 'Message';
+			case 'settings.account': return 'Account';
+			case 'settings.settings': return 'Settings';
+			case 'settings.language': return 'Language';
+			case 'settings.manageSubjects': return 'Manage Subjects';
+			case 'settings.notifications': return 'Notifications';
+			case 'settings.about': return 'About';
+			case 'settings.contact': return 'Contact';
+			case 'settings.terms': return 'Terms of Use';
+			case 'settings.privacy': return 'Privacy Policy';
 			case 'page.home': return 'Home';
 			case 'page.homePage': return 'Home page';
 			case 'page.profile': return 'Profile';

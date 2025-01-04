@@ -34,6 +34,23 @@ func (us *UserService) GetUser(userID string) (*dtos.UserDTO, error) {
 		logrus.Error("Error UserService GetUser: ", err)
 		return nil, fmt.Errorf("error parsing user DTO: %w", err)
 	}
+
+	userFriendship, err := us.userRepo.GetFriendshipsByUserId(userID)
+	if err != nil {
+		logrus.Error("Error UserService GetUserProfile: ", err)
+		return nil, err
+	}
+
+	participantRepository := repositories.NewParticipantRepository(us.userRepo.GetClient())
+	participatedEvents, err := participantRepository.GetParticipationsUser(userID)
+	if err != nil {
+		logrus.Error("Error UserService GetUserProfile: ", err)
+		return nil, err
+	}
+
+	userDTO.NbFriends = len(userFriendship)
+	userDTO.NbParticipatedEvents = len(participatedEvents)
+
 	return userDTO, nil
 }
 
@@ -48,6 +65,23 @@ func (us *UserService) GetUserProfile(userID string) (*dtos.UserProfileDTO, erro
 		logrus.Error("Error UserService GetUserProfile: ", err)
 		return nil, fmt.Errorf("error parsing user profile DTO: %w", err)
 	}
+
+	userFriendship, err := us.userRepo.GetFriendshipsByUserId(userID)
+	if err != nil {
+		logrus.Error("Error UserService GetUserProfile: ", err)
+		return nil, err
+	}
+
+	participantRepository := repositories.NewParticipantRepository(us.userRepo.GetClient())
+	participatedEvents, err := participantRepository.GetParticipationsUser(userID)
+	if err != nil {
+		logrus.Error("Error UserService GetUserProfile: ", err)
+		return nil, err
+	}
+
+	userProfileDTO.NbFriends = len(userFriendship)
+	userProfileDTO.NbParticipatedEvents = len(participatedEvents)
+
 	return userProfileDTO, nil
 }
 

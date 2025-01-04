@@ -1,5 +1,8 @@
+import 'package:client/core/models/reporting.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/core/models/user.dart';
+import 'package:client/core/services/badges_service.dart';
+import 'package:client/core/services/reporting_services.dart';
 import 'package:client/screens/settings_screen.dart';
 import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +13,12 @@ import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/user_provider.dart';
+import 'package:client/core/models/badge.dart' as custom_badge;
 
 class ProfilePage extends StatefulWidget {
   static const String routeName = '/profile';
@@ -126,16 +131,36 @@ class _ProfilePageState extends State<ProfilePage> {
           },
         ),
       ),
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 40, left: 20, right: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Hero(
-                tag: 'avatar_${_user!.id}',
-                child: avatar.toImage(height: 100),
+    ),
+    floatingActionButton: _isCurrentUser
+        ? null
+        : FloatingActionButton(
+      onPressed: () {
+        _showReportDialog(context);
+      },
+      child: const Icon(Icons.report_problem),
+    ),
+    floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+    backgroundColor: Colors.white,
+    body: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20, bottom: 40, left: 20, right: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Hero(
+              tag: 'avatar_${_user!.id}',
+              child: avatar.toImage(height: 100),
+            ),
+            const SizedBox(height: 5),
+            _buildUserBadges(),
+            const SizedBox(height: 20),
+            Text(
+              _user?.username ?? t.user.anonymous,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
               const SizedBox(height: 20),
               Text(
@@ -239,7 +264,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildUserStats() {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         SizedBox(
@@ -247,19 +272,19 @@ class _ProfilePageState extends State<ProfilePage> {
           height: 80,
           child: Card(
             child: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '12',
-                    style: TextStyle(
+                   _user!.nbFriends.toString(),
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
-                  Text('Amis'),
+                  const SizedBox(height: 8),
+                  const Text('Amis'),
                 ],
               ),
             ),
@@ -275,7 +300,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '36',
+                    _user!.nbParticpatedEvents.toString(),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -287,6 +312,141 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  void _showReportDialog(BuildContext context) {
+    final TextEditingController _controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Signaler ${_user!.username} ?"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Motif du signalement",
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+              SizedBox(height: 16),
+              TextField(
+                controller: _controller,
+                maxLines: 4, // Permet d'avoir plusieurs lignes de texte
+                decoration: InputDecoration(
+                  hintText: "Raison du signalement",
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.all(10),
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(t.app.cancel),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Signaler"),
+              onPressed: () {
+                String reason = _controller.text;
+                _reportUser(reason, widget.userId!);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _reportUser(String reason, String userId) {
+    Reporting createReporting = Reporting(
+      reason: reason,
+      type: "USER",
+      entityId: userId!,
+    );
+
+    ReportingServices.createReporting(createReporting).then((response) {
+      if (response.success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message!),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.message!),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
+  }
+
+  Widget _buildUserBadges() {
+    Future<List<custom_badge.Badge>> allBadgesFuture = BadgeServices.getBadges();
+    List<custom_badge.Badge> unlockedBadges = _user!.badges ?? [];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FutureBuilder<List<custom_badge.Badge>>(
+          future: allBadgesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+
+            if (snapshot.hasError) {
+              return const Icon(Icons.error);
+            }
+
+            if (snapshot.hasData) {
+              List<custom_badge.Badge> allBadges = snapshot.data!;
+
+              return Wrap(
+                spacing: 10,
+                children: allBadges.map((badge) {
+                  bool isUnlocked = unlockedBadges.any((unlockedBadge) => unlockedBadge.id == badge.id);
+
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SvgPicture.string(
+                          badge.svg,
+                          width: 35,
+                          height: 35,
+                          colorFilter: isUnlocked
+                              ? null
+                              : ColorFilter.mode(Colors.black.withOpacity(0.8), BlendMode.srcIn),
+                        ),
+                        if (!isUnlocked)
+                          Positioned(
+                            child: Icon(
+                              Icons.lock,
+                              color: Colors.red.withOpacity(0.8),
+                              size: 25,
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              );
+            }
+
+            return const Icon(Icons.error);
+          },
         ),
       ],
     );

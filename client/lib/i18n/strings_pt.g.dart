@@ -48,6 +48,7 @@ class TranslationsPt implements Translations {
 	@override late final _TranslationsResourcesPt resources = _TranslationsResourcesPt._(_root);
 	@override late final _TranslationsMessagesPt messages = _TranslationsMessagesPt._(_root);
 	@override late final _TranslationsCommonPt common = _TranslationsCommonPt._(_root);
+	@override late final _TranslationsSettingsPt settings = _TranslationsSettingsPt._(_root);
 	@override late final _TranslationsPagePt page = _TranslationsPagePt._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppPt implements TranslationsAppEn {
 	@override String get loadingIndicator => 'Carregando...';
 	@override String get errorOccurred => 'Ocorreu um erro';
 	@override String get backTo => 'Retornar a ';
+	@override String get unknown => 'Desconhecido';
 }
 
 // Path: user
@@ -187,6 +189,7 @@ class _TranslationsFormPt implements TranslationsFormEn {
 	@override String get confirmPassword => 'Confirmar senha';
 	@override String get pleaseConfirmPassword => 'Por favor, confirme sua senha';
 	@override String get passwordNotMatch => 'As senhas não correspondem';
+	@override String get invalidUsername => 'O nome de usuário deve: \n- conter entre 3 e 20 caracteres \n- começar com uma letra \n- não conter caracteres especiais';
 }
 
 // Path: swipe_cards
@@ -248,6 +251,7 @@ class _TranslationsErrorPt implements TranslationsErrorEn {
 	// Translations
 	@override String get details => 'Erro: {{error}}';
 	@override String get general => 'Ocorreu um erro';
+	@override String get no_results => 'Nenhum resultado encontrado';
 	@override String get no_internet => 'Sem conexão com a Internet';
 	@override String get no_internet_description => 'Por favor, verifique sua conexão com a Internet e tente novamente';
 	@override String get no_events => 'Nenhum evento encontrado';
@@ -350,6 +354,24 @@ class _TranslationsCommonPt implements TranslationsCommonEn {
 	@override String get message => 'Mensagem';
 }
 
+// Path: settings
+class _TranslationsSettingsPt implements TranslationsSettingsEn {
+	_TranslationsSettingsPt._(this._root);
+
+	final TranslationsPt _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Conta';
+	@override String get settings => 'Configurações';
+	@override String get language => 'Idioma';
+	@override String get manageSubjects => 'Gerenciar matérias';
+	@override String get notifications => 'Notificações';
+	@override String get about => 'Sobre';
+	@override String get contact => 'Contato';
+	@override String get terms => 'Termos de uso';
+	@override String get privacy => 'Política de privacidade';
+}
+
 // Path: page
 class _TranslationsPagePt implements TranslationsPageEn {
 	_TranslationsPagePt._(this._root);
@@ -429,6 +451,7 @@ extension on TranslationsPt {
 			case 'app.loadingIndicator': return 'Carregando...';
 			case 'app.errorOccurred': return 'Ocorreu um erro';
 			case 'app.backTo': return 'Retornar a ';
+			case 'app.unknown': return 'Desconhecido';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Nome de usuário';
 			case 'user.name': return 'Nome';
@@ -482,6 +505,7 @@ extension on TranslationsPt {
 			case 'form.confirmPassword': return 'Confirmar senha';
 			case 'form.pleaseConfirmPassword': return 'Por favor, confirme sua senha';
 			case 'form.passwordNotMatch': return 'As senhas não correspondem';
+			case 'form.invalidUsername': return 'O nome de usuário deve: \n- conter entre 3 e 20 caracteres \n- começar com uma letra \n- não conter caracteres especiais';
 			case 'swipe_cards.loading_error': return 'Erro ao carregar os eventos';
 			case 'swipe_cards.end_of_list': return 'Você chegou ao final da lista!';
 			case 'swipe_cards.nope': return 'Não para {{title}}';
@@ -516,6 +540,7 @@ extension on TranslationsPt {
 			case 'event.eventNotStarted': return 'O link de conexão estará disponível aqui quando o evento começar.';
 			case 'error.details': return 'Erro: {{error}}';
 			case 'error.general': return 'Ocorreu um erro';
+			case 'error.no_results': return 'Nenhum resultado encontrado';
 			case 'error.no_internet': return 'Sem conexão com a Internet';
 			case 'error.no_internet_description': return 'Por favor, verifique sua conexão com a Internet e tente novamente';
 			case 'error.no_events': return 'Nenhum evento encontrado';
@@ -562,6 +587,15 @@ extension on TranslationsPt {
 			case 'messages.sendMessage': return 'Enviar';
 			case 'common.sender': return 'Remetente';
 			case 'common.message': return 'Mensagem';
+			case 'settings.account': return 'Conta';
+			case 'settings.settings': return 'Configurações';
+			case 'settings.language': return 'Idioma';
+			case 'settings.manageSubjects': return 'Gerenciar matérias';
+			case 'settings.notifications': return 'Notificações';
+			case 'settings.about': return 'Sobre';
+			case 'settings.contact': return 'Contato';
+			case 'settings.terms': return 'Termos de uso';
+			case 'settings.privacy': return 'Política de privacidade';
 			case 'page.home': return 'Início';
 			case 'page.homePage': return 'Página inicial';
 			case 'page.profile': return 'Perfil';
