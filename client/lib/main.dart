@@ -4,6 +4,7 @@ import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/providers/locale_provider.dart';
 import 'package:client/router.dart';
 import 'package:client/screens/friends_list_screen.dart';
+import 'package:client/screens/search_event_screen.dart';
 import 'package:client/screens/settings_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:client/screens/profile_screen.dart';
 import 'core/services/cache_service.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
@@ -82,7 +82,7 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const SwipeCardsPage(),
+    const SearchEventPage(),
     const EventsPage(),
     const ConversationsPage(),
     const FriendsListPage(),
