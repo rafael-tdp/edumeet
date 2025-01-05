@@ -115,6 +115,15 @@ class _TranslationsUserSv implements TranslationsUserEn {
 	@override String get noDescription => 'Ingen beskrivning';
 	@override String get noAddress => 'Ingen adress tillgänglig';
 	@override String get noReportsAvailable => 'Antal rapporter inte tillgängligt';
+	@override String get noBio => 'Bio ej tillgänglig';
+	@override String get noBirthdate => 'Födelsedatum ej tillgängligt';
+	@override String get noLocation => 'Plats ej tillgänglig';
+	@override String get noEmail => 'E-post ej tillgänglig';
+	@override String get noUsername => 'Användarnamn ej tillgängligt';
+	@override String get noName => 'Namn ej tillgängligt';
+	@override String get noFirstname => 'Förnamn ej tillgängligt';
+	@override String get you => 'du';
+	@override String get me => '(jag)';
 }
 
 // Path: welcome
@@ -467,6 +476,15 @@ extension on TranslationsSv {
 			case 'user.noDescription': return 'Ingen beskrivning';
 			case 'user.noAddress': return 'Ingen adress tillgänglig';
 			case 'user.noReportsAvailable': return 'Antal rapporter inte tillgängligt';
+			case 'user.noBio': return 'Bio ej tillgänglig';
+			case 'user.noBirthdate': return 'Födelsedatum ej tillgängligt';
+			case 'user.noLocation': return 'Plats ej tillgänglig';
+			case 'user.noEmail': return 'E-post ej tillgänglig';
+			case 'user.noUsername': return 'Användarnamn ej tillgängligt';
+			case 'user.noName': return 'Namn ej tillgängligt';
+			case 'user.noFirstname': return 'Förnamn ej tillgängligt';
+			case 'user.you': return 'du';
+			case 'user.me': return '(jag)';
 			case 'welcome.welcome': return 'Välkommen till Edumeet, plattformen för samarbetsstudier';
 			case 'welcome.setup': return 'Låt oss börja med att välja ett språk';
 			case 'welcome.whatLanguage': return 'Vilket språk talar du?';

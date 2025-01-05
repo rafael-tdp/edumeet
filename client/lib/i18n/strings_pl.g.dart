@@ -115,6 +115,15 @@ class _TranslationsUserPl implements TranslationsUserEn {
 	@override String get noDescription => 'Brak opisu';
 	@override String get noAddress => 'Adres niedostępny';
 	@override String get noReportsAvailable => 'Liczba zgłoszeń niedostępna';
+	@override String get noBio => 'Brak dostępnych informacji o biografii';
+	@override String get noBirthdate => 'Data urodzenia niedostępna';
+	@override String get noLocation => 'Miejsce niedostępne';
+	@override String get noEmail => 'Email niedostępny';
+	@override String get noUsername => 'Nazwa użytkownika niedostępna';
+	@override String get noName => 'Imię i nazwisko niedostępne';
+	@override String get noFirstname => 'Imię niedostępne';
+	@override String get you => 'ty';
+	@override String get me => '(ja)';
 }
 
 // Path: welcome
@@ -467,6 +476,15 @@ extension on TranslationsPl {
 			case 'user.noDescription': return 'Brak opisu';
 			case 'user.noAddress': return 'Adres niedostępny';
 			case 'user.noReportsAvailable': return 'Liczba zgłoszeń niedostępna';
+			case 'user.noBio': return 'Brak dostępnych informacji o biografii';
+			case 'user.noBirthdate': return 'Data urodzenia niedostępna';
+			case 'user.noLocation': return 'Miejsce niedostępne';
+			case 'user.noEmail': return 'Email niedostępny';
+			case 'user.noUsername': return 'Nazwa użytkownika niedostępna';
+			case 'user.noName': return 'Imię i nazwisko niedostępne';
+			case 'user.noFirstname': return 'Imię niedostępne';
+			case 'user.you': return 'ty';
+			case 'user.me': return '(ja)';
 			case 'welcome.welcome': return 'Witamy w Edumeet, platformie do wspólnej nauki';
 			case 'welcome.setup': return 'Zacznijmy od wyboru języka';
 			case 'welcome.whatLanguage': return 'W jakim języku mówisz?';

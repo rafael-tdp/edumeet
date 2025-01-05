@@ -17,8 +17,6 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 
 	_ "edumeet/ent/runtime"
-	"edumeet/routes"
-	"edumeet/utils"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/gofiber/fiber/v2"
