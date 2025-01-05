@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:client/core/services/message_services.dart';
 import 'package:client/core/services/sse_services.dart';
 import 'package:client/providers/user_provider.dart';
 import 'package:client/i18n/generated/translations.g.dart';
@@ -5,6 +8,7 @@ import 'package:client/providers/locale_provider.dart';
 import 'package:client/router.dart';
 import 'package:client/screens/settings_screen.dart';
 import 'package:client/utils/colors.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -20,6 +24,8 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 
 void main() async {
   setUrlStrategy(PathUrlStrategy());
+
+  WidgetsFlutterBinding.ensureInitialized();
 
   final userProvider = UserProvider();
   await userProvider.loadUserFromCache();
@@ -73,6 +79,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final SseServices _sseServices = SseServices();
+  StreamSubscription? internetConnection;
+  bool isOffline = false;
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
@@ -117,6 +125,23 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _sseServices.connectToSse();
     _isFirstLaunch();
+
+    final MessageServices messageServices = MessageServices();
+     internetConnection = Connectivity().onConnectivityChanged.listen((connectivityResult) {
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        setState(() {
+          isOffline = true;
+        });
+        print("Connexion inactive");
+      } else if (connectivityResult.contains(ConnectivityResult.mobile) ||
+          connectivityResult.contains(ConnectivityResult.wifi)) {
+        setState(() {
+          isOffline = false;
+        });
+        print("Connexion active");
+        messageServices.sendPendingMessages();
+      }
+    });
   }
 
   @override

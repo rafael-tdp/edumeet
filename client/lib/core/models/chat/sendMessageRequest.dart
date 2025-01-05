@@ -12,6 +12,13 @@ class SendMessageRequest {
     required this.content,
   });
 
+  factory SendMessageRequest.fromJson(Map<String, dynamic> json) {
+    return SendMessageRequest(
+      eventId: json['eventId'],
+      content: json['content'],
+    );
+  }
+
 }
 
 extension SendMessageRequestAdapter on SendMessageRequest {
@@ -29,7 +36,7 @@ extension SendMessageRequestAdapter on SendMessageRequest {
     return {
       'eventId': this.eventId,
       'content': this.content,
-      'createdAt': this.createdAt,
+      'createdAt': this.createdAt.toIso8601String(),
     };
   }
 }
