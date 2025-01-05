@@ -3,6 +3,10 @@
         android:label="Edumeet"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDCL5rKyzR_ZYudC-EWbgG_V0NUN0tE_to"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
