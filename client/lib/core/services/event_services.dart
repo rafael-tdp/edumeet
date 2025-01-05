@@ -25,7 +25,7 @@ class EventServices {
         if (subjects.isNotEmpty) 'subjects': subjects.join(','),
         if (latitude != null) 'latitude': latitude.toString(),
         if (longitude != null) 'longitude': longitude.toString(),
-        if (eventType.isNotEmpty) 'eventType': eventType,
+        if (eventType.isNotEmpty) 'type': eventType,
         if (distance != null) 'distance': distance.toString(),
       };
 

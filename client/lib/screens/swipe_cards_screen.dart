@@ -12,6 +12,12 @@ class SwipeCardsPage extends StatefulWidget {
 class _SwipeCardsPageState extends State<SwipeCardsPage> {
   bool _showFilters = false;
 
+  hideFilters() {
+    setState(() {
+      _showFilters = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +53,7 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
       backgroundColor: Colors.transparent,
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
-        child: SwipeCardsComponent(showFilters: _showFilters),
+        child: SwipeCardsComponent(showFilters: _showFilters, hideFilters: hideFilters),
       ),
     );
   }
