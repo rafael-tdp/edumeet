@@ -115,6 +115,15 @@ class _TranslationsUserNl implements TranslationsUserFr {
 	@override String get noDescription => 'Geen beschrijving';
 	@override String get noAddress => 'Adres niet beschikbaar';
 	@override String get noReportsAvailable => 'Aantal meldingen niet beschikbaar';
+	@override String get noBio => 'Geen bio beschikbaar';
+	@override String get noBirthdate => 'Geboortedatum niet beschikbaar';
+	@override String get noLocation => 'Locatie niet beschikbaar';
+	@override String get noEmail => 'E-mail niet beschikbaar';
+	@override String get noUsername => 'Gebruikersnaam niet beschikbaar';
+	@override String get noName => 'Naam niet beschikbaar';
+	@override String get noFirstname => 'Voornaam niet beschikbaar';
+	@override String get you => 'jij';
+	@override String get me => '(ik)';
 }
 
 // Path: welcome
@@ -467,6 +476,15 @@ extension on TranslationsNl {
 			case 'user.noDescription': return 'Geen beschrijving';
 			case 'user.noAddress': return 'Adres niet beschikbaar';
 			case 'user.noReportsAvailable': return 'Aantal meldingen niet beschikbaar';
+			case 'user.noBio': return 'Geen bio beschikbaar';
+			case 'user.noBirthdate': return 'Geboortedatum niet beschikbaar';
+			case 'user.noLocation': return 'Locatie niet beschikbaar';
+			case 'user.noEmail': return 'E-mail niet beschikbaar';
+			case 'user.noUsername': return 'Gebruikersnaam niet beschikbaar';
+			case 'user.noName': return 'Naam niet beschikbaar';
+			case 'user.noFirstname': return 'Voornaam niet beschikbaar';
+			case 'user.you': return 'jij';
+			case 'user.me': return '(ik)';
 			case 'welcome.welcome': return 'Welkom bij Edumeet, het platform voor samenwerkingsstudie';
 			case 'welcome.setup': return 'Laten we beginnen met het kiezen van een taal';
 			case 'welcome.whatLanguage': return 'Welke taal spreek je?';

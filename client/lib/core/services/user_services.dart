@@ -119,8 +119,6 @@ class UserServices {
       },
     );
 
-    print(Uri.parse('${Env.BACKEND_URL}/user/friendship?status=${status.name.toUpperCase()}'));
-
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as List<dynamic>;
       final List<FriendRequest> friends = data.map((friend) => FriendRequest.fromJson(friend)).toList();

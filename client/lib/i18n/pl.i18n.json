@@ -48,7 +48,16 @@
     "anonymous": "Anonimowy",
     "noDescription": "Brak opisu",
     "noAddress": "Adres niedostępny",
-    "noReportsAvailable": "Liczba zgłoszeń niedostępna"
+    "noReportsAvailable": "Liczba zgłoszeń niedostępna",
+    "noBio": "Brak dostępnych informacji o biografii",
+    "noBirthdate": "Data urodzenia niedostępna",
+    "noLocation": "Miejsce niedostępne",
+    "noEmail": "Email niedostępny",
+    "noUsername": "Nazwa użytkownika niedostępna",
+    "noName": "Imię i nazwisko niedostępne",
+    "noFirstname": "Imię niedostępne",
+    "you": "ty",
+    "me": "(ja)"
   },
   "welcome": {
     "welcome": "Witamy w Edumeet, platformie do wspólnej nauki",

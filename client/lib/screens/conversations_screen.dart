@@ -3,10 +3,14 @@ import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/message_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
+import 'package:provider/provider.dart';
 import '../core/models/response.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/event_chat_page.dart';
 import 'package:go_router/go_router.dart';
+
+import '../i18n/generated/translations.g.dart';
+import '../providers/user_provider.dart';
 
 
 class ConversationsPage extends StatefulWidget {
@@ -60,6 +64,8 @@ class _ConversationsPageState extends State<ConversationsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final _currentUser = Provider.of<UserProvider>(context, listen: false).currentUser;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -111,26 +117,33 @@ class _ConversationsPageState extends State<ConversationsPage> {
                     itemCount: _filteredConversations.length,
                     itemBuilder: (context, index) {
                       final conversation = _filteredConversations[index];
-                      final Avatar _avatar = conversation.type.name == 'private'
-                          ? DiceBearBuilder(
-                          seed: conversation.name,
-                          sprite: DiceBearSprite.bottts)
-                          .build()
-                          : DiceBearBuilder(
-                          seed: conversation.name,
-                          sprite: DiceBearSprite.initials)
-                          .build();
 
                       return Column(
                         children: [
                           ListTile(
-                            leading: _avatar.toImage(height: 50),
+                            leading: conversation.type.name == 'private'
+                                ? CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.transparent,
+                                child: DiceBearBuilder(
+                                  seed: conversation.name,
+                                  sprite: DiceBearSprite.values.firstWhere((sprite) => sprite.name == (conversation.pictureConversation),
+                                    orElse: () => DiceBearSprite.bottts,
+                                  ),
+                                ).build().toImage(height: 50))
+                                : CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.transparent,
+                                child: DiceBearBuilder(
+                                  seed: conversation.name,
+                                  sprite: DiceBearSprite.initials,
+                                ).build().toImage(height: 50)),
                             title: Text(conversation.name),
                             subtitle: RichText(
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: '${conversation.lastMessageUsername}: ',
+                                    text: '${conversation.lastMessageUsername == _currentUser?.username ? t.user.you : conversation.lastMessageUsername}: ',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black),

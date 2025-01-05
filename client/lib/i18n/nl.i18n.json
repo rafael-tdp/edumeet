@@ -48,7 +48,16 @@
     "anonymous": "Anoniem",
     "noDescription": "Geen beschrijving",
     "noAddress": "Adres niet beschikbaar",
-    "noReportsAvailable": "Aantal meldingen niet beschikbaar"
+    "noReportsAvailable": "Aantal meldingen niet beschikbaar",
+    "noBio": "Geen bio beschikbaar",
+    "noBirthdate": "Geboortedatum niet beschikbaar",
+    "noLocation": "Locatie niet beschikbaar",
+    "noEmail": "E-mail niet beschikbaar",
+    "noUsername": "Gebruikersnaam niet beschikbaar",
+    "noName": "Naam niet beschikbaar",
+    "noFirstname": "Voornaam niet beschikbaar",
+    "you": "jij",
+    "me": "(ik)"
   },
   "welcome": {
     "welcome": "Welkom bij Edumeet, het platform voor samenwerkingsstudie",

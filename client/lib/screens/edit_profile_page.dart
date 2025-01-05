@@ -54,10 +54,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _addressController = TextEditingController(text: widget.user.address);
     _selectedAvatar = widget.user.picture; // Initialize with the current avatar
     _currentUsername = widget.user.username;
-    // _avatar = DiceBearBuilder(
-    //   seed: widget.user.username,
-    //   sprite: DiceBearSprite.bottts,
-    // ).build();
     _avatar = DiceBearBuilder(
       seed: widget.user.username,
       sprite: DiceBearSprite.values.firstWhere(

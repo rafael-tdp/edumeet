@@ -129,16 +129,23 @@ class _ParticipantsListState extends State<ParticipantsList> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: participantsList.map((participant) {
                                     String status = participant['status'];
-                                    final Avatar _avatar = DiceBearBuilder(
-                                      seed: participant['user']['username'],
-                                      sprite: DiceBearSprite.bottts,
-                                    ).build();
+
                                     return ListTile(
                                       title: Row(
                                         children: [
-                                          _avatar.toImage(
-                                              width: 24, height: 24),
-                                          Text(participant['user']['username']),
+                                          CircleAvatar(
+                                              radius: 20,
+                                              backgroundColor: Colors.transparent,
+                                              child: DiceBearBuilder(
+                                                seed: participant['user']['username'],
+                                                sprite: DiceBearSprite.values.firstWhere(
+                                                      (sprite) => sprite.name == (participant['user']['picture']),
+                                                  orElse: () => DiceBearSprite.bottts,
+                                                ),
+                                              ).build().toImage(width: 24, height: 24)),
+                                          Text(participant['user']['username'] == _currentUser?.username
+                                              ? ' (vous)'
+                                              : ' '),
                                         ],
                                       ),
                                       trailing: Row(
@@ -217,10 +224,6 @@ class _ParticipantsListState extends State<ParticipantsList> {
               itemCount: acceptedParticipants.length,
               itemBuilder: (context, index) {
                 final participant = acceptedParticipants[index];
-                final Avatar _avatar = DiceBearBuilder(
-                  seed: participant['user']['username'],
-                  sprite: DiceBearSprite.bottts,
-                ).build();
                 return GestureDetector(
                   onTap: () {
                     ProfilePage.navigateTo(context, participant['user']['id']);
@@ -229,12 +232,21 @@ class _ParticipantsListState extends State<ParticipantsList> {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Column(
                       children: [
-                        _avatar.toImage(width: 50, height: 50),
+                        CircleAvatar(
+                            radius: 20,
+                            backgroundColor: Colors.transparent,
+                            child: DiceBearBuilder(
+                              seed: participant['user']['username'],
+                              sprite: DiceBearSprite.values.firstWhere(
+                                    (sprite) => sprite.name == (participant['user']['picture']),
+                                orElse: () => DiceBearSprite.bottts,
+                              ),
+                            ).build().toImage(width: 50, height: 50)),
                         const SizedBox(height: 8),
                         Text(
-                          participant['user']['firstname']! +
-                              ' ' +
-                              participant['user']['lastname']!,
+                          participant['user']['username']! == _currentUser?.username
+                              ? t.user.you
+                              : participant['user']['username'],
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,

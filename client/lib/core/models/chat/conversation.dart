@@ -7,6 +7,7 @@ class Conversation {
   final String lastMessage;
   final String lastMessageUsername;
   final DateTime lastMessageDate;
+  final String? pictureConversation;
 
   Conversation({
     required this.id,
@@ -15,6 +16,7 @@ class Conversation {
     required this.lastMessage,
     required this.lastMessageUsername,
     required this.lastMessageDate,
+    this.pictureConversation,
   });
 
   factory Conversation.fromJson(Map<String, dynamic> json) {
@@ -25,6 +27,7 @@ class Conversation {
       lastMessage: json['lastMessage'],
       lastMessageUsername: json['lastMessageUsername'],
       lastMessageDate: DateTime.parse(json['lastMessageDate'].replaceAll(" UTC", "")),
+      pictureConversation: json['pictureConversation'],
     );
   }
 }

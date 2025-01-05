@@ -60,14 +60,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
           final User user = snapshot.data!;
 
-          final Avatar _avatar = DiceBearBuilder(
-            seed: user.username,
-            sprite: DiceBearSprite.values.firstWhere(
-              (sprite) => sprite.name == (user.picture ?? 'bottts'),
-              orElse: () => DiceBearSprite.bottts,
-            ),
-          ).build();
-
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -85,7 +77,16 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
                 ListTile(
-                  leading: _avatar.toImage(height: 40),
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.transparent,
+                      child: DiceBearBuilder(
+                        seed: user.username,
+                        sprite: DiceBearSprite.values.firstWhere(
+                              (sprite) => sprite.name == (user.picture),
+                          orElse: () => DiceBearSprite.bottts,
+                        ),
+                      ).build().toImage(height: 40)),
                   title: Text(user.firstname ?? t.user.anonymous),
                   subtitle: Text(user.username),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 18),

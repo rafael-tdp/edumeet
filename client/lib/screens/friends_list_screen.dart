@@ -129,13 +129,18 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 itemCount: acceptedFriends.length,
                 itemBuilder: (context, index) {
                   final friend = acceptedFriends[index];
-                  Avatar _avatar = DiceBearBuilder(
-                    seed: friend.friendUsername,
-                    sprite: DiceBearSprite.identicon,
-                  ).build();
 
                   return ListTile(
-                    leading: _avatar.toImage(height: 50),
+                    leading: CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.transparent,
+                        child: DiceBearBuilder(
+                          seed: friend.friendUsername,
+                          sprite: DiceBearSprite.values.firstWhere(
+                                (sprite) => sprite.name == (friend.friendPicture),
+                            orElse: () => DiceBearSprite.bottts,
+                          ),
+                        ).build().toImage(height: 50)),
                     title: Text(friend.friendUsername),
                     onTap: () {
                       ProfilePage.navigateTo(context, friend.friendId);
@@ -177,10 +182,16 @@ class _FriendsListPageState extends State<FriendsListPage> {
                 itemBuilder: (context, index) {
                   final friend = pendingFriends[index];
                   return ListTile(
-                    leading: DiceBearBuilder(
-                      seed: friend.friendUsername,
-                      sprite: DiceBearSprite.identicon,
-                    ).build().toImage(height: 50),
+                    leading: CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.transparent,
+                        child: DiceBearBuilder(
+                          seed: friend.friendUsername,
+                          sprite: DiceBearSprite.values.firstWhere(
+                                (sprite) => sprite.name == (friend.friendPicture),
+                            orElse: () => DiceBearSprite.bottts,
+                          ),
+                        ).build().toImage(height: 50)),
                     title: Text(friend.friendUsername),
                     onTap: () {
                       ProfilePage.navigateTo(context, friend.friendId);

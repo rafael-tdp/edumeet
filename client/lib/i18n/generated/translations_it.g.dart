@@ -115,6 +115,15 @@ class _TranslationsUserIt implements TranslationsUserFr {
 	@override String get noDescription => 'Nessuna descrizione';
 	@override String get noAddress => 'Indirizzo non disponibile';
 	@override String get noReportsAvailable => 'Numero di segnalazioni non disponibile';
+	@override String get noBio => 'Bio non disponibile';
+	@override String get noBirthdate => 'Data di nascita non disponibile';
+	@override String get noLocation => 'Luogo non disponibile';
+	@override String get noEmail => 'Email non disponibile';
+	@override String get noUsername => 'Nome utente non disponibile';
+	@override String get noName => 'Nome non disponibile';
+	@override String get noFirstname => 'Nome non disponibile';
+	@override String get you => 'tu';
+	@override String get me => '(me)';
 }
 
 // Path: welcome
@@ -467,6 +476,15 @@ extension on TranslationsIt {
 			case 'user.noDescription': return 'Nessuna descrizione';
 			case 'user.noAddress': return 'Indirizzo non disponibile';
 			case 'user.noReportsAvailable': return 'Numero di segnalazioni non disponibile';
+			case 'user.noBio': return 'Bio non disponibile';
+			case 'user.noBirthdate': return 'Data di nascita non disponibile';
+			case 'user.noLocation': return 'Luogo non disponibile';
+			case 'user.noEmail': return 'Email non disponibile';
+			case 'user.noUsername': return 'Nome utente non disponibile';
+			case 'user.noName': return 'Nome non disponibile';
+			case 'user.noFirstname': return 'Nome non disponibile';
+			case 'user.you': return 'tu';
+			case 'user.me': return '(me)';
 			case 'welcome.welcome': return 'Benvenuto su Edumeet, la piattaforma di revisione collaborativa';
 			case 'welcome.setup': return 'Iniziamo scegliendo una lingua';
 			case 'welcome.whatLanguage': return 'Quale lingua parli?';
