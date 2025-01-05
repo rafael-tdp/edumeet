@@ -131,14 +131,28 @@ class EventDetailsSection extends StatelessWidget {
                 children: [
                   const Icon(Icons.add_link, color: AppColors.purple, size: 24),
                   const SizedBox(width: 8),
-                  const Text("Code d'invitation : "),
+                  const Text("Code d'invitation : ", style: TextStyle(fontSize: 16)),
                   const SizedBox(width: 4),
                   Text(
                     code!,
                     style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold),
+                      fontSize: 16,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.copy),
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: code!)).then((_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text("Code copié dans le presse-papiers")),
+                        );
+                      });
+                    },
                   ),
                 ],
               ),

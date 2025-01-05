@@ -3,14 +3,12 @@ import 'package:client/core/models/response.dart';
 import 'package:client/core/models/user.dart';
 import 'package:client/core/services/badges_service.dart';
 import 'package:client/core/services/reporting_services.dart';
-import 'package:client/screens/settings_screen.dart';
 import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:client/utils/colors.dart';
 import 'package:client/components/profile_button.dart';
 import 'package:client/screens/edit_profile_page.dart';
-import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -360,7 +358,7 @@ class _ProfilePageState extends State<ProfilePage> {
     Reporting createReporting = Reporting(
       reason: reason,
       type: "USER",
-      entityId: userId!,
+      entityId: userId,
     );
 
     ReportingServices.createReporting(createReporting).then((response) {

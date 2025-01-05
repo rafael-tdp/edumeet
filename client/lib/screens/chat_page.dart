@@ -208,8 +208,8 @@ class _ChatPageState extends State<ChatPage> {
                         sprite: DiceBearSprite.bottts,
                       ).build();
 
-                      return Row(
-                        mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                      return Wrap(
+                        alignment: isCurrentUser ? WrapAlignment.end : WrapAlignment.start,
                         children: [
                           if (!isCurrentUser) _avatar.toImage(height: 25),
                           ChatMessage(
@@ -217,7 +217,7 @@ class _ChatPageState extends State<ChatPage> {
                             sender: widget.userName,
                             message: message.content,
                             isCurrentUser: message.isSentByCurrentUser,
-                            createdAt: DateTime(2022, 1, 1),
+                            createdAt: message.createdAt,
                             onDelete: () => _deleteMessage(message.id),
                           ),
                         ],

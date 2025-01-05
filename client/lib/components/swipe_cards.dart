@@ -14,7 +14,8 @@ class SwipeCardsComponent extends StatefulWidget {
   final bool showFilters;
   final void Function() hideFilters;
 
-  const SwipeCardsComponent({super.key, required this.showFilters, required this.hideFilters});
+  const SwipeCardsComponent(
+      {super.key, required this.showFilters, required this.hideFilters});
 
   @override
   _SwipeCardsComponentState createState() => _SwipeCardsComponentState();
@@ -28,7 +29,6 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
   String? _selectedSubject;
   List<Subject> _subjects = [];
   dynamic location;
-  bool _isLocationLoaded = false;
 
   @override
   void initState() {
@@ -47,9 +47,6 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
   _getLocation() async {
     try {
       location = await LocationService.getLocation();
-      setState(() {
-        _isLocationLoaded = true;
-      });
     } catch (error) {
       print("Error getting location: $error");
     }
@@ -62,66 +59,64 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
         Column(
           children: [
             Expanded(
-              child: !_isLocationLoaded
-                  ? const Center(child: CircularProgressIndicator())
-                  : FutureBuilder<List<Event>>(
-                      future: EventServices.getEvents(
-                        [_selectedSubject ?? ''],
-                        location?['latitude'],
-                        location?['longitude'],
-                        _eventType ?? '',
-                        _maxDistance,
-                      ),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                        if (snapshot.hasError || !snapshot.hasData) {
-                          return Center(child: Text(t.error.loadingEvents));
-                        }
+              child: FutureBuilder<List<Event>>(
+                future: EventServices.getEvents(
+                  [_selectedSubject ?? ''],
+                  location?['latitude'],
+                  location?['longitude'],
+                  _eventType ?? '',
+                  _maxDistance,
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.hasError || !snapshot.hasData) {
+                    return Center(child: Text(t.error.loadingEvents));
+                  }
 
-                        final events = snapshot.data!;
-                        final swipeItems = events.map((event) {
-                          return SwipeItem(
-                            content: event,
-                            likeAction: () async {
-                              await ParticipantServices.joinEvent(event.id!);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(t.event.hasJoinEvent(
-                                    event_title: event.title,
-                                  )),
-                                ),
-                              );
-                            },
-                          );
-                        }).toList();
-
-                        _matchEngine = MatchEngine(swipeItems: swipeItems);
-
-                        return SwipeCards(
-                          matchEngine: _matchEngine,
-                          itemBuilder: (context, index) {
-                            final event = swipeItems[index].content as Event;
-                            return _buildEventCard(event);
-                          },
-                          onStackFinished: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(t.swipe_cards.end_of_list)),
-                            );
-                          },
-                          itemChanged: (SwipeItem item, int index) {
-                            print(t.swipe_cards.item_changed(
-                              title: (item.content as Event).title,
-                            ));
-                          },
-                          upSwipeAllowed: false,
-                          fillSpace: true,
+                  final events = snapshot.data!;
+                  final swipeItems = events.map((event) {
+                    return SwipeItem(
+                      content: event,
+                      likeAction: () async {
+                        await ParticipantServices.joinEvent(event.id!);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(t.event.hasJoinEvent(
+                              event_title: event.title,
+                            )),
+                          ),
                         );
                       },
-                    ),
+                    );
+                  }).toList();
+
+                  _matchEngine = MatchEngine(swipeItems: swipeItems);
+
+                  return SwipeCards(
+                    matchEngine: _matchEngine,
+                    itemBuilder: (context, index) {
+                      final event = swipeItems[index].content as Event;
+                      return _buildEventCard(event);
+                    },
+                    onStackFinished: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(t.swipe_cards.end_of_list)),
+                      );
+                    },
+                    itemChanged: (SwipeItem item, int index) {
+                      print(t.swipe_cards.item_changed(
+                        title: (item.content as Event).title,
+                      ));
+                    },
+                    upSwipeAllowed: false,
+                    fillSpace: true,
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -143,7 +138,6 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
       ],
     );
   }
-
 
   Widget _buildEventCard(Event event) {
     return Center(

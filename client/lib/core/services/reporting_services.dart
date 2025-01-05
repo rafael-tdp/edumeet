@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:client/core/models/reporting.dart';
-import 'package:diacritic/diacritic.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../env/env.dart';
-import 'package:client/core/models/subject.dart';
 
 import '../models/response.dart';
 

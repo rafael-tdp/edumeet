@@ -1,5 +1,3 @@
-import 'package:client/core/models/message.dart';
-
 class Reporting {
   final String reason;
   final String type;

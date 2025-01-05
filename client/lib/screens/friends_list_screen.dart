@@ -105,7 +105,9 @@ class _FriendsListPageState extends State<FriendsListPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Liste d'amis"),
+        backgroundColor: Colors.transparent,
       ),
+      backgroundColor: Colors.white,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _friends.isEmpty

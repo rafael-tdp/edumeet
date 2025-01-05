@@ -37,23 +37,27 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              _showFilters ? Icons.filter_list_off : Icons.filter_list,
+          Padding(
+            padding: const EdgeInsets.only(top: 10, right: 12),
+            child: IconButton(
+              icon: Icon(
+                _showFilters ? Icons.filter_list_off : Icons.filter_list,
+              ),
+              color: AppColors.purple,
+              onPressed: () {
+                setState(() {
+                  _showFilters = !_showFilters;
+                });
+              },
             ),
-            color: AppColors.purple,
-            onPressed: () {
-              setState(() {
-                _showFilters = !_showFilters;
-              });
-            },
           ),
         ],
       ),
       backgroundColor: Colors.transparent,
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
-        child: SwipeCardsComponent(showFilters: _showFilters, hideFilters: hideFilters),
+        child: SwipeCardsComponent(
+            showFilters: _showFilters, hideFilters: hideFilters),
       ),
     );
   }
