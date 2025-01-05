@@ -119,6 +119,15 @@ class TranslationsUserEn {
 	String get noDescription => 'No description';
 	String get noAddress => 'Address not available';
 	String get noReportsAvailable => 'Number of reports not available';
+	String get noBio => 'Bio not available';
+	String get noBirthdate => 'Birthdate not available';
+	String get noLocation => 'Location not available';
+	String get noEmail => 'Email not available';
+	String get noUsername => 'Username not available';
+	String get noName => 'Name not available';
+	String get noFirstname => 'First name not available';
+	String get you => 'you';
+	String get me => '(me)';
 }
 
 // Path: welcome
@@ -471,6 +480,15 @@ extension on Translations {
 			case 'user.noDescription': return 'No description';
 			case 'user.noAddress': return 'Address not available';
 			case 'user.noReportsAvailable': return 'Number of reports not available';
+			case 'user.noBio': return 'Bio not available';
+			case 'user.noBirthdate': return 'Birthdate not available';
+			case 'user.noLocation': return 'Location not available';
+			case 'user.noEmail': return 'Email not available';
+			case 'user.noUsername': return 'Username not available';
+			case 'user.noName': return 'Name not available';
+			case 'user.noFirstname': return 'First name not available';
+			case 'user.you': return 'you';
+			case 'user.me': return '(me)';
 			case 'welcome.welcome': return 'Welcome to Edumeet, the collaborative revision platform';
 			case 'welcome.setup': return 'Let\'s start by choosing a language';
 			case 'welcome.whatLanguage': return 'What language do you speak?';

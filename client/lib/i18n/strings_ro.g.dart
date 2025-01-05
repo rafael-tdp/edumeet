@@ -115,6 +115,15 @@ class _TranslationsUserRo implements TranslationsUserEn {
 	@override String get noDescription => 'Nici o descriere';
 	@override String get noAddress => 'Adresă indisponibilă';
 	@override String get noReportsAvailable => 'Numărul de raportări nu este disponibil';
+	@override String get noBio => 'Bio indisponibilă';
+	@override String get noBirthdate => 'Data nașterii indisponibilă';
+	@override String get noLocation => 'Locația indisponibilă';
+	@override String get noEmail => 'Email indisponibil';
+	@override String get noUsername => 'Numele de utilizator indisponibil';
+	@override String get noName => 'Numele indisponibil';
+	@override String get noFirstname => 'Prenumele indisponibil';
+	@override String get you => 'tu';
+	@override String get me => '(eu)';
 }
 
 // Path: welcome
@@ -467,6 +476,15 @@ extension on TranslationsRo {
 			case 'user.noDescription': return 'Nici o descriere';
 			case 'user.noAddress': return 'Adresă indisponibilă';
 			case 'user.noReportsAvailable': return 'Numărul de raportări nu este disponibil';
+			case 'user.noBio': return 'Bio indisponibilă';
+			case 'user.noBirthdate': return 'Data nașterii indisponibilă';
+			case 'user.noLocation': return 'Locația indisponibilă';
+			case 'user.noEmail': return 'Email indisponibil';
+			case 'user.noUsername': return 'Numele de utilizator indisponibil';
+			case 'user.noName': return 'Numele indisponibil';
+			case 'user.noFirstname': return 'Prenumele indisponibil';
+			case 'user.you': return 'tu';
+			case 'user.me': return '(eu)';
 			case 'welcome.welcome': return 'Bun venit pe Edumeet, platforma de revizuire colaborativă';
 			case 'welcome.setup': return 'Haide să începem prin a alege o limbă';
 			case 'welcome.whatLanguage': return 'Ce limbă vorbești?';
