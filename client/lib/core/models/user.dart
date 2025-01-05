@@ -13,6 +13,7 @@ class User {
   final int? reportNumber;
   final String? address;
   final String? role;
+  final bool? activated;
   final List<Badge>? badges;
   final int? nbFriends;
   final int? nbParticpatedEvents;
@@ -29,6 +30,7 @@ class User {
     this.reportNumber,
     this.address,
     this.role,
+    this.activated,
     this.badges,
     this.nbFriends,
     this.nbParticpatedEvents,
@@ -49,11 +51,12 @@ class User {
       bio: json['bio'] ?? '',
       picture: json['picture'] ?? '',
       reportNumber: json['reportNumber'] ?? 0,
-      address: json['address'] ?? '',
-      role: json['role'] ?? '',
+      address: json['address'],
+      role: json['role'],
+      activated: json['activated'],
       badges: json['badges'] != null ? (json['badges'] as List).map((badge) => Badge.fromJson(badge)).toList() : null,
       nbFriends: json['nbFriends'] ?? 0,
-      nbParticpatedEvents: json['nbParticipatedEvents'] ?? 0,
+      nbParticpatedEvents: json['nbParticipatedEvents'] ?? 0
     );
   }
 
@@ -74,6 +77,7 @@ class User {
       'reportNumber': reportNumber,
       'address': removeDiacritics(address!),
       'role': role,
+      'activated': activated
     };
   }
 }

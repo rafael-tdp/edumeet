@@ -45,11 +45,6 @@ class AuthServices {
       final token = responseData['token'];
       await CacheService.saveDataToCache('auth_token', token);
 
-      // final isFirstLaunch = await CacheService.getDataFromCache('first_launch');
-      // if (isFirstLaunch == null) {
-      //   await CacheService.saveDataToCache('first_launch', "true");
-      // }
-
       final userJson = responseData['user'];
       await CacheService.saveDataToCache('user_data', jsonEncode(userJson));
 

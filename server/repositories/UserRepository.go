@@ -10,6 +10,8 @@ import (
 	"edumeet/enums"
 	"edumeet/utils"
 	"errors"
+
+	"github.com/samber/lo"
 )
 
 type UserRepository struct {
@@ -246,6 +248,91 @@ func (ur *UserRepository) DeleteFriendship(friendshipID string) error {
 	return nil
 }
 
+func (ur *UserRepository) GetUsers() ([]*ent.User, error) {
+	users, err := ur.client.User.Query().
+		Where(user.UsernameNEQ("deleted")).
+		All(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
+// On m'a fait la demande
+func (ur *UserRepository) GetPendingFriendships(userID string) ([]*ent.Friendship, error) {
+	friendships, err := ur.client.Friendship.Query().
+		Where(
+			friendship.And(
+				friendship.HasFriendWith(user.IDEQ(userID)),
+				friendship.StatusEQ(string(enums.FriendPending)),
+			),
+		).
+		WithUser().
+		All(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return friendships, nil
+}
+
+func (ur *UserRepository) UpdateUserAdmin(ctx context.Context, updateUserDTO dtos.UpdateUserAdminDTO) (*ent.User, error) {
+	user, err := ur.client.User.
+		UpdateOneID(updateUserDTO.Id).
+		SetEmail(updateUserDTO.Email).
+		SetUsername(updateUserDTO.Username).
+		SetFirstname(updateUserDTO.Firstname).
+		SetLastname(updateUserDTO.Lastname).
+		SetRole(updateUserDTO.Role).
+		SetActivated(updateUserDTO.Activated).
+		Save(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (ur *UserRepository) CreateUserAdmin(ctx context.Context, createUserDTO dtos.CreateUserDTO, hashedPassword string) (*ent.User, error) {
+
+	user, err := ur.client.User.
+		Create().
+		SetEmail(createUserDTO.Email).
+		SetUsername(createUserDTO.Username).
+		SetFirstname(createUserDTO.Firstname).
+		SetLastname(createUserDTO.Lastname).
+		SetPassword(hashedPassword).
+		SetRole(createUserDTO.Role).
+		SetBirthDate(createUserDTO.Birthdate).
+		Save(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (ur *UserRepository) SoftDeleteUser(ctx context.Context, userID string) error {
+	_, err := ur.client.User.
+		Update().
+		Where(user.IDEQ(userID)).
+		SetFirstname("deleted").
+		SetUsername("deleted").
+		SetLastname("deleted").
+		SetEmail(lo.RandomString(6, lo.LettersCharset)).
+		Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ur *UserRepository) GetClient() *ent.Client {
+	return ur.client
+}
+
 func (ur *UserRepository) IsFriendshipExist(userId1 string, userId2 string) (bool, error) {
 	exist, err := ur.client.Friendship.Query().
 		Where(
@@ -269,26 +356,4 @@ func (ur *UserRepository) IsFriendshipExist(userId1 string, userId2 string) (boo
 	}
 
 	return exist, nil
-}
-
-// On m'a fait la demande
-func (ur *UserRepository) GetPendingFriendships(userID string) ([]*ent.Friendship, error) {
-	friendships, err := ur.client.Friendship.Query().
-		Where(
-			friendship.And(
-				friendship.HasFriendWith(user.IDEQ(userID)),
-				friendship.StatusEQ(string(enums.FriendPending)),
-			),
-		).
-		WithUser().
-		All(context.Background())
-	if err != nil {
-		return nil, err
-	}
-
-	return friendships, nil
-}
-
-func (ur *UserRepository) GetClient() *ent.Client {
-	return ur.client
 }

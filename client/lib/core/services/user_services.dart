@@ -10,9 +10,16 @@ import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import '../models/subject.dart';
 import '../models/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer';
 
 class UserServices {
   final AuthServices _authServices = AuthServices();
+
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token');
+  }
 
   Future<ResponseRequest> getUserInfo() async {
     final token = await _authServices.getToken();
@@ -84,6 +91,123 @@ class UserServices {
     }
   }
 
+  static Future<List<User>> getUsers() async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return [];
+      }
+
+      final response = await http.get(
+        Uri.parse('${Env.BACKEND_URL}/users'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = utf8.decode(response.bodyBytes);
+        final users = jsonDecode(responseBody) as List<dynamic>;
+        return users.map((user) => User.fromJson(user)).toList();
+      } else {
+        log('Failed to load users: ${response.statusCode} - ${response.body}');
+        return [];
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while retrieving users',
+          error: error, stackTrace: stacktrace);
+      return [];
+    }
+  }
+
+  static Future<ResponseRequest> updateAdminUserInfo(User user) async {
+    final token = await getToken();
+
+    if (token == null) return ResponseRequest(success: false, message: 'User not authenticated');
+
+    final response = await http.patch(
+      Uri.parse('${Env.BACKEND_URL}/user/admin/${user.id}'),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode(user.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      final User user = User.fromJson(data);
+      return ResponseRequest(success: true, message: 'User updated', data: user);
+    } else {
+      return ResponseRequest(success: false, message: json.decode(response.body)['error']);
+    }
+  }
+  static Future<ResponseRequest> createUser(dynamic user) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return ResponseRequest(success: false, message: 'User not authenticated');
+      }
+
+      final response = await http.post(
+          Uri.parse('${Env.BACKEND_URL}/user/create'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({
+            "email": user['email'],
+            "password": user['password'],
+            "firstname": user['firstname'],
+            "lastname": user['lastname'],
+            "username": user['username'],
+            "birthdate": user['birthdate'],
+            "role": user['role'],
+          })
+      );
+
+      if (response.statusCode == 201) {
+        return ResponseRequest(success: true, message: 'Utilisateur crée avec succes.');
+      } else {
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while creating user',
+          error: error, stackTrace: stacktrace);
+      return ResponseRequest(success: true, message: 'Erreur lors de la création.');
+    }
+  }
+
+  static Future<ResponseRequest> deleteUser(userId) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
+      }
+
+      final response = await http.delete(
+        Uri.parse('${Env.BACKEND_URL}/user/' + userId),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 204) {
+        return ResponseRequest(success: true, message: "Utilisateur supprimé avec succes.");
+      } else {
+        return ResponseRequest(success: true, message: json.decode(response.body)['error']);
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while deleting user',
+          error: error, stackTrace: stacktrace);
+      return ResponseRequest(success: false, message: "Une erreur s'est produite.");
+    }
+  }
   Future<ResponseRequest> getUserSubjects() async {
     final token = await _authServices.getToken();
 

@@ -1,4 +1,6 @@
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/screens/admin/admin_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:client/screens/subjects_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/auth_services.dart';
@@ -53,14 +55,17 @@ class _LoginPageState extends State<LoginPage> {
       );
       ResponseRequest response = await _authServices.login(loginRequest, context);
       if (response.success) {
+        if(kIsWeb){
+          context.push(AdminPage.routeName);
+        }
         bool isFirstLogin = await _isFirstLogin();
-        if (isFirstLogin) {
+        if (isFirstLogin ) {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const SubjectsPage()),
           );
         } else {
-          context.go(HomePage.routeName);
+          context.push(HomePage.routeName);
         }
       } else {
         setState(() {

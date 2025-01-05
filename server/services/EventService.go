@@ -401,3 +401,12 @@ func (es *EventService) GetEventCode(eventId string) (*dtos.EventCodeDTO, error)
 	logrus.Info("Event code: ", event)
 	return dtos.EntToEventCodeDTO(event), nil
 }
+
+func (es *EventService) UpdateEventAdmin(ctx context.Context, eventID string, updateEventAdminDTO dtos.UpdateEventAdminDTO) error {
+	_, err := es.eventRepository.UpdateEventAdmin(ctx, updateEventAdminDTO, eventID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

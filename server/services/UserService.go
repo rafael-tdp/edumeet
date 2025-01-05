@@ -329,3 +329,72 @@ func (us *UserService) DeleteFriendship(friendshipID string, userId string) erro
 
 	return nil
 }
+
+func (us *UserService) GetUsers() ([]dtos.GetUserAdmin, error) {
+	users, err := us.userRepo.GetUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	usersDTO := make([]dtos.GetUserAdmin, 0)
+	for _, user := range users {
+		userDTO, err := dtos.UserEntToDtoAdmin(user)
+		if err != nil {
+			return nil, err
+		}
+		usersDTO = append(usersDTO, *userDTO)
+	}
+
+	return usersDTO, nil
+}
+
+func (us *UserService) UpdateUserAdmin(ctx context.Context, updateUserDTO dtos.UpdateUserAdminDTO) (*dtos.GetUserAdmin, error) {
+	_, err := us.userRepo.GetById(updateUserDTO.Id)
+	if err != nil {
+		return &dtos.GetUserAdmin{}, errors.New("user not found")
+	}
+
+	updatedUser, err := us.userRepo.UpdateUserAdmin(ctx, updateUserDTO)
+	if err != nil {
+		return &dtos.GetUserAdmin{}, err
+	}
+
+	dtosUser, err := dtos.UserEntToDtoAdmin(updatedUser)
+	if err != nil {
+		return &dtos.GetUserAdmin{}, err
+	}
+
+	return dtosUser, nil
+}
+
+func (us *UserService) CreateUserAdmin(ctx context.Context, createUserDTO dtos.CreateUserDTO) (*ent.User, error) {
+	user, err := us.userRepo.GetByEmail(createUserDTO.Email)
+	if err == nil {
+		return nil, errors.New("user already exists")
+	}
+
+	print(createUserDTO.Password)
+	bcryptUtils := utils.Bcrypt{}
+	hashedPassword := bcryptUtils.HashPassword(createUserDTO.Password)
+
+	user, err = us.userRepo.CreateUserAdmin(ctx, createUserDTO, hashedPassword)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (us *UserService) DeleteUser(ctx context.Context, userID string) error {
+	_, err := us.userRepo.GetById(userID)
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	err = us.userRepo.SoftDeleteUser(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

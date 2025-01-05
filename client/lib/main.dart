@@ -1,3 +1,5 @@
+
+import 'package:client/screens/admin/admin_page.dart';
 import 'dart:async';
 
 import 'package:client/core/services/message_services.dart';
@@ -29,6 +31,7 @@ import 'package:client/core/services/push_notification_service.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   setUrlStrategy(PathUrlStrategy());
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -119,40 +122,18 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _isFirstLaunch() async {
-    final isFirstLaunch = await CacheService.getDataFromCache("first_launch");
-    if (isFirstLaunch == null) {
-      await CacheService.saveDataToCache("first_launch", "false");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     PushNotificationService.initialize();
     _sseServices.connectToSse();
-    _isFirstLaunch();
-
-    final MessageServices messageServices = MessageServices();
-     internetConnection = Connectivity().onConnectivityChanged.listen((connectivityResult) {
-      if (connectivityResult.contains(ConnectivityResult.none)) {
-        setState(() {
-          isOffline = true;
-        });
-        print("Connexion inactive");
-      } else if (connectivityResult.contains(ConnectivityResult.mobile) ||
-          connectivityResult.contains(ConnectivityResult.wifi)) {
-        setState(() {
-          isOffline = false;
-        });
-        print("Connexion active");
-        messageServices.sendPendingMessages();
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if(kIsWeb) {
+     return const AdminPage();
+    }
     return Scaffold(
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(

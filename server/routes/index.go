@@ -53,6 +53,9 @@ func InitRoutes(app *fiber.App) {
 	aiController := initAIController(client)
 	setupRoutesAI(app, aiController)
 
+	//Initialiser les routes stat
+	statController := initStatController(client)
+	setupRoutesStat(app, statController)
 	//Initialiser les routes address
 	addressController := initAddressController(client)
 	setupRoutesAddress(app, addressController)

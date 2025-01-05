@@ -11,8 +11,11 @@ import (
 )
 
 func setupRoutesUser(app *fiber.App, userController *controllers.UserController) {
+	app.Get("/users", middlewares.AdminMiddleware, userController.GetUsers)
 	app.Get("/me", middlewares.JWTAuthMiddleware, userController.Me)
 	app.Post("/user/verify", userController.Verify)
+	app.Post("/user/create", middlewares.JWTAuthMiddleware, userController.CreateUserAdmin)
+	app.Delete("/user/:id", middlewares.JWTAuthMiddleware, userController.DeleteUser)
 	app.Post("/user/validate-user", userController.ValidateUser)
 	app.Get("/user/information/:id", middlewares.JWTAuthMiddleware, userController.GetUser)
 	app.Put("/user/:id", middlewares.JWTAuthMiddleware, userController.UpdateUser)
@@ -22,6 +25,7 @@ func setupRoutesUser(app *fiber.App, userController *controllers.UserController)
 	app.Put("/user/friendship/:id", middlewares.JWTAuthMiddleware, userController.AcceptFriendship)
 	app.Get("/user/friendship", middlewares.JWTAuthMiddleware, userController.GetFriendships)
 	app.Delete("/user/friendship/:id", middlewares.JWTAuthMiddleware, userController.DeleteFriendship)
+	app.Patch("/user/admin/:id", middlewares.JWTAuthMiddleware, userController.UpdateUserAdmin)
 
 }
 

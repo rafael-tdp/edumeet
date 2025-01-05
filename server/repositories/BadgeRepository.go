@@ -56,8 +56,8 @@ func (r *BadgeRepository) DeleteBadge(badgeID string) error {
 	return nil
 }
 
-func (r *BadgeRepository) CreateBadge(badgeDTO dtos.BadgeDTO) (*ent.Badge, error) {
-	badge, err := r.client.Badge.Create().SetName(badgeDTO.Name).SetType(badgeDTO.Type).SetNbRequirementEvent(badgeDTO.NbRequirementEvent).SetSvg(badgeDTO.Svg).Save(context.Background())
+func (r *BadgeRepository) CreateBadge(ctx context.Context, badgeDTO dtos.BadgeDTO) (*ent.Badge, error) {
+	badge, err := r.client.Badge.Create().SetName(badgeDTO.Name).SetType(badgeDTO.Type).SetNbRequirementEvent(badgeDTO.NbRequirementEvent).SetSvg(badgeDTO.Svg).Save(ctx)
 	if err != nil {
 		return nil, errors.New("error creating badge")
 	}
@@ -65,16 +65,25 @@ func (r *BadgeRepository) CreateBadge(badgeDTO dtos.BadgeDTO) (*ent.Badge, error
 	return badge, nil
 }
 
-func (r *BadgeRepository) UpdateBadge(badgeId string, badgeDTO dtos.BadgeDTO) (*ent.Badge, error) {
-	badge, err := r.client.Badge.Query().Where(badge.IDEQ(badgeId)).Only(context.Background())
+func (r *BadgeRepository) UpdateBadge(ctx context.Context, badgeId string, badgeDTO dtos.BadgeDTO) (*ent.Badge, error) {
+	existingBadge, err := r.client.Badge.Query().Where(badge.IDEQ(badgeId)).Only(context.Background())
 	if err != nil {
 		return nil, errors.New("badge not found")
 	}
 
-	badge, err = badge.Update().SetName(badgeDTO.Name).SetType(badgeDTO.Type).SetNbRequirementEvent(badgeDTO.NbRequirementEvent).SetSvg(badgeDTO.Svg).Save(context.Background())
-	if err != nil {
-		return nil, errors.New("error updating badge")
+	update := existingBadge.Update().
+		SetType(badgeDTO.Type).
+		SetNbRequirementEvent(badgeDTO.NbRequirementEvent).
+		SetSvg(badgeDTO.Svg)
+
+	if badgeDTO.Name != existingBadge.Name {
+		update = update.SetName(badgeDTO.Name)
 	}
 
-	return badge, nil
+	updatedBadge, err := update.Save(ctx)
+	if err != nil {
+		return nil, errors.New("error updating badge : " + err.Error())
+	}
+
+	return updatedBadge, nil
 }

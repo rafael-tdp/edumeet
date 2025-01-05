@@ -49,6 +49,64 @@ class SubjectServices {
     }
   }
 
+  static Future<ResponseRequest> deleteSubject(subjectId) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
+      }
+
+      final response = await http.delete(
+        Uri.parse('${Env.BACKEND_URL}/subjects/' + subjectId),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 204) {
+        return ResponseRequest(success: true, message: "Matière supprimé avec succes.");
+      } else {
+        return ResponseRequest(success: true, message: json.decode(response.body)['error']);
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while deleting subject',
+          error: error, stackTrace: stacktrace);
+      return ResponseRequest(success: false, message: "Une erreur s'est produite.");
+    }
+  }
+
+  static Future<ResponseRequest> updateSubject(subject, newName) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
+      }
+
+      final response = await http.put(
+        Uri.parse('${Env.BACKEND_URL}/subjects/' + subject.id),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+            "name": newName
+          })
+      );
+      if (response.statusCode == 200) {
+        return ResponseRequest(success: true, message: 'Matière mise a jour');
+      } else {
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
+      }
+    } catch (error, stacktrace) {
+      log('Erreur lors de la mise a jour de la matiere',
+          error: error, stackTrace: stacktrace);
+      return ResponseRequest(success: true, message: 'Erreur lors de la mise a jour.');
+    }
+  }
+
   static Future<ResponseRequest> subscribeToSubjects(List<String> subjectsId) async {
     try {
       final token = await getToken();
@@ -76,6 +134,37 @@ class SubjectServices {
       log('An error occurred while subscribing to subject',
           error: error, stackTrace: stacktrace);
       return ResponseRequest(success: false, message: 'Erreur lors de la souscription');
+    }
+  }
+
+  static Future<ResponseRequest> createSubject(subjectName) async {
+    try {
+      final token = await getToken();
+
+      if (token == null) {
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
+      }
+
+      final response = await http.post(
+        Uri.parse('${Env.BACKEND_URL}/subjects'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          "name": subjectName
+        })
+      );
+
+      if (response.statusCode == 201) {
+        return ResponseRequest(success: true, message: 'Matière crée avec success');
+      } else {
+        return ResponseRequest(success: false, message: json.decode(response.body)['error']);
+      }
+    } catch (error, stacktrace) {
+      log('An error occurred while creating subject',
+          error: error, stackTrace: stacktrace);
+      return ResponseRequest(success: true, message: 'Erreur lors de la création.');
     }
   }
 }

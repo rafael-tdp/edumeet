@@ -35,7 +35,7 @@ func (sr *SubjectService) Create(subjectDTO dtos.SubjectDTO) (*dtos.SubjectDTO, 
 	subject, err := sr.subjectRepository.Create(subjectDTO)
 	if err != nil {
 		logrus.Error("Error SubjectService.Create: ", err)
-		return nil, errors.New("error creating subject")
+		return nil, err
 	}
 
 	createdSubject := dtos.SubjectEntToDTO(subject)
@@ -73,7 +73,7 @@ func (sr *SubjectService) Update(subjectID string, subjectDTO dtos.SubjectDTO) (
 	subject, err := sr.subjectRepository.Update(subjectID, subjectDTO)
 	if err != nil {
 		logrus.Error("Error SubjectService.Update: ", err)
-		return nil, errors.New("error updating subject")
+		return nil, err
 	}
 
 	updatedSubject := dtos.SubjectEntToDTO(subject)
