@@ -96,7 +96,7 @@ func (cs *ChatService) SendMessageToUser(userID string, message string) error {
 	return nil
 }
 
-func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, participants []dtos.ParticipantDTO, message string, userId string, username string) error {
+func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, participants []dtos.ParticipantDTO, message string, userId string, username string, userPicture string) error {
 	// Create message for event
 	messageCreated, err := cs.chatRepo.CreateMessage(ctx, message, eventID, userId)
 	if err != nil {
@@ -112,6 +112,7 @@ func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, p
 		EventId:      eventID,
 		CreationDate: messageCreated.CreatedAt,
 		Content:      message,
+		PictureUser:  userPicture,
 	}
 
 	// Send message to all active participants except the sender
@@ -185,12 +186,15 @@ func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendI
 
 	var senderId string
 	var receiverId string
+	var pictureUser string
 	if userId == friendship.Edges.User.ID {
 		senderId = friendship.Edges.User.ID
 		receiverId = friendship.Edges.Friend.ID
+		pictureUser = *friendship.Edges.User.Picture
 	} else {
 		senderId = friendship.Edges.Friend.ID
 		receiverId = friendship.Edges.User.ID
+		pictureUser = *friendship.Edges.Friend.Picture
 	}
 
 	messageResponse := dtos.CreateMessageFriendDTO{
@@ -201,6 +205,7 @@ func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendI
 		ReceiverId:   receiverId,
 		CreationDate: messageCreated.CreatedAt,
 		Content:      message,
+		PictureUser:  pictureUser,
 	}
 
 	// Send message to friend
