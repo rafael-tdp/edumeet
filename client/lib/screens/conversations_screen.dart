@@ -79,12 +79,15 @@ class _ConversationsPageState extends State<ConversationsPage> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Rechercher une conversation',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  hintText: "Recherche de conversation...",
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
                 ),
-                prefixIcon: const Icon(Icons.search),
-              ),
               onChanged: _filterConversations,
             ),
           ),
