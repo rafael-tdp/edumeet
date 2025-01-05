@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:client/core/models/response.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/utils/http_utils.dart';
 import 'package:http/http.dart' as http;
@@ -364,28 +365,31 @@ class EventServices {
     }
   }
 
-  static Future<void> deleteEvent(String eventId) async {
+  static Future<ResponseRequest> deleteEvent(eventId) async {
     try {
-      final token = await AuthServices().getToken();;
+      final token = await AuthServices().getToken();
 
       if (token == null) {
-        throw Exception('No token found');
+        return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }
 
       final response = await http.delete(
-        Uri.parse('${Env.BACKEND_URL}/events/$eventId'),
+        Uri.parse('${Env.BACKEND_URL}/events/' + eventId),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
       );
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to delete event');
+      if (response.statusCode == 204) {
+        return ResponseRequest(success: true, message: "Evenement supprimé avec succes.");
+      } else {
+        return ResponseRequest(success: true, message: json.decode(response.body)['error']);
       }
-    } catch (error) {
-      log('An error occurred while deleting event', error: error);
-      rethrow;
+    } catch (error, stacktrace) {
+      log('An error occurred while deleting subject',
+          error: error, stackTrace: stacktrace);
+      return ResponseRequest(success: false, message: "Une erreur s'est produite.");
     }
   }
 
@@ -418,7 +422,7 @@ class EventServices {
 
   static Future<ResponseRequest> updateEventAdmin(eventId, updatedEvent) async {
     try {
-      final token = await getToken();
+      final token = await AuthServices().getToken();
 
       print(updatedEvent);
 

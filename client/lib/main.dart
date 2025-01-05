@@ -115,19 +115,11 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _isFirstLaunch() async {
-    final isFirstLaunch = await CacheService.getDataFromCache("first_launch");
-    if (isFirstLaunch == null) {
-      await CacheService.saveDataToCache("first_launch", "false");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     PushNotificationService.initialize();
     _sseServices.connectToSse();
-    _isFirstLaunch();
   }
 
   @override

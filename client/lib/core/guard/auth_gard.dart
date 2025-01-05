@@ -30,6 +30,7 @@ class _AuthGuardState extends State<AuthGuard> {
     final isLoggedIn = await CacheService.getDataFromCache("auth_token");
     setState(() {
       _isFirstLaunch = isFirstLaunch == null;
+      print("set state: $_isFirstLaunch");
       _isLoggedIn = isLoggedIn != null;
     });
   }

@@ -192,9 +192,9 @@ class _UserPageState extends State<UserPageAdmin> {
           rowBuilder: (user) {
             return [
               DataCell(Text(user.id.toString())),
-              DataCell(Text(user.email)),
-              DataCell(Text(user.firstname)),
-              DataCell(Text(user.lastname)),
+              DataCell(Text(user.email!)),
+              DataCell(Text(user.firstname!)),
+              DataCell(Text(user.lastname!)),
               DataCell(Text(user.birthDate.toString())),
               DataCell(Text(user.activated.toString())),
               DataCell(Text(user.reportNumber.toString())),

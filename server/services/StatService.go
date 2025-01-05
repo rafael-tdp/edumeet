@@ -52,7 +52,7 @@ func (sr *StatService) GetStats() (interface{}, error) {
 		return nil, err
 	}
 
-	subjects, err := sr.subjectRepository.GetSubjects()
+	subjects, err := sr.subjectRepository.GetSubjects(9999, 0)
 
 	if err != nil {
 		return nil, err

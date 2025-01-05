@@ -29,15 +29,16 @@ import 'package:client/core/guard/auth_gard.dart';
 import 'package:client/screens/create_event_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart';
-import 'dart:html';
 
-
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final initialRoute = kIsWeb ? AdminPage.routeName : '/home';
 
 List<RouteBase> mobileRoutes = [
   ShellRoute(
     navigatorKey: _shellNavigatorKey,
     builder: (context, state, child) => Scaffold(
-      body: HomePage(child: child),
+      body: const AuthGuard(child: HomePage()),
     ),
     routes: [
       GoRoute(
@@ -102,8 +103,7 @@ List<RouteBase> mobileRoutes = [
       ),
       GoRoute(
         path: '/',
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const AuthGuard(child: HomePage()),
+        builder: (context, state) => const HomePage(),
       ),
       GoRoute(
         path: ConversationsPage.routeName,
@@ -122,46 +122,7 @@ List<RouteBase> mobileRoutes = [
         parentNavigatorKey: _shellNavigatorKey,
         builder: (context, state) => const FriendsListPage(),
       ),
-      // GoRoute(
-      //     path: ProfilePage.routeName,
-      //     parentNavigatorKey: _shellNavigatorKey,
-      //     builder: (context, state) => const ProfilePage(
-      //           userId: null,
-      //         ),
-      //     routes: [
-      //       GoRoute(
-      //         path: EditProfilePage.routeName,
-      //         name: EditProfilePage.routeName.replaceAll("/", ""),
-      //         parentNavigatorKey: _rootNavigatorKey,
-      //         builder: (context, state) => EditProfilePage(
-      //           user: state.extra as User,
-      //         ),
-      //       ),
-      //     ]),
     ],
-  ),
-  GoRoute(
-    path: '/',
-    parentNavigatorKey: _rootNavigatorKey,
-    builder: (context, state) => const AuthGuard(child: HomePage()),
-  ),
-  GoRoute(
-    path: LoginPage.routeName,
-    name: LoginPage.routeName.replaceAll("/", ""),
-    parentNavigatorKey: _rootNavigatorKey,
-    builder: (context, state) => const LoginPage(),
-  ),
-  GoRoute(
-    path: RegisterPage.routeName,
-    name: RegisterPage.routeName.replaceAll("/", ""),
-    parentNavigatorKey: _rootNavigatorKey,
-    builder: (context, state) => const RegisterPage(),
-  ),
-  GoRoute(
-    path: HomePage.routeName,
-    name: HomePage.routeName.replaceAll("/", ""),
-    parentNavigatorKey: _rootNavigatorKey,
-    builder: (context, state) => const HomePage(),
   ),
   GoRoute(
     path: LanguagePage.routeName,
@@ -174,12 +135,6 @@ List<RouteBase> mobileRoutes = [
     name: SubjectsPage.routeName.replaceAll("/", ""),
     parentNavigatorKey: _rootNavigatorKey,
     builder: (context, state) => const SubjectsPage(),
-  ),
-  GoRoute(
-    path: ForgotPasswordPage.routeName,
-    name: ForgotPasswordPage.routeName.replaceAll("/", ""),
-    parentNavigatorKey: _rootNavigatorKey,
-    builder: (context, state) => const ForgotPasswordPage(),
   ),
   GoRoute(
     path: ValidateAccountPage.routeName,
@@ -213,13 +168,6 @@ List<RouteBase> mobileRoutes = [
       userId: state.pathParameters['userId'],
     ),
   ),
-  // GoRoute(
-  //     path: '${ProfilePage.routeName}/:userId',
-  //     parentNavigatorKey: _rootNavigatorKey,
-  //     builder: (context, state) {
-  //       final userId = state.pathParameters['userId'];
-  //       return ProfilePage(userId: userId);
-  //     }),
   GoRoute(
     path: '${ChatPage.routeName}/:userName',
     parentNavigatorKey: _rootNavigatorKey,
@@ -300,10 +248,6 @@ List<RouteBase> _webRoutes() {
     ),
   ];
 }
-
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
-final initialRoute = kIsWeb ? AdminPage.routeName : '/';
 
 final _router = GoRouter(
   initialLocation: initialRoute,

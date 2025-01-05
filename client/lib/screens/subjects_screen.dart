@@ -77,12 +77,13 @@ Future<bool> _isFirstLaunch() async {
 void _confirmSelection() async {
   final isFirstLaunch = await _isFirstLaunch();
   SubjectServices.subscribeToSubjects(_selectedSubjects.toList())
-      .then((response) {
+      .then((response) async {
     if (response.success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Vos matières ont été mises à jour")),
       );
       if (isFirstLaunch) {
+        await CacheService.saveDataToCache("first_launch", "false");
         context.go(HomePage.routeName);
       } else {
         context.go(SettingsPage.routeName);

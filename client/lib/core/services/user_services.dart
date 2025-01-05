@@ -208,8 +208,6 @@ class UserServices {
       return ResponseRequest(success: false, message: "Une erreur s'est produite.");
     }
   }
-}
-
   Future<ResponseRequest> getUserSubjects() async {
     final token = await _authServices.getToken();
 

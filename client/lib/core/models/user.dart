@@ -30,7 +30,7 @@ class User {
     this.reportNumber,
     this.address,
     this.role,
-    this.activated
+    this.activated,
     this.badges,
     this.nbFriends,
     this.nbParticpatedEvents,

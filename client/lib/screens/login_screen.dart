@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
             MaterialPageRoute(builder: (context) => const SubjectsPage()),
           );
         } else {
-          context.go(HomePage.routeName);
+          context.push(HomePage.routeName);
         }
       } else {
         setState(() {

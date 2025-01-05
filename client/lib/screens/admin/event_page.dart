@@ -36,7 +36,7 @@ class _EventPageState extends State<EventsPageAdmin> {
   Future<void> _fetchEvents() async {
     try {
 
-      final events = await EventServices.getEvents();
+      final events = await EventServices.getEvents([],null,null,"all",null);
       setState(() {
         _events = events;
         _isLoading = false;
