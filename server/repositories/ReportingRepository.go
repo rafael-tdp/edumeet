@@ -46,7 +46,7 @@ func (r *ReportingRepository) DeleteReporting(reportingID string) error {
 	return nil
 }
 
-func (r *ReportingRepository) CreateReporting(reportingDTO dtos.ReportingDTO) (*ent.Reporting, error) {
+func (r *ReportingRepository) CreateReporting(ctx context.Context, reportingDTO dtos.ReportingDTO) (*ent.Reporting, error) {
 
 	userReporter, err := r.client.User.Query().Where(user.IDEQ(reportingDTO.UserID)).Only(context.Background())
 	if err != nil {
@@ -74,6 +74,17 @@ func (r *ReportingRepository) CreateReporting(reportingDTO dtos.ReportingDTO) (*
 	reporting, err = r.client.Reporting.Create().SetReason(reportingDTO.Reason).SetType(reportingDTO.Type).SetUser(userReporter).SetEntityID(reportingDTO.EntityID).Save(context.Background())
 	if err != nil {
 		return nil, errors.New("error creating reporting")
+	}
+
+	if reportingDTO.Type == "USER" {
+		user, err := r.client.User.Query().Where(user.IDEQ(reportingDTO.EntityID)).Only(context.Background())
+		if err != nil {
+			return nil, errors.New("user not found")
+		}
+		_, err = user.Update().SetReportNumber(user.ReportNumber + 1).Save(ctx)
+		if err != nil {
+			return nil, errors.New("error updating user")
+		}
 	}
 
 	return reporting, nil

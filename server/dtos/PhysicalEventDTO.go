@@ -17,5 +17,7 @@ func EntToPhysicalEventDTO(physicalEvent *ent.PhysicalEvent) *PhysicalEventDTO {
 	return &PhysicalEventDTO{
 		ID:       physicalEvent.ID,
 		Location: physicalEvent.Location,
+		Lng:      physicalEvent.Lng,
+		Lat:      physicalEvent.Lat,
 	}
 }

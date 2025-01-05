@@ -52,6 +52,7 @@ class Translations implements BaseTranslations<AppLocale, Translations> {
 	late final TranslationsResourcesFr resources = TranslationsResourcesFr._(_root);
 	late final TranslationsMessagesFr messages = TranslationsMessagesFr._(_root);
 	late final TranslationsCommonFr common = TranslationsCommonFr._(_root);
+	late final TranslationsSettingsFr settings = TranslationsSettingsFr._(_root);
 	late final TranslationsPageFr page = TranslationsPageFr._(_root);
 }
 
@@ -93,6 +94,7 @@ class TranslationsAppFr {
 	String get loadingIndicator => 'Chargement...';
 	String get errorOccurred => 'Une erreur est survenue';
 	String get backTo => 'Retour à ';
+	String get unknown => 'Inconnu';
 }
 
 // Path: user
@@ -117,6 +119,14 @@ class TranslationsUserFr {
 	String get noDescription => 'Aucune description';
 	String get noAddress => 'Adresse non disponible';
 	String get noReportsAvailable => 'Nombre de signalements non disponible';
+	String get noBio => 'Bio non disponible';
+	String get noBirthdate => 'Date de naissance non disponible';
+	String get noLocation => 'Lieu non disponible';
+	String get noEmail => 'Email non disponible';
+	String get noUsername => 'Nom d\'utilisateur non disponible';
+	String get noName => 'Nom non disponible';
+	String get noFirstname => 'Prénom non disponible';
+	String get you => 'vous';
 }
 
 // Path: welcome
@@ -191,6 +201,7 @@ class TranslationsFormFr {
 	String get confirmPassword => 'Confirmer le mot de passe';
 	String get pleaseConfirmPassword => 'Veuillez confirmer votre mot de passe';
 	String get passwordNotMatch => 'Les mots de passe ne correspondent pas';
+	String get invalidUsername => 'Le nom d\'utilisateur doit débuter par une lettre et contenir : \n- Au moins 3 caractères \n- Au maximum 20 caractères \n- Aucun caractères spéciaul';
 }
 
 // Path: swipe_cards
@@ -252,6 +263,7 @@ class TranslationsErrorFr {
 	// Translations
 	String details({required Object error}) => 'Erreur : ${error}';
 	String get general => 'Une erreur est survenue';
+	String get no_results => 'Aucun résultat trouvé';
 	String get no_internet => 'Pas de connexion Internet';
 	String get no_internet_description => 'Veuillez vérifier votre connexion Internet et réessayer';
 	String get no_events => 'Aucun événement trouvé';
@@ -354,6 +366,24 @@ class TranslationsCommonFr {
 	String get message => 'Message';
 }
 
+// Path: settings
+class TranslationsSettingsFr {
+	TranslationsSettingsFr._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	String get account => 'Compte';
+	String get settings => 'Paramètres';
+	String get language => 'Langue';
+	String get manageSubjects => 'Gestion des matières';
+	String get notifications => 'Notifications';
+	String get about => 'À propos';
+	String get contact => 'Contact';
+	String get terms => 'Conditions d\'utilisation';
+	String get privacy => 'Politique de confidentialité';
+}
+
 // Path: page
 class TranslationsPageFr {
 	TranslationsPageFr._(this._root);
@@ -433,6 +463,7 @@ extension on Translations {
 			case 'app.loadingIndicator': return 'Chargement...';
 			case 'app.errorOccurred': return 'Une erreur est survenue';
 			case 'app.backTo': return 'Retour à ';
+			case 'app.unknown': return 'Inconnu';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Nom d\'utilisateur';
 			case 'user.name': return 'Nom';
@@ -448,6 +479,14 @@ extension on Translations {
 			case 'user.noDescription': return 'Aucune description';
 			case 'user.noAddress': return 'Adresse non disponible';
 			case 'user.noReportsAvailable': return 'Nombre de signalements non disponible';
+			case 'user.noBio': return 'Bio non disponible';
+			case 'user.noBirthdate': return 'Date de naissance non disponible';
+			case 'user.noLocation': return 'Lieu non disponible';
+			case 'user.noEmail': return 'Email non disponible';
+			case 'user.noUsername': return 'Nom d\'utilisateur non disponible';
+			case 'user.noName': return 'Nom non disponible';
+			case 'user.noFirstname': return 'Prénom non disponible';
+			case 'user.you': return 'vous';
 			case 'welcome.welcome': return 'Bienvenue sur Edumeet, la plateforme de révision collaborative';
 			case 'welcome.setup': return 'Commençons par choisir une langue';
 			case 'welcome.whatLanguage': return 'Quelle langue parles-tu ?';
@@ -486,6 +525,7 @@ extension on Translations {
 			case 'form.confirmPassword': return 'Confirmer le mot de passe';
 			case 'form.pleaseConfirmPassword': return 'Veuillez confirmer votre mot de passe';
 			case 'form.passwordNotMatch': return 'Les mots de passe ne correspondent pas';
+			case 'form.invalidUsername': return 'Le nom d\'utilisateur doit débuter par une lettre et contenir : \n- Au moins 3 caractères \n- Au maximum 20 caractères \n- Aucun caractères spéciaul';
 			case 'swipe_cards.loading_error': return 'Erreur de chargement des événements';
 			case 'swipe_cards.end_of_list': return 'Vous avez atteint la fin de la liste !';
 			case 'swipe_cards.nope': return ({required Object title}) => 'Non à ${title}';
@@ -520,6 +560,7 @@ extension on Translations {
 			case 'event.eventNotStarted': return 'Le lien de connexion sera disponible ici lorsque l\'événement commencera.';
 			case 'error.details': return ({required Object error}) => 'Erreur : ${error}';
 			case 'error.general': return 'Une erreur est survenue';
+			case 'error.no_results': return 'Aucun résultat trouvé';
 			case 'error.no_internet': return 'Pas de connexion Internet';
 			case 'error.no_internet_description': return 'Veuillez vérifier votre connexion Internet et réessayer';
 			case 'error.no_events': return 'Aucun événement trouvé';
@@ -566,6 +607,15 @@ extension on Translations {
 			case 'messages.sendMessage': return 'Envoyer';
 			case 'common.sender': return 'Expéditeur';
 			case 'common.message': return 'Message';
+			case 'settings.account': return 'Compte';
+			case 'settings.settings': return 'Paramètres';
+			case 'settings.language': return 'Langue';
+			case 'settings.manageSubjects': return 'Gestion des matières';
+			case 'settings.notifications': return 'Notifications';
+			case 'settings.about': return 'À propos';
+			case 'settings.contact': return 'Contact';
+			case 'settings.terms': return 'Conditions d\'utilisation';
+			case 'settings.privacy': return 'Politique de confidentialité';
 			case 'page.home': return 'Accueil';
 			case 'page.homePage': return 'Page d\'accueil';
 			case 'page.profile': return 'Profil';

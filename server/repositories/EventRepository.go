@@ -5,6 +5,7 @@ import (
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/ent/event"
+	"edumeet/ent/message"
 	"edumeet/ent/participant"
 	"edumeet/ent/remoteevent"
 	"edumeet/ent/subject"
@@ -185,7 +186,7 @@ func (er *EventRepository) UpdateEvent(ctx context.Context, event dtos.EventDTO,
 	return updatedEvent, nil
 }
 
-func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters) ([]*ent.Event, error) {
+func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters, limit, offset int) ([]*ent.Event, error) {
 	query := er.client.Event.Query().
 		WithRemoteEvent().
 		WithPhysicalEvent().
@@ -205,7 +206,10 @@ func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters)
 	}
 
 	// Exécuter la requête
-	events, err := query.All(context.Background())
+	events, err := query.
+		Limit(limit).
+		Offset(offset).
+		All(context.Background())
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch events: %v", err)
 	}
@@ -301,19 +305,39 @@ func (er *EventRepository) UpdateEventSubjects(ctx context.Context, eventId stri
 	return event, nil
 }
 
-func (er *EventRepository) GetEvents() ([]*ent.Event, error) {
-	events, err := er.client.Event.Query().
-		WithParticipants().
-		WithSubjects().
-		WithRemoteEvent().
-		WithPhysicalEvent().
+func (er *EventRepository) GetLastMessagesByEvent(eventID string) ([]dtos.MessageDTO, error) {
+	messages, err := er.client.Message.
+		Query().
+		Where(message.HasEventWith(event.IDEQ(eventID))).
+		Order(ent.Desc(message.FieldCreatedAt)).
+		Limit(5).
+		WithUser(
+			func(uq *ent.UserQuery) {
+				uq.Select(user.FieldID, user.FieldFirstname, user.FieldLastname, user.FieldUsername, user.FieldPicture)
+			},
+		).
 		All(context.Background())
 
 	if err != nil {
 		return nil, err
 	}
 
-	return events, nil
+	var messageDTOs []dtos.MessageDTO
+	for _, msg := range messages {
+		messageDTOs = append(messageDTOs, dtos.MessageDTO{
+			ID:      msg.ID,
+			Content: msg.Content,
+			User: dtos.UserDTO{
+				ID:        msg.Edges.User.ID,
+				Firstname: msg.Edges.User.Firstname,
+				Lastname:  msg.Edges.User.Lastname,
+				Username:  msg.Edges.User.Username,
+				Picture:   msg.Edges.User.Picture,
+			},
+		})
+	}
+
+	return messageDTOs, nil
 }
 
 func (er *EventRepository) UpdateEventAdmin(ctx context.Context, event dtos.UpdateEventAdminDTO, eventID string) (*ent.Event, error) {
@@ -329,4 +353,18 @@ func (er *EventRepository) UpdateEventAdmin(ctx context.Context, event dtos.Upda
 	}
 
 	return updatedEvent, nil
+}
+
+func (er *EventRepository) GetEvents() ([]*ent.Event, error) {
+	events, err := er.client.Event.Query().
+		WithParticipants().
+		WithSubjects().
+		WithRemoteEvent().
+		WithPhysicalEvent().
+		All(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+	return events, nil
 }

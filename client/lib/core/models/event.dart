@@ -1,3 +1,5 @@
+import 'package:client/core/models/message.dart';
+
 class Event {
   final String? id;
   final String title;
@@ -14,6 +16,8 @@ class Event {
   final String? createdBy;
   final List<dynamic>? subjects;
   final int? nbMaxParticipants;
+  final List<Message>? lastMessages;
+  final String? code;
 
   Event({
     this.id,
@@ -31,9 +35,16 @@ class Event {
     this.createdBy,
     this.subjects,
     this.nbMaxParticipants,
+    this.lastMessages,
+    this.code,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
+    List<Message>? lastMessages;
+    if (json['last_messages'] != null) {
+      lastMessages = List<Message>.from(
+          json['last_messages'].map((message) => Message.fromJson(message)));
+    }
     return Event(
       id: json['id'],
       title: json['title'],
@@ -50,6 +61,8 @@ class Event {
       createdBy: json['created_by'],
       subjects: json['subjects'],
       nbMaxParticipants: json['nb_max_participants'],
+      lastMessages: lastMessages,
+      code: json['code'],
     );
   }
 
@@ -70,6 +83,8 @@ class Event {
       'created_by': createdBy,
       'subjects': subjects,
       'nb_max_participants': nbMaxParticipants,
+      'last_messages': lastMessages,
+      'code': code,
     };
   }
 }

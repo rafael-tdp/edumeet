@@ -1,6 +1,7 @@
 import 'package:client/core/models/event.dart';
 import 'package:client/core/models/user.dart';
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/screens/edit_event_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/event_services.dart';
 import 'package:client/components/event/event_header.dart';
@@ -21,6 +22,7 @@ class EventDetailsPage extends StatefulWidget {
       extra: currentUser,
     );
   }
+
   final String eventId;
   final User currentUser;
 
@@ -39,6 +41,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   bool _isAppBarExpanded = false;
   late Future<Event> _eventFuture;
   late bool isCurrentUserEvent;
+  bool shouldRefresh = false;
 
   @override
   void initState() {
@@ -65,7 +68,24 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   void _navigateToChat(BuildContext context, Event event) {
-    context.go('${EventsPage.routeName}/${event.id}/details${EventChatPage.routeName}', extra: event);
+    // Navigator.of(context).push(
+    //   PageRouteBuilder(
+    //     transitionDuration: const Duration(milliseconds: 150),
+    //     reverseTransitionDuration: const Duration(milliseconds: 150),
+    //     pageBuilder: (context, animation, secondaryAnimation) {
+    //       EventChatPage.navigateTo(context, event.id!);
+    //       return SlideTransition(
+    //         position: Tween<Offset>(
+    //           begin: const Offset(1.0, 0.0),
+    //           end: Offset.zero,
+    //         ).animate(animation),
+    //         child:
+    //         EventChatPage(eventId: event.id!),
+    //       );
+    //     },
+    //   ),
+    // );
+    EventChatPage.navigateTo(context, event.id!);
   }
 
   @override
@@ -87,15 +107,21 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
           final event = snapshot.data!;
 
+          final currentParticipantId = event.participants!.firstWhere(
+              (participant) =>
+                  participant['user']['id'] == widget.currentUser.id,
+              orElse: () => null)?['id'];
+
           return CustomScrollView(
             controller: _scrollController,
             slivers: [
               SliverAppBar(
-                expandedHeight: 400,
+                expandedHeight: 350,
                 flexibleSpace: FlexibleSpaceBar(
                   background: EventHeader(
                     date: event.startDate,
-                    image: event.image!,
+                    image: event.image ??
+                        'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dHJhdmFpbHxlbnwwfHwwfHx8Mg%3D%3D',
                     title: event.title,
                     description: event.description,
                     participantsCount: event.participantsCount!,
@@ -110,9 +136,28 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                     weight: 30,
                   ),
                   onPressed: () {
-                    EventsPage.navigateTo(context);
+                    Navigator.of(context).pop(shouldRefresh);
                   },
                 ),
+                actions: [
+                  if (isCurrentUserEvent)
+                    IconButton(
+                      icon: Icon(
+                        Icons.edit,
+                        color: _isAppBarExpanded ? Colors.black : Colors.white,
+                      ),
+                      onPressed: () async {
+                        shouldRefresh = await context.push(
+                          '${EventsPage.routeName}/${event.id}${EditEventPage.routeName}',
+                        ) as bool;
+                        if (shouldRefresh == true) {
+                          setState(() {
+                            _eventFuture = EventServices.getEventDetails(event.id!);
+                          });
+                        }
+                      },
+                    ),
+                ],
               ),
               SliverToBoxAdapter(
                 child: Column(
@@ -123,6 +168,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       eventDate: event.startDate,
                       address: event.physicalEvent?['location'],
                       link: event.remoteEvent?['url'],
+                      code: isCurrentUserEvent ? event.code : null,
                     ),
                     const SizedBox(height: 20),
                     AnimatedOpacity(
@@ -138,14 +184,87 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       opacity: 1.0,
                       duration: const Duration(milliseconds: 500),
                       child: MessagesPreview(
-                        messages: const [],
+                        messages: event.lastMessages ?? const [],
                         onSeeAllMessages: () => _navigateToChat(context, event),
                       ),
                     ),
                     const SizedBox(height: 20),
                     ResourcesSection(
                       resources: event.documents ?? const [],
+                      eventId: event.id!,
                     ),
+                    const SizedBox(height: 20),
+                    // Leave button
+                    if (!isCurrentUserEvent)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: GestureDetector(
+                            onTap: () {
+                              if (currentParticipantId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Participant introuvable.'),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              EventServices.leaveEvent(currentParticipantId)
+                                  .then((_) {
+                                if (!mounted) return;
+                                EventsPage.navigateTo(context);
+                              }).catchError((e) {
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Erreur: ${e.toString()}'),
+                                  ),
+                                );
+                              });
+                            },
+                            child: const Text(
+                              "Quitter l'événement",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                    // Delete button
+                    if (isCurrentUserEvent)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: GestureDetector(
+                            onTap: () {
+                              EventServices.deleteEvent(event.id!).then((_) {
+                                if (!mounted) return;
+                                EventsPage.navigateTo(context);
+                              }).catchError((e) {
+                                if (!mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Erreur: ${e.toString()}'),
+                                  ),
+                                );
+                              });
+                            },
+                            child: const Text(
+                              "Supprimer l'événement",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     const SizedBox(height: 20),
                   ],
                 ),

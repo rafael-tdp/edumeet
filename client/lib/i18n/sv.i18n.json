@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Har du redan ett konto?",
     "loadingIndicator": "Laddar...",
     "errorOccurred": "Ett fel har inträffat",
-    "backTo": "Tillbaka till "
+    "backTo": "Tillbaka till ",
+    "unknown": "Okänd"
   },
   "user": {
     "email": "E-post",
@@ -47,7 +48,16 @@
     "anonymous": "Anonym",
     "noDescription": "Ingen beskrivning",
     "noAddress": "Ingen adress tillgänglig",
-    "noReportsAvailable": "Antal rapporter inte tillgängligt"
+    "noReportsAvailable": "Antal rapporter inte tillgängligt",
+    "noBio": "Bio ej tillgänglig",
+    "noBirthdate": "Födelsedatum ej tillgängligt",
+    "noLocation": "Plats ej tillgänglig",
+    "noEmail": "E-post ej tillgänglig",
+    "noUsername": "Användarnamn ej tillgängligt",
+    "noName": "Namn ej tillgängligt",
+    "noFirstname": "Förnamn ej tillgängligt",
+    "you": "du",
+    "me": "(jag)"
   },
   "welcome": {
     "welcome": "Välkommen till Edumeet, plattformen för samarbetsstudier",
@@ -93,7 +103,8 @@
     "haveToAcceptConditions": "Du måste godkänna användarvillkoren och integritetspolicyn",
     "confirmPassword": "Bekräfta lösenord",
     "pleaseConfirmPassword": "Vänligen bekräfta ditt lösenord",
-    "passwordNotMatch": "Lösenorden matchar inte"
+    "passwordNotMatch": "Lösenorden matchar inte",
+    "invalidUsername": "Användarnamnet måste: \n- innehålla mellan 3 och 20 tecken \n- börja med en bokstav \n- inte innehålla specialtecken"
   },
   "swipe_cards": {
     "loading_error": "Fel vid inläsning av evenemang",
@@ -134,6 +145,7 @@
   "error": {
     "details": "Fel: {{error}}",
     "general": "Ett fel har inträffat",
+    "no_results": "Inga resultat hittades",
     "no_internet": "Ingen internetanslutning",
     "no_internet_description": "Vänligen kontrollera din internetanslutning och försök igen",
     "no_events": "Inga evenemang hittades",
@@ -192,6 +204,17 @@
   "common": {
     "sender": "Avsändare",
     "message": "Meddelande"
+  },
+  "settings": {
+    "account": "Konto",
+    "settings": "Inställningar",
+    "language": "Språk",
+    "manageSubjects": "Hantera ämnen",
+    "notifications": "Notifikationer",
+    "about": "Om",
+    "contact": "Kontakt",
+    "terms": "Användarvillkor",
+    "privacy": "Integritetspolicy"
   },
   "page": {
     "home": "Startsida",

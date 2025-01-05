@@ -56,4 +56,14 @@ func InitRoutes(app *fiber.App) {
 	//Initialiser les routes stat
 	statController := initStatController(client)
 	setupRoutesStat(app, statController)
+	//Initialiser les routes address
+	addressController := initAddressController(client)
+	setupRoutesAddress(app, addressController)
+
+	//Initialiser les routes fcm
+	fcmController := initFcmController()
+	setupRoutesFcm(app, fcmController)
+
+	//Initialiser les routes swagger
+	setupRoutesSwagger(app)
 }

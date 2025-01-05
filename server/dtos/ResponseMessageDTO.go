@@ -1,24 +1,21 @@
 package dtos
 
-import "edumeet/ent"
-
-// ResponseMessageDTO is a DTO that represents a response message
 type ResponseMessageDTO struct {
-	Action    string   `json:"type"`
-	UserID    string   `json:"user_id"`
-	Message   string   `json:"message"`
-	Documents []string `json:"documents"`
-	CreatedAt string   `json:"created_at"`
-	MessageID string   `json:"message_id"`
+	ID          string `json:"id"`
+	Message     string `json:"message"`
+	Username    string `json:"username"`
+	CreatedBy   string `json:"createdBy"`
+	CreatedAt   string `json:"createdAt"`
+	PictureUser string `json:"pictureUser"`
 }
 
-func EntToResponseMessageDTO(message *ent.Message, documents []string, action string, userID string) *ResponseMessageDTO {
-	return &ResponseMessageDTO{
-		Action:    action,
-		UserID:    userID,
-		Message:   message.Content,
-		Documents: documents,
-		CreatedAt: message.CreatedAt.String(),
-		MessageID: message.ID,
+func EntToResponseMessageDTO(message string, id string, createdBy string, createdAt string, username string, pictureUser string) ResponseMessageDTO {
+	return ResponseMessageDTO{
+		ID:          id,
+		Message:     message,
+		Username:    username,
+		CreatedBy:   createdBy,
+		CreatedAt:   createdAt,
+		PictureUser: pictureUser,
 	}
 }

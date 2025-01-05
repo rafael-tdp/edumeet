@@ -3,6 +3,7 @@ package services
 import (
 	"os"
 
+	"github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
@@ -40,6 +41,7 @@ func (es *EmailService) SendEmail(toEmail, subject, htmlContent string) error {
 	d := gomail.NewDialer(es.smtpServer, es.port, es.username, es.password)
 
 	if err := d.DialAndSend(m); err != nil {
+		logrus.Error("Error EmailService.SendEmail: ", err)
 		return err
 	}
 

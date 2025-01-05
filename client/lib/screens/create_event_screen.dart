@@ -1,5 +1,6 @@
 import 'package:client/core/models/event.dart';
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/screens/create_documents_screen.dart';
 import 'package:client/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,7 +13,7 @@ class CreateEventPage extends StatefulWidget {
   static const String routeName = '/create';
 
   static navigateTo(BuildContext context) {
-    context.go('${EventsPage.routeName}$routeName');
+    context.push('${EventsPage.routeName}$routeName');
   }
 
   const CreateEventPage({super.key});
@@ -27,41 +28,47 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final _descriptionController = TextEditingController();
   DateTime? _startDate;
   DateTime? _endDate;
+  TimeOfDay? _startTime;
+  TimeOfDay? _endTime;
   final _locationController = TextEditingController();
-  final _maxParticipantsController = TextEditingController();
   final _onlineLinkController = TextEditingController();
 
+  bool _isDisposed = false;
   bool _isPrivate = false;
   bool _isPhysical = true;
   Set<String> _selectedSubjects = {};
-  
-  // Liste pour stocker les suggestions d'adresses
+
   List<String> _addressSuggestions = [];
 
   @override
   void dispose() {
+    _isDisposed = true;
     _nameController.dispose();
     _descriptionController.dispose();
     _locationController.dispose();
-    _maxParticipantsController.dispose();
     _onlineLinkController.dispose();
     super.dispose();
   }
 
-  // Fonction pour obtenir les suggestions d'adresses
   void _getAddressSuggestions(String query) async {
     try {
+      if (query.length < 3) {
+        return;
+      }
+
       List<String> suggestions = await fetchAddressSuggestions(query);
+      if (!mounted || _isDisposed) {
+        return;
+      }
       setState(() {
         _addressSuggestions = suggestions;
       });
     } catch (e) {
-      // Gérez les erreurs de récupération des adresses
       print("Erreur de récupération des adresses: $e");
     }
   }
 
-  void _createEvent() {
+  void _createEvent(context) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -69,25 +76,28 @@ class _CreateEventPageState extends State<CreateEventPage> {
     Event event = Event(
       title: _nameController.text,
       description: _descriptionController.text,
-      startDate:
-          _startDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
-      endDate: _endDate!.toIso8601String().replaceFirst(RegExp(r'\.000$'), 'Z'),
+      startDate: _startDate!
+          .add(Duration(hours: _startTime!.hour, minutes: _startTime!.minute))
+          .toIso8601String()
+          .replaceFirst(RegExp(r'\.000$'), 'Z'),
+      endDate: _endDate!
+          .add(Duration(hours: _endTime!.hour, minutes: _endTime!.minute))
+          .toIso8601String()
+          .replaceFirst(RegExp(r'\.000$'), 'Z'),
       isPrivate: _isPrivate,
-      nbMaxParticipants: int.parse(_maxParticipantsController.text),
-      physicalEvent: _isPhysical
-          ? {
-              'location': _locationController.text,
-            }
-          : null,
-      remoteEvent: !_isPhysical
-          ? {
-              'url': _onlineLinkController.text,
-            }
-          : null,
+      physicalEvent:
+          _isPhysical ? {'location': "1 Rue Lecourbe 75015 Paris"} : null,
+      remoteEvent: !_isPhysical ? {'url': _onlineLinkController.text} : null,
       subjects: _selectedSubjects.toList(),
     );
 
-    EventServices.createEvent(event);
+    try {
+      var createdEvent = await EventServices.createEvent(event);
+      final eventId = createdEvent.id;
+      CreateDocumentsPage.navigateTo(context, eventId!);
+    } catch (e) {
+      print("Erreur de création d'événement: $e");
+    }
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
@@ -105,6 +115,24 @@ class _CreateEventPageState extends State<CreateEventPage> {
           _startDate = selectedDate;
         } else {
           _endDate = selectedDate;
+        }
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context, bool isStartTime) async {
+    TimeOfDay initialTime = TimeOfDay.now();
+    TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: initialTime,
+    );
+
+    if (selectedTime != null) {
+      setState(() {
+        if (isStartTime) {
+          _startTime = selectedTime;
+        } else {
+          _endTime = selectedTime;
         }
       });
     }
@@ -170,20 +198,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 label: "Date de fin",
                 isStartDate: false,
               ),
-              _buildTextFormField(
-                controller: _maxParticipantsController,
-                label: t.event.maxParticipants,
-                icon: Icons.people,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return t.event.enterMaxParticipants;
-                  }
-                  if (int.tryParse(value) == null) {
-                    return t.event.invalidMaxParticipants;
-                  }
-                  return null;
-                },
+              _buildTimeField(
+                context,
+                label: "Heure de début",
+                isStartTime: true,
+              ),
+              _buildTimeField(
+                context,
+                label: "Heure de fin",
+                isStartTime: false,
               ),
               const SizedBox(height: 20),
               SwitchListTile(
@@ -192,6 +215,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 onChanged: (bool value) {
                   setState(() {
                     _isPhysical = value;
+                  });
+                },
+              ),
+              SwitchListTile(
+                title: const Text("Événement privé"),
+                value: _isPrivate,
+                onChanged: (bool value) {
+                  setState(() {
+                    _isPrivate = value;
                   });
                 },
               ),
@@ -220,7 +252,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         return null;
                       },
                     ),
-              // Affichage des suggestions d'adresses
               if (_addressSuggestions.isNotEmpty)
                 Column(
                   children: _addressSuggestions.map((suggestion) {
@@ -229,7 +260,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       onTap: () {
                         _locationController.text = suggestion;
                         setState(() {
-                          _addressSuggestions.clear(); // Efface les suggestions après sélection
+                          _addressSuggestions.clear();
                         });
                       },
                     );
@@ -237,7 +268,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 ),
               const SizedBox(height: 20),
               SizedBox(
-                height: 300.0, // Hauteur maximale que vous souhaitez
+                height: 300.0,
                 child: SingleChildScrollView(
                   child: SubjectsSelection(
                     onSelected: (selectedSubjects) {
@@ -251,7 +282,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _createEvent,
+                onPressed: () => _createEvent(context),
                 child: Text(t.event.create),
               ),
             ],
@@ -317,6 +348,39 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
               prefixIcon: const Icon(Icons.calendar_today),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimeField(
+    BuildContext context, {
+    required String label,
+    required bool isStartTime,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: GestureDetector(
+        onTap: () {
+          _selectTime(context, isStartTime);
+        },
+        child: AbsorbPointer(
+          child: TextFormField(
+            controller: isStartTime
+                ? TextEditingController(
+                    text: _startTime == null ? '' : _startTime!.format(context),
+                  )
+                : TextEditingController(
+                    text: _endTime == null ? '' : _endTime!.format(context),
+                  ),
+            decoration: InputDecoration(
+              labelText: label,
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+              ),
+              prefixIcon: const Icon(Icons.access_time),
             ),
           ),
         ),

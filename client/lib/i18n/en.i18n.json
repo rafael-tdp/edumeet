@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Already have an account?",
     "loadingIndicator": "Loading...",
     "errorOccurred": "An error occurred",
-    "backTo": "Back to "
+    "backTo": "Back to ",
+    "unknown": "Unknown"
   },
   "user": {
     "email": "Email",
@@ -47,7 +48,16 @@
     "anonymous": "Anonymous",
     "noDescription": "No description",
     "noAddress": "Address not available",
-    "noReportsAvailable": "Number of reports not available"
+    "noReportsAvailable": "Number of reports not available",
+    "noBio": "Bio not available",
+    "noBirthdate": "Birthdate not available",
+    "noLocation": "Location not available",
+    "noEmail": "Email not available",
+    "noUsername": "Username not available",
+    "noName": "Name not available",
+    "noFirstname": "First name not available",
+    "you": "you",
+    "me": "(me)"
   },
   "welcome": {
     "welcome": "Welcome to Edumeet, the collaborative revision platform",
@@ -93,7 +103,8 @@
     "haveToAcceptConditions": "You must accept the terms of use and privacy policy",
     "confirmPassword": "Confirm password",
     "pleaseConfirmPassword": "Please confirm your password",
-    "passwordNotMatch": "Passwords do not match"
+    "passwordNotMatch": "Passwords do not match",
+    "invalidUsername": "The username must: \n- be between 3 and 20 characters long \n- start with a letter \n- not contain special characters"
   },
   "swipe_cards": {
     "loading_error": "Error loading events",
@@ -134,6 +145,7 @@
   "error": {
     "details": "Error: {{error}}",
     "general": "An error occurred",
+    "no_results": "No results found",
     "no_internet": "No internet connection",
     "no_internet_description": "Please check your internet connection and try again",
     "no_events": "No events found",
@@ -192,6 +204,17 @@
   "common": {
     "sender": "Sender",
     "message": "Message"
+  },
+  "settings": {
+    "account": "Account",
+    "settings": "Settings",
+    "language": "Language",
+    "manageSubjects": "Manage Subjects",
+    "notifications": "Notifications",
+    "about": "About",
+    "contact": "Contact",
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy"
   },
   "page": {
     "home": "Home",

@@ -1,41 +1,52 @@
 
 import 'package:client/screens/admin/admin_page.dart';
+import 'package:client/core/services/sse_services.dart';
+import 'package:client/providers/user_provider.dart';
+import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/providers/locale_provider.dart';
+import 'package:client/router.dart';
+import 'package:client/screens/friends_list_screen.dart';
+import 'package:client/screens/settings_screen.dart';
 import 'package:client/utils/colors.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:client/providers/locale_provider.dart';
 import 'package:client/screens/profile_screen.dart';
+import 'core/services/cache_service.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
 import 'screens/conversations_screen.dart';
-import 'package:client/i18n/generated/translations.g.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'package:client/providers/user_provider.dart';
-import 'router.dart';
+import 'package:client/core/services/push_notification_service.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setUrlStrategy(PathUrlStrategy());
 
+  WidgetsFlutterBinding.ensureInitialized();
+
   final userProvider = UserProvider();
   await userProvider.loadUserFromCache();
-
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
       builder: (context) => MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context) => UserProvider()),
+          ChangeNotifierProvider(create: (_) => LocaleProvider()),
+          ChangeNotifierProvider(create: (_) => UserProvider()),
         ],
         child: TranslationProvider(child: const MyApp()),
       ),
     ),
   );
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -59,7 +70,7 @@ class MyApp extends StatelessWidget {
 class HomePage extends StatefulWidget {
   static const String routeName = '/home';
   static navigateTo(BuildContext context) {
-    context.go(routeName);
+    context.go(HomePage.routeName);
   }
 
   final Widget? child;
@@ -70,15 +81,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final SseServices _sseServices = SseServices();
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
     const SwipeCardsPage(),
     const EventsPage(),
     const ConversationsPage(),
-    const ProfilePage(
-      isCurrentUser: true,
-    ),
+    const FriendsListPage(),
+    const SettingsPage(),
   ];
 
   void _onTabTapped(int index) {
@@ -93,12 +104,30 @@ class _HomePageState extends State<HomePage> {
         context.go(ConversationsPage.routeName);
         break;
       case 3:
-        context.go(ProfilePage.routeName);
+        context.go(FriendsListPage.routeName);
+        break;
+      case 4:
+        context.go(SettingsPage.routeName);
         break;
     }
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  Future<void> _isFirstLaunch() async {
+    final isFirstLaunch = await CacheService.getDataFromCache("first_launch");
+    if (isFirstLaunch == null) {
+      await CacheService.saveDataToCache("first_launch", "false");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    PushNotificationService.initialize();
+    _sseServices.connectToSse();
+    _isFirstLaunch();
   }
 
   @override
@@ -119,11 +148,11 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: AppColors.purple,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.favorite),
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
+            icon: Icon(Icons.event),
             label: '',
           ),
           BottomNavigationBarItem(
@@ -131,24 +160,17 @@ class _HomePageState extends State<HomePage> {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.groups),
+            label: '',
+          ),
+          //Sous menu pour les amis
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
             label: '',
           ),
         ],
       ),
       backgroundColor: Colors.white,
-    );
-  }
-}
-
-// Exemple de page 3 (Paramètres)
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(t.page.settingsPage),
     );
   }
 }

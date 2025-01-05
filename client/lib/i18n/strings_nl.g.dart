@@ -48,6 +48,7 @@ class TranslationsNl implements Translations {
 	@override late final _TranslationsResourcesNl resources = _TranslationsResourcesNl._(_root);
 	@override late final _TranslationsMessagesNl messages = _TranslationsMessagesNl._(_root);
 	@override late final _TranslationsCommonNl common = _TranslationsCommonNl._(_root);
+	@override late final _TranslationsSettingsNl settings = _TranslationsSettingsNl._(_root);
 	@override late final _TranslationsPageNl page = _TranslationsPageNl._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppNl implements TranslationsAppEn {
 	@override String get loadingIndicator => 'Laden...';
 	@override String get errorOccurred => 'Er is een fout opgetreden';
 	@override String get backTo => 'Terug naar ';
+	@override String get unknown => 'Onbekend';
 }
 
 // Path: user
@@ -113,6 +115,15 @@ class _TranslationsUserNl implements TranslationsUserEn {
 	@override String get noDescription => 'Geen beschrijving';
 	@override String get noAddress => 'Adres niet beschikbaar';
 	@override String get noReportsAvailable => 'Aantal meldingen niet beschikbaar';
+	@override String get noBio => 'Geen bio beschikbaar';
+	@override String get noBirthdate => 'Geboortedatum niet beschikbaar';
+	@override String get noLocation => 'Locatie niet beschikbaar';
+	@override String get noEmail => 'E-mail niet beschikbaar';
+	@override String get noUsername => 'Gebruikersnaam niet beschikbaar';
+	@override String get noName => 'Naam niet beschikbaar';
+	@override String get noFirstname => 'Voornaam niet beschikbaar';
+	@override String get you => 'jij';
+	@override String get me => '(ik)';
 }
 
 // Path: welcome
@@ -187,6 +198,7 @@ class _TranslationsFormNl implements TranslationsFormEn {
 	@override String get confirmPassword => 'Bevestig het wachtwoord';
 	@override String get pleaseConfirmPassword => 'Bevestig je wachtwoord';
 	@override String get passwordNotMatch => 'Wachtwoorden komen niet overeen';
+	@override String get invalidUsername => 'De gebruikersnaam moet: \n- tussen de 3 en 20 tekens bevatten \n- beginnen met een letter \n- geen speciale tekens bevatten';
 }
 
 // Path: swipe_cards
@@ -248,6 +260,7 @@ class _TranslationsErrorNl implements TranslationsErrorEn {
 	// Translations
 	@override String get details => 'Fout: {{error}}';
 	@override String get general => 'Er is een fout opgetreden';
+	@override String get no_results => 'Geen resultaten gevonden';
 	@override String get no_internet => 'Geen internetverbinding';
 	@override String get no_internet_description => 'Controleer je internetverbinding en probeer het opnieuw';
 	@override String get no_events => 'Geen evenementen gevonden';
@@ -350,6 +363,24 @@ class _TranslationsCommonNl implements TranslationsCommonEn {
 	@override String get message => 'Bericht';
 }
 
+// Path: settings
+class _TranslationsSettingsNl implements TranslationsSettingsEn {
+	_TranslationsSettingsNl._(this._root);
+
+	final TranslationsNl _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Account';
+	@override String get settings => 'Instellingen';
+	@override String get language => 'Taal';
+	@override String get manageSubjects => 'Beheer vakken';
+	@override String get notifications => 'Meldingen';
+	@override String get about => 'Over';
+	@override String get contact => 'Contact';
+	@override String get terms => 'Voorwaarden';
+	@override String get privacy => 'Privacybeleid';
+}
+
 // Path: page
 class _TranslationsPageNl implements TranslationsPageEn {
 	_TranslationsPageNl._(this._root);
@@ -429,6 +460,7 @@ extension on TranslationsNl {
 			case 'app.loadingIndicator': return 'Laden...';
 			case 'app.errorOccurred': return 'Er is een fout opgetreden';
 			case 'app.backTo': return 'Terug naar ';
+			case 'app.unknown': return 'Onbekend';
 			case 'user.email': return 'E-mail';
 			case 'user.username': return 'Gebruikersnaam';
 			case 'user.name': return 'Naam';
@@ -444,6 +476,15 @@ extension on TranslationsNl {
 			case 'user.noDescription': return 'Geen beschrijving';
 			case 'user.noAddress': return 'Adres niet beschikbaar';
 			case 'user.noReportsAvailable': return 'Aantal meldingen niet beschikbaar';
+			case 'user.noBio': return 'Geen bio beschikbaar';
+			case 'user.noBirthdate': return 'Geboortedatum niet beschikbaar';
+			case 'user.noLocation': return 'Locatie niet beschikbaar';
+			case 'user.noEmail': return 'E-mail niet beschikbaar';
+			case 'user.noUsername': return 'Gebruikersnaam niet beschikbaar';
+			case 'user.noName': return 'Naam niet beschikbaar';
+			case 'user.noFirstname': return 'Voornaam niet beschikbaar';
+			case 'user.you': return 'jij';
+			case 'user.me': return '(ik)';
 			case 'welcome.welcome': return 'Welkom bij Edumeet, het platform voor samenwerkingsstudie';
 			case 'welcome.setup': return 'Laten we beginnen met het kiezen van een taal';
 			case 'welcome.whatLanguage': return 'Welke taal spreek je?';
@@ -482,6 +523,7 @@ extension on TranslationsNl {
 			case 'form.confirmPassword': return 'Bevestig het wachtwoord';
 			case 'form.pleaseConfirmPassword': return 'Bevestig je wachtwoord';
 			case 'form.passwordNotMatch': return 'Wachtwoorden komen niet overeen';
+			case 'form.invalidUsername': return 'De gebruikersnaam moet: \n- tussen de 3 en 20 tekens bevatten \n- beginnen met een letter \n- geen speciale tekens bevatten';
 			case 'swipe_cards.loading_error': return 'Fout bij het laden van de evenementen';
 			case 'swipe_cards.end_of_list': return 'Je hebt het einde van de lijst bereikt!';
 			case 'swipe_cards.nope': return 'Nee tegen {{title}}';
@@ -516,6 +558,7 @@ extension on TranslationsNl {
 			case 'event.eventNotStarted': return 'De inloglink zal hier beschikbaar zijn wanneer het evenement begint.';
 			case 'error.details': return 'Fout: {{error}}';
 			case 'error.general': return 'Er is een fout opgetreden';
+			case 'error.no_results': return 'Geen resultaten gevonden';
 			case 'error.no_internet': return 'Geen internetverbinding';
 			case 'error.no_internet_description': return 'Controleer je internetverbinding en probeer het opnieuw';
 			case 'error.no_events': return 'Geen evenementen gevonden';
@@ -562,6 +605,15 @@ extension on TranslationsNl {
 			case 'messages.sendMessage': return 'Verstuur';
 			case 'common.sender': return 'Afzender';
 			case 'common.message': return 'Bericht';
+			case 'settings.account': return 'Account';
+			case 'settings.settings': return 'Instellingen';
+			case 'settings.language': return 'Taal';
+			case 'settings.manageSubjects': return 'Beheer vakken';
+			case 'settings.notifications': return 'Meldingen';
+			case 'settings.about': return 'Over';
+			case 'settings.contact': return 'Contact';
+			case 'settings.terms': return 'Voorwaarden';
+			case 'settings.privacy': return 'Privacybeleid';
 			case 'page.home': return 'Startpagina';
 			case 'page.homePage': return 'Startpagina';
 			case 'page.profile': return 'Profiel';

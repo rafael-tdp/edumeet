@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Hai già un account?",
     "loadingIndicator": "Caricamento...",
     "errorOccurred": "Si è verificato un errore",
-    "backTo": "Torna a "
+    "backTo": "Torna a ",
+    "unknown": "Sconosciuto"
   },
   "user": {
     "email": "Email",
@@ -47,7 +48,16 @@
     "anonymous": "Anonimo",
     "noDescription": "Nessuna descrizione",
     "noAddress": "Indirizzo non disponibile",
-    "noReportsAvailable": "Numero di segnalazioni non disponibile"
+    "noReportsAvailable": "Numero di segnalazioni non disponibile",
+    "noBio": "Bio non disponibile",
+    "noBirthdate": "Data di nascita non disponibile",
+    "noLocation": "Luogo non disponibile",
+    "noEmail": "Email non disponibile",
+    "noUsername": "Nome utente non disponibile",
+    "noName": "Nome non disponibile",
+    "noFirstname": "Nome non disponibile",
+    "you": "tu",
+    "me": "(me)"
   },
   "welcome": {
     "welcome": "Benvenuto su Edumeet, la piattaforma di revisione collaborativa",
@@ -93,7 +103,8 @@
     "haveToAcceptConditions": "Devi accettare i termini di utilizzo e la politica sulla privacy",
     "confirmPassword": "Conferma la password",
     "pleaseConfirmPassword": "Per favore conferma la tua password",
-    "passwordNotMatch": "Le password non corrispondono"
+    "passwordNotMatch": "Le password non corrispondono",
+    "invalidUsername": "Il nome utente deve : \n- contenere tra 3 e 20 caratteri \n- iniziare con una lettera \n- non contenere caratteri speciali"
   },
   "swipe_cards": {
     "loading_error": "Errore nel caricamento degli eventi",
@@ -134,6 +145,7 @@
   "error": {
     "details": "Errore: {{error}}",
     "general": "Si è verificato un errore",
+    "no_results": "Nessun risultato trovato",
     "no_internet": "Nessuna connessione Internet",
     "no_internet_description": "Controlla la tua connessione Internet e riprova",
     "no_events": "Nessun evento trovato",
@@ -192,6 +204,17 @@
   "common": {
     "sender": "Mittente",
     "message": "Messaggio"
+  },
+  "settings": {
+    "account": "Account",
+    "settings": "Impostazioni",
+    "language": "Lingua",
+    "manageSubjects": "Gestione delle materie",
+    "notifications": "Notifiche",
+    "about": "Informazioni",
+    "contact": "Contatto",
+    "terms": "Termini di utilizzo",
+    "privacy": "Politica sulla privacy"
   },
   "page": {
     "home": "Home",

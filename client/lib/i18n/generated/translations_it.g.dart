@@ -48,6 +48,7 @@ class TranslationsIt implements Translations {
 	@override late final _TranslationsResourcesIt resources = _TranslationsResourcesIt._(_root);
 	@override late final _TranslationsMessagesIt messages = _TranslationsMessagesIt._(_root);
 	@override late final _TranslationsCommonIt common = _TranslationsCommonIt._(_root);
+	@override late final _TranslationsSettingsIt settings = _TranslationsSettingsIt._(_root);
 	@override late final _TranslationsPageIt page = _TranslationsPageIt._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppIt implements TranslationsAppFr {
 	@override String get loadingIndicator => 'Caricamento...';
 	@override String get errorOccurred => 'Si è verificato un errore';
 	@override String get backTo => 'Torna a ';
+	@override String get unknown => 'Sconosciuto';
 }
 
 // Path: user
@@ -113,6 +115,15 @@ class _TranslationsUserIt implements TranslationsUserFr {
 	@override String get noDescription => 'Nessuna descrizione';
 	@override String get noAddress => 'Indirizzo non disponibile';
 	@override String get noReportsAvailable => 'Numero di segnalazioni non disponibile';
+	@override String get noBio => 'Bio non disponibile';
+	@override String get noBirthdate => 'Data di nascita non disponibile';
+	@override String get noLocation => 'Luogo non disponibile';
+	@override String get noEmail => 'Email non disponibile';
+	@override String get noUsername => 'Nome utente non disponibile';
+	@override String get noName => 'Nome non disponibile';
+	@override String get noFirstname => 'Nome non disponibile';
+	@override String get you => 'tu';
+	@override String get me => '(me)';
 }
 
 // Path: welcome
@@ -187,6 +198,7 @@ class _TranslationsFormIt implements TranslationsFormFr {
 	@override String get confirmPassword => 'Conferma la password';
 	@override String get pleaseConfirmPassword => 'Per favore conferma la tua password';
 	@override String get passwordNotMatch => 'Le password non corrispondono';
+	@override String get invalidUsername => 'Il nome utente deve : \n- contenere tra 3 e 20 caratteri \n- iniziare con una lettera \n- non contenere caratteri speciali';
 }
 
 // Path: swipe_cards
@@ -248,6 +260,7 @@ class _TranslationsErrorIt implements TranslationsErrorFr {
 	// Translations
 	@override String details({required Object error}) => 'Errore: ${error}';
 	@override String get general => 'Si è verificato un errore';
+	@override String get no_results => 'Nessun risultato trovato';
 	@override String get no_internet => 'Nessuna connessione Internet';
 	@override String get no_internet_description => 'Controlla la tua connessione Internet e riprova';
 	@override String get no_events => 'Nessun evento trovato';
@@ -350,6 +363,24 @@ class _TranslationsCommonIt implements TranslationsCommonFr {
 	@override String get message => 'Messaggio';
 }
 
+// Path: settings
+class _TranslationsSettingsIt implements TranslationsSettingsFr {
+	_TranslationsSettingsIt._(this._root);
+
+	final TranslationsIt _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Account';
+	@override String get settings => 'Impostazioni';
+	@override String get language => 'Lingua';
+	@override String get manageSubjects => 'Gestione delle materie';
+	@override String get notifications => 'Notifiche';
+	@override String get about => 'Informazioni';
+	@override String get contact => 'Contatto';
+	@override String get terms => 'Termini di utilizzo';
+	@override String get privacy => 'Politica sulla privacy';
+}
+
 // Path: page
 class _TranslationsPageIt implements TranslationsPageFr {
 	_TranslationsPageIt._(this._root);
@@ -429,6 +460,7 @@ extension on TranslationsIt {
 			case 'app.loadingIndicator': return 'Caricamento...';
 			case 'app.errorOccurred': return 'Si è verificato un errore';
 			case 'app.backTo': return 'Torna a ';
+			case 'app.unknown': return 'Sconosciuto';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Nome utente';
 			case 'user.name': return 'Nome';
@@ -444,6 +476,15 @@ extension on TranslationsIt {
 			case 'user.noDescription': return 'Nessuna descrizione';
 			case 'user.noAddress': return 'Indirizzo non disponibile';
 			case 'user.noReportsAvailable': return 'Numero di segnalazioni non disponibile';
+			case 'user.noBio': return 'Bio non disponibile';
+			case 'user.noBirthdate': return 'Data di nascita non disponibile';
+			case 'user.noLocation': return 'Luogo non disponibile';
+			case 'user.noEmail': return 'Email non disponibile';
+			case 'user.noUsername': return 'Nome utente non disponibile';
+			case 'user.noName': return 'Nome non disponibile';
+			case 'user.noFirstname': return 'Nome non disponibile';
+			case 'user.you': return 'tu';
+			case 'user.me': return '(me)';
 			case 'welcome.welcome': return 'Benvenuto su Edumeet, la piattaforma di revisione collaborativa';
 			case 'welcome.setup': return 'Iniziamo scegliendo una lingua';
 			case 'welcome.whatLanguage': return 'Quale lingua parli?';
@@ -482,6 +523,7 @@ extension on TranslationsIt {
 			case 'form.confirmPassword': return 'Conferma la password';
 			case 'form.pleaseConfirmPassword': return 'Per favore conferma la tua password';
 			case 'form.passwordNotMatch': return 'Le password non corrispondono';
+			case 'form.invalidUsername': return 'Il nome utente deve : \n- contenere tra 3 e 20 caratteri \n- iniziare con una lettera \n- non contenere caratteri speciali';
 			case 'swipe_cards.loading_error': return 'Errore nel caricamento degli eventi';
 			case 'swipe_cards.end_of_list': return 'Hai raggiunto la fine della lista!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'No a ${title}';
@@ -516,6 +558,7 @@ extension on TranslationsIt {
 			case 'event.eventNotStarted': return 'Il link di connessione sarà disponibile qui quando l\'evento inizierà.';
 			case 'error.details': return ({required Object error}) => 'Errore: ${error}';
 			case 'error.general': return 'Si è verificato un errore';
+			case 'error.no_results': return 'Nessun risultato trovato';
 			case 'error.no_internet': return 'Nessuna connessione Internet';
 			case 'error.no_internet_description': return 'Controlla la tua connessione Internet e riprova';
 			case 'error.no_events': return 'Nessun evento trovato';
@@ -562,6 +605,15 @@ extension on TranslationsIt {
 			case 'messages.sendMessage': return 'Invia';
 			case 'common.sender': return 'Mittente';
 			case 'common.message': return 'Messaggio';
+			case 'settings.account': return 'Account';
+			case 'settings.settings': return 'Impostazioni';
+			case 'settings.language': return 'Lingua';
+			case 'settings.manageSubjects': return 'Gestione delle materie';
+			case 'settings.notifications': return 'Notifiche';
+			case 'settings.about': return 'Informazioni';
+			case 'settings.contact': return 'Contatto';
+			case 'settings.terms': return 'Termini di utilizzo';
+			case 'settings.privacy': return 'Politica sulla privacy';
 			case 'page.home': return 'Home';
 			case 'page.homePage': return 'Pagina principale';
 			case 'page.profile': return 'Profilo';

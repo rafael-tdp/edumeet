@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Masz już konto?",
     "loadingIndicator": "Ładowanie...",
     "errorOccurred": "Wystąpił błąd",
-    "backTo": "Powrót do "
+    "backTo": "Powrót do ",
+    "unknown": "Nieznane"
   },
   "user": {
     "email": "Email",
@@ -47,7 +48,16 @@
     "anonymous": "Anonimowy",
     "noDescription": "Brak opisu",
     "noAddress": "Adres niedostępny",
-    "noReportsAvailable": "Liczba zgłoszeń niedostępna"
+    "noReportsAvailable": "Liczba zgłoszeń niedostępna",
+    "noBio": "Brak dostępnych informacji o biografii",
+    "noBirthdate": "Data urodzenia niedostępna",
+    "noLocation": "Miejsce niedostępne",
+    "noEmail": "Email niedostępny",
+    "noUsername": "Nazwa użytkownika niedostępna",
+    "noName": "Imię i nazwisko niedostępne",
+    "noFirstname": "Imię niedostępne",
+    "you": "ty",
+    "me": "(ja)"
   },
   "welcome": {
     "welcome": "Witamy w Edumeet, platformie do wspólnej nauki",
@@ -93,7 +103,8 @@
     "haveToAcceptConditions": "Musisz zaakceptować warunki korzystania i politykę prywatności",
     "confirmPassword": "Potwierdź hasło",
     "pleaseConfirmPassword": "Proszę potwierdzić hasło",
-    "passwordNotMatch": "Hasła się nie zgadzają"
+    "passwordNotMatch": "Hasła się nie zgadzają",
+    "invalidUsername": "Nazwa użytkownika musi:\n- mieć od 3 do 20 znaków\n- zaczynać się od litery\n- nie zawierać znaków specjalnych"
   },
   "swipe_cards": {
     "loading_error": "Błąd ładowania wydarzeń",
@@ -134,6 +145,7 @@
   "error": {
     "details": "Błąd: {{error}}",
     "general": "Wystąpił błąd",
+    "no_results": "Nie znaleziono żadnych wyników",
     "no_internet": "Brak połączenia z internetem",
     "no_internet_description": "Proszę sprawdzić połączenie z internetem i spróbować ponownie",
     "no_events": "Brak wydarzeń",
@@ -192,6 +204,17 @@
   "common": {
     "sender": "Nadawca",
     "message": "Wiadomość"
+  },
+  "settings": {
+    "account": "Konto",
+    "settings": "Ustawienia",
+    "language": "Język",
+    "manageSubjects": "Zarządzanie przedmiotami",
+    "notifications": "Powiadomienia",
+    "about": "O aplikacji",
+    "contact": "Kontakt",
+    "terms": "Warunki użytkowania",
+    "privacy": "Polityka prywatności"
   },
   "page": {
     "home": "Strona główna",

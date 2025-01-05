@@ -48,6 +48,7 @@ class TranslationsRo implements Translations {
 	@override late final _TranslationsResourcesRo resources = _TranslationsResourcesRo._(_root);
 	@override late final _TranslationsMessagesRo messages = _TranslationsMessagesRo._(_root);
 	@override late final _TranslationsCommonRo common = _TranslationsCommonRo._(_root);
+	@override late final _TranslationsSettingsRo settings = _TranslationsSettingsRo._(_root);
 	@override late final _TranslationsPageRo page = _TranslationsPageRo._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppRo implements TranslationsAppFr {
 	@override String get loadingIndicator => 'Încărcare...';
 	@override String get errorOccurred => 'A apărut o eroare';
 	@override String get backTo => 'Înapoi la ';
+	@override String get unknown => 'Necunoscut';
 }
 
 // Path: user
@@ -113,6 +115,15 @@ class _TranslationsUserRo implements TranslationsUserFr {
 	@override String get noDescription => 'Nici o descriere';
 	@override String get noAddress => 'Adresă indisponibilă';
 	@override String get noReportsAvailable => 'Numărul de raportări nu este disponibil';
+	@override String get noBio => 'Bio indisponibilă';
+	@override String get noBirthdate => 'Data nașterii indisponibilă';
+	@override String get noLocation => 'Locația indisponibilă';
+	@override String get noEmail => 'Email indisponibil';
+	@override String get noUsername => 'Numele de utilizator indisponibil';
+	@override String get noName => 'Numele indisponibil';
+	@override String get noFirstname => 'Prenumele indisponibil';
+	@override String get you => 'tu';
+	@override String get me => '(eu)';
 }
 
 // Path: welcome
@@ -187,6 +198,7 @@ class _TranslationsFormRo implements TranslationsFormFr {
 	@override String get confirmPassword => 'Confirmă parola';
 	@override String get pleaseConfirmPassword => 'Te rugăm să confirmi parola';
 	@override String get passwordNotMatch => 'Parolele nu se potrivesc';
+	@override String get invalidUsername => 'Numele de utilizator trebuie să: \n- conțină între 3 și 20 de caractere \n- înceapă cu o literă \n- nu conțină caractere speciale';
 }
 
 // Path: swipe_cards
@@ -248,6 +260,7 @@ class _TranslationsErrorRo implements TranslationsErrorFr {
 	// Translations
 	@override String details({required Object error}) => 'Eroare: ${error}';
 	@override String get general => 'A apărut o eroare';
+	@override String get no_results => 'Niciun rezultat găsit';
 	@override String get no_internet => 'Fără conexiune la Internet';
 	@override String get no_internet_description => 'Te rugăm să verifici conexiunea ta la Internet și să încerci din nou';
 	@override String get no_events => 'Niciun eveniment găsit';
@@ -350,6 +363,24 @@ class _TranslationsCommonRo implements TranslationsCommonFr {
 	@override String get message => 'Mesaj';
 }
 
+// Path: settings
+class _TranslationsSettingsRo implements TranslationsSettingsFr {
+	_TranslationsSettingsRo._(this._root);
+
+	final TranslationsRo _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Cont';
+	@override String get settings => 'Setări';
+	@override String get language => 'Limba';
+	@override String get manageSubjects => 'Gestionarea materiilor';
+	@override String get notifications => 'Notificări';
+	@override String get about => 'Despre';
+	@override String get contact => 'Contact';
+	@override String get terms => 'Termeni și condiții';
+	@override String get privacy => 'Politica de confidențialitate';
+}
+
 // Path: page
 class _TranslationsPageRo implements TranslationsPageFr {
 	_TranslationsPageRo._(this._root);
@@ -429,6 +460,7 @@ extension on TranslationsRo {
 			case 'app.loadingIndicator': return 'Încărcare...';
 			case 'app.errorOccurred': return 'A apărut o eroare';
 			case 'app.backTo': return 'Înapoi la ';
+			case 'app.unknown': return 'Necunoscut';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Nume de utilizator';
 			case 'user.name': return 'Nume';
@@ -444,6 +476,15 @@ extension on TranslationsRo {
 			case 'user.noDescription': return 'Nici o descriere';
 			case 'user.noAddress': return 'Adresă indisponibilă';
 			case 'user.noReportsAvailable': return 'Numărul de raportări nu este disponibil';
+			case 'user.noBio': return 'Bio indisponibilă';
+			case 'user.noBirthdate': return 'Data nașterii indisponibilă';
+			case 'user.noLocation': return 'Locația indisponibilă';
+			case 'user.noEmail': return 'Email indisponibil';
+			case 'user.noUsername': return 'Numele de utilizator indisponibil';
+			case 'user.noName': return 'Numele indisponibil';
+			case 'user.noFirstname': return 'Prenumele indisponibil';
+			case 'user.you': return 'tu';
+			case 'user.me': return '(eu)';
 			case 'welcome.welcome': return 'Bun venit pe Edumeet, platforma de revizuire colaborativă';
 			case 'welcome.setup': return 'Haide să începem prin a alege o limbă';
 			case 'welcome.whatLanguage': return 'Ce limbă vorbești?';
@@ -482,6 +523,7 @@ extension on TranslationsRo {
 			case 'form.confirmPassword': return 'Confirmă parola';
 			case 'form.pleaseConfirmPassword': return 'Te rugăm să confirmi parola';
 			case 'form.passwordNotMatch': return 'Parolele nu se potrivesc';
+			case 'form.invalidUsername': return 'Numele de utilizator trebuie să: \n- conțină între 3 și 20 de caractere \n- înceapă cu o literă \n- nu conțină caractere speciale';
 			case 'swipe_cards.loading_error': return 'Eroare la încărcarea evenimentelor';
 			case 'swipe_cards.end_of_list': return 'Ai ajuns la sfârșitul listei!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'Nu pentru ${title}';
@@ -516,6 +558,7 @@ extension on TranslationsRo {
 			case 'event.eventNotStarted': return 'Linkul de conectare va fi disponibil aici când evenimentul va începe.';
 			case 'error.details': return ({required Object error}) => 'Eroare: ${error}';
 			case 'error.general': return 'A apărut o eroare';
+			case 'error.no_results': return 'Niciun rezultat găsit';
 			case 'error.no_internet': return 'Fără conexiune la Internet';
 			case 'error.no_internet_description': return 'Te rugăm să verifici conexiunea ta la Internet și să încerci din nou';
 			case 'error.no_events': return 'Niciun eveniment găsit';
@@ -562,6 +605,15 @@ extension on TranslationsRo {
 			case 'messages.sendMessage': return 'Trimite';
 			case 'common.sender': return 'Expeditor';
 			case 'common.message': return 'Mesaj';
+			case 'settings.account': return 'Cont';
+			case 'settings.settings': return 'Setări';
+			case 'settings.language': return 'Limba';
+			case 'settings.manageSubjects': return 'Gestionarea materiilor';
+			case 'settings.notifications': return 'Notificări';
+			case 'settings.about': return 'Despre';
+			case 'settings.contact': return 'Contact';
+			case 'settings.terms': return 'Termeni și condiții';
+			case 'settings.privacy': return 'Politica de confidențialitate';
 			case 'page.home': return 'Acasă';
 			case 'page.homePage': return 'Pagina principală';
 			case 'page.profile': return 'Profil';

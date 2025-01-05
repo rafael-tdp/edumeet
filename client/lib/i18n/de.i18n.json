@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Sie haben bereits ein Konto?",
     "loadingIndicator": "Laden...",
     "errorOccurred": "Ein Fehler ist aufgetreten",
-    "backTo": "Zurück zu "
+    "backTo": "Zurück zu ",
+    "unknown": "Unbekannt"
   },
   "user": {
     "email": "Email",
@@ -47,7 +48,16 @@
     "anonymous": "Anonym",
     "noDescription": "Keine Beschreibung",
     "noAddress": "Adresse nicht verfügbar",
-    "noReportsAvailable": "Anzahl der Meldungen nicht verfügbar"
+    "noReportsAvailable": "Anzahl der Meldungen nicht verfügbar",
+    "noBio": "Bio nicht verfügbar",
+    "noBirthdate": "Geburtsdatum nicht verfügbar",
+    "noLocation": "Standort nicht verfügbar",
+    "noEmail": "E-Mail nicht verfügbar",
+    "noUsername": "Benutzername nicht verfügbar",
+    "noName": "Name nicht verfügbar",
+    "noFirstname": "Vorname nicht verfügbar",
+    "you": "Sie",
+    "me": "(ich)"
   },
   "welcome": {
     "welcome": "Willkommen bei Edumeet, der Plattform für gemeinsames Lernen",
@@ -93,7 +103,8 @@
     "haveToAcceptConditions": "Du musst die Nutzungsbedingungen und die Datenschutzerklärung akzeptieren",
     "confirmPassword": "Passwort bestätigen",
     "pleaseConfirmPassword": "Bitte bestätige dein Passwort",
-    "passwordNotMatch": "Die Passwörter stimmen nicht überein"
+    "passwordNotMatch": "Die Passwörter stimmen nicht überein",
+    "invalidUsername": "Der Benutzername muss:\n- zwischen 3 und 20 Zeichen lang sein\n- mit einem Buchstaben beginnen\n- keine Sonderzeichen enthalten"
   },
   "swipe_cards": {
     "loading_error": "Fehler beim Laden der Ereignisse",
@@ -134,6 +145,7 @@
   "error": {
     "details": "Fehler: {{error}}",
     "general": "Es ist ein Fehler aufgetreten",
+    "no_results": "Keine Ergebnisse gefunden",
     "no_internet": "Keine Internetverbindung",
     "no_internet_description": "Bitte überprüfe deine Internetverbindung und versuche es erneut",
     "no_events": "Keine Ereignisse gefunden",
@@ -192,6 +204,17 @@
   "common": {
     "sender": "Absender",
     "message": "Nachricht"
+  },
+  "settings": {
+    "account": "Konto",
+    "settings": "Einstellungen",
+    "language": "Sprache",
+    "manageSubjects": "Fächer verwalten",
+    "notifications": "Benachrichtigungen",
+    "about": "Über",
+    "contact": "Kontakt",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutzrichtlinie"
   },
   "page": {
     "home": "Startseite",

@@ -1,10 +1,10 @@
 import 'package:client/core/models/user.dart';
 import 'package:client/core/services/event_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/screens/event_details_page.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/event_card.dart';
-import 'package:client/screens/event_details_page.dart';
 import 'package:client/screens/create_event_screen.dart';
 import 'package:client/core/models/event.dart';
 import 'package:client/core/services/user_services.dart';
@@ -12,8 +12,8 @@ import 'package:go_router/go_router.dart';
 
 class EventsPage extends StatefulWidget {
   static const String routeName = '/events';
-  static navigateTo(BuildContext context) {
-    context.go(routeName);
+  static navigateTo(BuildContext context, {String? action}) {
+    context.go(routeName, extra: action);
   }
 
   const EventsPage({super.key});
@@ -30,32 +30,24 @@ class _EventsPageState extends State<EventsPage> {
   void initState() {
     super.initState();
     _fetchCurrentUser();
+    _fetchEvents();
   }
 
   void _fetchCurrentUser() async {
     try {
       final response = await UserServices().getUserInfo();
+      if (!mounted) return;
       setState(() {
         _currentUser = response.data;
       });
     } catch (e) {
-      // ignore: use_build_context_synchronously
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User not loaded")),
       );
     }
   }
 
-// void _openEventPage(BuildContext context, String eventId) {
-//   if (_currentUser == null) {
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       const SnackBar(content: Text("User not loaded")),
-//     );
-//     return;
-//   }
-//
-//   EventDetailsPage.navigateTo(context, eventId, _currentUser!);
-// }
   void _openEventPage(BuildContext context, String eventId) {
     if (_currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -63,7 +55,7 @@ class _EventsPageState extends State<EventsPage> {
       );
       return;
     }
-    context.go(
+    context.push(
       '${EventsPage.routeName}/$eventId/details',
       extra: _currentUser,
     );
@@ -77,6 +69,60 @@ class _EventsPageState extends State<EventsPage> {
     return _showOnlyMyEvents
         ? EventServices.getEventsCreatedByCurrentUser()
         : EventServices.getCurrentUserEvents();
+  }
+
+  void _showJoinEventDialog() {
+    final TextEditingController codeController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Rejoindre un événement"),
+          content: TextField(
+            controller: codeController,
+            decoration: const InputDecoration(hintText: "Code de l'événement"),
+            keyboardType: TextInputType.number,
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Annuler"),
+            ),
+            TextButton(
+              onPressed: () async {
+                final code = codeController.text.trim();
+                if (code.isNotEmpty) {
+                  try {
+                    final result = await EventServices.joinEventWithCode(code);
+                    if (result["event"] != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Vous avez rejoint l'événement")),
+                      );
+                      // Navigator.of(context).pop();
+                      await Future.delayed(const Duration(seconds: 1));
+                      EventDetailsPage.navigateTo(
+                          context, result["event"]["id"], _currentUser!);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Code invalide")),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Impossible d'utiliser ce code")),
+                    );
+                  }
+                }
+              },
+              child: const Text("Rejoindre"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -108,6 +154,11 @@ class _EventsPageState extends State<EventsPage> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () => _createEvent(context),
+            color: AppColors.purple,
+          ),
+          IconButton(
+            icon: const Icon(Icons.add_link),
+            onPressed: _showJoinEventDialog,
             color: AppColors.purple,
           ),
         ],

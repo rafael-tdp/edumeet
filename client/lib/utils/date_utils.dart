@@ -1,11 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class DateUtils {
+  static final tz.Location _franceLocation = tz.getLocation('Europe/Paris');
+
+  static DateTime now() {
+    tz.initializeTimeZones();
+    return tz.TZDateTime.now(_franceLocation);
+  }
+
+  static String DateTimeToShortDate(DateTime date) {
+    return "${date.day.toString().padLeft(2, '0')} ${getMonthName(date.month)} ${date.year}";
+  }
+
   static String isoToFormattedDate(String isoDate) {
     try {
       final dateTime = DateTime.parse(isoDate);
       return DateFormat('dd/MM/yyyy').format(dateTime);
+    } catch (e) {
+      return 'Invalid date';
+    }
+  }
+
+  // iso to time (dd/MM/yyyy à HH:mm)
+  static String isoToFormattedDateAndTime(String isoDate) {
+    try {
+      final dateTime = DateTime.parse(isoDate);
+      return DateFormat('dd/MM/yyyy à HH:mm').format(dateTime);
     } catch (e) {
       return 'Invalid date';
     }
@@ -68,5 +91,23 @@ class DateUtils {
     if (picked != null) {
       controller.text = DateFormat('dd/MM/yyyy').format(picked);
     }
+  }
+
+  static String getMonthName(int month) {
+    const months = [
+      'janv',
+      'févr',
+      'mars',
+      'avr',
+      'mai',
+      'juin',
+      'juil',
+      'août',
+      'sept',
+      'oct',
+      'nov',
+      'déc'
+    ];
+    return months[month - 1];
   }
 }

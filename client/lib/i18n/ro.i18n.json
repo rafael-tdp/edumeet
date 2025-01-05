@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Ai deja un cont?",
     "loadingIndicator": "Încărcare...",
     "errorOccurred": "A apărut o eroare",
-    "backTo": "Înapoi la "
+    "backTo": "Înapoi la ",
+    "unknown": "Necunoscut"
   },
   "user": {
     "email": "Email",
@@ -47,7 +48,16 @@
     "anonymous": "Anonim",
     "noDescription": "Nici o descriere",
     "noAddress": "Adresă indisponibilă",
-    "noReportsAvailable": "Numărul de raportări nu este disponibil"
+    "noReportsAvailable": "Numărul de raportări nu este disponibil",
+    "noBio": "Bio indisponibilă",
+    "noBirthdate": "Data nașterii indisponibilă",
+    "noLocation": "Locația indisponibilă",
+    "noEmail": "Email indisponibil",
+    "noUsername": "Numele de utilizator indisponibil",
+    "noName": "Numele indisponibil",
+    "noFirstname": "Prenumele indisponibil",
+    "you": "tu",
+    "me": "(eu)"
   },
   "welcome": {
     "welcome": "Bun venit pe Edumeet, platforma de revizuire colaborativă",
@@ -93,7 +103,8 @@
     "haveToAcceptConditions": "Trebuie să accepți condițiile de utilizare și politica de confidențialitate",
     "confirmPassword": "Confirmă parola",
     "pleaseConfirmPassword": "Te rugăm să confirmi parola",
-    "passwordNotMatch": "Parolele nu se potrivesc"
+    "passwordNotMatch": "Parolele nu se potrivesc",
+    "invalidUsername": "Numele de utilizator trebuie să: \n- conțină între 3 și 20 de caractere \n- înceapă cu o literă \n- nu conțină caractere speciale"
   },
   "swipe_cards": {
     "loading_error": "Eroare la încărcarea evenimentelor",
@@ -134,6 +145,7 @@
   "error": {
     "details": "Eroare: {{error}}",
     "general": "A apărut o eroare",
+    "no_results": "Niciun rezultat găsit",
     "no_internet": "Fără conexiune la Internet",
     "no_internet_description": "Te rugăm să verifici conexiunea ta la Internet și să încerci din nou",
     "no_events": "Niciun eveniment găsit",
@@ -192,6 +204,17 @@
   "common": {
     "sender": "Expeditor",
     "message": "Mesaj"
+  },
+  "settings": {
+    "account": "Cont",
+    "settings": "Setări",
+    "language": "Limba",
+    "manageSubjects": "Gestionarea materiilor",
+    "notifications": "Notificări",
+    "about": "Despre",
+    "contact": "Contact",
+    "terms": "Termeni și condiții",
+    "privacy": "Politica de confidențialitate"
   },
   "page": {
     "home": "Acasă",

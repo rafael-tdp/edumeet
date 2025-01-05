@@ -48,6 +48,7 @@ class TranslationsDe implements Translations {
 	@override late final _TranslationsResourcesDe resources = _TranslationsResourcesDe._(_root);
 	@override late final _TranslationsMessagesDe messages = _TranslationsMessagesDe._(_root);
 	@override late final _TranslationsCommonDe common = _TranslationsCommonDe._(_root);
+	@override late final _TranslationsSettingsDe settings = _TranslationsSettingsDe._(_root);
 	@override late final _TranslationsPageDe page = _TranslationsPageDe._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppDe implements TranslationsAppEn {
 	@override String get loadingIndicator => 'Laden...';
 	@override String get errorOccurred => 'Ein Fehler ist aufgetreten';
 	@override String get backTo => 'Zurück zu ';
+	@override String get unknown => 'Unbekannt';
 }
 
 // Path: user
@@ -113,6 +115,15 @@ class _TranslationsUserDe implements TranslationsUserEn {
 	@override String get noDescription => 'Keine Beschreibung';
 	@override String get noAddress => 'Adresse nicht verfügbar';
 	@override String get noReportsAvailable => 'Anzahl der Meldungen nicht verfügbar';
+	@override String get noBio => 'Bio nicht verfügbar';
+	@override String get noBirthdate => 'Geburtsdatum nicht verfügbar';
+	@override String get noLocation => 'Standort nicht verfügbar';
+	@override String get noEmail => 'E-Mail nicht verfügbar';
+	@override String get noUsername => 'Benutzername nicht verfügbar';
+	@override String get noName => 'Name nicht verfügbar';
+	@override String get noFirstname => 'Vorname nicht verfügbar';
+	@override String get you => 'Sie';
+	@override String get me => '(ich)';
 }
 
 // Path: welcome
@@ -187,6 +198,7 @@ class _TranslationsFormDe implements TranslationsFormEn {
 	@override String get confirmPassword => 'Passwort bestätigen';
 	@override String get pleaseConfirmPassword => 'Bitte bestätige dein Passwort';
 	@override String get passwordNotMatch => 'Die Passwörter stimmen nicht überein';
+	@override String get invalidUsername => 'Der Benutzername muss:\n- zwischen 3 und 20 Zeichen lang sein\n- mit einem Buchstaben beginnen\n- keine Sonderzeichen enthalten';
 }
 
 // Path: swipe_cards
@@ -248,6 +260,7 @@ class _TranslationsErrorDe implements TranslationsErrorEn {
 	// Translations
 	@override String get details => 'Fehler: {{error}}';
 	@override String get general => 'Es ist ein Fehler aufgetreten';
+	@override String get no_results => 'Keine Ergebnisse gefunden';
 	@override String get no_internet => 'Keine Internetverbindung';
 	@override String get no_internet_description => 'Bitte überprüfe deine Internetverbindung und versuche es erneut';
 	@override String get no_events => 'Keine Ereignisse gefunden';
@@ -350,6 +363,24 @@ class _TranslationsCommonDe implements TranslationsCommonEn {
 	@override String get message => 'Nachricht';
 }
 
+// Path: settings
+class _TranslationsSettingsDe implements TranslationsSettingsEn {
+	_TranslationsSettingsDe._(this._root);
+
+	final TranslationsDe _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Konto';
+	@override String get settings => 'Einstellungen';
+	@override String get language => 'Sprache';
+	@override String get manageSubjects => 'Fächer verwalten';
+	@override String get notifications => 'Benachrichtigungen';
+	@override String get about => 'Über';
+	@override String get contact => 'Kontakt';
+	@override String get terms => 'Nutzungsbedingungen';
+	@override String get privacy => 'Datenschutzrichtlinie';
+}
+
 // Path: page
 class _TranslationsPageDe implements TranslationsPageEn {
 	_TranslationsPageDe._(this._root);
@@ -429,6 +460,7 @@ extension on TranslationsDe {
 			case 'app.loadingIndicator': return 'Laden...';
 			case 'app.errorOccurred': return 'Ein Fehler ist aufgetreten';
 			case 'app.backTo': return 'Zurück zu ';
+			case 'app.unknown': return 'Unbekannt';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Benutzername';
 			case 'user.name': return 'Name';
@@ -444,6 +476,15 @@ extension on TranslationsDe {
 			case 'user.noDescription': return 'Keine Beschreibung';
 			case 'user.noAddress': return 'Adresse nicht verfügbar';
 			case 'user.noReportsAvailable': return 'Anzahl der Meldungen nicht verfügbar';
+			case 'user.noBio': return 'Bio nicht verfügbar';
+			case 'user.noBirthdate': return 'Geburtsdatum nicht verfügbar';
+			case 'user.noLocation': return 'Standort nicht verfügbar';
+			case 'user.noEmail': return 'E-Mail nicht verfügbar';
+			case 'user.noUsername': return 'Benutzername nicht verfügbar';
+			case 'user.noName': return 'Name nicht verfügbar';
+			case 'user.noFirstname': return 'Vorname nicht verfügbar';
+			case 'user.you': return 'Sie';
+			case 'user.me': return '(ich)';
 			case 'welcome.welcome': return 'Willkommen bei Edumeet, der Plattform für gemeinsames Lernen';
 			case 'welcome.setup': return 'Lass uns zunächst eine Sprache wählen';
 			case 'welcome.whatLanguage': return 'Welche Sprache sprichst du?';
@@ -482,6 +523,7 @@ extension on TranslationsDe {
 			case 'form.confirmPassword': return 'Passwort bestätigen';
 			case 'form.pleaseConfirmPassword': return 'Bitte bestätige dein Passwort';
 			case 'form.passwordNotMatch': return 'Die Passwörter stimmen nicht überein';
+			case 'form.invalidUsername': return 'Der Benutzername muss:\n- zwischen 3 und 20 Zeichen lang sein\n- mit einem Buchstaben beginnen\n- keine Sonderzeichen enthalten';
 			case 'swipe_cards.loading_error': return 'Fehler beim Laden der Ereignisse';
 			case 'swipe_cards.end_of_list': return 'Du hast das Ende der Liste erreicht!';
 			case 'swipe_cards.nope': return 'Nein zu {{title}}';
@@ -516,6 +558,7 @@ extension on TranslationsDe {
 			case 'event.eventNotStarted': return 'Der Verbindungslink wird hier verfügbar sein, wenn das Ereignis beginnt.';
 			case 'error.details': return 'Fehler: {{error}}';
 			case 'error.general': return 'Es ist ein Fehler aufgetreten';
+			case 'error.no_results': return 'Keine Ergebnisse gefunden';
 			case 'error.no_internet': return 'Keine Internetverbindung';
 			case 'error.no_internet_description': return 'Bitte überprüfe deine Internetverbindung und versuche es erneut';
 			case 'error.no_events': return 'Keine Ereignisse gefunden';
@@ -562,6 +605,15 @@ extension on TranslationsDe {
 			case 'messages.sendMessage': return 'Nachricht senden';
 			case 'common.sender': return 'Absender';
 			case 'common.message': return 'Nachricht';
+			case 'settings.account': return 'Konto';
+			case 'settings.settings': return 'Einstellungen';
+			case 'settings.language': return 'Sprache';
+			case 'settings.manageSubjects': return 'Fächer verwalten';
+			case 'settings.notifications': return 'Benachrichtigungen';
+			case 'settings.about': return 'Über';
+			case 'settings.contact': return 'Kontakt';
+			case 'settings.terms': return 'Nutzungsbedingungen';
+			case 'settings.privacy': return 'Datenschutzrichtlinie';
 			case 'page.home': return 'Startseite';
 			case 'page.homePage': return 'Startseite';
 			case 'page.profile': return 'Profil';

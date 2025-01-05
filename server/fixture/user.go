@@ -15,9 +15,13 @@ func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 	physicalUser := []string{"Zaid", "Jugurtha", "Rafael", "Makan"}
 	physicalAddress := []string{"242 Rue du Faubourg Saint-Antoine, 75012 Paris", "105 Stoke Newington Church St, London N16 0UD, Royaume-Uni", "44 Rue des Clottins, 95560 Montsoult", "14 Rue Édouard-Grimaux, 86000 Poitiers"}
 	pictures := []string{
-		"https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?q=80&w=2830&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-		"https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D",
-		"https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cHJvZmlsZXxlbnwwfHwwfHx8Mg%3D%3D",
+		"adventurer",
+		"avaraaars",
+		"bigSmile",
+		"bottts",
+		"bigEars",
+		"identicon",
+		"initials",
 	}
 	dateUtils := utils.Date{}
 	bcryptUtils := utils.Bcrypt{}
@@ -38,6 +42,7 @@ func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 			SetBirthDate(dateUtils.GenerateBirthDate()).
 			SetBio(gofakeit.Sentence(10)).
 			SetActivated(true).
+			SetAddress(physicalAddress[i]).
 			SetLng(lng).
 			SetLat(lat).
 			SetCreatedBy(id).

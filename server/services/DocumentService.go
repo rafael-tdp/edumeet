@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/sirupsen/logrus"
 )
 
 type DocumentService struct {
@@ -23,15 +25,17 @@ func NewDocumentService(documentRepo *repositories.DocumentRepository, eventRepo
 	}
 }
 
-func (r *DocumentService) GetDocumentById(documentID string) (dtos.DocumentDTO, error) {
+func (r *DocumentService) GetDocumentById(documentID string) (dtos.DocumentResponseDTO, error) {
 	document, err := r.documentRepo.GetDocumentById(documentID)
 	if err != nil {
-		return dtos.DocumentDTO{}, err
+		logrus.Error("Error DocumentService.GetDocumentById: ", err)
+		return dtos.DocumentResponseDTO{}, err
 	}
 
-	documentDTO := dtos.DocumentDTO{
+	documentDTO := dtos.DocumentResponseDTO{
 		ID:   document.ID,
 		Path: document.Path,
+		Name: document.Name,
 	}
 
 	return documentDTO, nil
@@ -40,14 +44,17 @@ func (r *DocumentService) GetDocumentById(documentID string) (dtos.DocumentDTO, 
 func (r *DocumentService) DeleteDocument(documentID string) error {
 	document, err := r.documentRepo.GetDocumentById(documentID)
 	if err != nil {
+		logrus.Error("Error DocumentService.DeleteDocument: ", err)
 		return err
 	}
 	err = os.Remove(document.Path)
 	if err != nil {
+		logrus.Error("Error DocumentService.DeleteDocument: ", err)
 		return err
 	}
 	err = r.documentRepo.DeleteDocument(document.ID)
 	if err != nil {
+		logrus.Error("Error DocumentService.DeleteDocument: ", err)
 		return err
 	}
 
@@ -58,6 +65,7 @@ func (r *DocumentService) CreateDocument(ctx context.Context, documentDTO dtos.D
 	if documentDTO.EventID != "" {
 		_, err := r.eventRepo.GetEvent(documentDTO.EventID)
 		if err != nil {
+			logrus.Error("Error DocumentService.CreateDocument: ", err)
 			return dtos.DocumentDTO{}, err
 		}
 	} //else if documentDTO.MessageID != "" {
@@ -72,6 +80,7 @@ func (r *DocumentService) CreateDocument(ctx context.Context, documentDTO dtos.D
 	filePath := fmt.Sprintf("%s%s-%s", uploadDir, ulid.GenerateUlid()(), fileName)
 	dstFile, err := os.Create(filePath)
 	if err != nil {
+		logrus.Error("Error DocumentService.CreateDocument: ", err)
 		return dtos.DocumentDTO{}, err
 	}
 
@@ -79,6 +88,7 @@ func (r *DocumentService) CreateDocument(ctx context.Context, documentDTO dtos.D
 
 	file, err := documentDTO.File.Open()
 	if err != nil {
+		logrus.Error("Error DocumentService.CreateDocument: ", err)
 		return dtos.DocumentDTO{}, err
 	}
 
@@ -86,6 +96,7 @@ func (r *DocumentService) CreateDocument(ctx context.Context, documentDTO dtos.D
 
 	_, err = io.Copy(dstFile, file)
 	if err != nil {
+		logrus.Error("Error DocumentService.CreateDocument: ", err)
 		return dtos.DocumentDTO{}, err
 	}
 
@@ -105,6 +116,7 @@ func (r *DocumentService) CreateDocument(ctx context.Context, documentDTO dtos.D
 func (ds *DocumentService) GetEventDocuments(eventID string) ([]dtos.EventDocumentDTO, error) {
 	eventDocuments, err := ds.documentRepo.GetEventDocuments(eventID)
 	if err != nil {
+		logrus.Error("Error DocumentService.GetEventDocuments: ", err)
 		return []dtos.EventDocumentDTO{}, err
 	}
 

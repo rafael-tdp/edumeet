@@ -48,6 +48,7 @@ class TranslationsSv implements Translations {
 	@override late final _TranslationsResourcesSv resources = _TranslationsResourcesSv._(_root);
 	@override late final _TranslationsMessagesSv messages = _TranslationsMessagesSv._(_root);
 	@override late final _TranslationsCommonSv common = _TranslationsCommonSv._(_root);
+	@override late final _TranslationsSettingsSv settings = _TranslationsSettingsSv._(_root);
 	@override late final _TranslationsPageSv page = _TranslationsPageSv._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppSv implements TranslationsAppFr {
 	@override String get loadingIndicator => 'Laddar...';
 	@override String get errorOccurred => 'Ett fel har inträffat';
 	@override String get backTo => 'Tillbaka till ';
+	@override String get unknown => 'Okänd';
 }
 
 // Path: user
@@ -113,6 +115,15 @@ class _TranslationsUserSv implements TranslationsUserFr {
 	@override String get noDescription => 'Ingen beskrivning';
 	@override String get noAddress => 'Ingen adress tillgänglig';
 	@override String get noReportsAvailable => 'Antal rapporter inte tillgängligt';
+	@override String get noBio => 'Bio ej tillgänglig';
+	@override String get noBirthdate => 'Födelsedatum ej tillgängligt';
+	@override String get noLocation => 'Plats ej tillgänglig';
+	@override String get noEmail => 'E-post ej tillgänglig';
+	@override String get noUsername => 'Användarnamn ej tillgängligt';
+	@override String get noName => 'Namn ej tillgängligt';
+	@override String get noFirstname => 'Förnamn ej tillgängligt';
+	@override String get you => 'du';
+	@override String get me => '(jag)';
 }
 
 // Path: welcome
@@ -187,6 +198,7 @@ class _TranslationsFormSv implements TranslationsFormFr {
 	@override String get confirmPassword => 'Bekräfta lösenord';
 	@override String get pleaseConfirmPassword => 'Vänligen bekräfta ditt lösenord';
 	@override String get passwordNotMatch => 'Lösenorden matchar inte';
+	@override String get invalidUsername => 'Användarnamnet måste: \n- innehålla mellan 3 och 20 tecken \n- börja med en bokstav \n- inte innehålla specialtecken';
 }
 
 // Path: swipe_cards
@@ -248,6 +260,7 @@ class _TranslationsErrorSv implements TranslationsErrorFr {
 	// Translations
 	@override String details({required Object error}) => 'Fel: ${error}';
 	@override String get general => 'Ett fel har inträffat';
+	@override String get no_results => 'Inga resultat hittades';
 	@override String get no_internet => 'Ingen internetanslutning';
 	@override String get no_internet_description => 'Vänligen kontrollera din internetanslutning och försök igen';
 	@override String get no_events => 'Inga evenemang hittades';
@@ -350,6 +363,24 @@ class _TranslationsCommonSv implements TranslationsCommonFr {
 	@override String get message => 'Meddelande';
 }
 
+// Path: settings
+class _TranslationsSettingsSv implements TranslationsSettingsFr {
+	_TranslationsSettingsSv._(this._root);
+
+	final TranslationsSv _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Konto';
+	@override String get settings => 'Inställningar';
+	@override String get language => 'Språk';
+	@override String get manageSubjects => 'Hantera ämnen';
+	@override String get notifications => 'Notifikationer';
+	@override String get about => 'Om';
+	@override String get contact => 'Kontakt';
+	@override String get terms => 'Användarvillkor';
+	@override String get privacy => 'Integritetspolicy';
+}
+
 // Path: page
 class _TranslationsPageSv implements TranslationsPageFr {
 	_TranslationsPageSv._(this._root);
@@ -429,6 +460,7 @@ extension on TranslationsSv {
 			case 'app.loadingIndicator': return 'Laddar...';
 			case 'app.errorOccurred': return 'Ett fel har inträffat';
 			case 'app.backTo': return 'Tillbaka till ';
+			case 'app.unknown': return 'Okänd';
 			case 'user.email': return 'E-post';
 			case 'user.username': return 'Användarnamn';
 			case 'user.name': return 'Namn';
@@ -444,6 +476,15 @@ extension on TranslationsSv {
 			case 'user.noDescription': return 'Ingen beskrivning';
 			case 'user.noAddress': return 'Ingen adress tillgänglig';
 			case 'user.noReportsAvailable': return 'Antal rapporter inte tillgängligt';
+			case 'user.noBio': return 'Bio ej tillgänglig';
+			case 'user.noBirthdate': return 'Födelsedatum ej tillgängligt';
+			case 'user.noLocation': return 'Plats ej tillgänglig';
+			case 'user.noEmail': return 'E-post ej tillgänglig';
+			case 'user.noUsername': return 'Användarnamn ej tillgängligt';
+			case 'user.noName': return 'Namn ej tillgängligt';
+			case 'user.noFirstname': return 'Förnamn ej tillgängligt';
+			case 'user.you': return 'du';
+			case 'user.me': return '(jag)';
 			case 'welcome.welcome': return 'Välkommen till Edumeet, plattformen för samarbetsstudier';
 			case 'welcome.setup': return 'Låt oss börja med att välja ett språk';
 			case 'welcome.whatLanguage': return 'Vilket språk talar du?';
@@ -482,6 +523,7 @@ extension on TranslationsSv {
 			case 'form.confirmPassword': return 'Bekräfta lösenord';
 			case 'form.pleaseConfirmPassword': return 'Vänligen bekräfta ditt lösenord';
 			case 'form.passwordNotMatch': return 'Lösenorden matchar inte';
+			case 'form.invalidUsername': return 'Användarnamnet måste: \n- innehålla mellan 3 och 20 tecken \n- börja med en bokstav \n- inte innehålla specialtecken';
 			case 'swipe_cards.loading_error': return 'Fel vid inläsning av evenemang';
 			case 'swipe_cards.end_of_list': return 'Du har nått slutet av listan!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'Nej till ${title}';
@@ -516,6 +558,7 @@ extension on TranslationsSv {
 			case 'event.eventNotStarted': return 'Länken för att ansluta kommer att finnas här när evenemanget börjar.';
 			case 'error.details': return ({required Object error}) => 'Fel: ${error}';
 			case 'error.general': return 'Ett fel har inträffat';
+			case 'error.no_results': return 'Inga resultat hittades';
 			case 'error.no_internet': return 'Ingen internetanslutning';
 			case 'error.no_internet_description': return 'Vänligen kontrollera din internetanslutning och försök igen';
 			case 'error.no_events': return 'Inga evenemang hittades';
@@ -562,6 +605,15 @@ extension on TranslationsSv {
 			case 'messages.sendMessage': return 'Skicka';
 			case 'common.sender': return 'Avsändare';
 			case 'common.message': return 'Meddelande';
+			case 'settings.account': return 'Konto';
+			case 'settings.settings': return 'Inställningar';
+			case 'settings.language': return 'Språk';
+			case 'settings.manageSubjects': return 'Hantera ämnen';
+			case 'settings.notifications': return 'Notifikationer';
+			case 'settings.about': return 'Om';
+			case 'settings.contact': return 'Kontakt';
+			case 'settings.terms': return 'Användarvillkor';
+			case 'settings.privacy': return 'Integritetspolicy';
 			case 'page.home': return 'Startsida';
 			case 'page.homePage': return 'Startsidan';
 			case 'page.profile': return 'Profil';

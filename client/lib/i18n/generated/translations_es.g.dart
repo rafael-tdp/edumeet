@@ -48,6 +48,7 @@ class TranslationsEs implements Translations {
 	@override late final _TranslationsResourcesEs resources = _TranslationsResourcesEs._(_root);
 	@override late final _TranslationsMessagesEs messages = _TranslationsMessagesEs._(_root);
 	@override late final _TranslationsCommonEs common = _TranslationsCommonEs._(_root);
+	@override late final _TranslationsSettingsEs settings = _TranslationsSettingsEs._(_root);
 	@override late final _TranslationsPageEs page = _TranslationsPageEs._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppEs implements TranslationsAppFr {
 	@override String get loadingIndicator => 'Cargando...';
 	@override String get errorOccurred => 'Ocurrió un error';
 	@override String get backTo => 'Regresar a ';
+	@override String get unknown => 'Desconocido';
 }
 
 // Path: user
@@ -113,6 +115,15 @@ class _TranslationsUserEs implements TranslationsUserFr {
 	@override String get noDescription => 'Sin descripción';
 	@override String get noAddress => 'Dirección no disponible';
 	@override String get noReportsAvailable => 'Número de reportes no disponible';
+	@override String get noBio => 'Bio no disponible';
+	@override String get noBirthdate => 'Fecha de nacimiento no disponible';
+	@override String get noLocation => 'Lugar no disponible';
+	@override String get noEmail => 'Correo electrónico no disponible';
+	@override String get noUsername => 'Nombre de usuario no disponible';
+	@override String get noName => 'Nombre no disponible';
+	@override String get noFirstname => 'Nombre no disponible';
+	@override String get you => 'tú';
+	@override String get me => '(yo)';
 }
 
 // Path: welcome
@@ -187,6 +198,7 @@ class _TranslationsFormEs implements TranslationsFormFr {
 	@override String get confirmPassword => 'Confirmar contraseña';
 	@override String get pleaseConfirmPassword => 'Por favor confirma tu contraseña';
 	@override String get passwordNotMatch => 'Las contraseñas no coinciden';
+	@override String get invalidUsername => 'El nombre de usuario debe: \n- contener entre 3 y 20 caracteres \n- comenzar con una letra \n- no contener caracteres especiales';
 }
 
 // Path: swipe_cards
@@ -248,6 +260,7 @@ class _TranslationsErrorEs implements TranslationsErrorFr {
 	// Translations
 	@override String details({required Object error}) => 'Error: ${error}';
 	@override String get general => 'Se ha producido un error';
+	@override String get no_results => 'Ningún resultado encontrado';
 	@override String get no_internet => 'Sin conexión a Internet';
 	@override String get no_internet_description => 'Por favor verifica tu conexión a Internet y vuelve a intentarlo';
 	@override String get no_events => 'No se encontraron eventos';
@@ -350,6 +363,24 @@ class _TranslationsCommonEs implements TranslationsCommonFr {
 	@override String get message => 'Mensaje';
 }
 
+// Path: settings
+class _TranslationsSettingsEs implements TranslationsSettingsFr {
+	_TranslationsSettingsEs._(this._root);
+
+	final TranslationsEs _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Cuenta';
+	@override String get settings => 'Ajustes';
+	@override String get language => 'Idioma';
+	@override String get manageSubjects => 'Gestión de materias';
+	@override String get notifications => 'Notificaciones';
+	@override String get about => 'Acerca de';
+	@override String get contact => 'Contacto';
+	@override String get terms => 'Términos de uso';
+	@override String get privacy => 'Política de privacidad';
+}
+
 // Path: page
 class _TranslationsPageEs implements TranslationsPageFr {
 	_TranslationsPageEs._(this._root);
@@ -429,6 +460,7 @@ extension on TranslationsEs {
 			case 'app.loadingIndicator': return 'Cargando...';
 			case 'app.errorOccurred': return 'Ocurrió un error';
 			case 'app.backTo': return 'Regresar a ';
+			case 'app.unknown': return 'Desconocido';
 			case 'user.email': return 'Correo electrónico';
 			case 'user.username': return 'Nombre de usuario';
 			case 'user.name': return 'Nombre';
@@ -444,6 +476,15 @@ extension on TranslationsEs {
 			case 'user.noDescription': return 'Sin descripción';
 			case 'user.noAddress': return 'Dirección no disponible';
 			case 'user.noReportsAvailable': return 'Número de reportes no disponible';
+			case 'user.noBio': return 'Bio no disponible';
+			case 'user.noBirthdate': return 'Fecha de nacimiento no disponible';
+			case 'user.noLocation': return 'Lugar no disponible';
+			case 'user.noEmail': return 'Correo electrónico no disponible';
+			case 'user.noUsername': return 'Nombre de usuario no disponible';
+			case 'user.noName': return 'Nombre no disponible';
+			case 'user.noFirstname': return 'Nombre no disponible';
+			case 'user.you': return 'tú';
+			case 'user.me': return '(yo)';
 			case 'welcome.welcome': return 'Bienvenido a Edumeet, la plataforma de revisión colaborativa';
 			case 'welcome.setup': return 'Comencemos eligiendo un idioma';
 			case 'welcome.whatLanguage': return '¿Qué idioma hablas?';
@@ -482,6 +523,7 @@ extension on TranslationsEs {
 			case 'form.confirmPassword': return 'Confirmar contraseña';
 			case 'form.pleaseConfirmPassword': return 'Por favor confirma tu contraseña';
 			case 'form.passwordNotMatch': return 'Las contraseñas no coinciden';
+			case 'form.invalidUsername': return 'El nombre de usuario debe: \n- contener entre 3 y 20 caracteres \n- comenzar con una letra \n- no contener caracteres especiales';
 			case 'swipe_cards.loading_error': return 'Error al cargar los eventos';
 			case 'swipe_cards.end_of_list': return '¡Has llegado al final de la lista!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'No a ${title}';
@@ -516,6 +558,7 @@ extension on TranslationsEs {
 			case 'event.eventNotStarted': return 'El enlace para unirse estará disponible aquí cuando el evento comience.';
 			case 'error.details': return ({required Object error}) => 'Error: ${error}';
 			case 'error.general': return 'Se ha producido un error';
+			case 'error.no_results': return 'Ningún resultado encontrado';
 			case 'error.no_internet': return 'Sin conexión a Internet';
 			case 'error.no_internet_description': return 'Por favor verifica tu conexión a Internet y vuelve a intentarlo';
 			case 'error.no_events': return 'No se encontraron eventos';
@@ -562,6 +605,15 @@ extension on TranslationsEs {
 			case 'messages.sendMessage': return 'Enviar';
 			case 'common.sender': return 'Remitente';
 			case 'common.message': return 'Mensaje';
+			case 'settings.account': return 'Cuenta';
+			case 'settings.settings': return 'Ajustes';
+			case 'settings.language': return 'Idioma';
+			case 'settings.manageSubjects': return 'Gestión de materias';
+			case 'settings.notifications': return 'Notificaciones';
+			case 'settings.about': return 'Acerca de';
+			case 'settings.contact': return 'Contacto';
+			case 'settings.terms': return 'Términos de uso';
+			case 'settings.privacy': return 'Política de privacidad';
 			case 'page.home': return 'Inicio';
 			case 'page.homePage': return 'Página de inicio';
 			case 'page.profile': return 'Perfil';

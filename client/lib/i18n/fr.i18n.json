@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "loadingIndicator": "Chargement...",
     "errorOccurred": "Une erreur est survenue",
-    "backTo": "Retour à "
+    "backTo": "Retour à ",
+    "unknown": "Inconnu"
   },
   "user": {
     "email": "Email",
@@ -47,7 +48,15 @@
     "anonymous": "Anonyme",
     "noDescription": "Aucune description",
     "noAddress": "Adresse non disponible",
-    "noReportsAvailable": "Nombre de signalements non disponible"
+    "noReportsAvailable": "Nombre de signalements non disponible",
+    "noBio": "Bio non disponible",
+    "noBirthdate": "Date de naissance non disponible",
+    "noLocation": "Lieu non disponible",
+    "noEmail": "Email non disponible",
+    "noUsername": "Nom d'utilisateur non disponible",
+    "noName": "Nom non disponible",
+    "noFirstname": "Prénom non disponible",
+    "you": "vous"
   },
   "welcome": {
     "welcome": "Bienvenue sur Edumeet, la plateforme de révision collaborative",
@@ -93,7 +102,8 @@
     "haveToAcceptConditions": "Vous devez accepter les conditions d'utilisation et la politique de confidentialité",
     "confirmPassword": "Confirmer le mot de passe",
     "pleaseConfirmPassword": "Veuillez confirmer votre mot de passe",
-    "passwordNotMatch": "Les mots de passe ne correspondent pas"
+    "passwordNotMatch": "Les mots de passe ne correspondent pas",
+    "invalidUsername": "Le nom d'utilisateur doit débuter par une lettre et contenir : \n- Au moins 3 caractères \n- Au maximum 20 caractères \n- Aucun caractères spéciaul"
   },
   "swipe_cards": {
     "loading_error": "Erreur de chargement des événements",
@@ -134,6 +144,7 @@
   "error": {
     "details": "Erreur : {{error}}",
     "general": "Une erreur est survenue",
+    "no_results": "Aucun résultat trouvé",
     "no_internet": "Pas de connexion Internet",
     "no_internet_description": "Veuillez vérifier votre connexion Internet et réessayer",
     "no_events": "Aucun événement trouvé",
@@ -192,6 +203,17 @@
   "common": {
     "sender": "Expéditeur",
     "message": "Message"
+  },
+  "settings": {
+    "account": "Compte",
+    "settings": "Paramètres",
+    "language": "Langue",
+    "manageSubjects": "Gestion des matières",
+    "notifications": "Notifications",
+    "about": "À propos",
+    "contact": "Contact",
+    "terms": "Conditions d'utilisation",
+    "privacy": "Politique de confidentialité"
   },
   "page": {
     "home": "Accueil",

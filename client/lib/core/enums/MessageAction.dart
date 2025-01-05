@@ -1,0 +1,4 @@
+enum MessageAction {
+  CREATE,
+  DELETE,
+}

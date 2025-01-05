@@ -1,14 +1,20 @@
+import 'package:client/core/services/user_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:flutter/foundation.dart';
+import 'package:client/screens/subjects_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/core/models/auth/loginRequest.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:client/screens/forgot_password_screen.dart';
+import '../core/services/cache_service.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../core/services/user_services.dart';
 import '../main.dart';
+import '../providers/user_provider.dart';
 import '../utils/colors.dart';
 
 class LoginPage extends StatefulWidget {
@@ -25,12 +31,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final AuthServices _authServices = AuthServices();
+  final UserServices _userServices = UserServices();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String? _errorMessage;
   bool _isPasswordVisible = false;
+
+  Future<bool> _isFirstLogin() async {
+    final isFirstLogin = await CacheService.getDataFromCache("first_launch");
+    if (isFirstLogin == null) {
+      return true;
+    }
+    return false;
+  }
 
   Future<void> _login() async {
     setState(() {
@@ -47,6 +62,13 @@ class _LoginPageState extends State<LoginPage> {
       if (response.success) {
         if(kIsWeb){
           context.push(AdminPage.routeName);
+        }
+        bool isFirstLogin = await _isFirstLogin();
+        if (isFirstLogin ) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SubjectsPage()),
+          );
         } else {
           context.go(HomePage.routeName);
         }

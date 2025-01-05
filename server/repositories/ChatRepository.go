@@ -2,9 +2,9 @@ package repositories
 
 import (
 	"context"
-	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/ent/event"
+	"edumeet/ent/friendship"
 	"edumeet/ent/message"
 )
 
@@ -18,10 +18,10 @@ func NewChatRepository(client *ent.Client) *ChatRepository {
 	}
 }
 
-func (cr *ChatRepository) CreateMessage(ctx context.Context, messageDTO dtos.MessageDTO, eventID string, userID string) (*ent.Message, error) {
+func (cr *ChatRepository) CreateMessage(ctx context.Context, message string, eventID string, userID string) (*ent.Message, error) {
 	//flush message in DB
-	message, err := cr.client.Message.Create().
-		SetContent(messageDTO.Message).
+	messageCreated, err := cr.client.Message.Create().
+		SetContent(message).
 		SetUserID(userID).
 		SetEventID(eventID).
 		Save(ctx)
@@ -30,7 +30,22 @@ func (cr *ChatRepository) CreateMessage(ctx context.Context, messageDTO dtos.Mes
 		return nil, err
 	}
 
-	return message, nil
+	return messageCreated, nil
+}
+
+func (cr *ChatRepository) CreateMessageFriend(ctx context.Context, message string, friendId string, userID string) (*ent.Message, error) {
+	//flush message in DB
+	messageCreated, err := cr.client.Message.Create().
+		SetContent(message).
+		SetUserID(userID).
+		SetFriendshipID(friendId).
+		Save(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return messageCreated, nil
 }
 
 func (cr *ChatRepository) DeleteMessage(messageID string) error {
@@ -60,7 +75,70 @@ func (cr *ChatRepository) GetChat(messageID string) (*ent.Message, error) {
 		Where(message.IDEQ(messageID)).
 		WithUser().
 		WithEvent().
+		WithFriendship().
 		Only(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return message, nil
+}
+
+func (cr *ChatRepository) GetMessagesFriend(friendId string) ([]*ent.Message, error) {
+	messages, err := cr.client.Message.Query().
+		Where(message.HasFriendshipWith(friendship.IDEQ(friendId))).
+		WithUser().
+		All(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return messages, nil
+}
+
+func (cr *ChatRepository) GetMessagesEvent(eventId string) ([]*ent.Message, error) {
+	messages, err := cr.client.Message.Query().
+		Where(message.HasEventWith(event.IDEQ(eventId))).
+		WithUser().
+		All(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	return messages, nil
+}
+
+func (cr *ChatRepository) GetLastMessageEvent(eventId string) (*ent.Message, error) {
+	message, err := cr.client.Message.Query().
+		Where(message.HasEventWith(event.IDEQ(eventId))).
+		WithUser().
+		Order(ent.Desc(message.FieldCreatedAt)).
+		First(context.Background())
+
+	if ent.IsNotFound(err) {
+		return nil, nil
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return message, nil
+}
+
+func (cr *ChatRepository) GetLastMessageFriend(friendId string) (*ent.Message, error) {
+	message, err := cr.client.Message.Query().
+		Where(message.HasFriendshipWith(friendship.IDEQ(friendId))).
+		WithUser().
+		Order(ent.Desc(message.FieldCreatedAt)).
+		First(context.Background())
+
+	if ent.IsNotFound(err) {
+		return nil, nil
+	}
 
 	if err != nil {
 		return nil, err

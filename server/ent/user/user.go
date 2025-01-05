@@ -44,6 +44,8 @@ const (
 	FieldActivated = "activated"
 	// FieldReportNumber holds the string denoting the reportnumber field in the database.
 	FieldReportNumber = "report_number"
+	// FieldAddress holds the string denoting the address field in the database.
+	FieldAddress = "address"
 	// FieldLng holds the string denoting the lng field in the database.
 	FieldLng = "lng"
 	// FieldLat holds the string denoting the lat field in the database.
@@ -130,6 +132,7 @@ var Columns = []string{
 	FieldPicture,
 	FieldActivated,
 	FieldReportNumber,
+	FieldAddress,
 	FieldLng,
 	FieldLat,
 	FieldRole,
@@ -278,6 +281,11 @@ func ByActivated(opts ...sql.OrderTermOption) OrderOption {
 // ByReportNumber orders the results by the reportNumber field.
 func ByReportNumber(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldReportNumber, opts...).ToFunc()
+}
+
+// ByAddress orders the results by the address field.
+func ByAddress(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAddress, opts...).ToFunc()
 }
 
 // ByLng orders the results by the lng field.

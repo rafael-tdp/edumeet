@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Heb je al een account?",
     "loadingIndicator": "Laden...",
     "errorOccurred": "Er is een fout opgetreden",
-    "backTo": "Terug naar "
+    "backTo": "Terug naar ",
+    "unknown": "Onbekend"
   },
   "user": {
     "email": "E-mail",
@@ -47,7 +48,16 @@
     "anonymous": "Anoniem",
     "noDescription": "Geen beschrijving",
     "noAddress": "Adres niet beschikbaar",
-    "noReportsAvailable": "Aantal meldingen niet beschikbaar"
+    "noReportsAvailable": "Aantal meldingen niet beschikbaar",
+    "noBio": "Geen bio beschikbaar",
+    "noBirthdate": "Geboortedatum niet beschikbaar",
+    "noLocation": "Locatie niet beschikbaar",
+    "noEmail": "E-mail niet beschikbaar",
+    "noUsername": "Gebruikersnaam niet beschikbaar",
+    "noName": "Naam niet beschikbaar",
+    "noFirstname": "Voornaam niet beschikbaar",
+    "you": "jij",
+    "me": "(ik)"
   },
   "welcome": {
     "welcome": "Welkom bij Edumeet, het platform voor samenwerkingsstudie",
@@ -93,7 +103,8 @@
     "haveToAcceptConditions": "Je moet de gebruiksvoorwaarden en het privacybeleid accepteren",
     "confirmPassword": "Bevestig het wachtwoord",
     "pleaseConfirmPassword": "Bevestig je wachtwoord",
-    "passwordNotMatch": "Wachtwoorden komen niet overeen"
+    "passwordNotMatch": "Wachtwoorden komen niet overeen",
+    "invalidUsername": "De gebruikersnaam moet: \n- tussen de 3 en 20 tekens bevatten \n- beginnen met een letter \n- geen speciale tekens bevatten"
   },
   "swipe_cards": {
     "loading_error": "Fout bij het laden van de evenementen",
@@ -134,6 +145,7 @@
   "error": {
     "details": "Fout: {{error}}",
     "general": "Er is een fout opgetreden",
+    "no_results": "Geen resultaten gevonden",
     "no_internet": "Geen internetverbinding",
     "no_internet_description": "Controleer je internetverbinding en probeer het opnieuw",
     "no_events": "Geen evenementen gevonden",
@@ -192,6 +204,17 @@
   "common": {
     "sender": "Afzender",
     "message": "Bericht"
+  },
+  "settings": {
+    "account": "Account",
+    "settings": "Instellingen",
+    "language": "Taal",
+    "manageSubjects": "Beheer vakken",
+    "notifications": "Meldingen",
+    "about": "Over",
+    "contact": "Contact",
+    "terms": "Voorwaarden",
+    "privacy": "Privacybeleid"
   },
   "page": {
     "home": "Startpagina",

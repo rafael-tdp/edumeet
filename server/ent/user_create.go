@@ -183,6 +183,20 @@ func (uc *UserCreate) SetNillableReportNumber(i *int) *UserCreate {
 	return uc
 }
 
+// SetAddress sets the "address" field.
+func (uc *UserCreate) SetAddress(s string) *UserCreate {
+	uc.mutation.SetAddress(s)
+	return uc
+}
+
+// SetNillableAddress sets the "address" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAddress(s *string) *UserCreate {
+	if s != nil {
+		uc.SetAddress(*s)
+	}
+	return uc
+}
+
 // SetLng sets the "lng" field.
 func (uc *UserCreate) SetLng(f float64) *UserCreate {
 	uc.mutation.SetLng(f)
@@ -544,6 +558,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.ReportNumber(); ok {
 		_spec.SetField(user.FieldReportNumber, field.TypeInt, value)
 		_node.ReportNumber = value
+	}
+	if value, ok := uc.mutation.Address(); ok {
+		_spec.SetField(user.FieldAddress, field.TypeString, value)
+		_node.Address = &value
 	}
 	if value, ok := uc.mutation.Lng(); ok {
 		_spec.SetField(user.FieldLng, field.TypeFloat64, value)

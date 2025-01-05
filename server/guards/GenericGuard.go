@@ -5,10 +5,14 @@ import (
 	"edumeet/interfaces"
 )
 
+const (
+	RoleAdmin = "ADMIN"
+)
+
 func CanAuthorize(user *ent.User, entity interfaces.Authorizable) bool {
-	return user.Role == "ADMIN" || user.ID == *entity.GetCreatedBy()
+	return user.Role == RoleAdmin || user.ID == *entity.GetCreatedBy()
 }
 
 func IsAdmin(user *ent.User) bool {
-	return user.Role == "ADMIN"
+	return user.Role == RoleAdmin
 }

@@ -3,32 +3,28 @@ package dtos
 import (
 	"edumeet/ent"
 	"edumeet/ent/user"
-	"edumeet/utils"
 	"time"
 )
 
 type UserDTO struct {
-	ID        string    `json:"id" validate:"required"`
-	Email     string    `json:"email" validate:"required,email"`
-	Username  string    `json:"username" validate:"required,min=3"`
-	Lastname  string    `json:"lastname,omitempty"`
-	Firstname string    `json:"firstname,omitempty"`
-	BirthDate time.Time `json:"birthDate,omitempty"`
-	Bio       *string   `json:"bio,omitempty"`
-	Picture   *string   `json:"picture,omitempty"`
-	Activated bool      `json:"activated,omitempty"`
-	ReportNum int       `json:"reportNumber,omitempty"`
-	Address   string    `json:"address,omitempty"`
-	Role      user.Role `json:"role" validate:"required,oneof=SUPERADMIN ADMIN USER"`
+	ID                   string     `json:"id" validate:"required"`
+	Email                string     `json:"email" validate:"required,email"`
+	Username             string     `json:"username" validate:"required,min=3"`
+	Lastname             string     `json:"lastname,omitempty"`
+	Firstname            string     `json:"firstname,omitempty"`
+	BirthDate            time.Time  `json:"birthDate,omitempty"`
+	Bio                  *string    `json:"bio,omitempty"`
+	Picture              *string    `json:"picture,omitempty"`
+	Activated            bool       `json:"activated,omitempty"`
+	ReportNum            int        `json:"reportNumber,omitempty"`
+	Address              string     `json:"address,omitempty"`
+	Role                 user.Role  `json:"role" validate:"required,oneof=SUPERADMIN ADMIN USER"`
+	Badges               []BadgeDTO `json:"badges,omitempty"`
+	NbFriends            int        `json:"nbFriends,omitempty"`
+	NbParticipatedEvents int        `json:"nbParticipatedEvents,omitempty"`
 }
 
 func UserEntToDto(user *ent.User) (*UserDTO, error) {
-	address, err := utils.GetAddress(*user.Lat, *user.Lng)
-
-	if err != nil {
-		return nil, err
-	}
-
 	userDTO := &UserDTO{
 		ID:        user.ID,
 		Email:     user.Email,
@@ -40,8 +36,9 @@ func UserEntToDto(user *ent.User) (*UserDTO, error) {
 		Picture:   user.Picture,
 		Activated: user.Activated,
 		ReportNum: user.ReportNumber,
-		Address:   address,
+		Address:   *user.Address,
 		Role:      user.Role,
+		Badges:    convertBadges(user.Edges.Badges),
 	}
 
 	return userDTO, nil
@@ -50,11 +47,6 @@ func UserEntToDto(user *ent.User) (*UserDTO, error) {
 func EntToUserDTO(user *ent.User) *UserDTO {
 	if user == nil {
 		return nil
-	}
-
-	var address string
-	if user.Lat != nil || user.Lng != nil {
-		address, _ = utils.GetAddress(*user.Lat, *user.Lng)
 	}
 
 	return &UserDTO{
@@ -68,7 +60,22 @@ func EntToUserDTO(user *ent.User) *UserDTO {
 		Picture:   user.Picture,
 		Activated: user.Activated,
 		ReportNum: user.ReportNumber,
-		Address:   address,
+		Address:   *user.Address,
 		Role:      user.Role,
 	}
+}
+
+func convertBadges(badges []*ent.Badge) []BadgeDTO {
+	var badgesDTO []BadgeDTO
+	for _, badge := range badges {
+		badgeDTO := BadgeDTO{
+			ID:                 badge.ID,
+			Name:               badge.Name,
+			Type:               badge.Type,
+			NbRequirementEvent: badge.NbRequirementEvent,
+			Svg:                badge.Svg,
+		}
+		badgesDTO = append(badgesDTO, badgeDTO)
+	}
+	return badgesDTO
 }

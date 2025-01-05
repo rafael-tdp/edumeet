@@ -5,6 +5,7 @@ import 'package:client/core/models/auth/resetPasswordRequest.dart';
 import 'package:client/core/models/auth/verifyCodeRequest.dart';
 import 'package:client/core/models/user.dart';
 import 'package:client/providers/user_provider.dart';
+import 'package:client/utils/http_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -39,13 +40,15 @@ class AuthServices {
     );
 
     if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
+      final responseData = HttpUtils.decodeResponse(response);
 
       final token = responseData['token'];
       await CacheService.saveDataToCache('auth_token', token);
 
-      await CacheService.saveDataToCache(
-          'first_launch', DateTime.now().toString());
+      // final isFirstLaunch = await CacheService.getDataFromCache('first_launch');
+      // if (isFirstLaunch == null) {
+      //   await CacheService.saveDataToCache('first_launch', "true");
+      // }
 
       final userJson = responseData['user'];
       await CacheService.saveDataToCache('user_data', jsonEncode(userJson));

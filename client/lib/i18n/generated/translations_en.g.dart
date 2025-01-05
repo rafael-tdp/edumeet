@@ -48,6 +48,7 @@ class TranslationsEn implements Translations {
 	@override late final _TranslationsResourcesEn resources = _TranslationsResourcesEn._(_root);
 	@override late final _TranslationsMessagesEn messages = _TranslationsMessagesEn._(_root);
 	@override late final _TranslationsCommonEn common = _TranslationsCommonEn._(_root);
+	@override late final _TranslationsSettingsEn settings = _TranslationsSettingsEn._(_root);
 	@override late final _TranslationsPageEn page = _TranslationsPageEn._(_root);
 }
 
@@ -89,6 +90,7 @@ class _TranslationsAppEn implements TranslationsAppFr {
 	@override String get loadingIndicator => 'Loading...';
 	@override String get errorOccurred => 'An error occurred';
 	@override String get backTo => 'Back to ';
+	@override String get unknown => 'Unknown';
 }
 
 // Path: user
@@ -113,6 +115,15 @@ class _TranslationsUserEn implements TranslationsUserFr {
 	@override String get noDescription => 'No description';
 	@override String get noAddress => 'Address not available';
 	@override String get noReportsAvailable => 'Number of reports not available';
+	@override String get noBio => 'Bio not available';
+	@override String get noBirthdate => 'Birthdate not available';
+	@override String get noLocation => 'Location not available';
+	@override String get noEmail => 'Email not available';
+	@override String get noUsername => 'Username not available';
+	@override String get noName => 'Name not available';
+	@override String get noFirstname => 'First name not available';
+	@override String get you => 'you';
+	@override String get me => '(me)';
 }
 
 // Path: welcome
@@ -187,6 +198,7 @@ class _TranslationsFormEn implements TranslationsFormFr {
 	@override String get confirmPassword => 'Confirm password';
 	@override String get pleaseConfirmPassword => 'Please confirm your password';
 	@override String get passwordNotMatch => 'Passwords do not match';
+	@override String get invalidUsername => 'The username must: \n- be between 3 and 20 characters long \n- start with a letter \n- not contain special characters';
 }
 
 // Path: swipe_cards
@@ -248,6 +260,7 @@ class _TranslationsErrorEn implements TranslationsErrorFr {
 	// Translations
 	@override String details({required Object error}) => 'Error: ${error}';
 	@override String get general => 'An error occurred';
+	@override String get no_results => 'No results found';
 	@override String get no_internet => 'No internet connection';
 	@override String get no_internet_description => 'Please check your internet connection and try again';
 	@override String get no_events => 'No events found';
@@ -350,6 +363,24 @@ class _TranslationsCommonEn implements TranslationsCommonFr {
 	@override String get message => 'Message';
 }
 
+// Path: settings
+class _TranslationsSettingsEn implements TranslationsSettingsFr {
+	_TranslationsSettingsEn._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get account => 'Account';
+	@override String get settings => 'Settings';
+	@override String get language => 'Language';
+	@override String get manageSubjects => 'Manage Subjects';
+	@override String get notifications => 'Notifications';
+	@override String get about => 'About';
+	@override String get contact => 'Contact';
+	@override String get terms => 'Terms of Use';
+	@override String get privacy => 'Privacy Policy';
+}
+
 // Path: page
 class _TranslationsPageEn implements TranslationsPageFr {
 	_TranslationsPageEn._(this._root);
@@ -429,6 +460,7 @@ extension on TranslationsEn {
 			case 'app.loadingIndicator': return 'Loading...';
 			case 'app.errorOccurred': return 'An error occurred';
 			case 'app.backTo': return 'Back to ';
+			case 'app.unknown': return 'Unknown';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Username';
 			case 'user.name': return 'Name';
@@ -444,6 +476,15 @@ extension on TranslationsEn {
 			case 'user.noDescription': return 'No description';
 			case 'user.noAddress': return 'Address not available';
 			case 'user.noReportsAvailable': return 'Number of reports not available';
+			case 'user.noBio': return 'Bio not available';
+			case 'user.noBirthdate': return 'Birthdate not available';
+			case 'user.noLocation': return 'Location not available';
+			case 'user.noEmail': return 'Email not available';
+			case 'user.noUsername': return 'Username not available';
+			case 'user.noName': return 'Name not available';
+			case 'user.noFirstname': return 'First name not available';
+			case 'user.you': return 'you';
+			case 'user.me': return '(me)';
 			case 'welcome.welcome': return 'Welcome to Edumeet, the collaborative revision platform';
 			case 'welcome.setup': return 'Let\'s start by choosing a language';
 			case 'welcome.whatLanguage': return 'What language do you speak?';
@@ -482,6 +523,7 @@ extension on TranslationsEn {
 			case 'form.confirmPassword': return 'Confirm password';
 			case 'form.pleaseConfirmPassword': return 'Please confirm your password';
 			case 'form.passwordNotMatch': return 'Passwords do not match';
+			case 'form.invalidUsername': return 'The username must: \n- be between 3 and 20 characters long \n- start with a letter \n- not contain special characters';
 			case 'swipe_cards.loading_error': return 'Error loading events';
 			case 'swipe_cards.end_of_list': return 'You have reached the end of the list!';
 			case 'swipe_cards.nope': return ({required Object title}) => 'No to ${title}';
@@ -516,6 +558,7 @@ extension on TranslationsEn {
 			case 'event.eventNotStarted': return 'The connection link will be available here when the event starts.';
 			case 'error.details': return ({required Object error}) => 'Error: ${error}';
 			case 'error.general': return 'An error occurred';
+			case 'error.no_results': return 'No results found';
 			case 'error.no_internet': return 'No internet connection';
 			case 'error.no_internet_description': return 'Please check your internet connection and try again';
 			case 'error.no_events': return 'No events found';
@@ -562,6 +605,15 @@ extension on TranslationsEn {
 			case 'messages.sendMessage': return 'Send';
 			case 'common.sender': return 'Sender';
 			case 'common.message': return 'Message';
+			case 'settings.account': return 'Account';
+			case 'settings.settings': return 'Settings';
+			case 'settings.language': return 'Language';
+			case 'settings.manageSubjects': return 'Manage Subjects';
+			case 'settings.notifications': return 'Notifications';
+			case 'settings.about': return 'About';
+			case 'settings.contact': return 'Contact';
+			case 'settings.terms': return 'Terms of Use';
+			case 'settings.privacy': return 'Privacy Policy';
 			case 'page.home': return 'Home';
 			case 'page.homePage': return 'Home page';
 			case 'page.profile': return 'Profile';

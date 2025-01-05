@@ -30,7 +30,8 @@
     "alreadyHaveAccount": "Você já tem uma conta?",
     "loadingIndicator": "Carregando...",
     "errorOccurred": "Ocorreu um erro",
-    "backTo": "Retornar a "
+    "backTo": "Retornar a ",
+    "unknown": "Desconhecido"
   },
   "user": {
     "email": "Email",
@@ -47,7 +48,16 @@
     "anonymous": "Anônimo",
     "noDescription": "Nenhuma descrição",
     "noAddress": "Endereço não disponível",
-    "noReportsAvailable": "Número de denúncias não disponível"
+    "noReportsAvailable": "Número de denúncias não disponível",
+    "noBio": "Bio não disponível",
+    "noBirthdate": "Data de nascimento não disponível",
+    "noLocation": "Localização não disponível",
+    "noEmail": "Email não disponível",
+    "noUsername": "Nome de usuário não disponível",
+    "noName": "Nome não disponível",
+    "noFirstname": "Primeiro nome não disponível",
+    "you": "você",
+    "me": "(eu)"
   },
   "welcome": {
     "welcome": "Bem-vindo ao Edumeet, a plataforma de revisão colaborativa",
@@ -93,7 +103,8 @@
     "haveToAcceptConditions": "Você deve aceitar os termos de uso e a política de privacidade",
     "confirmPassword": "Confirmar senha",
     "pleaseConfirmPassword": "Por favor, confirme sua senha",
-    "passwordNotMatch": "As senhas não correspondem"
+    "passwordNotMatch": "As senhas não correspondem",
+    "invalidUsername": "O nome de usuário deve: \n- conter entre 3 e 20 caracteres \n- começar com uma letra \n- não conter caracteres especiais"
   },
   "swipe_cards": {
     "loading_error": "Erro ao carregar os eventos",
@@ -134,6 +145,7 @@
   "error": {
     "details": "Erro: {{error}}",
     "general": "Ocorreu um erro",
+    "no_results": "Nenhum resultado encontrado",
     "no_internet": "Sem conexão com a Internet",
     "no_internet_description": "Por favor, verifique sua conexão com a Internet e tente novamente",
     "no_events": "Nenhum evento encontrado",
@@ -192,6 +204,17 @@
   "common": {
     "sender": "Remetente",
     "message": "Mensagem"
+  },
+  "settings": {
+    "account": "Conta",
+    "settings": "Configurações",
+    "language": "Idioma",
+    "manageSubjects": "Gerenciar matérias",
+    "notifications": "Notificações",
+    "about": "Sobre",
+    "contact": "Contato",
+    "terms": "Termos de uso",
+    "privacy": "Política de privacidade"
   },
   "page": {
     "home": "Início",

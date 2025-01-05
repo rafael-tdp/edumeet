@@ -29,6 +29,8 @@ const (
 	EdgeUser = "user"
 	// EdgeEvent holds the string denoting the event edge name in mutations.
 	EdgeEvent = "event"
+	// EdgeFriendship holds the string denoting the friendship edge name in mutations.
+	EdgeFriendship = "friendship"
 	// EdgeDocuments holds the string denoting the documents edge name in mutations.
 	EdgeDocuments = "documents"
 	// Table holds the table name of the message in the database.
@@ -47,6 +49,13 @@ const (
 	EventInverseTable = "events"
 	// EventColumn is the table column denoting the event relation/edge.
 	EventColumn = "event_messages"
+	// FriendshipTable is the table that holds the friendship relation/edge.
+	FriendshipTable = "messages"
+	// FriendshipInverseTable is the table name for the Friendship entity.
+	// It exists in this package in order to avoid circular dependency with the "friendship" package.
+	FriendshipInverseTable = "friendships"
+	// FriendshipColumn is the table column denoting the friendship relation/edge.
+	FriendshipColumn = "friendship_messages"
 	// DocumentsTable is the table that holds the documents relation/edge. The primary key declared below.
 	DocumentsTable = "message_documents"
 	// DocumentsInverseTable is the table name for the Document entity.
@@ -68,6 +77,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"event_messages",
+	"friendship_messages",
 	"user_messages",
 }
 
@@ -156,6 +166,13 @@ func ByEventField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
+// ByFriendshipField orders the results by friendship field.
+func ByFriendshipField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newFriendshipStep(), sql.OrderByField(field, opts...))
+	}
+}
+
 // ByDocumentsCount orders the results by documents count.
 func ByDocumentsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -181,6 +198,13 @@ func newEventStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EventInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, EventTable, EventColumn),
+	)
+}
+func newFriendshipStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(FriendshipInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, FriendshipTable, FriendshipColumn),
 	)
 }
 func newDocumentsStep() *sqlgraph.Step {

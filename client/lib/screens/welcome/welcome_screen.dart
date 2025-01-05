@@ -64,7 +64,7 @@ class _OnboardingPagerState extends State<OnboardingPager> {
           onNext: _nextPage,
         ),
         OnboardingPage(
-          title: t.welcome.chooseLanguage,
+          title: t.welcome.whatLanguage,
           additionalWidget: LanguageSelection(parentContext: context),
           onNext: _nextPage,
           onPrevious: _previousPage,

@@ -3717,18 +3717,21 @@ func (m *EventDocumentMutation) ResetEdge(name string) error {
 // FriendshipMutation represents an operation that mutates the Friendship nodes in the graph.
 type FriendshipMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *string
-	status        *string
-	clearedFields map[string]struct{}
-	user          *string
-	cleareduser   bool
-	friend        *string
-	clearedfriend bool
-	done          bool
-	oldValue      func(context.Context) (*Friendship, error)
-	predicates    []predicate.Friendship
+	op              Op
+	typ             string
+	id              *string
+	status          *string
+	clearedFields   map[string]struct{}
+	user            *string
+	cleareduser     bool
+	friend          *string
+	clearedfriend   bool
+	messages        map[string]struct{}
+	removedmessages map[string]struct{}
+	clearedmessages bool
+	done            bool
+	oldValue        func(context.Context) (*Friendship, error)
+	predicates      []predicate.Friendship
 }
 
 var _ ent.Mutation = (*FriendshipMutation)(nil)
@@ -3949,6 +3952,60 @@ func (m *FriendshipMutation) ResetFriend() {
 	m.clearedfriend = false
 }
 
+// AddMessageIDs adds the "messages" edge to the Message entity by ids.
+func (m *FriendshipMutation) AddMessageIDs(ids ...string) {
+	if m.messages == nil {
+		m.messages = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.messages[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMessages clears the "messages" edge to the Message entity.
+func (m *FriendshipMutation) ClearMessages() {
+	m.clearedmessages = true
+}
+
+// MessagesCleared reports if the "messages" edge to the Message entity was cleared.
+func (m *FriendshipMutation) MessagesCleared() bool {
+	return m.clearedmessages
+}
+
+// RemoveMessageIDs removes the "messages" edge to the Message entity by IDs.
+func (m *FriendshipMutation) RemoveMessageIDs(ids ...string) {
+	if m.removedmessages == nil {
+		m.removedmessages = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.messages, ids[i])
+		m.removedmessages[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMessages returns the removed IDs of the "messages" edge to the Message entity.
+func (m *FriendshipMutation) RemovedMessagesIDs() (ids []string) {
+	for id := range m.removedmessages {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MessagesIDs returns the "messages" edge IDs in the mutation.
+func (m *FriendshipMutation) MessagesIDs() (ids []string) {
+	for id := range m.messages {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMessages resets all changes to the "messages" edge.
+func (m *FriendshipMutation) ResetMessages() {
+	m.messages = nil
+	m.clearedmessages = false
+	m.removedmessages = nil
+}
+
 // Where appends a list predicates to the FriendshipMutation builder.
 func (m *FriendshipMutation) Where(ps ...predicate.Friendship) {
 	m.predicates = append(m.predicates, ps...)
@@ -4082,12 +4139,15 @@ func (m *FriendshipMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *FriendshipMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.user != nil {
 		edges = append(edges, friendship.EdgeUser)
 	}
 	if m.friend != nil {
 		edges = append(edges, friendship.EdgeFriend)
+	}
+	if m.messages != nil {
+		edges = append(edges, friendship.EdgeMessages)
 	}
 	return edges
 }
@@ -4104,30 +4164,50 @@ func (m *FriendshipMutation) AddedIDs(name string) []ent.Value {
 		if id := m.friend; id != nil {
 			return []ent.Value{*id}
 		}
+	case friendship.EdgeMessages:
+		ids := make([]ent.Value, 0, len(m.messages))
+		for id := range m.messages {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *FriendshipMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
+	if m.removedmessages != nil {
+		edges = append(edges, friendship.EdgeMessages)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *FriendshipMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case friendship.EdgeMessages:
+		ids := make([]ent.Value, 0, len(m.removedmessages))
+		for id := range m.removedmessages {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *FriendshipMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.cleareduser {
 		edges = append(edges, friendship.EdgeUser)
 	}
 	if m.clearedfriend {
 		edges = append(edges, friendship.EdgeFriend)
+	}
+	if m.clearedmessages {
+		edges = append(edges, friendship.EdgeMessages)
 	}
 	return edges
 }
@@ -4140,6 +4220,8 @@ func (m *FriendshipMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case friendship.EdgeFriend:
 		return m.clearedfriend
+	case friendship.EdgeMessages:
+		return m.clearedmessages
 	}
 	return false
 }
@@ -4168,6 +4250,9 @@ func (m *FriendshipMutation) ResetEdge(name string) error {
 	case friendship.EdgeFriend:
 		m.ResetFriend()
 		return nil
+	case friendship.EdgeMessages:
+		m.ResetMessages()
+		return nil
 	}
 	return fmt.Errorf("unknown Friendship edge %s", name)
 }
@@ -4175,25 +4260,27 @@ func (m *FriendshipMutation) ResetEdge(name string) error {
 // MessageMutation represents an operation that mutates the Message nodes in the graph.
 type MessageMutation struct {
 	config
-	op               Op
-	typ              string
-	id               *string
-	created_at       *time.Time
-	updated_at       *time.Time
-	created_by       *string
-	updated_by       *string
-	content          *string
-	clearedFields    map[string]struct{}
-	user             *string
-	cleareduser      bool
-	event            *string
-	clearedevent     bool
-	documents        map[string]struct{}
-	removeddocuments map[string]struct{}
-	cleareddocuments bool
-	done             bool
-	oldValue         func(context.Context) (*Message, error)
-	predicates       []predicate.Message
+	op                Op
+	typ               string
+	id                *string
+	created_at        *time.Time
+	updated_at        *time.Time
+	created_by        *string
+	updated_by        *string
+	content           *string
+	clearedFields     map[string]struct{}
+	user              *string
+	cleareduser       bool
+	event             *string
+	clearedevent      bool
+	friendship        *string
+	clearedfriendship bool
+	documents         map[string]struct{}
+	removeddocuments  map[string]struct{}
+	cleareddocuments  bool
+	done              bool
+	oldValue          func(context.Context) (*Message, error)
+	predicates        []predicate.Message
 }
 
 var _ ent.Mutation = (*MessageMutation)(nil)
@@ -4584,6 +4671,45 @@ func (m *MessageMutation) ResetEvent() {
 	m.clearedevent = false
 }
 
+// SetFriendshipID sets the "friendship" edge to the Friendship entity by id.
+func (m *MessageMutation) SetFriendshipID(id string) {
+	m.friendship = &id
+}
+
+// ClearFriendship clears the "friendship" edge to the Friendship entity.
+func (m *MessageMutation) ClearFriendship() {
+	m.clearedfriendship = true
+}
+
+// FriendshipCleared reports if the "friendship" edge to the Friendship entity was cleared.
+func (m *MessageMutation) FriendshipCleared() bool {
+	return m.clearedfriendship
+}
+
+// FriendshipID returns the "friendship" edge ID in the mutation.
+func (m *MessageMutation) FriendshipID() (id string, exists bool) {
+	if m.friendship != nil {
+		return *m.friendship, true
+	}
+	return
+}
+
+// FriendshipIDs returns the "friendship" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// FriendshipID instead. It exists only for internal usage by the builders.
+func (m *MessageMutation) FriendshipIDs() (ids []string) {
+	if id := m.friendship; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetFriendship resets all changes to the "friendship" edge.
+func (m *MessageMutation) ResetFriendship() {
+	m.friendship = nil
+	m.clearedfriendship = false
+}
+
 // AddDocumentIDs adds the "documents" edge to the Document entity by ids.
 func (m *MessageMutation) AddDocumentIDs(ids ...string) {
 	if m.documents == nil {
@@ -4854,12 +4980,15 @@ func (m *MessageMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MessageMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.user != nil {
 		edges = append(edges, message.EdgeUser)
 	}
 	if m.event != nil {
 		edges = append(edges, message.EdgeEvent)
+	}
+	if m.friendship != nil {
+		edges = append(edges, message.EdgeFriendship)
 	}
 	if m.documents != nil {
 		edges = append(edges, message.EdgeDocuments)
@@ -4879,6 +5008,10 @@ func (m *MessageMutation) AddedIDs(name string) []ent.Value {
 		if id := m.event; id != nil {
 			return []ent.Value{*id}
 		}
+	case message.EdgeFriendship:
+		if id := m.friendship; id != nil {
+			return []ent.Value{*id}
+		}
 	case message.EdgeDocuments:
 		ids := make([]ent.Value, 0, len(m.documents))
 		for id := range m.documents {
@@ -4891,7 +5024,7 @@ func (m *MessageMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MessageMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removeddocuments != nil {
 		edges = append(edges, message.EdgeDocuments)
 	}
@@ -4914,12 +5047,15 @@ func (m *MessageMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MessageMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.cleareduser {
 		edges = append(edges, message.EdgeUser)
 	}
 	if m.clearedevent {
 		edges = append(edges, message.EdgeEvent)
+	}
+	if m.clearedfriendship {
+		edges = append(edges, message.EdgeFriendship)
 	}
 	if m.cleareddocuments {
 		edges = append(edges, message.EdgeDocuments)
@@ -4935,6 +5071,8 @@ func (m *MessageMutation) EdgeCleared(name string) bool {
 		return m.cleareduser
 	case message.EdgeEvent:
 		return m.clearedevent
+	case message.EdgeFriendship:
+		return m.clearedfriendship
 	case message.EdgeDocuments:
 		return m.cleareddocuments
 	}
@@ -4951,6 +5089,9 @@ func (m *MessageMutation) ClearEdge(name string) error {
 	case message.EdgeEvent:
 		m.ClearEvent()
 		return nil
+	case message.EdgeFriendship:
+		m.ClearFriendship()
+		return nil
 	}
 	return fmt.Errorf("unknown Message unique edge %s", name)
 }
@@ -4964,6 +5105,9 @@ func (m *MessageMutation) ResetEdge(name string) error {
 		return nil
 	case message.EdgeEvent:
 		m.ResetEvent()
+		return nil
+	case message.EdgeFriendship:
+		m.ResetFriendship()
 		return nil
 	case message.EdgeDocuments:
 		m.ResetDocuments()
@@ -7825,6 +7969,7 @@ type UserMutation struct {
 	activated           *bool
 	reportNumber        *int
 	addreportNumber     *int
+	address             *string
 	lng                 *float64
 	addlng              *float64
 	lat                 *float64
@@ -8550,6 +8695,55 @@ func (m *UserMutation) ResetReportNumber() {
 	m.addreportNumber = nil
 }
 
+// SetAddress sets the "address" field.
+func (m *UserMutation) SetAddress(s string) {
+	m.address = &s
+}
+
+// Address returns the value of the "address" field in the mutation.
+func (m *UserMutation) Address() (r string, exists bool) {
+	v := m.address
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAddress returns the old "address" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldAddress(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAddress is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAddress requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAddress: %w", err)
+	}
+	return oldValue.Address, nil
+}
+
+// ClearAddress clears the value of the "address" field.
+func (m *UserMutation) ClearAddress() {
+	m.address = nil
+	m.clearedFields[user.FieldAddress] = struct{}{}
+}
+
+// AddressCleared returns if the "address" field was cleared in this mutation.
+func (m *UserMutation) AddressCleared() bool {
+	_, ok := m.clearedFields[user.FieldAddress]
+	return ok
+}
+
+// ResetAddress resets all changes to the "address" field.
+func (m *UserMutation) ResetAddress() {
+	m.address = nil
+	delete(m.clearedFields, user.FieldAddress)
+}
+
 // SetLng sets the "lng" field.
 func (m *UserMutation) SetLng(f float64) {
 	m.lng = &f
@@ -9138,7 +9332,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 18)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -9180,6 +9374,9 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.reportNumber != nil {
 		fields = append(fields, user.FieldReportNumber)
+	}
+	if m.address != nil {
+		fields = append(fields, user.FieldAddress)
 	}
 	if m.lng != nil {
 		fields = append(fields, user.FieldLng)
@@ -9226,6 +9423,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Activated()
 	case user.FieldReportNumber:
 		return m.ReportNumber()
+	case user.FieldAddress:
+		return m.Address()
 	case user.FieldLng:
 		return m.Lng()
 	case user.FieldLat:
@@ -9269,6 +9468,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldActivated(ctx)
 	case user.FieldReportNumber:
 		return m.OldReportNumber(ctx)
+	case user.FieldAddress:
+		return m.OldAddress(ctx)
 	case user.FieldLng:
 		return m.OldLng(ctx)
 	case user.FieldLat:
@@ -9382,6 +9583,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetReportNumber(v)
 		return nil
+	case user.FieldAddress:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAddress(v)
+		return nil
 	case user.FieldLng:
 		v, ok := value.(float64)
 		if !ok {
@@ -9487,6 +9695,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldPicture) {
 		fields = append(fields, user.FieldPicture)
 	}
+	if m.FieldCleared(user.FieldAddress) {
+		fields = append(fields, user.FieldAddress)
+	}
 	if m.FieldCleared(user.FieldLng) {
 		fields = append(fields, user.FieldLng)
 	}
@@ -9521,6 +9732,9 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldPicture:
 		m.ClearPicture()
+		return nil
+	case user.FieldAddress:
+		m.ClearAddress()
 		return nil
 	case user.FieldLng:
 		m.ClearLng()
@@ -9577,6 +9791,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldReportNumber:
 		m.ResetReportNumber()
+		return nil
+	case user.FieldAddress:
+		m.ResetAddress()
 		return nil
 	case user.FieldLng:
 		m.ResetLng()

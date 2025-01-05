@@ -25,5 +25,6 @@ class RegisterRequest {
     'lastname': lastname,
     'birthDate': '${birthDate.toIso8601String()}Z',
     'address': address,
+    'picture': 'initials',
   };
 }
