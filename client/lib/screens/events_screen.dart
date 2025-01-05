@@ -25,6 +25,7 @@ class EventsPage extends StatefulWidget {
 class _EventsPageState extends State<EventsPage> {
   bool _showOnlyMyEvents = false;
   User? _currentUser;
+  String _searchQuery = ''; // Variable pour la recherche
 
   @override
   void initState() {
@@ -112,7 +113,8 @@ class _EventsPageState extends State<EventsPage> {
                     }
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Impossible d'utiliser ce code")),
+                      const SnackBar(
+                          content: Text("Impossible d'utiliser ce code")),
                     );
                   }
                 }
@@ -140,6 +142,29 @@ class _EventsPageState extends State<EventsPage> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 200,
+              child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value.toLowerCase();
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: "Recherche...",
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                ),
+              ),
+            ),
+          ),
           IconButton(
             icon: Icon(
               _showOnlyMyEvents ? Icons.filter_list_off : Icons.filter_list,
@@ -161,6 +186,7 @@ class _EventsPageState extends State<EventsPage> {
             onPressed: _showJoinEventDialog,
             color: AppColors.purple,
           ),
+          const SizedBox(width: 16),
         ],
       ),
       body: FutureBuilder<List<Event>>(
@@ -176,10 +202,15 @@ class _EventsPageState extends State<EventsPage> {
 
           final events = snapshot.data!;
 
+          // Filtrer les événements selon la recherche
+          final filteredEvents = events.where((event) {
+            return event.title.toLowerCase().contains(_searchQuery);
+          }).toList();
+
           return ListView.builder(
-            itemCount: events.length,
+            itemCount: filteredEvents.length,
             itemBuilder: (context, index) {
-              final event = events[index];
+              final event = filteredEvents[index];
               return GestureDetector(
                 onTap: () => _openEventPage(context, event.id!),
                 child: EventCard(
