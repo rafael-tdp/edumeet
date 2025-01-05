@@ -59,6 +59,9 @@ func (e *Event) GenerateEvent(ctx context.Context, client *ent.Client) {
 				SetURL(gofakeit.URL()).
 				SetEventID(event.ID).
 				Save(ctx)
+			if err != nil {
+				panic(err)
+			}
 		} else {
 			_, err = client.PhysicalEvent.Create().
 				SetEventID(event.ID).
@@ -66,6 +69,9 @@ func (e *Event) GenerateEvent(ctx context.Context, client *ent.Client) {
 				SetLng(gofakeit.Longitude()).
 				SetLat(gofakeit.Latitude()).
 				Save(ctx)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 }

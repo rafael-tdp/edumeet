@@ -21,7 +21,7 @@ func (m *FriendShip) GenerateFriendship(ctx context.Context, client *ent.Client)
 	}
 
 	for _, currentUser := range users {
-		numFriends := gofakeit.Number(0, 3)
+		numFriends := gofakeit.Number(2, 3)
 		usersShuffled := users
 		gofakeit.ShuffleAnySlice(usersShuffled)
 		for i := 0; i < numFriends; i++ {
@@ -34,7 +34,12 @@ func (m *FriendShip) GenerateFriendship(ctx context.Context, client *ent.Client)
 			_, err = client.Friendship.Create().
 				SetUser(currentUser).
 				SetFriend(friend).
-				SetStatus(string(enums.FriendAccepted)).
+				SetStatus(func() string {
+					if i == 0 {
+						return string(enums.FriendPending)
+					}
+					return string(enums.FriendAccepted)
+				}()).
 				Save(ctx)
 			if err != nil {
 				panic("error creating friendship: " + err.Error())
