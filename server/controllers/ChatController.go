@@ -131,7 +131,7 @@ func (cc *ChatController) SendMessageToEvent(c *fiber.Ctx) error {
 
 	// Envoyez le message à tous les utilisateurs de cet événement
 	ctx := context.WithValue(c.Context(), "user_id", user.ID)
-	err = cc.chatService.SendMessageToEvent(ctx, eventId, event.Participants, messageDTO.Message, user.ID, user.Username)
+	err = cc.chatService.SendMessageToEvent(ctx, eventId, event.Participants, messageDTO.Message, user.ID, user.Username, *user.Picture)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

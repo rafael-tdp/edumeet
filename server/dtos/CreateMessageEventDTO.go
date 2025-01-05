@@ -9,4 +9,5 @@ type CreateMessageEventDTO struct {
 	EventId      string    `json:"eventId" validate:"required"`
 	CreationDate time.Time `json:"creationDate" validate:"required"`
 	Content      string    `json:"content" validate:"required"`
+	PictureUser  string    `json:"pictureUser" validate:"required"`
 }
