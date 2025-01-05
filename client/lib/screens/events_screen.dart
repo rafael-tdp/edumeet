@@ -1,7 +1,7 @@
 import 'package:client/core/models/user.dart';
-import 'package:client/core/services/auth_services.dart';
 import 'package:client/core/services/event_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/screens/event_details_page.dart';
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/event_card.dart';
@@ -25,11 +25,13 @@ class EventsPage extends StatefulWidget {
 class _EventsPageState extends State<EventsPage> {
   bool _showOnlyMyEvents = false;
   User? _currentUser;
+  String _searchQuery = ''; // Variable pour la recherche
 
   @override
   void initState() {
     super.initState();
     _fetchCurrentUser();
+    _fetchEvents();
   }
 
   void _fetchCurrentUser() async {
@@ -47,16 +49,6 @@ class _EventsPageState extends State<EventsPage> {
     }
   }
 
-// void _openEventPage(BuildContext context, String eventId) {
-//   if (_currentUser == null) {
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       const SnackBar(content: Text("User not loaded")),
-//     );
-//     return;
-//   }
-//
-//   EventDetailsPage.navigateTo(context, eventId, _currentUser!);
-// }
   void _openEventPage(BuildContext context, String eventId) {
     if (_currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -64,7 +56,7 @@ class _EventsPageState extends State<EventsPage> {
       );
       return;
     }
-    context.go(
+    context.push(
       '${EventsPage.routeName}/$eventId/details',
       extra: _currentUser,
     );
@@ -78,6 +70,61 @@ class _EventsPageState extends State<EventsPage> {
     return _showOnlyMyEvents
         ? EventServices.getEventsCreatedByCurrentUser()
         : EventServices.getCurrentUserEvents();
+  }
+
+  void _showJoinEventDialog() {
+    final TextEditingController codeController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Rejoindre un événement"),
+          content: TextField(
+            controller: codeController,
+            decoration: const InputDecoration(hintText: "Code de l'événement"),
+            keyboardType: TextInputType.number,
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Annuler"),
+            ),
+            TextButton(
+              onPressed: () async {
+                final code = codeController.text.trim();
+                if (code.isNotEmpty) {
+                  try {
+                    final result = await EventServices.joinEventWithCode(code);
+                    if (result["event"] != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Vous avez rejoint l'événement")),
+                      );
+                      // Navigator.of(context).pop();
+                      await Future.delayed(const Duration(seconds: 1));
+                      EventDetailsPage.navigateTo(
+                          context, result["event"]["id"], _currentUser!);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Code invalide")),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text("Impossible d'utiliser ce code")),
+                    );
+                  }
+                }
+              },
+              child: const Text("Rejoindre"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -95,6 +142,29 @@ class _EventsPageState extends State<EventsPage> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 200,
+              child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value.toLowerCase();
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: "Recherche...",
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                ),
+              ),
+            ),
+          ),
           IconButton(
             icon: Icon(
               _showOnlyMyEvents ? Icons.filter_list_off : Icons.filter_list,
@@ -111,6 +181,12 @@ class _EventsPageState extends State<EventsPage> {
             onPressed: () => _createEvent(context),
             color: AppColors.purple,
           ),
+          IconButton(
+            icon: const Icon(Icons.add_link),
+            onPressed: _showJoinEventDialog,
+            color: AppColors.purple,
+          ),
+          const SizedBox(width: 16),
         ],
       ),
       body: FutureBuilder<List<Event>>(
@@ -126,10 +202,15 @@ class _EventsPageState extends State<EventsPage> {
 
           final events = snapshot.data!;
 
+          // Filtrer les événements selon la recherche
+          final filteredEvents = events.where((event) {
+            return event.title.toLowerCase().contains(_searchQuery);
+          }).toList();
+
           return ListView.builder(
-            itemCount: events.length,
+            itemCount: filteredEvents.length,
             itemBuilder: (context, index) {
-              final event = events[index];
+              final event = filteredEvents[index];
               return GestureDetector(
                 onTap: () => _openEventPage(context, event.id!),
                 child: EventCard(

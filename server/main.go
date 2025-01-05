@@ -1,15 +1,19 @@
 package main
 
 import (
+	"edumeet/metrics"
 	"edumeet/routes"
 	"edumeet/utils"
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
+	"github.com/valyala/fasthttp/fasthttpadaptor"
 	"gopkg.in/natefinch/lumberjack.v2"
 
 	_ "edumeet/ent/runtime"
@@ -34,6 +38,10 @@ import (
 // @host localhost:3000
 // @BasePath /
 func main() {
+
+	// Initialiser les métriques
+	metrics.InitMetrics()
+
 	// Initialiser le logger
 	initLogger()
 	// Utilisation de flag pour choisir le mode (normal, fixture ou migrate)
@@ -53,6 +61,8 @@ func main() {
 			log.Printf("Error loading .env file: %v", err)
 		}
 
+		http.Handle("/metrics", promhttp.Handler())
+
 		// Initialiser une nouvelle application Fiber
 		app := fiber.New(fiber.Config{
 			BodyLimit: 25 * 1024 * 1024,
@@ -64,6 +74,13 @@ func main() {
 			// Générer un ULID et un email aléatoire, et les retourner dans la réponse
 			fmt.Println(ulid.Make())
 			return c.SendString("Hello, World! " + gofakeit.Email())
+		})
+
+		p := fasthttpadaptor.NewFastHTTPHandler(promhttp.Handler())
+
+		app.Get("/metrics", func(c *fiber.Ctx) error {
+			p(c.Context())
+			return nil
 		})
 
 		utils.InitRedis()

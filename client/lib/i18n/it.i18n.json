@@ -48,7 +48,16 @@
     "anonymous": "Anonimo",
     "noDescription": "Nessuna descrizione",
     "noAddress": "Indirizzo non disponibile",
-    "noReportsAvailable": "Numero di segnalazioni non disponibile"
+    "noReportsAvailable": "Numero di segnalazioni non disponibile",
+    "noBio": "Bio non disponibile",
+    "noBirthdate": "Data di nascita non disponibile",
+    "noLocation": "Luogo non disponibile",
+    "noEmail": "Email non disponibile",
+    "noUsername": "Nome utente non disponibile",
+    "noName": "Nome non disponibile",
+    "noFirstname": "Nome non disponibile",
+    "you": "tu",
+    "me": "(me)"
   },
   "welcome": {
     "welcome": "Benvenuto su Edumeet, la piattaforma di revisione collaborativa",

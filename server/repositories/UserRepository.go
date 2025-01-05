@@ -73,7 +73,7 @@ func (ur *UserRepository) ValidateUser(ctx context.Context, userId string) (*ent
 
 func (ur *UserRepository) GetById(userID string) (*ent.User, error) {
 
-	user, err := ur.client.User.Query().Where(user.IDEQ(userID)).Only(context.Background())
+	user, err := ur.client.User.Query().Where(user.IDEQ(userID)).WithBadges().Only(context.Background())
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
@@ -287,4 +287,8 @@ func (ur *UserRepository) GetPendingFriendships(userID string) ([]*ent.Friendshi
 	}
 
 	return friendships, nil
+}
+
+func (ur *UserRepository) GetClient() *ent.Client {
+	return ur.client
 }

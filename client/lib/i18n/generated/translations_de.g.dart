@@ -115,6 +115,15 @@ class _TranslationsUserDe implements TranslationsUserFr {
 	@override String get noDescription => 'Keine Beschreibung';
 	@override String get noAddress => 'Adresse nicht verfügbar';
 	@override String get noReportsAvailable => 'Anzahl der Meldungen nicht verfügbar';
+	@override String get noBio => 'Bio nicht verfügbar';
+	@override String get noBirthdate => 'Geburtsdatum nicht verfügbar';
+	@override String get noLocation => 'Standort nicht verfügbar';
+	@override String get noEmail => 'E-Mail nicht verfügbar';
+	@override String get noUsername => 'Benutzername nicht verfügbar';
+	@override String get noName => 'Name nicht verfügbar';
+	@override String get noFirstname => 'Vorname nicht verfügbar';
+	@override String get you => 'Sie';
+	@override String get me => '(ich)';
 }
 
 // Path: welcome
@@ -467,6 +476,15 @@ extension on TranslationsDe {
 			case 'user.noDescription': return 'Keine Beschreibung';
 			case 'user.noAddress': return 'Adresse nicht verfügbar';
 			case 'user.noReportsAvailable': return 'Anzahl der Meldungen nicht verfügbar';
+			case 'user.noBio': return 'Bio nicht verfügbar';
+			case 'user.noBirthdate': return 'Geburtsdatum nicht verfügbar';
+			case 'user.noLocation': return 'Standort nicht verfügbar';
+			case 'user.noEmail': return 'E-Mail nicht verfügbar';
+			case 'user.noUsername': return 'Benutzername nicht verfügbar';
+			case 'user.noName': return 'Name nicht verfügbar';
+			case 'user.noFirstname': return 'Vorname nicht verfügbar';
+			case 'user.you': return 'Sie';
+			case 'user.me': return '(ich)';
 			case 'welcome.welcome': return 'Willkommen bei Edumeet, der Plattform für gemeinsames Lernen';
 			case 'welcome.setup': return 'Lass uns zunächst eine Sprache wählen';
 			case 'welcome.whatLanguage': return 'Welche Sprache sprichst du?';

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:client/core/enums/FriendStatus.dart';
+import 'package:client/core/models/friendship/friendRequest.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/core/services/auth_services.dart';
 import 'package:client/core/services/cache_service.dart';
@@ -99,6 +101,28 @@ class UserServices {
       final data = json.decode(response.body) as List<dynamic>;
       final List<Subject> subjects = data.map((subject) => Subject.fromJson(subject)).toList();
       return ResponseRequest(success: true, data: subjects);
+    } else {
+      return ResponseRequest(success: false, message: json.decode(response.body)['error']);
+    }
+  }
+
+  Future<ResponseRequest> getUserFriends([FriendStatus status = FriendStatus.all]) async {
+    final token = await _authServices.getToken();
+
+    if (token == null) return ResponseRequest(success: false, message: 'Veuillez vous connecter');
+
+    final response = await http.get(
+      Uri.parse('${Env.BACKEND_URL}/user/friendship?status=${status.name.toUpperCase()}'),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as List<dynamic>;
+      final List<FriendRequest> friends = data.map((friend) => FriendRequest.fromJson(friend)).toList();
+      return ResponseRequest(success: true, data: friends);
     } else {
       return ResponseRequest(success: false, message: json.decode(response.body)['error']);
     }

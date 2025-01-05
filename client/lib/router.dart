@@ -3,10 +3,12 @@ import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/conversations_screen.dart';
 import 'package:client/screens/create_documents_screen.dart';
 import 'package:client/screens/document_viewer_screen.dart';
+import 'package:client/screens/edit_event_screen.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/screens/event_chat_page.dart';
 import 'package:client/screens/event_details_page.dart';
 import 'package:client/screens/events_screen.dart';
+import 'package:client/screens/friends_list_screen.dart';
 import 'package:client/screens/language_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/settings_screen.dart';
@@ -81,6 +83,14 @@ final _router =
                   },
                 ),
               ]),
+          GoRoute(
+            path: '/:eventId/edit',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) {
+              final eventId = state.pathParameters['eventId']!;
+              return EditEventPage(eventId: eventId);
+            },
+          ),
         ],
       ),
       GoRoute(
@@ -89,10 +99,17 @@ final _router =
         builder: (context, state) => const ConversationsPage(),
       ),
       GoRoute(
-          path: SettingsPage.routeName,
-          name: SettingsPage.routeName.replaceAll("/", ""),
-          parentNavigatorKey: _shellNavigatorKey,
-          builder: (context, state) => const SettingsPage()),
+        path: SettingsPage.routeName,
+        name: SettingsPage.routeName.replaceAll("/", ""),
+        parentNavigatorKey: _shellNavigatorKey,
+        builder: (context, state) => const SettingsPage(),
+      ),
+      GoRoute(
+        path: FriendsListPage.routeName,
+        name: FriendsListPage.routeName.replaceAll("/", ""),
+        parentNavigatorKey: _shellNavigatorKey,
+        builder: (context, state) => const FriendsListPage(),
+      ),
       // GoRoute(
       //     path: ProfilePage.routeName,
       //     parentNavigatorKey: _shellNavigatorKey,
@@ -112,39 +129,46 @@ final _router =
     ],
   ),
   GoRoute(
-      path: '/',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const AuthGuard(child: HomePage())),
+    path: '/',
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => const AuthGuard(child: HomePage()),
+  ),
   GoRoute(
-      path: LoginPage.routeName,
-      name: LoginPage.routeName.replaceAll("/", ""),
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const LoginPage()),
+    path: LoginPage.routeName,
+    name: LoginPage.routeName.replaceAll("/", ""),
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => const LoginPage(),
+  ),
   GoRoute(
-      path: RegisterPage.routeName,
-      name: RegisterPage.routeName.replaceAll("/", ""),
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const RegisterPage()),
+    path: RegisterPage.routeName,
+    name: RegisterPage.routeName.replaceAll("/", ""),
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => const RegisterPage(),
+  ),
   GoRoute(
-      path: HomePage.routeName,
-      name: HomePage.routeName.replaceAll("/", ""),
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const HomePage()),
+    path: HomePage.routeName,
+    name: HomePage.routeName.replaceAll("/", ""),
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => const HomePage(),
+  ),
   GoRoute(
-      path: LanguagePage.routeName,
-      name: LanguagePage.routeName.replaceAll("/", ""),
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const LanguagePage()),
+    path: LanguagePage.routeName,
+    name: LanguagePage.routeName.replaceAll("/", ""),
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => const LanguagePage(),
+  ),
   GoRoute(
-      path: SubjectsPage.routeName,
-      name: SubjectsPage.routeName.replaceAll("/", ""),
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const SubjectsPage()),
+    path: SubjectsPage.routeName,
+    name: SubjectsPage.routeName.replaceAll("/", ""),
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => const SubjectsPage(),
+  ),
   GoRoute(
-      path: ForgotPasswordPage.routeName,
-      name: ForgotPasswordPage.routeName.replaceAll("/", ""),
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const ForgotPasswordPage()),
+    path: ForgotPasswordPage.routeName,
+    name: ForgotPasswordPage.routeName.replaceAll("/", ""),
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => const ForgotPasswordPage(),
+  ),
   GoRoute(
     path: ValidateAccountPage.routeName,
     parentNavigatorKey: _rootNavigatorKey,
@@ -153,22 +177,30 @@ final _router =
       email: state.pathParameters['email']!,
     ),
   ),
+  GoRoute(
+    path: ProfilePage.routeName,
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => const ProfilePage(
+      userId: null,
+    ),
+    routes: [
       GoRoute(
-          path: ProfilePage.routeName,
-          parentNavigatorKey: _rootNavigatorKey,
-          builder: (context, state) => const ProfilePage(
-            userId: null,
-          ),
-          routes: [
-            GoRoute(
-              path: EditProfilePage.routeName,
-              name: EditProfilePage.routeName.replaceAll("/", ""),
-              parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) => EditProfilePage(
-                user: state.extra as User,
-              ),
-            ),
-          ]),
+        path: EditProfilePage.routeName,
+        name: EditProfilePage.routeName.replaceAll("/", ""),
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => EditProfilePage(
+          user: state.extra as User,
+        ),
+      ),
+    ],
+  ),
+  GoRoute(
+    path: "${ProfilePage.routeName}/:userId",
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => ProfilePage(
+      userId: state.pathParameters['userId'],
+    ),
+  ),
   // GoRoute(
   //     path: '${ProfilePage.routeName}/:userId',
   //     parentNavigatorKey: _rootNavigatorKey,

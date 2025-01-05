@@ -54,10 +54,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _addressController = TextEditingController(text: widget.user.address);
     _selectedAvatar = widget.user.picture; // Initialize with the current avatar
     _currentUsername = widget.user.username;
-    // _avatar = DiceBearBuilder(
-    //   seed: widget.user.username,
-    //   sprite: DiceBearSprite.bottts,
-    // ).build();
     _avatar = DiceBearBuilder(
       seed: widget.user.username,
       sprite: DiceBearSprite.values.firstWhere(
@@ -109,12 +105,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           await UserServices().updateUserInfo(updatedUser);
       if (response.success) {
         Provider.of<UserProvider>(context, listen: false).setUser(response.data);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfilePage(),
-          ),
-        );
+        Navigator.of(context).pop(true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

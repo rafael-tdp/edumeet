@@ -7,9 +7,9 @@ class UserProvider with ChangeNotifier {
 
   User? get currentUser => _currentUser;
 
-  void setUser(User user) {
+  void setUser(User user) async {
+    await CacheService.saveUserToCache(user);
     _currentUser = user;
-    CacheService.saveUserToCache(user);
     notifyListeners();
   }
 
@@ -36,6 +36,7 @@ class UserProvider with ChangeNotifier {
 
   void clearUser() {
     _currentUser = null;
+    CacheService.removeDataFromCache('user_data');
     notifyListeners();
   }
 

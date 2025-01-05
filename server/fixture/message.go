@@ -20,7 +20,6 @@ func (m *Message) GenerateMessagesForEvents(ctx context.Context, client *ent.Cli
 		}).
 		All(ctx)
 	if err != nil {
-		logrus.Error("error fetching events with participants to create messages: %v", err)
 		panic("error fetching events with participants to create messages: " + err.Error())
 	}
 
@@ -57,7 +56,6 @@ func (m *Message) GenerateMessagesForEvents(ctx context.Context, client *ent.Cli
 					Save(ctx)
 
 				if err != nil {
-					logrus.Error("error creating message for event: %v", err)
 					panic("error creating message for event: " + err.Error())
 				}
 			}
@@ -68,7 +66,6 @@ func (m *Message) GenerateMessagesForEvents(ctx context.Context, client *ent.Cli
 func (m *Message) GenerateMessagesForFriends(ctx context.Context, client *ent.Client) {
 	users, err := client.User.Query().All(ctx)
 	if err != nil {
-		logrus.Error("error fetching users to create messages for friends: %v", err)
 		panic("error fetching users to create messages for friends: " + err.Error())
 	}
 
@@ -83,7 +80,6 @@ func (m *Message) GenerateMessagesForFriends(ctx context.Context, client *ent.Cl
 			WithFriend().
 			All(ctx)
 		if err != nil {
-			logrus.Error("error fetching friends for user: %v", err)
 			panic("error fetching friends for user: " + err.Error())
 		}
 
@@ -108,7 +104,6 @@ func (m *Message) GenerateMessagesForFriends(ctx context.Context, client *ent.Cl
 					Save(ctx)
 
 				if err != nil {
-					logrus.Error("error creating message for friend: %v", err)
 					panic("error creating message for friend: " + err.Error())
 				}
 			}

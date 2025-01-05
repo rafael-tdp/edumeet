@@ -324,6 +324,7 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 		EventDocuments:    dtos.EntToEventDocumentDTO(event.Edges.EventDocuments),
 		CreatedBy:         event.CreatedBy,
 		LastMessages:      lastMessages,
+		Code:              event.Code,
 	}
 
 	if event.Edges.RemoteEvent != nil {
@@ -363,19 +364,19 @@ func (es *EventService) UpdateEventSubjects(ctx context.Context, eventID string,
 	}
 	return nil
 }
-func (es *EventService) JoinEventByCode(eventCode string, userID string) error {
+func (es *EventService) JoinEventByCode(eventCode string, userID string) (*ent.Event, error) {
 
 	event, err := es.eventRepository.GetEventByCode(eventCode)
 
 	if err != nil {
 		logrus.Error("Error EventService.JoinEventByCode: ", err)
-		return err
+		return nil, err
 	}
 
 	if event.Edges.Participants != nil {
 		for _, participant := range event.Edges.Participants {
 			if participant.Edges.User.ID == userID {
-				return errors.New("user already joined the event")
+				return nil, errors.New("user already joined the event")
 			}
 		}
 	}
@@ -384,10 +385,10 @@ func (es *EventService) JoinEventByCode(eventCode string, userID string) error {
 
 	if err != nil {
 		logrus.Error("Error EventService.JoinEventByCode: ", err)
-		return err
+		return nil, err
 	}
 
-	return nil
+	return event, nil
 }
 
 func (es *EventService) GetEventCode(eventId string) (*dtos.EventCodeDTO, error) {

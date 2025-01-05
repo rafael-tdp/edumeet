@@ -1,8 +1,10 @@
 import 'package:client/core/models/message.dart';
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:client/providers/user_provider.dart';
 import 'package:client/utils/colors.dart';
 import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MessagesPreview extends StatelessWidget {
   final List<Message> messages;
@@ -16,6 +18,8 @@ class MessagesPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _currentUser = Provider.of<UserProvider>(context, listen: false).currentUser;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -64,12 +68,6 @@ class MessagesPreview extends StatelessWidget {
                     )
                   else
                     ...messages.take(3).map((message) {
-                      final Avatar _avatar = DiceBearBuilder(
-                        seed: message.user.username,
-                        sprite: DiceBearSprite.bottts,
-                      ).build();
-
-                      _avatar.toImage(width: 50, height: 50);
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -80,7 +78,10 @@ class MessagesPreview extends StatelessWidget {
                                 backgroundColor: Colors.transparent,
                                 child: DiceBearBuilder(
                                   seed: message.user.username,
-                                  sprite: DiceBearSprite.bottts,
+                                  sprite: DiceBearSprite.values.firstWhere(
+                                        (sprite) => sprite.name == (message.user.picture),
+                                    orElse: () => DiceBearSprite.bottts,
+                                  ),
                                 ).build().toImage(width: 40, height: 40)),
                             const SizedBox(width: 10),
                             Expanded(
@@ -88,7 +89,7 @@ class MessagesPreview extends StatelessWidget {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: "${message.user.username}: ",
+                                      text: "${message.user.username == _currentUser?.username ? t.user.you : message.user.username}: ",
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,

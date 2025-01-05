@@ -10,4 +10,5 @@ type CreateMessageFriendDTO struct {
 	ReceiverId   string    `json:"receiverId" validate:"required"`
 	CreationDate time.Time `json:"creationDate" validate:"required"`
 	Content      string    `json:"content" validate:"required"`
+	PictureUser  string    `json:"pictureUser" validate:"required"`
 }

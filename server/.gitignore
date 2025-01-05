@@ -1,3 +1,5 @@
 tmp
 .env
 .air.toml
+
+credentials.json

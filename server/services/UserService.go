@@ -5,6 +5,7 @@ import (
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/enums"
+	"edumeet/firebase"
 	"edumeet/repositories"
 	"edumeet/utils"
 	"errors"
@@ -34,6 +35,23 @@ func (us *UserService) GetUser(userID string) (*dtos.UserDTO, error) {
 		logrus.Error("Error UserService GetUser: ", err)
 		return nil, fmt.Errorf("error parsing user DTO: %w", err)
 	}
+
+	userFriendship, err := us.userRepo.GetFriendshipsByUserId(userID)
+	if err != nil {
+		logrus.Error("Error UserService GetUserProfile: ", err)
+		return nil, err
+	}
+
+	participantRepository := repositories.NewParticipantRepository(us.userRepo.GetClient())
+	participatedEvents, err := participantRepository.GetParticipationsUser(userID)
+	if err != nil {
+		logrus.Error("Error UserService GetUserProfile: ", err)
+		return nil, err
+	}
+
+	userDTO.NbFriends = len(userFriendship)
+	userDTO.NbParticipatedEvents = len(participatedEvents)
+
 	return userDTO, nil
 }
 
@@ -48,6 +66,23 @@ func (us *UserService) GetUserProfile(userID string) (*dtos.UserProfileDTO, erro
 		logrus.Error("Error UserService GetUserProfile: ", err)
 		return nil, fmt.Errorf("error parsing user profile DTO: %w", err)
 	}
+
+	userFriendship, err := us.userRepo.GetFriendshipsByUserId(userID)
+	if err != nil {
+		logrus.Error("Error UserService GetUserProfile: ", err)
+		return nil, err
+	}
+
+	participantRepository := repositories.NewParticipantRepository(us.userRepo.GetClient())
+	participatedEvents, err := participantRepository.GetParticipationsUser(userID)
+	if err != nil {
+		logrus.Error("Error UserService GetUserProfile: ", err)
+		return nil, err
+	}
+
+	userProfileDTO.NbFriends = len(userFriendship)
+	userProfileDTO.NbParticipatedEvents = len(participatedEvents)
+
 	return userProfileDTO, nil
 }
 
@@ -187,6 +222,12 @@ func (us *UserService) CreateFriendship(ctx context.Context, userID string, frie
 		return nil, err
 	}
 
+	// Send notification to friend
+	fcm_token := utils.GetTokenFromRedis(friend.ID + "_FCM")
+	if fcm_token != "null" {
+		firebase.SendNotification(fcm_token, "New friend request", user.Username+" wants to be your friend")
+	}
+
 	return friendshipCreated, nil
 }
 
@@ -227,7 +268,7 @@ func (us *UserService) GetFriendships(userID string, status string) ([]dtos.Frie
 		}
 
 		return pendingFriendshipsDTO, nil
-	} else {
+	} else if status == string(enums.FriendAccepted) {
 
 		friendships, err := us.userRepo.GetFriendshipsByUserId(userID)
 		if err != nil {
@@ -242,6 +283,30 @@ func (us *UserService) GetFriendships(userID string, status string) ([]dtos.Frie
 		}
 
 		return acceptedFriendshipDTO, nil
+	} else if status == string(enums.FriendAll) {
+
+		pendingFriendships, err := us.userRepo.GetPendingFriendships(userID)
+		if err != nil {
+			logrus.Error("Error UserService GetFriendships: ", err)
+			return nil, err
+		}
+
+		acceptedFriendships, err := us.userRepo.GetFriendshipsByUserId(userID)
+		if err != nil {
+			logrus.Error("Error UserService GetFriendships: ", err)
+			return nil, err
+		}
+
+		friendships := append(pendingFriendships, acceptedFriendships...)
+		friendshipsDTO, err := dtos.FriendshipsEntToDTO(friendships, userID, status)
+		if err != nil {
+			logrus.Error("Error UserService GetFriendships: ", err)
+			return nil, err
+		}
+
+		return friendshipsDTO, nil
+	} else {
+		return nil, errors.New("invalid status")
 	}
 }
 

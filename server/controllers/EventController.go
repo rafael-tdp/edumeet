@@ -5,6 +5,7 @@ import (
 	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/guards"
+	"edumeet/metrics"
 	"edumeet/services"
 	"edumeet/structures"
 
@@ -71,9 +72,11 @@ func (ec *EventController) CreateEvent(c *fiber.Ctx) error {
 	remoteEvent, err := ec.eventservice.CreateEvent(ctx, eventDTO, currentUser.ID)
 
 	if err != nil {
+		metrics.EventAttempts.WithLabelValues("failure").Inc()
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
+	metrics.EventAttempts.WithLabelValues("success").Inc()
 	return c.Status(fiber.StatusCreated).JSON(remoteEvent)
 }
 
@@ -389,7 +392,7 @@ func (ec *EventController) JoinEventByCode(c *fiber.Ctx) error {
 
 	user := c.Locals("user").(*ent.User)
 
-	err := ec.eventservice.JoinEventByCode(code, user.ID)
+	event, err := ec.eventservice.JoinEventByCode(code, user.ID)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -397,11 +400,10 @@ func (ec *EventController) JoinEventByCode(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(
-		fiber.Map{
-			"message": "Successfully joined event",
-		},
-	)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Successfully joined event",
+		"event":   event,
+	})
 }
 
 // GetEventCode retrieves the event code for an event

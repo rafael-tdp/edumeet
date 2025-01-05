@@ -2,8 +2,6 @@ import 'package:client/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/models/subject.dart';
 import 'package:client/utils/colors.dart';
-import 'package:client/utils/colors.dart';
-import 'package:flutter/material.dart';
 import 'package:client/core/services/subjects_services.dart';
 import 'package:client/components/profile_button.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +9,6 @@ import 'package:go_router/go_router.dart';
 import '../core/services/cache_service.dart';
 import '../core/services/user_services.dart';
 import '../main.dart';
-import 'package:client/components/profile_button.dart';
 
 class SubjectsPage extends StatefulWidget {
   static const String routeName = '/subjects';

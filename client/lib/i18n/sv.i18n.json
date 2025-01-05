@@ -48,7 +48,16 @@
     "anonymous": "Anonym",
     "noDescription": "Ingen beskrivning",
     "noAddress": "Ingen adress tillgänglig",
-    "noReportsAvailable": "Antal rapporter inte tillgängligt"
+    "noReportsAvailable": "Antal rapporter inte tillgängligt",
+    "noBio": "Bio ej tillgänglig",
+    "noBirthdate": "Födelsedatum ej tillgängligt",
+    "noLocation": "Plats ej tillgänglig",
+    "noEmail": "E-post ej tillgänglig",
+    "noUsername": "Användarnamn ej tillgängligt",
+    "noName": "Namn ej tillgängligt",
+    "noFirstname": "Förnamn ej tillgängligt",
+    "you": "du",
+    "me": "(jag)"
   },
   "welcome": {
     "welcome": "Välkommen till Edumeet, plattformen för samarbetsstudier",

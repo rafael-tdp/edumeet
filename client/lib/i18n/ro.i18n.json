@@ -48,7 +48,16 @@
     "anonymous": "Anonim",
     "noDescription": "Nici o descriere",
     "noAddress": "Adresă indisponibilă",
-    "noReportsAvailable": "Numărul de raportări nu este disponibil"
+    "noReportsAvailable": "Numărul de raportări nu este disponibil",
+    "noBio": "Bio indisponibilă",
+    "noBirthdate": "Data nașterii indisponibilă",
+    "noLocation": "Locația indisponibilă",
+    "noEmail": "Email indisponibil",
+    "noUsername": "Numele de utilizator indisponibil",
+    "noName": "Numele indisponibil",
+    "noFirstname": "Prenumele indisponibil",
+    "you": "tu",
+    "me": "(eu)"
   },
   "welcome": {
     "welcome": "Bun venit pe Edumeet, platforma de revizuire colaborativă",

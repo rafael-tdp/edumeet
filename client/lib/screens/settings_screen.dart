@@ -1,10 +1,8 @@
-import 'package:client/main.dart';
 import 'package:client/screens/language_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/subjects_screen.dart';
 import 'package:client/utils/language.dart';
 import 'package:dice_bear/dice_bear.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +16,7 @@ import 'login_screen.dart';
 
 class SettingsPage extends StatefulWidget {
   static const String routeName = '/settings';
+
   static navigateTo(BuildContext context) {
     context.push(routeName);
   }
@@ -29,102 +28,130 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  late Future<User?> _userFuture;
+  final AuthServices _authServices = AuthServices();
+
+  @override
+  void initState() {
+    super.initState();
+    _userFuture = Provider.of<UserProvider>(context, listen: false).getUser();
+  }
+
   @override
   Widget build(BuildContext context) {
-    User? user = Provider.of<UserProvider>(context, listen: false).currentUser;
-    final AuthServices _authServices = AuthServices();
     final local = Localizations.localeOf(context).languageCode;
-    // Avatar _avatar = DiceBearBuilder(
-    //   seed: user?.username ?? t.user.anonymous,
-    //   sprite: DiceBearSprite.bottts,
-    // ).build();
-    final Avatar _avatar = DiceBearBuilder(
-      seed: user!.username,
-      sprite: DiceBearSprite.values.firstWhere(
-            (sprite) => sprite.name == user.picture,
-      ),
-    ).build();
 
     return Scaffold(
       appBar: AppBar(
         title: Text(t.page.settings),
         backgroundColor: Colors.transparent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                t.settings.account,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: _avatar.toImage(height: 40),
-              title: Text(user?.firstname ?? t.user.anonymous),
-              subtitle: Text(user?.username ?? t.user.anonymous),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () {
-                ProfilePage.navigateTo(context);
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                t.settings.settings,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.book, color: Colors.green),
-              title: Text(t.settings.manageSubjects),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () {
-                SubjectsPage.navigateTo(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.language, color: Colors.orange),
-              title: Text(t.settings.language),
-              subtitle: Text(languageNames[local] ?? t.app.unknown),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () {
-                LanguagePage.navigateTo(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.notifications, color: Colors.blue),
-              title: Text(t.settings.notifications),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-              onTap: () {
+      backgroundColor: Colors.white,
+      body: FutureBuilder<User?>(
+        future: _userFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Erreur : ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data == null) {
+            return Center(child: Text(t.user.anonymous));
+          }
 
-              },
+          final User user = snapshot.data!;
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    t.settings.account,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  leading: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.transparent,
+                      child: DiceBearBuilder(
+                        seed: user.username,
+                        sprite: DiceBearSprite.values.firstWhere(
+                              (sprite) => sprite.name == (user.picture),
+                          orElse: () => DiceBearSprite.bottts,
+                        ),
+                      ).build().toImage(height: 40)),
+                  title: Text(user.firstname ?? t.user.anonymous),
+                  subtitle: Text(user.username),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+                  onTap: () async {
+                    await context.push(
+                      ProfilePage.routeName,
+                    );
+                    setState(() {
+                      _userFuture =
+                          Provider.of<UserProvider>(context, listen: false)
+                              .getUser();
+                    });
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    t.settings.settings,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.book, color: Colors.green),
+                  title: Text(t.settings.manageSubjects),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+                  onTap: () {
+                    SubjectsPage.navigateTo(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.language, color: Colors.orange),
+                  title: Text(t.settings.language),
+                  subtitle: Text(languageNames[local] ?? t.app.unknown),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+                  onTap: () {
+                    LanguagePage.navigateTo(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.notifications, color: Colors.blue),
+                  title: Text(t.settings.notifications),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+                  onTap: () {},
+                ),
+                const SizedBox(height: 50),
+                Center(
+                  child: ProfileButton(
+                    text: t.profile.logout,
+                    backgroundColor: Colors.redAccent,
+                    onPressed: () async {
+                      await _authServices.logout();
+                      Provider.of<UserProvider>(context, listen: false)
+                          .clearUser();
+                      context.go(LoginPage.routeName);
+                    },
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 50),
-            Center(
-              child: ProfileButton(
-                text: t.profile.logout,
-                backgroundColor: Colors.redAccent,
-                onPressed: () async {
-                  await _authServices.logout();
-                  Provider.of<UserProvider>(context, listen: false).clearUser();
-                  context.go(LoginPage.routeName);
-                },
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

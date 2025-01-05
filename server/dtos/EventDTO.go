@@ -17,6 +17,7 @@ type EventDTO struct {
 	CreatedBy        *string           `json:"created_by,omitempty"`
 	Participants     []ParticipantDTO  `json:"participants,omitempty"`
 	Subjects         []string          `json:"subjects,omitempty"`
+	Code             string            `json:"code,omitempty"`
 }
 
 func EntToEventDTO(event *ent.Event) *EventDTO {
@@ -43,6 +44,7 @@ func EntToEventDTO(event *ent.Event) *EventDTO {
 		CreatedBy:        event.CreatedBy,
 		Participants:     ConvertParticipants(event.Edges.Participants),
 		Subjects:         ConvertSubjects(event.Edges.Subjects),
+		Code:             event.Code,
 	}
 }
 
@@ -79,4 +81,5 @@ type EventWithDetailsDTO struct {
 	EventDocuments    []*EventDocumentDTO      `json:"event_documents"`
 	CreatedBy         *string                  `json:"created_by,omitempty"`
 	LastMessages      []MessageDTO             `json:"last_messages"`
+	Code              string                   `json:"code,omitempty"`
 }

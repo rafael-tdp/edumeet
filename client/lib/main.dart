@@ -6,21 +6,27 @@ import 'package:client/providers/user_provider.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/providers/locale_provider.dart';
 import 'package:client/router.dart';
+import 'package:client/screens/search_event_screen.dart';
+import 'package:client/screens/friends_list_screen.dart';
+import 'package:client/screens/search_event_screen.dart';
 import 'package:client/screens/settings_screen.dart';
 import 'package:client/utils/colors.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:client/screens/profile_screen.dart';
 import 'core/services/cache_service.dart';
 import 'screens/swipe_cards_screen.dart';
 import 'screens/events_screen.dart';
 import 'screens/conversations_screen.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:client/core/services/push_notification_service.dart';
+import 'firebase_options.dart';
 
 void main() async {
   setUrlStrategy(PathUrlStrategy());
@@ -29,7 +35,6 @@ void main() async {
 
   final userProvider = UserProvider();
   await userProvider.loadUserFromCache();
-
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,
@@ -84,12 +89,10 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const SwipeCardsPage(),
+    const SearchEventPage(),
     const EventsPage(),
     const ConversationsPage(),
-    // const ProfilePage(
-    //   userId: null,
-    // ),
+    const FriendsListPage(),
     const SettingsPage(),
   ];
 
@@ -105,6 +108,9 @@ class _HomePageState extends State<HomePage> {
         context.go(ConversationsPage.routeName);
         break;
       case 3:
+        context.go(FriendsListPage.routeName);
+        break;
+      case 4:
         context.go(SettingsPage.routeName);
         break;
     }
@@ -123,6 +129,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    PushNotificationService.initialize();
     _sseServices.connectToSse();
     _isFirstLaunch();
 
@@ -159,11 +166,11 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: AppColors.purple,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.favorite),
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.school),
+            icon: Icon(Icons.event),
             label: '',
           ),
           BottomNavigationBarItem(
@@ -171,7 +178,11 @@ class _HomePageState extends State<HomePage> {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.groups),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
             label: '',
           ),
         ],

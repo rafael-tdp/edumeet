@@ -48,7 +48,16 @@
     "anonymous": "Anonym",
     "noDescription": "Keine Beschreibung",
     "noAddress": "Adresse nicht verfügbar",
-    "noReportsAvailable": "Anzahl der Meldungen nicht verfügbar"
+    "noReportsAvailable": "Anzahl der Meldungen nicht verfügbar",
+    "noBio": "Bio nicht verfügbar",
+    "noBirthdate": "Geburtsdatum nicht verfügbar",
+    "noLocation": "Standort nicht verfügbar",
+    "noEmail": "E-Mail nicht verfügbar",
+    "noUsername": "Benutzername nicht verfügbar",
+    "noName": "Name nicht verfügbar",
+    "noFirstname": "Vorname nicht verfügbar",
+    "you": "Sie",
+    "me": "(ich)"
   },
   "welcome": {
     "welcome": "Willkommen bei Edumeet, der Plattform für gemeinsames Lernen",

@@ -8,12 +8,14 @@ import 'package:client/core/services/event_services.dart';
 import 'package:client/core/models/event.dart';
 import 'package:client/core/models/subject.dart';
 import 'package:client/core/services/location_services.dart';
-import 'package:client/components/event/event_filters.dart';
+import 'package:client/components/event/event_filters_dialog.dart';
 
 class SwipeCardsComponent extends StatefulWidget {
   final bool showFilters;
+  final void Function() hideFilters;
 
-  const SwipeCardsComponent({super.key, required this.showFilters});
+  const SwipeCardsComponent(
+      {super.key, required this.showFilters, required this.hideFilters});
 
   @override
   _SwipeCardsComponentState createState() => _SwipeCardsComponentState();
@@ -24,11 +26,9 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
 
   String? _eventType;
   double? _maxDistance;
-  List<String>? _selectedTopics;
-  List<Subject> _subjects = [];
   String? _selectedSubject;
+  List<Subject> _subjects = [];
   dynamic location;
-  bool _isLocationLoaded = false;
 
   @override
   void initState() {
@@ -47,9 +47,6 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
   _getLocation() async {
     try {
       location = await LocationService.getLocation();
-      setState(() {
-        _isLocationLoaded = true;
-      });
     } catch (error) {
       print("Error getting location: $error");
     }
@@ -62,83 +59,81 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
         Column(
           children: [
             Expanded(
-              child: !_isLocationLoaded
-                  ? const Center(child: CircularProgressIndicator())
-                  : FutureBuilder<List<Event>>(
-                      future: EventServices.getEvents(
-                          _selectedTopics ?? [],
-                          location?['latitude'],
-                          location?['longitude'],
-                          _eventType ?? '',
-                          _maxDistance),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
+              child: FutureBuilder<List<Event>>(
+                future: EventServices.getEvents(
+                  [_selectedSubject ?? ''],
+                  location?['latitude'],
+                  location?['longitude'],
+                  _eventType ?? '',
+                  _maxDistance,
+                ),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.hasError || !snapshot.hasData) {
+                    return Center(child: Text(t.error.loadingEvents));
+                  }
 
-                        if (snapshot.hasError || !snapshot.hasData) {
-                          return Center(child: Text(t.error.loadingEvents));
-                        }
-
-                        final events = snapshot.data!;
-                        final swipeItems = events.map((event) {
-                          return SwipeItem(
-                            content: event,
-                            likeAction: () async {
-                              await ParticipantServices.joinEvent(event.id!);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content: Text(t.event.hasJoinEvent(
-                                        event_title: event.title))),
-                              );
-                            },
-                          );
-                        }).toList();
-                        _matchEngine = MatchEngine(swipeItems: swipeItems);
-
-                        return SwipeCards(
-                          matchEngine: _matchEngine,
-                          itemBuilder: (context, index) {
-                            final event = swipeItems[index].content as Event;
-                            return _buildEventCard(event);
-                          },
-                          onStackFinished: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text(t.swipe_cards.end_of_list)),
-                            );
-                          },
-                          itemChanged: (SwipeItem item, int index) {
-                            print(t.swipe_cards.item_changed(
-                                title: (item.content as Event).title));
-                          },
-                          upSwipeAllowed: false,
-                          fillSpace: true,
+                  final events = snapshot.data!;
+                  final swipeItems = events.map((event) {
+                    return SwipeItem(
+                      content: event,
+                      likeAction: () async {
+                        await ParticipantServices.joinEvent(event.id!);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(t.event.hasJoinEvent(
+                              event_title: event.title,
+                            )),
+                          ),
                         );
                       },
-                    ),
+                    );
+                  }).toList();
+
+                  _matchEngine = MatchEngine(swipeItems: swipeItems);
+
+                  return SwipeCards(
+                    matchEngine: _matchEngine,
+                    itemBuilder: (context, index) {
+                      final event = swipeItems[index].content as Event;
+                      return _buildEventCard(event);
+                    },
+                    onStackFinished: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(t.swipe_cards.end_of_list)),
+                      );
+                    },
+                    itemChanged: (SwipeItem item, int index) {
+                      print(t.swipe_cards.item_changed(
+                        title: (item.content as Event).title,
+                      ));
+                    },
+                    upSwipeAllowed: false,
+                    fillSpace: true,
+                  );
+                },
+              ),
             ),
           ],
         ),
         if (widget.showFilters)
-          Container(
-            width: double.infinity,
-            color: Colors.white,
-            padding: const EdgeInsets.all(10),
-            child: FiltersComponent(
-              subjects: _subjects,
-              onEventTypeChanged: (value) => setState(() => _eventType = value),
-              onDistanceChanged: (value) =>
-                  setState(() => _maxDistance = value),
-              onSubjectChanged: (value) => setState(() {
-                _selectedSubject = value;
-                _selectedTopics = value != null ? [value] : null;
-              }),
-              selectedEventType: _eventType,
-              selectedSubject: _selectedSubject,
-            ),
+          EventFiltersDialog(
+            eventType: _eventType,
+            maxDistance: _maxDistance,
+            selectedSubject: _selectedSubject,
+            subjects: _subjects,
+            onApply: (eventType, maxDistance, selectedSubject) {
+              setState(() {
+                _eventType = eventType;
+                _maxDistance = maxDistance;
+                _selectedSubject = selectedSubject;
+              });
+              widget.hideFilters();
+            },
           ),
       ],
     );
