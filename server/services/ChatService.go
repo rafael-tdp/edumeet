@@ -272,10 +272,13 @@ func (cs *ChatService) GetConversations(userId string) ([]dtos.ConversationDTO, 
 
 	for _, friendship := range conversationsFriends {
 		var userNameFriend string
+		var pictureConversation string
 		if friendship.Edges.User.ID == userId {
 			userNameFriend = friendship.Edges.Friend.Username
+			pictureConversation = *friendship.Edges.Friend.Picture
 		} else {
 			userNameFriend = friendship.Edges.User.Username
+			pictureConversation = *friendship.Edges.User.Picture
 		}
 
 		lastMessageFriend, err := cs.chatRepo.GetLastMessageFriend(friendship.ID)
@@ -286,7 +289,7 @@ func (cs *ChatService) GetConversations(userId string) ([]dtos.ConversationDTO, 
 		}
 
 		if lastMessageFriend != nil {
-			conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(friendship.ID, userNameFriend, "private", lastMessageFriend.Content, lastMessageFriend.CreatedAt.String(), lastMessageFriend.Edges.User.Username))
+			conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(friendship.ID, userNameFriend, "private", lastMessageFriend.Content, lastMessageFriend.CreatedAt.String(), lastMessageFriend.Edges.User.Username, pictureConversation))
 		}
 	}
 
@@ -300,7 +303,7 @@ func (cs *ChatService) GetConversations(userId string) ([]dtos.ConversationDTO, 
 		}
 
 		if lastMessageEvent != nil {
-			conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(participant.Edges.Event.ID, participant.Edges.Event.Title, "event", lastMessageEvent.Content, lastMessageEvent.CreatedAt.String(), lastMessageEvent.Edges.User.Username))
+			conversationDTOs = append(conversationDTOs, dtos.EntToConversationDTO(participant.Edges.Event.ID, participant.Edges.Event.Title, "event", lastMessageEvent.Content, lastMessageEvent.CreatedAt.String(), lastMessageEvent.Edges.User.Username, ""))
 		}
 	}
 
