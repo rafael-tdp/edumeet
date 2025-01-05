@@ -336,7 +336,7 @@ func (cs *ChatService) GetMessagesFriend(userId, friendId string) ([]dtos.Respon
 
 	getChatDtos := make([]dtos.ResponseMessageDTO, 0)
 	for _, message := range messages {
-		getChatDtos = append(getChatDtos, dtos.EntToResponseMessageDTO(message.Content, message.ID, *message.CreatedBy, message.CreatedAt.String(), message.Edges.User.Username))
+		getChatDtos = append(getChatDtos, dtos.EntToResponseMessageDTO(message.Content, message.ID, *message.CreatedBy, message.CreatedAt.String(), message.Edges.User.Username, *message.Edges.User.Picture))
 	}
 
 	return getChatDtos, nil
@@ -367,7 +367,7 @@ func (cs *ChatService) GetMessagesEvent(userId, eventId string) ([]dtos.Response
 			continue
 		}
 
-		getChatDtos = append(getChatDtos, dtos.EntToResponseMessageDTO(message.Content, message.ID, *message.CreatedBy, message.CreatedAt.String(), message.Edges.User.Username))
+		getChatDtos = append(getChatDtos, dtos.EntToResponseMessageDTO(message.Content, message.ID, *message.CreatedBy, message.CreatedAt.String(), message.Edges.User.Username, *message.Edges.User.Picture))
 	}
 
 	return getChatDtos, nil
