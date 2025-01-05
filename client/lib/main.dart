@@ -3,6 +3,7 @@ import 'package:client/providers/user_provider.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/providers/locale_provider.dart';
 import 'package:client/router.dart';
+import 'package:client/screens/search_event_screen.dart';
 import 'package:client/screens/friends_list_screen.dart';
 import 'package:client/screens/search_event_screen.dart';
 import 'package:client/screens/settings_screen.dart';
