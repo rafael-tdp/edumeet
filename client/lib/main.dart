@@ -1,5 +1,8 @@
 
 import 'package:client/screens/admin/admin_page.dart';
+import 'dart:async';
+
+import 'package:client/core/services/message_services.dart';
 import 'package:client/core/services/sse_services.dart';
 import 'package:client/providers/user_provider.dart';
 import 'package:client/i18n/generated/translations.g.dart';
@@ -10,6 +13,7 @@ import 'package:client/screens/friends_list_screen.dart';
 import 'package:client/screens/search_event_screen.dart';
 import 'package:client/screens/settings_screen.dart';
 import 'package:client/utils/colors.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -83,6 +87,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final SseServices _sseServices = SseServices();
+  StreamSubscription? internetConnection;
+  bool isOffline = false;
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
@@ -156,7 +162,6 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.groups),
             label: '',
           ),
-          //Sous menu pour les amis
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: '',
