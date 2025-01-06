@@ -6,6 +6,7 @@ import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:client/components/event/participant_management_modal.dart';
 
 class ParticipantsList extends StatefulWidget {
   final List<dynamic> participants;
@@ -54,32 +55,57 @@ class _ParticipantsListState extends State<ParticipantsList> {
   }
 
   void _acceptUser(String participantId) {
-    ParticipantServices.processParticipant(participantId, 'ACCEPTED');
-    setState(() {
-      final participant = participantsList
-          .firstWhere((p) => p['id'] == participantId, orElse: () => null);
-      if (participant != null) {
-        participant['status'] = 'ACCEPTED';
-      }
-    });
+    try {
+      ParticipantServices.processParticipant(participantId, 'ACCEPTED');
+      setState(() {
+        final participant = participantsList
+            .firstWhere((p) => p['id'] == participantId, orElse: () => null);
+        if (participant != null) {
+          participant['status'] = 'ACCEPTED';
+        }
+      });
+      _showMessage("Utilisateur accepté avec succès.");
+      Navigator.of(context).pop();
+    } catch (e) {
+      _showMessage("Erreur lors de l'acceptation de l'utilisateur.");
+    }
   }
 
   void _rejectUser(String participantId) {
-    ParticipantServices.processParticipant(participantId, 'REJECTED');
-    setState(() {
-      final participant = participantsList
-          .firstWhere((p) => p['id'] == participantId, orElse: () => null);
-      if (participant != null) {
-        participant['status'] = 'REJECTED';
-      }
-    });
+    try {
+      ParticipantServices.processParticipant(participantId, 'REJECTED');
+      setState(() {
+        final participant = participantsList
+            .firstWhere((p) => p['id'] == participantId, orElse: () => null);
+        if (participant != null) {
+          participant['status'] = 'REJECTED';
+        }
+      });
+      _showMessage("Utilisateur refusé.");
+      Navigator.of(context).pop();
+    } catch (e) {
+      _showMessage("Erreur lors du rejet de l'utilisateur.");
+    }
   }
 
   void _removeUser(String participantId) {
-    ParticipantServices.processParticipant(participantId, 'REJECTED');
-    setState(() {
-      participantsList.removeWhere((p) => p['id'] == participantId);
-    });
+    try {
+      ParticipantServices.processParticipant(participantId, 'REJECTED');
+      setState(() {
+        participantsList =
+            participantsList.where((p) => p['id'] != participantId).toList();
+      });
+      _showMessage("Utilisateur supprimé.");
+      Navigator.of(context).pop();
+    } catch (e) {
+      _showMessage("Erreur lors de la suppression de l'utilisateur.");
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
@@ -89,11 +115,13 @@ class _ParticipantsListState extends State<ParticipantsList> {
         child: CircularProgressIndicator(),
       );
     } else {
-      final acceptedParticipants = widget.participants
-          .where((participant) => participant['status'] == 'ACCEPTED')
+      final filteredParticipants = participantsList
+          .where((participant) =>
+              participant['status'] == 'ACCEPTED' ||
+              participant['status'] == 'PENDING')
           .toList();
 
-      final pendingParticipantsCount = widget.participants
+      final pendingParticipantsCount = participantsList
           .where((participant) => participant['status'] == 'PENDING')
           .length;
 
@@ -119,81 +147,18 @@ class _ParticipantsListState extends State<ParticipantsList> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.group, size: 28),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text("Gestion des utilisateurs"),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: participantsList.map((participant) {
-                                    String status = participant['status'];
-
-                                    return ListTile(
-                                      title: Row(
-                                        children: [
-                                          CircleAvatar(
-                                              radius: 20,
-                                              backgroundColor: Colors.transparent,
-                                              child: DiceBearBuilder(
-                                                seed: participant['user']['username'],
-                                                sprite: DiceBearSprite.values.firstWhere(
-                                                      (sprite) => sprite.name == (participant['user']['picture']),
-                                                  orElse: () => DiceBearSprite.bottts,
-                                                ),
-                                              ).build().toImage(width: 24, height: 24)),
-                                          Text(participant['user']['username'] == _currentUser?.username
-                                              ? ' (vous)'
-                                              : ' '),
-                                        ],
-                                      ),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          if (status == 'PENDING') ...[
-                                            IconButton(
-                                              icon: const Icon(Icons.check),
-                                              onPressed: () => _acceptUser(
-                                                  participant['id']),
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.cancel),
-                                              onPressed: () => _rejectUser(
-                                                  participant['id']),
-                                            ),
-                                          ],
-                                          if (status == 'ACCEPTED' && participant['user']['id'] != _currentUser?.id) ...[
-                                            IconButton(
-                                              icon: const Icon(Icons.delete),
-                                              onPressed: () => _removeUser(
-                                                  participant['id']),
-                                            ),
-                                          ],
-                                          if (status == 'REJECTED') ...[
-                                            const Text(
-                                              'Rejeté',
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text("Fermer"),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return ParticipantManagementModal(
+                              participantsList: participantsList,
+                              currentUser: _currentUser,
+                              acceptUser: _acceptUser,
+                              rejectUser: _rejectUser,
+                              removeUser: _removeUser,
+                            );
+                          },
+                        ),
                       ),
                       Positioned(
                         right: 4,
@@ -221,10 +186,11 @@ class _ParticipantsListState extends State<ParticipantsList> {
             height: 100,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: acceptedParticipants.length,
+              itemCount: filteredParticipants.length,
               itemBuilder: (context, index) {
-                final participant = acceptedParticipants[index];
+                final participant = filteredParticipants[index];
                 return GestureDetector(
+                  key: ValueKey(participant['id']),
                   onTap: () {
                     ProfilePage.navigateTo(context, participant['user']['id']);
                   },
@@ -238,13 +204,16 @@ class _ParticipantsListState extends State<ParticipantsList> {
                             child: DiceBearBuilder(
                               seed: participant['user']['username'],
                               sprite: DiceBearSprite.values.firstWhere(
-                                    (sprite) => sprite.name == (participant['user']['picture']),
+                                (sprite) =>
+                                    sprite.name ==
+                                    (participant['user']['picture']),
                                 orElse: () => DiceBearSprite.bottts,
                               ),
                             ).build().toImage(width: 50, height: 50)),
                         const SizedBox(height: 8),
                         Text(
-                          participant['user']['username']! == _currentUser?.username
+                          participant['user']['username']! ==
+                                  _currentUser?.username
                               ? t.user.you
                               : participant['user']['username'],
                           style: const TextStyle(
@@ -260,7 +229,6 @@ class _ParticipantsListState extends State<ParticipantsList> {
             ),
           ),
           if (widget.isCurrentUserEvent) ...[
-            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Center(
@@ -277,49 +245,12 @@ class _ParticipantsListState extends State<ParticipantsList> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Gestion des utilisateurs"),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: participantsList.map((participant) {
-                                String status = participant['status'];
-                                return ListTile(
-                                  title: Text(participant['user']['username']),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      if (status == 'PENDING') ...[
-                                        IconButton(
-                                          icon: const Icon(Icons.check),
-                                          onPressed: () =>
-                                              _acceptUser(participant['id']),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.cancel),
-                                          onPressed: () =>
-                                              _rejectUser(participant['id']),
-                                        ),
-                                      ],
-                                      if (status == 'ACCEPTED' &&
-                                          participant['user']['id'] !=
-                                              _currentUser?.id) ...[
-                                        IconButton(
-                                          icon: const Icon(Icons.delete),
-                                          onPressed: () =>
-                                              _removeUser(participant['id']),
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("Fermer"),
-                              ),
-                            ],
+                          return ParticipantManagementModal(
+                            participantsList: participantsList,
+                            currentUser: _currentUser,
+                            acceptUser: _acceptUser,
+                            rejectUser: _rejectUser,
+                            removeUser: _removeUser,
                           );
                         },
                       );

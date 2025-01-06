@@ -11,6 +11,7 @@ import 'package:client/screens/event_chat_page.dart';
 import 'package:client/components/event/resources_section.dart';
 import 'package:client/components/event/event_details_section.dart';
 import 'package:go_router/go_router.dart';
+import 'package:client/components/confirmation_dialog.dart';
 
 import 'events_screen.dart';
 
@@ -152,11 +153,13 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         ) as bool;
                         if (shouldRefresh == true) {
                           setState(() {
-                            _eventFuture = EventServices.getEventDetails(event.id!);
+                            _eventFuture =
+                                EventServices.getEventDetails(event.id!);
                           });
                         }
                       },
                     ),
+                    const SizedBox(width: 12),
                 ],
               ),
               SliverToBoxAdapter(
@@ -200,7 +203,22 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
+
+                              final bool? confirmed =
+                                  await ConfirmationDialog.show(
+                                context,
+                                title: "Quitter l'événement",
+                                message:
+                                    "Êtes-vous sûr de vouloir quitter cet événement ? Cette action est irréversible.",
+                                confirmText: "Quitter",
+                                cancelText: "Annuler",
+                                confirmColor: Colors.red,
+                                icon: Icons.warning,
+                              );
+
+                              if (confirmed != true) return;
+
                               if (currentParticipantId == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -241,7 +259,21 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: GestureDetector(
-                            onTap: () {
+                            onTap: () async {
+                              final bool? confirmed =
+                                  await ConfirmationDialog.show(
+                                context,
+                                title: "Supprimer l'événement",
+                                message:
+                                    "Êtes-vous sûr de vouloir supprimer cet événement ? Cette action est irréversible.",
+                                confirmText: "Supprimer",
+                                cancelText: "Annuler",
+                                confirmColor: Colors.red,
+                                icon: Icons.warning,
+                              );
+
+                              if (confirmed != true) return;
+
                               EventServices.deleteEvent(event.id!).then((_) {
                                 if (!mounted) return;
                                 EventsPage.navigateTo(context);
