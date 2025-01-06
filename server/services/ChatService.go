@@ -44,7 +44,6 @@ func (cs *ChatService) SubscribeUser(userID string, ch chan string) {
 	defer cs.mu.Unlock()
 	cs.users[userID] = ch
 	logrus.Info("User ", userID, " subscribed")
-	print("User ", userID, " subscribed\n")
 }
 
 func (cs *ChatService) UnsubscribeUser(userID string) {
@@ -52,7 +51,6 @@ func (cs *ChatService) UnsubscribeUser(userID string) {
 	defer cs.mu.Unlock()
 	delete(cs.users, userID)
 	logrus.Info("User ", userID, " unsubscribed")
-	print("User ", userID, " unsubscribed\n")
 }
 
 func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {
