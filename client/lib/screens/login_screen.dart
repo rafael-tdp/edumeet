@@ -226,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   const SizedBox(height: 10.0),
-                  Hero(
+                  if (!kIsWeb) Hero(
                     tag: 'edumeet-google-login',
                     child: ProfileButton(
                       text: "Se connecter avec Google",
@@ -237,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 10.0),
-                  Wrap(
+                  if (!kIsWeb) Wrap(
                     alignment: WrapAlignment.center,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
