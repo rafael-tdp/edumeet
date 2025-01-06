@@ -373,7 +373,6 @@ func (us *UserService) CreateUserAdmin(ctx context.Context, createUserDTO dtos.C
 		return nil, errors.New("user already exists")
 	}
 
-	print(createUserDTO.Password)
 	bcryptUtils := utils.Bcrypt{}
 	hashedPassword := bcryptUtils.HashPassword(createUserDTO.Password)
 

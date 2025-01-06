@@ -128,7 +128,8 @@ func (as *AuthService) ResetPassword(requestBody dtos.ResetPasswordDTO) error {
 	}
 	bcryptUtils := utils.Bcrypt{}
 	hashedPassword := bcryptUtils.HashPassword(requestBody.Password)
-	err = as.userRepo.UpdatePassword(user.ID, hashedPassword)
+	ctx := context.WithValue(context.Background(), "user_id", user.ID)
+	err = as.userRepo.UpdatePassword(ctx, user.ID, hashedPassword)
 	if err != nil {
 		logrus.Error("Error AuthService function ResetPassword: ", err)
 		return err
