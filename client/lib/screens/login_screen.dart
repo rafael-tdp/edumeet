@@ -84,6 +84,41 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<void> _loginWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      ResponseRequest response = await _authServices.loginWithGoogle(context);
+      if (response.success) {
+        bool isFirstLogin = await _isFirstLogin();
+        if (isFirstLogin) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SubjectsPage()),
+          );
+        } else {
+          context.go(HomePage.routeName);
+        }
+      } else {
+        setState(() {
+          _errorMessage = response.message;
+        });
+      }
+    } catch (error) {
+      setState(() {
+        _errorMessage = error.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,32 +207,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState?.validate() == true) {
-                          await _login();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 15.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        backgroundColor: AppColors.purple,
-                      ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                            )
-                          : Text(
-                              t.app.login,
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.white),
-                            ),
-                    ),
+                  ProfileButton(
+                    text: t.app.login,
+                    backgroundColor: AppColors.purple,
+                    onPressed: () async {
+                      if (_formKey.currentState?.validate() == true) {
+                        await _login();
+                      }
+                    },
+                    isLoader: _isLoading,
                   ),
                   if (_errorMessage != null)
                     Padding(
@@ -214,7 +232,7 @@ class _LoginPageState extends State<LoginPage> {
                       text: "Se connecter avec Google",
                       backgroundColor: Colors.red,
                       onPressed: () async {
-                        await _authServices.loginWithGoogle(context);
+                        await _loginWithGoogle();
                       },
                     ),
                   ),

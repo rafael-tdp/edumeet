@@ -30,13 +30,9 @@ func (o *OAuthService) GetAuthURL(state string) string {
 	return o.config.AuthCodeURL(state)
 }
 
-func (o *OAuthService) GetUserInfo(ctx context.Context, code string) (map[string]interface{}, error) {
-	token, err := o.config.Exchange(ctx, code)
-	if err != nil {
-		return nil, fmt.Errorf("failed to exchange token: %w", err)
-	}
+func (o *OAuthService) GetUserInfo(ctx context.Context, token string) (map[string]interface{}, error) {
 
-	client := o.config.Client(ctx, token)
+	client := o.config.Client(ctx, &oauth2.Token{AccessToken: token})
 	resp, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user info: %w", err)

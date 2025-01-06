@@ -169,10 +169,13 @@ class AuthServices {
       scopes: ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"]
     ).signIn();
 
-    final googleAuth = await googleAccount?.authentication;
+    if (googleAccount == null) {
+      return ResponseRequest(success: false, message: 'Google sign in failed');
+    }
 
+    final googleAuth = await googleAccount?.authentication;
     final response = await http.get(
-      Uri.parse('${Env.BACKEND_URL}/auth/google/callback?code=${googleAuth?.idToken}'),
+      Uri.parse('${Env.BACKEND_URL}/auth/google/callback/${googleAuth?.accessToken}'),
     );
 
     if (response.statusCode == 200) {
@@ -190,6 +193,7 @@ class AuthServices {
 
       _controller.add(AuthenticationStatus.authenticated);
 
+      await GoogleSignIn().signOut();
       return ResponseRequest(
           success: true, message: 'Login successful', data: token);
     } else {

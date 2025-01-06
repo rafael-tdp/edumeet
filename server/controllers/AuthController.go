@@ -265,13 +265,13 @@ func (ac *AuthController) GoogleLogin(c *fiber.Ctx) error {
 }
 
 func (ac *AuthController) GoogleCallback(c *fiber.Ctx) error {
-	code := c.Query("code")
-	if code == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Code not provided"})
+	token := c.Params("token")
+	if token == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Token not provided"})
 	}
 
 	ctx := context.WithValue(c.Context(), "user_id", "register")
-	userInfo, err := ac.oauthService.GetUserInfo(ctx, code)
+	userInfo, err := ac.oauthService.GetUserInfo(ctx, token)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
