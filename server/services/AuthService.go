@@ -8,6 +8,8 @@ import (
 	"edumeet/utils"
 	"errors"
 
+	"strings"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -133,4 +135,36 @@ func (as *AuthService) ResetPassword(requestBody dtos.ResetPasswordDTO) error {
 	}
 	utils.DeleteValidationCodeFromRedis(user.ID)
 	return nil
+}
+
+func (as *AuthService) HandleOAuthUser(email string, userInfo map[string]interface{}) (string, *ent.User, error) {
+	existingUser, err := as.userRepo.GetByEmail(email)
+	if err == nil && existingUser != nil {
+		jwtToken, err := utils.GenerateJWT(existingUser.Email, existingUser.ID, existingUser.Role)
+		if err != nil {
+			return "", nil, err
+		}
+
+		return jwtToken, existingUser, nil
+	}
+
+	userDTO := dtos.RegisterDTO{
+		Email:     email,
+		Firstname: userInfo["given_name"].(string),
+		Lastname:  userInfo["family_name"].(string),
+		Username:  strings.ToLower(userInfo["given_name"].(string)[:1] + userInfo["family_name"].(string)),
+	}
+	ctx := context.WithValue(context.Background(), "user_id", "register")
+	newUser, err := as.RegisterUser(ctx, userDTO)
+	ctx = context.WithValue(context.Background(), "user_id", newUser.ID)
+	as.userRepo.ValidateUser(ctx, newUser.ID)
+	if err != nil {
+		return "", nil, err
+	}
+	jwtToken, err := utils.GenerateJWT(newUser.Email, newUser.ID, newUser.Role)
+	if err != nil {
+		return "", nil, err
+	}
+
+	return jwtToken, newUser, nil
 }

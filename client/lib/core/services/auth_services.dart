@@ -7,6 +7,7 @@ import 'package:client/core/models/user.dart';
 import 'package:client/providers/user_provider.dart';
 import 'package:client/utils/http_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../../env/env.dart';
@@ -163,5 +164,42 @@ class AuthServices {
     }
   }
 
+  Future<ResponseRequest>loginWithGoogle(BuildContext context) async {
+    final googleAccount = await GoogleSignIn(
+      scopes: ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"]
+    ).signIn();
+
+    if (googleAccount == null) {
+      return ResponseRequest(success: false, message: 'Google sign in failed');
+    }
+
+    final googleAuth = await googleAccount?.authentication;
+    final response = await http.get(
+      Uri.parse('${Env.BACKEND_URL}/auth/google/callback/${googleAuth?.accessToken}'),
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = HttpUtils.decodeResponse(response);
+
+      final token = responseData['token'];
+      await CacheService.saveDataToCache('auth_token', token);
+
+      final userJson = responseData['user'];
+      await CacheService.saveDataToCache('user_data', jsonEncode(userJson));
+
+      final currentUser = User.fromJson(userJson);
+
+      Provider.of<UserProvider>(context, listen: false).setUser(currentUser);
+
+      _controller.add(AuthenticationStatus.authenticated);
+
+      await GoogleSignIn().signOut();
+      return ResponseRequest(
+          success: true, message: 'Login successful', data: token);
+    } else {
+      return ResponseRequest(
+          success: false, message: jsonDecode(response.body)['error']);
+    }
+  }
   void dispose() => _controller.close();
 }

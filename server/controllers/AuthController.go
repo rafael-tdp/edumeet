@@ -20,12 +20,14 @@ import (
 type AuthController struct {
 	authService  *services.AuthService
 	emailService *services.EmailService
+	oauthService *services.OAuthService
 }
 
-func NewAuthController(authService *services.AuthService, emailService *services.EmailService) *AuthController {
+func NewAuthController(authService *services.AuthService, emailService *services.EmailService, oauthService *services.OAuthService) *AuthController {
 	return &AuthController{
 		authService:  authService,
 		emailService: emailService,
+		oauthService: oauthService,
 	}
 }
 
@@ -254,4 +256,31 @@ func (uc *UserController) ResendEmailValidateUser(c *fiber.Ctx) error {
 		"message": "User activated successfully",
 		"user":    user,
 	})
+}
+
+func (ac *AuthController) GoogleLogin(c *fiber.Ctx) error {
+	state := "random_state_string"
+	url := ac.oauthService.GetAuthURL(state)
+	return c.Redirect(url)
+}
+
+func (ac *AuthController) GoogleCallback(c *fiber.Ctx) error {
+	token := c.Params("token")
+	if token == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Token not provided"})
+	}
+
+	ctx := context.WithValue(c.Context(), "user_id", "register")
+	userInfo, err := ac.oauthService.GetUserInfo(ctx, token)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	email := userInfo["email"].(string)
+	token, user, err := ac.authService.HandleOAuthUser(email, userInfo)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	return c.JSON(fiber.Map{"token": token, "user": user})
 }

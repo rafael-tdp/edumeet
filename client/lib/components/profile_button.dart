@@ -4,6 +4,7 @@ class ProfileButton extends StatelessWidget {
   final String text;
   final Color backgroundColor;
   final bool rounded;
+  final bool isLoader;
   final VoidCallback onPressed;
 
   const ProfileButton({
@@ -11,6 +12,7 @@ class ProfileButton extends StatelessWidget {
     required this.text,
     required this.backgroundColor,
     required this.onPressed,
+    this.isLoader = false,
     this.rounded = false,
   });
 
@@ -24,13 +26,14 @@ class ProfileButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(rounded ? 20 : 2),
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.white),
-        ),
-      ),
+      child: isLoader
+          ? const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            )
+          : Text(
+              text,
+              style: const TextStyle(color: Colors.white),
+            ),
     );
   }
 }

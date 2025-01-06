@@ -21,6 +21,7 @@ require (
 	github.com/swaggo/swag v1.16.4
 	github.com/valyala/fasthttp v1.57.0
 	golang.org/x/crypto v0.31.0
+	golang.org/x/oauth2 v0.24.0
 	google.golang.org/api v0.214.0
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
@@ -101,7 +102,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.29.0 // indirect
 	golang.org/x/mod v0.22.0 // indirect
 	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/oauth2 v0.24.0 // indirect
 	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect

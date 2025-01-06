@@ -1,3 +1,4 @@
+import 'package:client/components/profile_button.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:flutter/foundation.dart';
@@ -82,6 +83,41 @@ class _LoginPageState extends State<LoginPage> {
       });
     }
   }
+
+  Future<void> _loginWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      ResponseRequest response = await _authServices.loginWithGoogle(context);
+      if (response.success) {
+        bool isFirstLogin = await _isFirstLogin();
+        if (isFirstLogin) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const SubjectsPage()),
+          );
+        } else {
+          context.go(HomePage.routeName);
+        }
+      } else {
+        setState(() {
+          _errorMessage = response.message;
+        });
+      }
+    } catch (error) {
+      setState(() {
+        _errorMessage = error.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -171,32 +207,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState?.validate() == true) {
-                          await _login();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 15.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        backgroundColor: AppColors.purple,
-                      ),
-                      child: _isLoading
-                          ? const CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                            )
-                          : Text(
-                              t.app.login,
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.white),
-                            ),
-                    ),
+                  ProfileButton(
+                    text: t.app.login,
+                    backgroundColor: AppColors.purple,
+                    onPressed: () async {
+                      if (_formKey.currentState?.validate() == true) {
+                        await _login();
+                      }
+                    },
+                    isLoader: _isLoading,
                   ),
                   if (_errorMessage != null)
                     Padding(
@@ -206,6 +225,17 @@ class _LoginPageState extends State<LoginPage> {
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),
+                  const SizedBox(height: 10.0),
+                  Hero(
+                    tag: 'edumeet-google-login',
+                    child: ProfileButton(
+                      text: "Se connecter avec Google",
+                      backgroundColor: Colors.red,
+                      onPressed: () async {
+                        await _loginWithGoogle();
+                      },
+                    ),
+                  ),
                   const SizedBox(height: 10.0),
                   Wrap(
                     alignment: WrapAlignment.center,
