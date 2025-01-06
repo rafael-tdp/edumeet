@@ -29,6 +29,8 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
   String? _correction;
   bool _isLoading = false;
   final TextEditingController _exerciseController = TextEditingController();
+  final TextEditingController _correctionController =
+      TextEditingController(); // Controller for correction text
   User? _currentUser;
 
   @override
@@ -46,6 +48,7 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
   @override
   void dispose() {
     _exerciseController.dispose();
+    _correctionController.dispose(); // Dispose the new controller
     super.dispose();
   }
 
@@ -89,6 +92,8 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
           widget.eventId, _exerciseController.text);
       setState(() {
         _correction = response;
+        _correctionController.text =
+            _correction!; // Populate correction text field
       });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -148,7 +153,7 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
           },
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
@@ -195,22 +200,12 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
-                        Container(
-                          constraints: const BoxConstraints(
-                            maxHeight: 300,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: SingleChildScrollView(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                _correction!,
-                                style: const TextStyle(color: Colors.black87),
-                              ),
-                            ),
+                        TextField(
+                          controller: _correctionController,
+                          maxLines: 10,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: "Modifiez la correction ici...",
                           ),
                         ),
                       ],

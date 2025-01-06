@@ -193,15 +193,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 label: "Date de début",
                 isStartDate: true,
               ),
-              _buildDateField(
-                context,
-                label: "Date de fin",
-                isStartDate: false,
-              ),
               _buildTimeField(
                 context,
                 label: "Heure de début",
                 isStartTime: true,
+              ),
+              _buildDateField(
+                context,
+                label: "Date de fin",
+                isStartDate: false,
               ),
               _buildTimeField(
                 context,
