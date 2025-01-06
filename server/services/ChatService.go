@@ -377,3 +377,10 @@ func (cs *ChatService) GetMessagesEvent(userId, eventId string) ([]dtos.Response
 
 	return getChatDtos, nil
 }
+
+func (cs *ChatService) IsUserSubscribed(userID string) bool {
+	cs.mu.Lock()
+	defer cs.mu.Unlock()
+	_, exists := cs.users[userID]
+	return exists
+}

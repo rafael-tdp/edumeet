@@ -38,13 +38,18 @@ func NewChatController(chatService *services.ChatService, eventService *services
 func (cc *ChatController) Connect(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
+	messageChannel := make(chan string)
+
+	if !cc.chatService.IsUserSubscribed(user.ID) {
+		cc.chatService.SubscribeUser(user.ID, messageChannel)
+	} else {
+		return nil
+	}
+
 	c.Set("Content-Type", "text/event-stream")
 	c.Set("Cache-Control", "no-cache")
 	c.Set("Connection", "keep-alive")
 	c.Set("Transfer-Encoding", "chunked")
-
-	messageChannel := make(chan string)
-	cc.chatService.SubscribeUser(user.ID, messageChannel)
 
 	c.Status(fiber.StatusOK).Context().SetBodyStreamWriter(fasthttp.StreamWriter(func(w *bufio.Writer) {
 		defer cc.chatService.UnsubscribeUser(user.ID) // Nettoyage après déconnexion
