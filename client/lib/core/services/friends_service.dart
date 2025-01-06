@@ -40,14 +40,15 @@ class FriendsServices {
     if (token == null) return ResponseRequest(success: false, message: 'Veuillez vous connecter');
 
     final response = await http.post(
-      Uri.parse('${Env.BACKEND_URL}/user/friendship/$friendId'),
+      Uri.parse('${Env.BACKEND_URL}/user/friendship'),
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
+      body: json.encode({'friendID': friendId}),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       return ResponseRequest(success: true);
     } else {
       return ResponseRequest(success: false, message: json.decode(response.body)['error']);

@@ -2,7 +2,7 @@ import 'package:client/i18n/generated/translations.g.dart';
 import 'package:flutter/material.dart';
 import 'package:client/utils/colors.dart';
 
-class MessageInputField extends StatelessWidget {
+class MessageInputField extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback onSendMessage;
 
@@ -13,15 +13,35 @@ class MessageInputField extends StatelessWidget {
   });
 
   @override
+  _MessageInputFieldState createState() => _MessageInputFieldState();
+}
+
+class _MessageInputFieldState extends State<MessageInputField> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onTextChanged);
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TextField(
-      controller: controller,
-      onSubmitted: (_) => onSendMessage(),
+      controller: widget.controller,
+      onSubmitted: (_) => widget.onSendMessage(),
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.grey[200],
-        hintText: t.messages
-            .writeMessageHint, // Utilisation de la traduction pour l'indice
+        hintText: t.messages.writeMessageHint,
         hintStyle: const TextStyle(
           color: Colors.grey,
           fontSize: 16,
@@ -49,11 +69,11 @@ class MessageInputField extends StatelessWidget {
           ),
         ),
         suffixIcon: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.send,
-            color: Colors.grey,
+            color: widget.controller.text.isEmpty ? Colors.grey : AppColors.purple,
           ),
-          onPressed: onSendMessage,
+          onPressed: widget.controller.text.isEmpty ? null : widget.onSendMessage,
         ),
       ),
     );

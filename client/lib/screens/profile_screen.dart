@@ -15,6 +15,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../core/services/friends_service.dart';
 import '../providers/user_provider.dart';
 import 'package:client/core/models/badge.dart' as custom_badge;
 
@@ -37,6 +38,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final UserServices _userServices = UserServices();
+  final FriendsServices _friendsServices = FriendsServices();
   bool _isCurrentUser = false;
   bool _isLoading = true;
   User? _user;
@@ -128,16 +130,31 @@ class _ProfilePageState extends State<ProfilePage> {
             context.pop(true);
           },
         ),
+        actions: _isCurrentUser
+            ? null
+            : [
+          IconButton(
+            icon: const Icon(Icons.person_add),
+            onPressed: () async {
+              final response = await _friendsServices.sendFriendRequest(widget.userId!);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(response.success ? 'Friend request sent' : 'Failed to send friend request'),
+                  backgroundColor: response.success ? Colors.green : Colors.red,
+                ),
+              );
+            },
+          ),
+          const SizedBox(width: 10),
+          IconButton(
+            icon: const Icon(Icons.report_problem, color: Colors.orange),
+            onPressed: () {
+              _showReportDialog(context);
+            },
+          ),
+          const SizedBox(width: 10),
+        ],
       ),
-      floatingActionButton: _isCurrentUser
-          ? null
-          : FloatingActionButton(
-        onPressed: () {
-          _showReportDialog(context);
-        },
-        child: const Icon(Icons.report_problem),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
