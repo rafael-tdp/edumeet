@@ -101,7 +101,11 @@ func (us *UserService) Verify(ctx context.Context, requestBody dtos.VerifyCodeDT
 		logrus.Error("Error UserService Verify: ", err)
 		return dtos.UserDTO{}, errors.New("user not found")
 	}
-	code := utils.GetValidationCodeFromRedis(user.ID)
+	code, err := utils.GetValidationCodeFromRedis(user.ID)
+	if err != nil {
+		logrus.Error("Error UserService Verify: ", err)
+		return dtos.UserDTO{}, err
+	}
 	if code != requestBody.Code {
 		logrus.Error("Error UserService Verify: ", err)
 		return dtos.UserDTO{}, errors.New("invalid code")
@@ -127,7 +131,11 @@ func (us *UserService) ValidateUser(ctx context.Context, requestBody dtos.Valida
 	}
 
 	if user.Activated == false {
-		code := utils.GetValidationCodeFromRedis(user.ID)
+		code, err := utils.GetValidationCodeFromRedis(user.ID)
+		if err != nil {
+			return false, err
+		}
+
 		if code != requestBody.Code {
 			return false, errors.New("invalid code")
 		} else {
@@ -223,7 +231,11 @@ func (us *UserService) CreateFriendship(ctx context.Context, userID string, frie
 	}
 
 	// Send notification to friend
-	fcm_token := utils.GetTokenFromRedis(friend.ID + "_FCM")
+	fcm_token, err := utils.GetTokenFromRedis(friend.ID + "_FCM")
+	if err != nil {
+		logrus.Error("Error UserService CreateFriendship: ", err)
+		return nil, err
+	}
 	if fcm_token != "null" {
 		firebase.SendNotification(fcm_token, "New friend request", user.Username+" wants to be your friend")
 	}
@@ -374,7 +386,10 @@ func (us *UserService) CreateUserAdmin(ctx context.Context, createUserDTO dtos.C
 	}
 
 	bcryptUtils := utils.Bcrypt{}
-	hashedPassword := bcryptUtils.HashPassword(createUserDTO.Password)
+	hashedPassword, err := bcryptUtils.HashPassword(createUserDTO.Password)
+	if err != nil {
+		return nil, err
+	}
 
 	user, err = us.userRepo.CreateUserAdmin(ctx, createUserDTO, hashedPassword)
 	if err != nil {

@@ -32,13 +32,17 @@ func (u *User) GenerateUser(ctx context.Context, client *ent.Client) {
 			panic(err)
 		}
 		id := ulid.GenerateUlid()()
+		password, err := bcryptUtils.HashPassword("Password1234!!")
+		if err != nil {
+			panic(err)
+		}
 		client.User.Create().
 			SetID(id).
 			SetEmail(strings.ToLower(physicalUser[i]) + "@user.com").
 			SetUsername(strings.ToLower(physicalUser[i])).
 			SetLastname(strings.ToLower(gofakeit.LastName())).
 			SetFirstname(strings.ToLower(physicalUser[i])).
-			SetPassword(bcryptUtils.HashPassword("Password1234!!")).
+			SetPassword(password).
 			SetBirthDate(dateUtils.GenerateBirthDate()).
 			SetBio(gofakeit.Sentence(10)).
 			SetActivated(true).

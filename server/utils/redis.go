@@ -3,10 +3,11 @@ package utils
 import (
 	"context"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"log"
 	"os"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
 var ctx = context.Background()
@@ -32,18 +33,18 @@ func InitRedis() {
 	log.Println("Connexion à Redis réussie")
 }
 
-func GetValidationCodeFromRedis(key string) string {
+func GetValidationCodeFromRedis(key string) (string, error) {
 	key = fmt.Sprintf("%s:validation", key)
 	val, err := rdb.Get(ctx, key).Result()
 	if err == redis.Nil {
-		return "null"
+		return "null", nil
 	} else if err != nil {
-		panic(err)
+		return "", err
 	}
-	return val
+	return val, nil
 }
 
-func StoreValidationCodeInRedis(key string, value string, expiration ...int) {
+func StoreValidationCodeInRedis(key string, value string, expiration ...int) error {
 	exp := 60
 	if len(expiration) > 0 {
 		exp = expiration[0]
@@ -51,30 +52,32 @@ func StoreValidationCodeInRedis(key string, value string, expiration ...int) {
 	key = fmt.Sprintf("%s:validation", key)
 	err := rdb.Set(ctx, key, value, time.Duration(exp)*time.Minute).Err()
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
-func DeleteValidationCodeFromRedis(key string) {
+func DeleteValidationCodeFromRedis(key string) error {
 	key = fmt.Sprintf("%s:validation", key)
 	err := rdb.Del(ctx, key).Err()
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
-func GetTokenFromRedis(key string) string {
+func GetTokenFromRedis(key string) (string, error) {
 	key = fmt.Sprintf("%s:token", key)
 	val, err := rdb.Get(ctx, key).Result()
 	if err == redis.Nil {
-		return "null"
+		return "null", nil
 	} else if err != nil {
-		panic(err)
+		return "", err
 	}
-	return val
+	return val, nil
 }
 
-func StoreTokenInRedis(key string, value string, expiration ...int) {
+func StoreTokenInRedis(key string, value string, expiration ...int) error {
 	exp := 60
 	if len(expiration) > 0 {
 		exp = expiration[0]
@@ -82,14 +85,16 @@ func StoreTokenInRedis(key string, value string, expiration ...int) {
 	key = fmt.Sprintf("%s:token", key)
 	err := rdb.Set(ctx, key, value, time.Duration(exp)*time.Minute).Err()
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
-func DeleteTokenFromRedis(key string) {
+func DeleteTokenFromRedis(key string) error {
 	key = fmt.Sprintf("%s:token", key)
 	err := rdb.Del(ctx, key).Err()
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }

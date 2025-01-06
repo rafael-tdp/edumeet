@@ -6,7 +6,6 @@ import (
 	"edumeet/ent"
 	"edumeet/guards"
 	"edumeet/services"
-	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -106,8 +105,6 @@ func (uc *BadgeController) DeleteBadge(c *fiber.Ctx) error {
 	if !guards.IsAdmin(currentUser) {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"error": "Not authorized"})
 	}
-
-	fmt.Println(badgeId.String())
 
 	badge, err := uc.badgeService.GetBadgeById(badgeId.String())
 	if err != nil {

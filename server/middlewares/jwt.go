@@ -5,7 +5,6 @@ import (
 	"edumeet/repositories"
 	"edumeet/structures"
 	"edumeet/utils"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -40,7 +39,6 @@ func JWTAuthMiddleware(c *fiber.Ctx) error {
 	})
 
 	if err != nil {
-		fmt.Println("JWT Parse Error: ", err)
 		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Token parsing error", "details": err.Error()})
 	}
 
