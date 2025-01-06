@@ -18,6 +18,7 @@ class Event {
   final int? nbMaxParticipants;
   final List<Message>? lastMessages;
   final String? code;
+  final dynamic? participantStatus;
 
   Event({
     this.id,
@@ -37,6 +38,7 @@ class Event {
     this.nbMaxParticipants,
     this.lastMessages,
     this.code,
+    this.participantStatus,
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -63,6 +65,7 @@ class Event {
       nbMaxParticipants: json['nb_max_participants'],
       lastMessages: lastMessages,
       code: json['code'],
+      participantStatus: json['participant_status'],
     );
   }
 
@@ -85,6 +88,7 @@ class Event {
       'nb_max_participants': nbMaxParticipants,
       'last_messages': lastMessages,
       'code': code,
+      'participant_status': participantStatus,
     };
   }
 }

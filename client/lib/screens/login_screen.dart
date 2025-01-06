@@ -56,9 +56,9 @@ class _LoginPageState extends State<LoginPage> {
       );
       ResponseRequest response = await _authServices.login(loginRequest, context);
       if (response.success) {
-        if(kIsWeb){
-          context.push(AdminPage.routeName);
-        }
+        // if(kIsWeb){
+        //   context.push(AdminPage.routeName);
+        // }
         bool isFirstLogin = await _isFirstLogin();
         if (isFirstLogin ) {
           Navigator.push(

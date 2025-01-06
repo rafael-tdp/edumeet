@@ -243,33 +243,34 @@ func (es *EventService) GetEventsByUser(userID string) ([]dtos.EventWithTypeDTO,
 	var eventsWithType []dtos.EventWithTypeDTO
 
 	for _, event := range events {
-		if event.Edges.RemoteEvent != nil {
-			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
-				ID:                event.ID,
-				StartDate:         event.StartDate,
-				EndDate:           event.EndDate,
-				IsPrivate:         event.IsPrivate,
-				Title:             event.Title,
-				Description:       event.Description,
-				Image:             event.Image,
-				RemoteEventDTO:    dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent),
-				ParticipantsCount: len(event.Edges.Participants),
-				CreatedBy:         event.CreatedBy,
-			})
-		} else {
-			eventsWithType = append(eventsWithType, dtos.EventWithTypeDTO{
-				ID:                event.ID,
-				StartDate:         event.StartDate,
-				EndDate:           event.EndDate,
-				IsPrivate:         event.IsPrivate,
-				Title:             event.Title,
-				Description:       event.Description,
-				Image:             event.Image,
-				PhysicalEventDTO:  dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent),
-				ParticipantsCount: len(event.Edges.Participants),
-				CreatedBy:         event.CreatedBy,
-			})
+		var participantStatus string
+		for _, participant := range event.Edges.Participants {
+			if participant.Edges.User.ID == userID {
+				participantStatus = participant.Status
+				break
+			}
 		}
+
+		eventDTO := dtos.EventWithTypeDTO{
+			ID:                event.ID,
+			StartDate:         event.StartDate,
+			EndDate:           event.EndDate,
+			IsPrivate:         event.IsPrivate,
+			Title:             event.Title,
+			Description:       event.Description,
+			Image:             event.Image,
+			ParticipantsCount: len(event.Edges.Participants),
+			CreatedBy:         event.CreatedBy,
+			ParticipantStatus: participantStatus,
+		}
+
+		if event.Edges.RemoteEvent != nil {
+			eventDTO.RemoteEventDTO = dtos.EntToRemoteEventDTO(event.Edges.RemoteEvent)
+		} else {
+			eventDTO.PhysicalEventDTO = dtos.EntToPhysicalEventDTO(event.Edges.PhysicalEvent)
+		}
+
+		eventsWithType = append(eventsWithType, eventDTO)
 	}
 
 	logrus.Info("Events by user: ", eventsWithType)
