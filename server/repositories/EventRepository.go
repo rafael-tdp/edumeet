@@ -14,6 +14,7 @@ import (
 	"edumeet/utils"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/samber/lo"
 )
@@ -195,6 +196,10 @@ func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters,
 				pq.WithUser()
 			},
 		)
+
+	// Seulement les events futurs
+
+	query = query.Where(event.StartDateGT(time.Now()))
 
 	// Filtrer par type d'événement
 	if filters.Type == "remote" {
