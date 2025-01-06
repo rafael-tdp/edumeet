@@ -24,13 +24,11 @@ class PushNotificationService {
     await messaging.requestPermission();
 
     String? token = await messaging.getToken();
-    print("FCM Token: $token");
     if (token != null) {
       await sendTokenToServer(token);
     }
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Received message: ${message.notification?.title}');
       showFlutterNotification(message);
     });
 
@@ -40,7 +38,6 @@ class PushNotificationService {
   static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     showFlutterNotification(message);
-    print('Handling a background message: ${message.messageId}');
   }
 
   static Future<void> setupFlutterNotifications() async {
@@ -96,12 +93,9 @@ class PushNotificationService {
       );
 
       if (response.statusCode == 200) {
-        print('Token sent to server successfully');
       } else {
-        print('Failed to send token: ${response.body}');
       }
     } catch (e) {
-      print('Error sending token to server: $e');
     }
   }
 

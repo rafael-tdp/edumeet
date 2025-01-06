@@ -34,7 +34,6 @@ class SSEClient {
         throw HttpException('Erreur HTTP ${_response!.statusCode}');
       }
     } catch (e) {
-      print('Erreur SSE : $e');
       rethrow;
     } finally {
       _httpClient?.close();

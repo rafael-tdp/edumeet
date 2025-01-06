@@ -39,7 +39,6 @@ class LocationService {
         "longitude": currentLocation.longitude!,
       };
     } catch (error) {
-      print("Erreur lors de la récupération de la localisation: $error");
       rethrow;
     }
   }

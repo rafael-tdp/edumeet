@@ -57,7 +57,6 @@ class _EventsMapsScreenState extends State<EventsMapsScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading events: $e');
       setState(() {
         _isLoading = false;
         _hasError = true;

@@ -7,10 +7,8 @@ class CacheService {
   static Future<String?> getDataFromCache(String key) async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey(key)) {
-      print("$key : ${prefs.getString(key)}");
       return prefs.getString(key);
     } else {
-      print("$key : Data not found");
       return null;
     }
   }
@@ -32,7 +30,6 @@ class CacheService {
         final userMap = jsonDecode(userData);
         return User.fromJson(userMap);
       } catch (e) {
-        print('Erreur lors de la conversion JSON en User : $e');
         return null;
       }
     }

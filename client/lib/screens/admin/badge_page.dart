@@ -38,7 +38,6 @@ class _BadgePageState extends State<BadgePage> {
         _isLoading = false;
       });
     } catch (error) {
-      print('Error fetching badges: $error');
       setState(() {
         _isLoading = false;
       });

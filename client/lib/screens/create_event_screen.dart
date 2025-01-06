@@ -64,7 +64,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
         _addressSuggestions = suggestions;
       });
     } catch (e) {
-      print("Erreur de récupération des adresses: $e");
     }
   }
 
@@ -96,7 +95,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
       final eventId = createdEvent.id;
       CreateDocumentsPage.navigateTo(context, eventId!);
     } catch (e) {
-      print("Erreur de création d'événement: $e");
     }
   }
 

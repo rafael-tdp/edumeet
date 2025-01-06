@@ -99,7 +99,6 @@ class EventDetailsSection extends StatelessWidget {
                         if (await canLaunchUrl(url)) {
                           await launchUrl(url);
                         } else {
-                          print('Impossible d\'ouvrir le lien');
                         }
                       },
                       child: Text(

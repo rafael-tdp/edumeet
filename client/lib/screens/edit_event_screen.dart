@@ -67,7 +67,6 @@ class _EditEventPageState extends State<EditEventPage> {
         _addressSuggestions = suggestions;
       });
     } catch (e) {
-      print("Erreur de récupération des adresses: $e");
     }
   }
 
@@ -102,10 +101,8 @@ class _EditEventPageState extends State<EditEventPage> {
       if (currentUser != null) {
         Navigator.of(context).pop(true);
       } else {
-        print("Erreur: utilisateur non trouvé");
       }
     } catch (e) {
-      print("Erreur de mise à jour d'événement: $e");
     }
   }
 
@@ -140,7 +137,6 @@ class _EditEventPageState extends State<EditEventPage> {
       setState(() {
         if (isStartTime) {
           _startTime = selectedTime;
-          print("start time selected: ${_startTime}");
         } else {
           _endTime = selectedTime;
         }
@@ -174,9 +170,7 @@ class _EditEventPageState extends State<EditEventPage> {
           _onlineLinkController.text = event.remoteEvent['url']!;
         }
       });
-      print("start time: ${_startDate}");
     } catch (e) {
-      print("Erreur de chargement de l'événement: $e");
     }
   }
 
