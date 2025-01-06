@@ -39,6 +39,7 @@ class _SearchEventPageState extends State<SearchEventPage> {
           ),
         ),
         body: const TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           children: [
             SwipeCardsPage(),
             EventsMapsScreen(),
