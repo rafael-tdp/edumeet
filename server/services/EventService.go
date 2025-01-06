@@ -120,7 +120,7 @@ func (es *EventService) UpdateEvent(ctx context.Context, event dtos.EventDTO, ev
 	return dtos.EntToEventDTO(eventCreatedWithEdge), nil
 }
 
-func (es *EventService) GetFilteredEvents(filters structures.EventFilters, perPage, offset int) ([]dtos.EventWithTypeDTO, error) {
+func (es *EventService) GetFilteredEvents(filters structures.EventFilters, perPage, offset int, userId string) ([]dtos.EventWithTypeDTO, error) {
 	events, err := es.eventRepository.GetEventsWithFilters(filters, perPage, offset)
 	if err != nil {
 		logrus.Error("Error EventService.GetFilteredEvents: ", err)
@@ -150,6 +150,19 @@ func (es *EventService) GetFilteredEvents(filters structures.EventFilters, perPa
 		}
 
 		for _, event := range events {
+
+			// Check if an event has the user as a participant
+			isParticipant := false
+			for _, participant := range event.Edges.Participants {
+				if participant.Edges.User.ID == userId {
+					isParticipant = true
+					break
+				}
+			}
+			if isParticipant {
+				continue
+			}
+
 			if filters.Type == "all" && event.Edges.RemoteEvent != nil {
 				filteredEvents = append(filteredEvents, event)
 				continue
@@ -164,7 +177,21 @@ func (es *EventService) GetFilteredEvents(filters structures.EventFilters, perPa
 			}
 		}
 	} else {
-		filteredEvents = events
+		for _, event := range events {
+
+			// Check if an event has the user as a participant
+			isParticipant := false
+			for _, participant := range event.Edges.Participants {
+				if participant.Edges.User.ID == userId {
+					isParticipant = true
+					break
+				}
+			}
+			if isParticipant {
+				continue
+			}
+			filteredEvents = append(filteredEvents, event)
+		}
 	}
 
 	eventsWithType := make([]dtos.EventWithTypeDTO, 0)

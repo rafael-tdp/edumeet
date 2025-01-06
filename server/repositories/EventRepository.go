@@ -190,7 +190,11 @@ func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters,
 	query := er.client.Event.Query().
 		WithRemoteEvent().
 		WithPhysicalEvent().
-		WithParticipants()
+		WithParticipants(
+			func(pq *ent.ParticipantQuery) {
+				pq.WithUser()
+			},
+		)
 
 	// Filtrer par type d'événement
 	if filters.Type == "remote" {

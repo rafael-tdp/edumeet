@@ -258,7 +258,9 @@ func (ec *EventController) GetAllEvents(c *fiber.Ctx) error {
 		Subjects:  subjects,
 	}
 
-	events, err := ec.eventservice.GetFilteredEvents(filters, perPage, offset)
+	currentUser := c.Locals("user").(*ent.User)
+
+	events, err := ec.eventservice.GetFilteredEvents(filters, perPage, offset, currentUser.ID)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
