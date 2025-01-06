@@ -234,7 +234,11 @@ func (er *EventRepository) GetEventsByUser(userID string) ([]*ent.Event, error) 
 				event.CreatedBy(userID),
 			),
 		).
-		WithParticipants().
+		WithParticipants(
+			func(pq *ent.ParticipantQuery) {
+				pq.WithUser()
+			},
+		).
 		WithEventDocuments().
 		All(context.Background())
 
