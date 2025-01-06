@@ -1,3 +1,4 @@
+import 'package:client/components/profile_button.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:flutter/foundation.dart';
@@ -206,6 +207,17 @@ class _LoginPageState extends State<LoginPage> {
                         style: const TextStyle(color: Colors.red),
                       ),
                     ),
+                  const SizedBox(height: 10.0),
+                  Hero(
+                    tag: 'edumeet-google-login',
+                    child: ProfileButton(
+                      text: "Se connecter avec Google",
+                      backgroundColor: Colors.red,
+                      onPressed: () async {
+                        await _authServices.loginWithGoogle(context);
+                      },
+                    ),
+                  ),
                   const SizedBox(height: 10.0),
                   Wrap(
                     alignment: WrapAlignment.center,
