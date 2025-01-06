@@ -76,19 +76,9 @@ class _AdminPageState extends State<AdminPage> {
 
   final List<AdminMenuItem> _adminMenuItems = const [
     AdminMenuItem(
-      title: 'User Profile',
-      icon: Icons.account_circle,
-      route: '/admin/profile',
-    ),
-    AdminMenuItem(
-      title: 'Settings',
-      icon: Icons.settings,
-      route: '/admin/settings',
-    ),
-    AdminMenuItem(
       title: 'Logout',
       icon: Icons.logout,
-      route: '/logout',
+      route: '/login',
     ),
   ];
 
