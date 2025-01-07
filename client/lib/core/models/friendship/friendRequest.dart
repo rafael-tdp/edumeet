@@ -24,4 +24,14 @@ class FriendRequest {
       friendPicture: json['friendPicture'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'friendID': friendId,
+      'status': status.name,
+      'friendUsername': friendUsername,
+      'friendPicture': friendPicture,
+    };
+  }
 }
