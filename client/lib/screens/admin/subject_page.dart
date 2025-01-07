@@ -189,7 +189,7 @@ class _SubjectPageState extends State<SubjectPage> {
                 ? const Center(child: Text('Aucun sujet disponible'))
                 : DataTableWithPagination<Subject>(
                     data: _subjects,
-                    initialRowsPerPage: 10,
+                    initialRowsPerPage: 5,
                     columns: const [
                       DataColumn(label: Text('Id')),
                       DataColumn(label: Text('Name')),
