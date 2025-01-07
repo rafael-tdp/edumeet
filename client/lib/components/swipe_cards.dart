@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:client/core/services/participant_services.dart';
 import 'package:client/core/services/subjects_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
@@ -9,6 +12,8 @@ import 'package:client/core/models/event.dart';
 import 'package:client/core/models/subject.dart';
 import 'package:client/core/services/location_services.dart';
 import 'package:client/components/event/event_filters_dialog.dart';
+
+import '../utils/connectivty_utils.dart';
 
 class SwipeCardsComponent extends StatefulWidget {
   final bool showFilters;
@@ -23,7 +28,6 @@ class SwipeCardsComponent extends StatefulWidget {
 
 class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
   late MatchEngine _matchEngine;
-
   String? _eventType;
   double? _maxDistance;
   String? _selectedSubject;
@@ -35,6 +39,17 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
     super.initState();
     _loadSubjects();
     _getLocation();
+    ConnectivityUtils.listenConnectivityChanges(() {
+      _loadSubjects();
+      _getLocation();
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    ConnectivityUtils.cancelSubscription();
+    super.dispose();
   }
 
   Future<void> _loadSubjects() async {
