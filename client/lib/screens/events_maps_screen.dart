@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import '../core/services/event_services.dart';
 import 'package:client/utils/date_utils.dart' as d;
 
+import '../i18n/generated/translations.g.dart';
 import '../utils/connectivty_utils.dart';
 
 class EventsMapsScreen extends StatefulWidget {
@@ -22,6 +24,7 @@ class _EventsMapsScreenState extends State<EventsMapsScreen> {
   Set<Marker> markers = {};
   late LocationData _userLocation;
   bool _isLoading = true;
+  bool _isConnected = true;
   bool _hasError = false;
 
   Future<LatLng> _getUserLocation() async {
@@ -67,11 +70,21 @@ class _EventsMapsScreenState extends State<EventsMapsScreen> {
   @override
   void initState() {
     super.initState();
-    _getUserLocation().then((_) => _loadEvents());
-    ConnectivityUtils.listenConnectivityChanges(() {
-      _getUserLocation().then((_) => _loadEvents());
-      setState(() {});
-    });
+    _checkConnectivityAndLoadData();
+  }
+
+  Future<void> _checkConnectivityAndLoadData() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      setState(() {
+        _isConnected = false;
+        _isLoading = false;
+      });
+    } else {
+      _getUserLocation().then((_) => {
+        _loadEvents()
+      });
+    }
   }
 
   @override
@@ -84,8 +97,10 @@ class _EventsMapsScreenState extends State<EventsMapsScreen> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
+    } else if (!_isConnected) {
+      return Container(padding: const EdgeInsets.symmetric(horizontal: 50), child: const Center(child: Text('Une connexion internet est nécessaire pour afficher les événements sur la carte', textAlign: TextAlign.center)));
     } else if (_hasError) {
-      return const Center(child: Text('Error retrieving location'));
+      return Center(child: Text(t.error.general));
     } else {
       LatLng _center = LatLng(_userLocation.latitude!, _userLocation.longitude!);
       return Scaffold(
