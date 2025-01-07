@@ -166,7 +166,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               _buildTextFormField(
                 controller: _nameController,
                 label: t.event.name,
-                icon: Icons.event,
+                icon: Icons.title,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return t.event.enterName;
@@ -318,7 +318,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
           fillColor: Colors.grey[100],
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.0),
-            borderSide: BorderSide.none, // Pas de bordure initiale
+            borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16.0),
@@ -332,7 +332,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
             color: AppColors.purple,
           ),
           floatingLabelBehavior:
-              FloatingLabelBehavior.auto, // Étiquette flottante
+              FloatingLabelBehavior.auto,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 16,
