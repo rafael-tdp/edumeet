@@ -127,7 +127,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     PushNotificationService.initialize();
-    _sseServices.connectToSse();
     MessageServices messageServices = MessageServices();
     internetConnection = Connectivity().onConnectivityChanged.listen((connectivityResult) {
       if (connectivityResult.contains(ConnectivityResult.none)) {
@@ -150,11 +149,6 @@ class _HomePageState extends State<HomePage> {
         messageServices.sendPendingMessages();
       }
     });
-  }
-  @override 
-  void dispose() {
-    _sseServices.dispose();
-    super.dispose();
   }
 
   @override

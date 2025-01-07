@@ -9,6 +9,7 @@ import (
 	"edumeet/services"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/oklog/ulid/v2"
@@ -42,20 +43,12 @@ var activeConnections = make(map[string]chan string)
 func (cc *ChatController) Connect(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
-	// Vérifier si l'utilisateur a déjà une connexion active
-	if existingChannel, exists := activeConnections[user.ID]; exists {
-		// Si une connexion existe, on ferme l'ancienne connexion
-		close(existingChannel)
-		// Attendez que le flux de messages soit complètement fermé
-		<-existingChannel
-	}
-
 	// Créer un nouveau canal pour la nouvelle connexion
 	messageChannel := make(chan string)
-	cc.chatService.SubscribeUser(user.ID, messageChannel)
-
-	// Ajouter la nouvelle connexion à la map des connexions actives
-	activeConnections[user.ID] = messageChannel
+	if !cc.chatService.IsUserSubscribed(user.ID) {
+		cc.chatService.SubscribeUser(user.ID, messageChannel)
+		activeConnections[user.ID] = messageChannel
+	}
 
 	// Définir les en-têtes HTTP pour SSE
 	c.Set("Content-Type", "text/event-stream")
@@ -65,17 +58,30 @@ func (cc *ChatController) Connect(c *fiber.Ctx) error {
 
 	// Définir le stream de sortie pour l'utilisateur
 	c.Status(fiber.StatusOK).Context().SetBodyStreamWriter(fasthttp.StreamWriter(func(w *bufio.Writer) {
+		ticker := time.NewTicker(3 * time.Second) // Période de ping
 		defer func() {
+			ticker.Stop()
 			cc.chatService.UnsubscribeUser(user.ID)
 		}()
+
 		for {
 			select {
 			case message := <-messageChannel:
 				msg := fmt.Sprintf("data: %s\n\n", message)
-				fmt.Fprintf(w, msg)
+				if _, err := fmt.Fprintf(w, msg); err != nil {
+					logrus.Errorf("Error writing message for user %s: %v\n", user.ID, err)
+					return
+				}
+
+			case <-ticker.C:
+				ping := "event: ping\ndata: {}\n\n"
+				if _, err := fmt.Fprintf(w, ping); err != nil {
+					logrus.Warnf("Ping failed for user %s: %v\n", user.ID, err)
+					return
+				}
 
 				if err := w.Flush(); err != nil {
-					logrus.Errorf("Error flushing for user %s: %v\n", user.ID, err)
+					logrus.Errorf("Error flushing ping for user %s: %v\n", user.ID, err)
 					return
 				}
 			}
@@ -345,4 +351,22 @@ func (cc *ChatController) GetMessagesEvent(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(messages)
+}
+
+// @Summary Disconnect from the chat
+// @Description Close the connection to stop receiving real-time chat messages
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Success 200 {string} string "Connection closed"
+// @Failure 400 {object} map[string]string "Bad Request: Failed to disconnect"
+// @Router /chats/disconnect [get]
+func (cc *ChatController) Disconnect(c *fiber.Ctx) error {
+	user := c.Locals("user").(*ent.User)
+	if existingChannel, exists := activeConnections[user.ID]; exists {
+		cc.chatService.UnsubscribeUser(user.ID)
+		close(existingChannel)
+		<-existingChannel
+	}
+	return nil
 }
