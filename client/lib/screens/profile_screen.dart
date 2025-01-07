@@ -52,9 +52,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    _fetchUser();
     ConnectivityUtils.listenConnectivityChanges(() {
-      _loadUser();
+      _fetchUser();
       setState(() {});
     });
   }
@@ -63,6 +63,16 @@ class _ProfilePageState extends State<ProfilePage> {
   void dispose() {
     ConnectivityUtils.cancelSubscription();
     super.dispose();
+  }
+
+  void _fetchUser() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      _loadUserFromCache();
+    } else {
+      _loadUser();
+    }
+    setState(() {});
   }
 
   Future<void> _loadUser() async {
@@ -91,6 +101,30 @@ class _ProfilePageState extends State<ProfilePage> {
             _errorMessage = response.message ?? t.error.general;
           });
         }
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadUserFromCache () async {
+    try {
+      ResponseRequest response = await _userServices.getUserInfoFromCache();
+      if (response.success) {
+        setState(() {
+          _isCurrentUser = true;
+          _user = response.data as User;
+        });
+      } else {
+        setState(() {
+          _errorMessage = response.message ?? t.error.general;
+        });
       }
     } catch (e) {
       setState(() {
