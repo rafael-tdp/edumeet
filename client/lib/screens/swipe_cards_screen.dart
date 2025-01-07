@@ -27,8 +27,8 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
             _showFilters = !_showFilters;
           });
         },
-        backgroundColor: AppColors.purple,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.white,
+        foregroundColor: AppColors.purple,
         child: Icon(
           _showFilters ? Icons.filter_list_off : Icons.filter_list,
         ),

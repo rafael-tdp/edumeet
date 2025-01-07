@@ -1,4 +1,5 @@
 import 'package:client/core/models/stat.dart';
+import 'package:client/utils/colors.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -27,13 +28,13 @@ class DonutChart extends State<SubjectsChart> {
   Color _getSubjectColor(int subject) {
     switch (subject) {
       case 0:
-        return Colors.blue;
+        return AppColors.blue;
       case 1:
-        return Colors.orange;
+        return const Color.fromARGB(255, 146, 139, 255);
       case 2:
-        return Colors.green;
+        return Colors.blue;
       case 3:
-        return Colors.red;
+        return AppColors.purple;
       case 4:
         return Colors.purple;
       default:
@@ -44,6 +45,7 @@ class DonutChart extends State<SubjectsChart> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: AppColors.lightPurple,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
@@ -55,54 +57,70 @@ class DonutChart extends State<SubjectsChart> {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Text(
                   widget.chartTitle,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Expanded(
                   child: Column(
                     children: [
-                      Text(
+                      const Text(
                         "Année Précédente",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       LayoutBuilder(
                         builder: (context, constraints) {
                           double chartDiameter =
                               constraints.maxWidth * widget.chartDiameterFactor;
                           double chartRadius = chartDiameter / 2;
 
-                          return Container(
+                          return SizedBox(
                             width: chartDiameter,
                             height: chartDiameter,
                             child: PieChart(
                               PieChartData(
                                 pieTouchData: PieTouchData(
-                                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                                  touchCallback:
+                                      (FlTouchEvent event, pieTouchResponse) {
                                     setState(() {
-                                      if (!event.isInterestedForInteractions || pieTouchResponse == null || pieTouchResponse.touchedSection == null) {
+                                      if (!event.isInterestedForInteractions ||
+                                          pieTouchResponse == null ||
+                                          pieTouchResponse.touchedSection ==
+                                              null) {
                                         touchedIndex = -1;
                                         return;
                                       }
-                                      touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                                      touchedIndex = pieTouchResponse
+                                          .touchedSection!.touchedSectionIndex;
                                     });
                                   },
                                 ),
                                 borderData: FlBorderData(show: false),
                                 sectionsSpace: 0,
-                                centerSpaceRadius: chartRadius * widget.centerSpaceRadiusFactor,
+                                centerSpaceRadius: chartRadius *
+                                    widget.centerSpaceRadiusFactor,
                                 sections: widget.topSubjects.map((subject) {
-                                  final double previousYearEvents = subject.previousYearCount.toDouble();
-                                  final isTouched = widget.topSubjects.indexOf(subject) == touchedIndex;
+                                  final double previousYearEvents =
+                                      subject.previousYearCount.toDouble();
+                                  final isTouched =
+                                      widget.topSubjects.indexOf(subject) ==
+                                          touchedIndex;
                                   final fontSize = isTouched ? 25.0 : 16.0;
-                                  final radius = isTouched ? chartRadius * 0.6 : chartRadius * 0.5;
+                                  final radius = isTouched
+                                      ? chartRadius * 0.6
+                                      : chartRadius * 0.5;
                                   return PieChartSectionData(
                                     value: previousYearEvents,
-                                    color: _getSubjectColor(widget.topSubjects.indexOf(subject)),
+                                    color: _getSubjectColor(
+                                        widget.topSubjects.indexOf(subject)),
                                     title: isTouched
                                         ? '${subject.previousYearCount} événements'
                                         : subject.name,
@@ -124,46 +142,62 @@ class DonutChart extends State<SubjectsChart> {
                 Expanded(
                   child: Column(
                     children: [
-                      Text(
+                      const Text(
                         "Année Courante",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       LayoutBuilder(
                         builder: (context, constraints) {
                           double chartDiameter =
                               constraints.maxWidth * widget.chartDiameterFactor;
                           double chartRadius = chartDiameter / 2;
 
-                          return Container(
+                          return SizedBox(
                             width: chartDiameter,
                             height: chartDiameter,
                             child: PieChart(
                               PieChartData(
                                 pieTouchData: PieTouchData(
-                                  touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                                  touchCallback:
+                                      (FlTouchEvent event, pieTouchResponse) {
                                     setState(() {
-                                      if (!event.isInterestedForInteractions || pieTouchResponse == null || pieTouchResponse.touchedSection == null) {
+                                      if (!event.isInterestedForInteractions ||
+                                          pieTouchResponse == null ||
+                                          pieTouchResponse.touchedSection ==
+                                              null) {
                                         touchedIndex = -1;
                                         return;
                                       }
-                                      touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
+                                      touchedIndex = pieTouchResponse
+                                          .touchedSection!.touchedSectionIndex;
                                     });
                                   },
                                 ),
                                 borderData: FlBorderData(show: false),
                                 sectionsSpace: 0,
-                                centerSpaceRadius: chartRadius * widget.centerSpaceRadiusFactor,
+                                centerSpaceRadius: chartRadius *
+                                    widget.centerSpaceRadiusFactor,
                                 sections: widget.topSubjects.map((subject) {
-                                  final double currentYearEvents = subject.currentYearCount.toDouble();
-                                  final isTouched = widget.topSubjects.indexOf(subject) == touchedIndex;
-                                  final fontSize = isTouched ? 25.0 : 16.0;
-                                  final radius = isTouched ? chartRadius * 0.6 : chartRadius * 0.5;
+                                  final double currentYearEvents =
+                                      subject.currentYearCount.toDouble();
+                                  final isTouched =
+                                      widget.topSubjects.indexOf(subject) ==
+                                          touchedIndex;
+                                  final fontSize = isTouched ? 16.0 : 10.0;
+                                  final radius = isTouched
+                                      ? chartRadius * 0.6
+                                      : chartRadius * 0.5;
                                   return PieChartSectionData(
                                     value: currentYearEvents,
-                                    color: _getSubjectColor(widget.topSubjects.indexOf(subject)),
+                                    color: _getSubjectColor(
+                                        widget.topSubjects.indexOf(subject)),
                                     title: isTouched
-                                        ? '${subject.currentYearCount} événements'
+                                        ? '${subject.currentYearCount} événement(s)'
                                         : subject.name,
                                     radius: radius,
                                     titleStyle: TextStyle(

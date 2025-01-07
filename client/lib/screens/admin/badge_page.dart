@@ -8,7 +8,7 @@ import 'package:client/utils/colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/models/response.dart';
-import '../../widgets/confirmation_dialog.dart';
+import 'package:client/widgets/confirmation_dialog.dart';
 
 class BadgePage extends StatefulWidget {
   static const String routeName = '/badges';
@@ -54,7 +54,8 @@ class _BadgePageState extends State<BadgePage> {
           builder: (context, setState) {
             return ConfirmationDialog(
               title: 'Confirmer la suppression',
-              content: 'Êtes-vous sûr de vouloir supprimer le Badge "${badge.name}" ?',
+              content:
+                  'Êtes-vous sûr de vouloir supprimer le Badge "${badge.name}" ?',
               isLoading: isDeleting,
               onCancel: () {
                 Navigator.of(context).pop();
@@ -65,7 +66,8 @@ class _BadgePageState extends State<BadgePage> {
                 });
                 await Future.delayed(const Duration(seconds: 2));
 
-                ResponseRequest response = await BadgeServices.deleteBadge(badge.id);
+                ResponseRequest response =
+                    await BadgeServices.deleteBadge(badge.id);
 
                 setState(() {
                   isDeleting = false;
@@ -78,7 +80,9 @@ class _BadgePageState extends State<BadgePage> {
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
+                    SnackBar(
+                        content: Text(
+                            response.message ?? 'Une erreur s\'est produite')),
                   );
                 }
                 Navigator.of(context).pop();
@@ -102,7 +106,8 @@ class _BadgePageState extends State<BadgePage> {
             await Future.delayed(const Duration(seconds: 2));
 
             try {
-              ResponseRequest response = await BadgeServices.updateBadge(badge, newBadge);
+              ResponseRequest response =
+                  await BadgeServices.updateBadge(badge, newBadge);
 
               if (response.success) {
                 _fetchBadges();
@@ -113,7 +118,8 @@ class _BadgePageState extends State<BadgePage> {
 
                 callback(true, null, false);
               } else {
-                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+                callback(false,
+                    response.message ?? 'Une erreur s\'est produite', false);
               }
             } catch (e) {
               callback(false, e.toString(), false);
@@ -123,7 +129,6 @@ class _BadgePageState extends State<BadgePage> {
       },
     );
   }
-
 
   void _showCreateBadgeDialog(BuildContext context) {
     showDialog(
@@ -135,7 +140,8 @@ class _BadgePageState extends State<BadgePage> {
 
             await Future.delayed(const Duration(seconds: 2));
             try {
-             ResponseRequest response =  await BadgeServices.createBadge(newBadge);
+              ResponseRequest response =
+                  await BadgeServices.createBadge(newBadge);
 
               if (response.success) {
                 _fetchBadges();
@@ -146,7 +152,8 @@ class _BadgePageState extends State<BadgePage> {
 
                 callback(true, null, false);
               } else {
-                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+                callback(false,
+                    response.message ?? 'Une erreur s\'est produite', false);
               }
             } catch (e) {
               callback(false, e.toString(), false);
@@ -157,87 +164,86 @@ class _BadgePageState extends State<BadgePage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBlue,
+      backgroundColor: AppColors.transparent,
       appBar: AppBar(
-        title: const Text('Liste des Badges'),
         backgroundColor: AppColors.transparent,
+        title: const Text(
+          'Liste des badges',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _showCreateBadgeDialog(context);
-                  },
-                  child: const Text('Créer un Badge', style: TextStyle(color: AppColors.white)),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.darkBlue,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    textStyle: const TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            ),
             const SizedBox(height: 16),
             _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _badges.isEmpty
-                ? const Center(child: Text('Aucune données disponible'))
-                : DataTableWithPagination<Model.Badge>(
-              data: _badges,
-              initialRowsPerPage: 5,
-              columns: const [
-                DataColumn(label: Text('Id')),
-                DataColumn(label: Text('Name')),
-                DataColumn(label: Text('Type')),
-                DataColumn(label: Text('Nb requirement event')),
-                DataColumn(label: Text('SVG')),
-                DataColumn(label: Text('Actions')),
-              ],
-              rowBuilder: (badge) {
-                return [
-                  DataCell(Text(badge.id)),
-                  DataCell(Text(badge.name)),
-                  DataCell(Text(badge.type)),
-                  DataCell(Text(badge.nbRequirementEvent.toString())),
-                  DataCell(
-                    SvgPicture.string(
-                      badge.svg,
-                      height: 40,
-                      width: 40,
-                    ),
-                  ),
-                  DataCell(Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        tooltip: 'Modifier',
-                        onPressed: () {
-                          _showEditBadgeDialog(context, badge);
+                    ? const Center(child: Text('Aucune données disponible'))
+                    : DataTableWithPagination<Model.Badge>(
+                        data: _badges,
+                        initialRowsPerPage: 5,
+                        columns: const [
+                          DataColumn(label: Text('Id')),
+                          DataColumn(label: Text('Name')),
+                          DataColumn(label: Text('Type')),
+                          DataColumn(label: Text('Nb requirement event')),
+                          DataColumn(label: Text('SVG')),
+                          DataColumn(label: Text('Actions')),
+                        ],
+                        rowBuilder: (badge) {
+                          return [
+                            DataCell(Text(badge.id)),
+                            DataCell(Text(badge.name)),
+                            DataCell(Text(badge.type)),
+                            DataCell(Text(badge.nbRequirementEvent.toString())),
+                            DataCell(
+                              SvgPicture.string(
+                                badge.svg,
+                                height: 40,
+                                width: 40,
+                              ),
+                            ),
+                            DataCell(Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  tooltip: 'Modifier',
+                                  onPressed: () {
+                                    _showEditBadgeDialog(context, badge);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  tooltip: 'Supprimer',
+                                  onPressed: () {
+                                    _showDeleteConfirmation(context, badge);
+                                  },
+                                ),
+                              ],
+                            )),
+                          ];
                         },
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        tooltip: 'Supprimer',
-                        onPressed: () {
-                          _showDeleteConfirmation(context, badge);
-                        },
-                      ),
-                    ],
-                  )),
-                ];
-              },
-            ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _showCreateBadgeDialog(context);
+        },
+        backgroundColor: AppColors.purple,
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

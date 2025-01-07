@@ -53,22 +53,22 @@ class _AdminPageState extends State<AdminPage> {
       icon: Icons.dashboard,
     ),
     AdminMenuItem(
-      title: 'Subject',
+      title: 'Sujets',
       icon: Icons.menu_book,
       route: '${AdminPage.routeName}${SubjectPage.routeName}',
     ),
     AdminMenuItem(
-      title: 'Badge',
+      title: 'Badges',
       icon: Icons.star,
       route: '${AdminPage.routeName}${BadgePage.routeName}',
     ),
     AdminMenuItem(
-      title: 'Event',
+      title: 'Evenements',
       icon: Icons.event,
       route: '${AdminPage.routeName}${EventsPageAdmin.routeName}',
     ),
     AdminMenuItem(
-      title: 'User',
+      title: 'Utilisateurs',
       icon: Icons.admin_panel_settings,
       route: '${AdminPage.routeName}${UserPageAdmin.routeName}',
     ),
@@ -76,7 +76,7 @@ class _AdminPageState extends State<AdminPage> {
 
   final List<AdminMenuItem> _adminMenuItems = const [
     AdminMenuItem(
-      title: 'Logout',
+      title: 'Déconnexion',
       icon: Icons.logout,
       route: '/login',
     ),
@@ -84,7 +84,7 @@ class _AdminPageState extends State<AdminPage> {
 
   List<Widget> get _pages {
     return [
-      DashboardPage(),
+      const DashboardPage(),
       SubjectPage(),
       BadgePage(),
       EventsPageAdmin(),
@@ -95,11 +95,24 @@ class _AdminPageState extends State<AdminPage> {
   @override
   Widget build(BuildContext context) {
     return AdminScaffold(
-      backgroundColor: AppColors.lightBlue,
+      backgroundColor: AppColors.white,
       leadingIcon: const Icon(Icons.menu, color: AppColors.white),
       appBar: AppBar(
         backgroundColor: AppColors.purple,
-        title: const Text('Edumeet Admin', style: TextStyle(color: AppColors.white)),
+        title: const Text(
+          'Edumeet Admin',
+          style: TextStyle(
+            color: AppColors.white,
+            fontSize: 18,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1.0),
+            child: Container(
+              color: Colors.white,
+              height: 1.0,
+            )),
         actions: [
           PopupMenuButton<AdminMenuItem>(
             child: const Icon(Icons.account_circle, color: AppColors.white),
@@ -109,12 +122,13 @@ class _AdminPageState extends State<AdminPage> {
                   value: item,
                   child: Row(
                     children: [
-                      Icon(item.icon, color: AppColors.white),
+                      Icon(item.icon, color: AppColors.purple),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
                         child: Text(
                           item.title,
-                          style: TextStyle(color: AppColors.white, fontSize: 14),
+                          style: const TextStyle(
+                              color: AppColors.purple, fontSize: 14),
                         ),
                       ),
                     ],
@@ -126,44 +140,49 @@ class _AdminPageState extends State<AdminPage> {
               context.go(item.route!);
             },
           ),
+          const SizedBox(width: 20),
         ],
       ),
       sideBar: SideBar(
-        backgroundColor: AppColors.darkBlue,
-        activeBackgroundColor: AppColors.lightBlue,
-        borderColor: AppColors.white,
-        iconColor: AppColors.white,
-        activeIconColor: AppColors.lightBlue,
-        textStyle: TextStyle(
-          color: AppColors.white,
+        backgroundColor: Colors.grey.shade50,
+        activeBackgroundColor: AppColors.lightPurple,
+        borderColor: Colors.grey.shade300,
+        iconColor: AppColors.purple,
+        activeIconColor: AppColors.purple,
+        textStyle: const TextStyle(
+          color: AppColors.purple,
           fontSize: 13,
+          fontWeight: FontWeight.bold,
         ),
-        activeTextStyle: TextStyle(
+        activeTextStyle: const TextStyle(
           color: AppColors.darkBlue,
           fontSize: 13,
         ),
         items: _sideBarItems,
         selectedRoute: AdminPage.routeName,
         onSelected: (item) {
-          if (item.route == '${AdminPage.routeName}${DashboardPage.routeName}') {
+          if (item.route ==
+              '${AdminPage.routeName}${DashboardPage.routeName}') {
             setState(() {
               _selectedIndex = 0;
             });
-          } else if (item.route == '${AdminPage.routeName}${SubjectPage.routeName}') {
+          } else if (item.route ==
+              '${AdminPage.routeName}${SubjectPage.routeName}') {
             setState(() {
               _selectedIndex = 1;
             });
-          } else if (item.route == '${AdminPage.routeName}${BadgePage.routeName}') {
+          } else if (item.route ==
+              '${AdminPage.routeName}${BadgePage.routeName}') {
             setState(() {
               _selectedIndex = 2;
             });
-          }
-          else if (item.route == '${AdminPage.routeName}${EventsPageAdmin.routeName}') {
+          } else if (item.route ==
+              '${AdminPage.routeName}${EventsPageAdmin.routeName}') {
             setState(() {
               _selectedIndex = 3;
             });
-          }
-          else if (item.route == '${AdminPage.routeName}${UserPageAdmin.routeName}') {
+          } else if (item.route ==
+              '${AdminPage.routeName}${UserPageAdmin.routeName}') {
             setState(() {
               _selectedIndex = 4;
             });

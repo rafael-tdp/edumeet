@@ -9,15 +9,17 @@ import 'package:go_router/go_router.dart';
 import '../../widgets/confirmation_dialog.dart';
 import '../../widgets/create_modal_subject.dart';
 import '../../widgets/edit_modal_subject.dart';
-import 'package:flutter/material.dart';
 
 class SubjectPage extends StatefulWidget {
   static const String routeName = '/subjects';
+
+  const SubjectPage({super.key});
   static navigateTo(BuildContext context) {
     context.go('${AdminPage.routeName}$routeName');
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _SubjectPageState createState() => _SubjectPageState();
 }
 
@@ -56,7 +58,8 @@ class _SubjectPageState extends State<SubjectPage> {
           builder: (context, setState) {
             return ConfirmationDialog(
               title: 'Confirmer la suppression',
-              content: 'Êtes-vous sûr de vouloir supprimer le sujet "${subject.name}" ?',
+              content:
+                  'Êtes-vous sûr de vouloir supprimer le sujet "${subject.name}" ?',
               isLoading: isDeleting,
               onCancel: () {
                 Navigator.of(context).pop();
@@ -68,20 +71,24 @@ class _SubjectPageState extends State<SubjectPage> {
 
                 await Future.delayed(const Duration(seconds: 2));
 
-                ResponseRequest response = await SubjectServices.deleteSubject(subject.id);
+                ResponseRequest response =
+                    await SubjectServices.deleteSubject(subject.id);
                 setState(() {
                   isDeleting = false;
                 });
 
-                if(response.success) {
+                if (response.success) {
                   _fetchSubjects();
 
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Matière supprimé avec succes')),
+                    const SnackBar(
+                        content: Text('Matière supprimé avec succes')),
                   );
-                } else{
+                } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
+                    SnackBar(
+                        content: Text(
+                            response.message ?? 'Une erreur s\'est produite')),
                   );
                 }
                 Navigator.of(context).pop();
@@ -104,7 +111,8 @@ class _SubjectPageState extends State<SubjectPage> {
 
             await Future.delayed(const Duration(seconds: 2));
 
-            ResponseRequest response = await SubjectServices.updateSubject(subject, newName);
+            ResponseRequest response =
+                await SubjectServices.updateSubject(subject, newName);
 
             if (response.success) {
               _fetchSubjects();
@@ -115,7 +123,8 @@ class _SubjectPageState extends State<SubjectPage> {
 
               callback(true, null, false);
             } else {
-              callback(false, response.message ?? 'Une erreur s\'est produite', false);
+              callback(false, response.message ?? 'Une erreur s\'est produite',
+                  false);
             }
           },
         );
@@ -133,7 +142,8 @@ class _SubjectPageState extends State<SubjectPage> {
             await Future.delayed(const Duration(seconds: 2));
 
             try {
-              ResponseRequest response = await SubjectServices.createSubject(subjectName);
+              ResponseRequest response =
+                  await SubjectServices.createSubject(subjectName);
 
               if (response.success) {
                 _fetchSubjects();
@@ -143,7 +153,8 @@ class _SubjectPageState extends State<SubjectPage> {
 
                 callback(true, null, false);
               } else {
-                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+                callback(false,
+                    response.message ?? 'Une erreur s\'est produite', false);
               }
             } catch (e) {
               callback(false, 'Erreur : ${e.toString()}', false);
@@ -157,9 +168,17 @@ class _SubjectPageState extends State<SubjectPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBlue,
+      backgroundColor: AppColors.transparent,
       appBar: AppBar(
-        title: const Text('Liste des Subjects'),
+        title: const Text(
+          'Liste des sujets',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
         backgroundColor: AppColors.transparent,
       ),
       body: Padding(
@@ -167,49 +186,49 @@ class _SubjectPageState extends State<SubjectPage> {
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _subjects.isEmpty
-            ? const Center(child: Text('Aucun sujet disponible'))
-            : DataTableWithPagination<Subject>(
-          data: _subjects,
-          initialRowsPerPage: 5,
-          columns: const [
-            DataColumn(label: Text('Id')),
-            DataColumn(label: Text('Name')),
-            DataColumn(label: Text('Actions')),
-          ],
-          rowBuilder: (subject) {
-            return [
-              DataCell(Text(subject.id.toString())),
-              DataCell(Text(subject.name)),
-              DataCell(Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    tooltip: 'Modifier',
-                    onPressed: () {
-                      _showEditSubjectDialog(context, subject);
+                ? const Center(child: Text('Aucun sujet disponible'))
+                : DataTableWithPagination<Subject>(
+                    data: _subjects,
+                    initialRowsPerPage: 10,
+                    columns: const [
+                      DataColumn(label: Text('Id')),
+                      DataColumn(label: Text('Name')),
+                      DataColumn(label: Text('Actions')),
+                    ],
+                    rowBuilder: (subject) {
+                      return [
+                        DataCell(Text(subject.id.toString())),
+                        DataCell(Text(subject.name)),
+                        DataCell(Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              tooltip: 'Modifier',
+                              onPressed: () {
+                                _showEditSubjectDialog(context, subject);
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              tooltip: 'Supprimer',
+                              onPressed: () {
+                                _showDeleteConfirmation(context, subject);
+                              },
+                            ),
+                          ],
+                        )),
+                      ];
                     },
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete),
-                    tooltip: 'Supprimer',
-                    onPressed: () {
-                      _showDeleteConfirmation(context, subject);
-                    },
-                  ),
-                ],
-              )),
-            ];
-          },
-        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showCreateSubjectDialog(context);
         },
-        backgroundColor: AppColors.blue,
+        backgroundColor: AppColors.purple,
+        foregroundColor: Colors.white,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-
     );
   }
 }

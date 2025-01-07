@@ -1,3 +1,4 @@
+import 'package:client/utils/colors.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,8 @@ class LineChartWidget extends StatelessWidget {
   final bool showTitle;
   final List<String>? months;
 
-  LineChartWidget({
+  const LineChartWidget({
+    super.key,
     required this.monthlyEvents,
     this.chartTitle = "",
     this.maxY,
@@ -25,7 +27,7 @@ class LineChartWidget extends StatelessWidget {
     this.showGrid = true,
     this.showDots = true,
     this.isCurved = true,
-    this.lineColor = Colors.blue,
+    this.lineColor = AppColors.purple,
     this.barWidth = 4.0,
     this.reservedSize = 30,
     this.showTitle = true,
@@ -36,7 +38,9 @@ class LineChartWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     double computedMaxY = maxY ??
         (monthlyEvents.isNotEmpty
-            ? (monthlyEvents.reduce((a, b) => a > b ? a : b) / verticalInterval).ceil() * verticalInterval
+            ? (monthlyEvents.reduce((a, b) => a > b ? a : b) / verticalInterval)
+                    .ceil() *
+                verticalInterval
             : 100.0);
 
     computedMaxY = computedMaxY + (computedMaxY * 0.1);
@@ -47,7 +51,20 @@ class LineChartWidget extends StatelessWidget {
       return FlSpot(index.toDouble(), monthlyEvents[index].toDouble());
     });
 
-    List<String> defaultMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    List<String> defaultMonths = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
     List<String> monthsList = months ?? defaultMonths;
 
     double dynamicVerticalInterval = verticalInterval;
@@ -56,6 +73,7 @@ class LineChartWidget extends StatelessWidget {
     }
 
     return Card(
+      color: AppColors.lightPurple,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
@@ -65,17 +83,18 @@ class LineChartWidget extends StatelessWidget {
           children: [
             if (chartTitle.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
+                padding: const EdgeInsets.only(bottom: 20.0),
                 child: Text(
                   chartTitle,
-                  style: TextStyle(
-                    fontSize: 18,
+                  style: const TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
               ),
             Container(
+              color: Colors.transparent,
               height: 250,
               child: LineChart(
                 LineChartData(
@@ -84,7 +103,9 @@ class LineChartWidget extends StatelessWidget {
                     verticalInterval: dynamicVerticalInterval,
                     horizontalInterval: horizontalInterval,
                   ),
-                  borderData: FlBorderData(show: true, border: Border.all(color: Colors.black, width: 1)),
+                  borderData: FlBorderData(
+                      show: true,
+                      border: Border.all(color: Colors.black, width: 1)),
                   lineBarsData: [
                     LineChartBarData(
                       spots: eventSpots,
@@ -103,7 +124,7 @@ class LineChartWidget extends StatelessWidget {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             value.toInt().toString(),
-                            style: TextStyle(fontSize: 10),
+                            style: const TextStyle(fontSize: 10),
                           );
                         },
                       ),
@@ -115,13 +136,15 @@ class LineChartWidget extends StatelessWidget {
                         getTitlesWidget: (value, meta) {
                           return Text(
                             monthsList[value.toInt() % monthsList.length],
-                            style: TextStyle(fontSize: 10),
+                            style: const TextStyle(fontSize: 10),
                           );
                         },
                       ),
                     ),
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
                   ),
                   minY: 0,
                   maxY: computedMaxY,

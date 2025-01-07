@@ -1,7 +1,5 @@
 import 'package:client/core/models/event.dart';
-import 'package:client/core/models/subject.dart';
 import 'package:client/core/services/event_services.dart';
-import 'package:client/core/services/subjects_services.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/datatable.dart';
@@ -10,10 +8,11 @@ import 'package:go_router/go_router.dart';
 import '../../core/models/response.dart';
 import '../../widgets/confirmation_dialog.dart';
 import '../../widgets/edit_modal_event.dart';
-import '../../widgets/edit_modal_subject.dart';
 
 class EventsPageAdmin extends StatefulWidget {
   static const String routeName = '/events';
+
+  const EventsPageAdmin({super.key});
   static navigateTo(BuildContext context) {
     context.go('${AdminPage.routeName}$routeName');
   }
@@ -35,8 +34,7 @@ class _EventPageState extends State<EventsPageAdmin> {
 
   Future<void> _fetchEvents() async {
     try {
-
-      final events = await EventServices.getEvents([],null,null,"all",null);
+      final events = await EventServices.getEvents([], null, null, "all", null);
       setState(() {
         _events = events;
         _isLoading = false;
@@ -58,7 +56,8 @@ class _EventPageState extends State<EventsPageAdmin> {
           builder: (context, setState) {
             return ConfirmationDialog(
               title: 'Confirmer la suppression',
-              content: 'Êtes-vous sûr de vouloir supprimer l\'evenement "${event.title}" ?',
+              content:
+                  'Êtes-vous sûr de vouloir supprimer l\'evenement "${event.title}" ?',
               isLoading: isDeleting,
               onCancel: () {
                 Navigator.of(context).pop();
@@ -68,21 +67,25 @@ class _EventPageState extends State<EventsPageAdmin> {
                   isDeleting = true;
                 });
 
-                ResponseRequest response = await EventServices.deleteEvent(event.id);
+                ResponseRequest response =
+                    await EventServices.deleteEvent(event.id);
 
                 setState(() {
                   isDeleting = false;
                 });
 
-                if(response.success) {
+                if (response.success) {
                   _fetchEvents();
 
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Evenement supprimé avec succes')),
+                    const SnackBar(
+                        content: Text('Evenement supprimé avec succes')),
                   );
-                } else{
+                } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
+                    SnackBar(
+                        content: Text(
+                            response.message ?? 'Une erreur s\'est produite')),
                   );
                 }
                 Navigator.of(context).pop();
@@ -105,7 +108,8 @@ class _EventPageState extends State<EventsPageAdmin> {
           try {
             await Future.delayed(const Duration(seconds: 2));
 
-            ResponseRequest response =  await EventServices.updateEventAdmin(event.id, updatedEvent);
+            ResponseRequest response =
+                await EventServices.updateEventAdmin(event.id, updatedEvent);
 
             if (response.success) {
               _fetchEvents();
@@ -114,7 +118,8 @@ class _EventPageState extends State<EventsPageAdmin> {
               );
               callback(true, null, false);
             } else {
-              callback(false, response.message ?? 'Une erreur s\'est produite', false);
+              callback(false, response.message ?? 'Une erreur s\'est produite',
+                  false);
             }
           } catch (error) {
             callback(false, 'Erreur : $error', false);
@@ -124,13 +129,20 @@ class _EventPageState extends State<EventsPageAdmin> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBlue,
+      backgroundColor: AppColors.transparent,
       appBar: AppBar(
-        title: const Text('Liste des Evenements'),
+        title: const Text(
+          'Liste des événements',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
         backgroundColor: AppColors.transparent,
       ),
       body: Padding(
@@ -138,50 +150,49 @@ class _EventPageState extends State<EventsPageAdmin> {
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _events.isEmpty
-            ? const Center(child: Text('Aucun evenement disponible'))
-            : DataTableWithPagination<Event>(
-          data: _events,
-          initialRowsPerPage: 5,
-          columns: const [
-            DataColumn(label: Text('Id')),
-            DataColumn(label: Text('StartDate')),
-            DataColumn(label: Text('EndDate')),
-            DataColumn(label: Text('Title')),
-            DataColumn(label: Text('IsPrivate')),
-            DataColumn(label: Text('NbParticipant')),
-            DataColumn(label: Text('Actions')),
-          ],
-          rowBuilder: (event) {
-            return [
-              DataCell(Text(event.id.toString())),
-              DataCell(Text(event.startDate)),
-              DataCell(Text(event.endDate)),
-              DataCell(Text(event.title)),
-              DataCell(Text(event.isPrivate.toString())),
-              DataCell(Text(event.participantsCount.toString())),
-              DataCell(Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    tooltip: 'Modifier',
-                    onPressed: () {
-                      _showEditEventDialog(context, event);
+                ? const Center(child: Text('Aucun evenement disponible'))
+                : DataTableWithPagination<Event>(
+                    data: _events,
+                    initialRowsPerPage: 5,
+                    columns: const [
+                      DataColumn(label: Text('Id')),
+                      DataColumn(label: Text('StartDate')),
+                      DataColumn(label: Text('EndDate')),
+                      DataColumn(label: Text('Title')),
+                      DataColumn(label: Text('IsPrivate')),
+                      DataColumn(label: Text('NbParticipant')),
+                      DataColumn(label: Text('Actions')),
+                    ],
+                    rowBuilder: (event) {
+                      return [
+                        DataCell(Text(event.id.toString())),
+                        DataCell(Text(event.startDate)),
+                        DataCell(Text(event.endDate)),
+                        DataCell(Text(event.title)),
+                        DataCell(Text(event.isPrivate.toString())),
+                        DataCell(Text(event.participantsCount.toString())),
+                        DataCell(Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              tooltip: 'Modifier',
+                              onPressed: () {
+                                _showEditEventDialog(context, event);
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              tooltip: 'Supprimer',
+                              onPressed: () {
+                                _showDeleteConfirmation(context, event);
+                              },
+                            ),
+                          ],
+                        )),
+                      ];
                     },
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete),
-                    tooltip: 'Supprimer',
-                    onPressed: () {
-                      _showDeleteConfirmation(context, event);
-                    },
-                  ),
-                ],
-              )),
-            ];
-          },
-        ),
       ),
-
     );
   }
 }

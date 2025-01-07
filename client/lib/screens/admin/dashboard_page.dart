@@ -3,18 +3,20 @@ import 'package:client/core/services/stats_services.dart';
 import 'package:client/utils/colors.dart';
 import 'package:client/widgets/donut_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart';
 import 'package:go_router/go_router.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:client/widgets/line_chart.dart';
 
 class DashboardPage extends StatefulWidget {
   static const String routeName = '/dashboard';
+
+  const DashboardPage({super.key});
   static navigateTo(BuildContext context) {
     context.go('${AdminPage.routeName}$routeName');
   }
 
   @override
+  // ignore: library_private_types_in_public_api
   _DashboardPageState createState() => _DashboardPageState();
 }
 
@@ -24,10 +26,9 @@ class _DashboardPageState extends State<DashboardPage> {
     userByMonth: [],
     eventByMonth: [],
     topSubjects: [],
-    averageParticipantsByEvent: AverageParticipants(previousYear: 0, currentYear: 0),
+    averageParticipantsByEvent:
+        AverageParticipants(previousYear: 0, currentYear: 0),
   );
-
-  bool _isLoading = true;
 
   @override
   void initState() {
@@ -40,12 +41,9 @@ class _DashboardPageState extends State<DashboardPage> {
       final stats = await StatsServices.getStats();
       setState(() {
         _stats = stats;
-        _isLoading = false;
       });
     } catch (error) {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() {});
     }
   }
 
@@ -54,27 +52,48 @@ class _DashboardPageState extends State<DashboardPage> {
     final List<TopSubject> topSubjects = _stats.topSubjects;
     final List<int> userByMonth = _stats.userByMonth;
     final List<int> eventByMonth = _stats.eventByMonth;
-    final AverageParticipants averageParticipants = _stats.averageParticipantsByEvent;
-
+    final AverageParticipants averageParticipants =
+        _stats.averageParticipantsByEvent;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text("Dashboard"),
-      ),
+          backgroundColor: Colors.transparent,
+          title: const Text(
+            "Dashboard",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          )),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LineChartWidget(monthlyEvents: eventByMonth, chartTitle: "Événements par mois",isCurved: false),
-              SizedBox(height: 16),
-              _buildStatCard("Participants moyens par événement", averageParticipants.previousYear as double, averageParticipants.currentYear as double),
-              SizedBox(height: 16),
-              LineChartWidget(monthlyEvents: userByMonth, chartTitle: "Utilisateurs par mois", lineColor: AppColors.blue, isCurved: false),
-              SizedBox(height: 16),
-              SubjectsChart(topSubjects: topSubjects, chartTitle: "Top 5 des matières les plus populaires"),
-              SizedBox(height: 16),
+              LineChartWidget(
+                monthlyEvents: eventByMonth,
+                chartTitle: "Événements par mois",
+                isCurved: false,
+              ),
+              const SizedBox(height: 16),
+              _buildStatCard(
+                  "Participants moyens par événement",
+                  averageParticipants.previousYear,
+                  averageParticipants.currentYear),
+              const SizedBox(height: 16),
+              LineChartWidget(
+                  monthlyEvents: userByMonth,
+                  chartTitle: "Utilisateurs par mois",
+                  isCurved: false),
+              const SizedBox(height: 16),
+              SubjectsChart(
+                  topSubjects: topSubjects,
+                  chartTitle: "Top 5 des matières les plus populaires"),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -82,8 +101,10 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildStatCard(String title, double previousYearValue, double currentYearValue) {
+  Widget _buildStatCard(
+      String title, double previousYearValue, double currentYearValue) {
     return Card(
+      color: AppColors.lightPurple,
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Padding(
@@ -91,21 +112,32 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Précédente année', style: TextStyle(fontSize: 14, color: Colors.grey)),
-                Text(previousYearValue.toStringAsFixed(1), style: TextStyle(fontSize: 16)),
+                const Text('Année précédente',
+                    style: TextStyle(fontSize: 14, color: Colors.grey)),
+                Text(previousYearValue.toStringAsFixed(1),
+                    style: const TextStyle(fontSize: 16)),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Année en cours', style: TextStyle(fontSize: 14, color: Colors.grey)),
-                Text(currentYearValue.toStringAsFixed(1), style: TextStyle(fontSize: 16)),
+                const Text('Année en cours',
+                    style: TextStyle(fontSize: 14, color: Colors.grey)),
+                Text(currentYearValue.toStringAsFixed(1),
+                    style: const TextStyle(fontSize: 16)),
               ],
             ),
           ],

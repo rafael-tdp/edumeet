@@ -1,5 +1,3 @@
-import 'package:client/core/models/subject.dart';
-import 'package:client/core/services/subjects_services.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:client/widgets/edit_modal_user.dart';
@@ -10,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import '../../core/models/response.dart';
 import '../../core/models/user.dart';
 import '../../widgets/confirmation_dialog.dart';
-import 'package:client/core/models/user.dart';
 
 import '../../widgets/create_user_modal.dart';
 
@@ -61,18 +58,21 @@ class _UserPageState extends State<UserPageAdmin> {
             await Future.delayed(const Duration(seconds: 2));
 
             try {
-              ResponseRequest response =  await UserServices.updateAdminUserInfo(newUser);
+              ResponseRequest response =
+                  await UserServices.updateAdminUserInfo(newUser);
 
               if (response.success) {
                 _fetchUsers();
 
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Utilisateur modifiée avec succès')),
+                  const SnackBar(
+                      content: Text('Utilisateur modifiée avec succès')),
                 );
 
                 callback(true, null, false);
               } else {
-                callback(false, response.message ?? 'Une erreur s\'est produite', false);
+                callback(false,
+                    response.message ?? 'Une erreur s\'est produite', false);
               }
             } catch (e) {
               callback(false, e.toString(), false);
@@ -93,7 +93,8 @@ class _UserPageState extends State<UserPageAdmin> {
           builder: (context, setState) {
             return ConfirmationDialog(
               title: 'Confirmer la suppression',
-              content: 'Êtes-vous sûr de vouloir supprimer cet utilisateur "${user.username}" ?',
+              content:
+                  'Êtes-vous sûr de vouloir supprimer cet utilisateur "${user.username}" ?',
               isLoading: isDeleting,
               onCancel: () {
                 Navigator.of(context).pop();
@@ -103,20 +104,24 @@ class _UserPageState extends State<UserPageAdmin> {
                   isDeleting = true;
                 });
 
-                ResponseRequest response = await UserServices.deleteUser(user.id);
+                ResponseRequest response =
+                    await UserServices.deleteUser(user.id);
                 setState(() {
                   isDeleting = false;
                 });
 
-                if(response.success) {
+                if (response.success) {
                   _fetchUsers();
 
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Utilisateur supprimé avec succes')),
+                    const SnackBar(
+                        content: Text('Utilisateur supprimé avec succes')),
                   );
-                } else{
+                } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(response.message ?? 'Une erreur s\'est produite')),
+                    SnackBar(
+                        content: Text(
+                            response.message ?? 'Une erreur s\'est produite')),
                   );
                 }
                 Navigator.of(context).pop();
@@ -151,21 +156,27 @@ class _UserPageState extends State<UserPageAdmin> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBlue,
+      backgroundColor: AppColors.transparent,
       appBar: AppBar(
-        title: const Text('Liste des Utilisateurs'),
+        title: const Text(
+          'Liste des utilisateurs',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
         backgroundColor: AppColors.transparent,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showCreateUserDialog(context);
         },
-        backgroundColor: AppColors.blue,
+        backgroundColor: AppColors.purple,
         child: const Icon(Icons.add, color: Colors.white),
       ),
       body: Padding(
@@ -173,54 +184,53 @@ class _UserPageState extends State<UserPageAdmin> {
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : _users.isEmpty
-            ? const Center(child: Text('Aucun utilisateur trouvé'))
-            : DataTableWithPagination<User>(
-          data: _users,
-          initialRowsPerPage: 5,
-          columns: const [
-            DataColumn(label: Text('Id')),
-            DataColumn(label: Text('Email')),
-            DataColumn(label: Text('Firstname')),
-            DataColumn(label: Text('Lastname')),
-            DataColumn(label: Text('BirthDate')),
-            DataColumn(label: Text('Activated')),
-            DataColumn(label: Text('ReportNumber')),
-            DataColumn(label: Text('Role')),
-            DataColumn(label: Text('Actions')),
-          ],
-          rowBuilder: (user) {
-            return [
-              DataCell(Text(user.id.toString())),
-              DataCell(Text(user.email!)),
-              DataCell(Text(user.firstname!)),
-              DataCell(Text(user.lastname!)),
-              DataCell(Text(user.birthDate.toString())),
-              DataCell(Text(user.activated.toString())),
-              DataCell(Text(user.reportNumber.toString())),
-              DataCell(Text(user.role.toString())),
-              DataCell(Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    tooltip: 'Modifier',
-                    onPressed: () {
-                      _showEditUserDialog(context, user);
+                ? const Center(child: Text('Aucun utilisateur trouvé'))
+                : DataTableWithPagination<User>(
+                    data: _users,
+                    initialRowsPerPage: 5,
+                    columns: const [
+                      DataColumn(label: Text('Id')),
+                      DataColumn(label: Text('Email')),
+                      DataColumn(label: Text('Firstname')),
+                      DataColumn(label: Text('Lastname')),
+                      DataColumn(label: Text('BirthDate')),
+                      DataColumn(label: Text('Activated')),
+                      DataColumn(label: Text('ReportNumber')),
+                      DataColumn(label: Text('Role')),
+                      DataColumn(label: Text('Actions')),
+                    ],
+                    rowBuilder: (user) {
+                      return [
+                        DataCell(Text(user.id.toString())),
+                        DataCell(Text(user.email!)),
+                        DataCell(Text(user.firstname!)),
+                        DataCell(Text(user.lastname!)),
+                        DataCell(Text(user.birthDate.toString())),
+                        DataCell(Text(user.activated.toString())),
+                        DataCell(Text(user.reportNumber.toString())),
+                        DataCell(Text(user.role.toString())),
+                        DataCell(Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit),
+                              tooltip: 'Modifier',
+                              onPressed: () {
+                                _showEditUserDialog(context, user);
+                              },
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete),
+                              tooltip: 'Supprimer',
+                              onPressed: () {
+                                _showDeleteConfirmation(context, user);
+                              },
+                            ),
+                          ],
+                        )),
+                      ];
                     },
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete),
-                    tooltip: 'Supprimer',
-                    onPressed: () {
-                      _showDeleteConfirmation(context, user);
-                    },
-                  ),
-                ],
-              )),
-            ];
-          },
-        ),
       ),
-
     );
   }
 }
