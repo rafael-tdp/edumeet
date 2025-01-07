@@ -37,14 +37,25 @@ class UserServices {
     if (response.statusCode == 200) {
       final data = HttpUtils.decodeResponse(response);
       final User user = User.fromJson(data);
-      await CacheService.saveDataToCache("user_username", user.username);
-      await CacheService.saveDataToCache("user_email", user.email!);
-      await CacheService.saveDataToCache("user_role", user.role!);
+      await CacheService.saveUserToCache(user);
       return ResponseRequest(success: true, data: user);
     } else {
       return ResponseRequest(success: false, message: json.decode(response.body)['error']);
     }
   }
+
+  Future<ResponseRequest> getUserInfoFromCache() async {
+  try {
+    final User? user = await CacheService.getUserFromCache();
+    if (user != null) {
+      return ResponseRequest(success: true, data: user);
+    } else {
+      return ResponseRequest(success: false, message: 'No cached user data found');
+    }
+  } catch (e) {
+    return ResponseRequest(success: false, message: 'Error retrieving cached user data: $e');
+  }
+}
 
   Future<ResponseRequest> getUserById(String? id) async {
     final token = await _authServices.getToken();
@@ -62,6 +73,7 @@ class UserServices {
     if (response.statusCode == 200) {
       final data = HttpUtils.decodeResponse(response);
       final User user = User.fromJson(data);
+      await CacheService.saveUserToCache(user);
       return ResponseRequest(success: true, data: user);
     } else {
       return ResponseRequest(success: false, message: json.decode(response.body)['error']);
