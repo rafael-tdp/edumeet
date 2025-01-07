@@ -56,7 +56,7 @@ class _EventsPageState extends State<EventsPage> {
       );
       return;
     }
-    if (participantStatus != "ACCEPTED") {
+    if (participantStatus == "PENDING") {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Vous devez être accepté pour voir les détails")),
       );

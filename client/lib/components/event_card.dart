@@ -8,7 +8,7 @@ class EventCard extends StatelessWidget {
   final String imageUrl;
   final String participants;
   final bool isCurrentUserEvent;
-  final String participantStatus;
+  final String? participantStatus;
 
   const EventCard({
     super.key,
@@ -17,7 +17,7 @@ class EventCard extends StatelessWidget {
     required this.imageUrl,
     required this.participants,
     this.isCurrentUserEvent = false,
-    required this.participantStatus,
+    this.participantStatus,
   });
 
   @override
@@ -120,8 +120,7 @@ class EventCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Grey overlay if participantStatus is not "ACCEPTED"
-                if (participantStatus != "ACCEPTED")
+                if (participantStatus == "PENDING")
                   Container(
                     height: 150,
                     decoration: BoxDecoration(
@@ -153,7 +152,7 @@ class EventCard extends StatelessWidget {
               ),
             ),
           ),
-        if (participantStatus != "ACCEPTED")
+        if (participantStatus == "PENDING")
           Positioned(
             top: 5,
             right: 10,
