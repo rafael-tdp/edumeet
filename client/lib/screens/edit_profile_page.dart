@@ -8,11 +8,11 @@ import 'package:client/utils/colors.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../components/profile_button.dart';
 import '../components/avatar_selector.dart';
 import '../core/models/user.dart';
 import '../providers/user_provider.dart';
+import 'package:client/core/services/adresse_services.dart';
 
 class EditProfilePage extends StatefulWidget {
   static const String routeName = '/edit-profile';
@@ -37,9 +37,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _emailController;
   late TextEditingController _birthDateController;
   late TextEditingController _addressController;
+
   String? _selectedAvatar;
   late String _currentUsername;
   late Avatar _avatar;
+  List<String> _addressSuggestions = [];
 
   @override
   void initState() {
@@ -86,6 +88,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _birthDateController.dispose();
     _addressController.dispose();
     super.dispose();
+  }
+
+  void _getAddressSuggestions(String query) async {
+    try {
+      if (query.length < 3) {
+        return;
+      }
+
+      List<String> suggestions = await fetchAddressSuggestions(query);
+
+      setState(() {
+        _addressSuggestions = suggestions;
+      });
+    } catch (e) {}
   }
 
   Future<void> _saveProfile() async {
@@ -246,7 +262,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   controller: _addressController,
                   label: t.profile.address,
                   icon: Icons.location_on,
+                  onChanged: _getAddressSuggestions,
                 ),
+                if (_addressSuggestions.isNotEmpty)
+                  Column(
+                    children: _addressSuggestions.map((suggestion) {
+                      return ListTile(
+                        title: Text(suggestion),
+                        onTap: () {
+                          _addressController.text = suggestion;
+                          setState(() {
+                            _addressSuggestions.clear();
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
