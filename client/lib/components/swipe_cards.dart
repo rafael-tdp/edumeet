@@ -63,7 +63,6 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
     try {
       location = await LocationService.getLocation();
     } catch (error) {
-      print("Error getting location: $error");
     }
   }
 
@@ -123,9 +122,6 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                       );
                     },
                     itemChanged: (SwipeItem item, int index) {
-                      print(t.swipe_cards.item_changed(
-                        title: (item.content as Event).title,
-                      ));
                     },
                     upSwipeAllowed: false,
                     fillSpace: true,

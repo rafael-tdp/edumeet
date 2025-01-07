@@ -424,8 +424,6 @@ class EventServices {
     try {
       final token = await AuthServices().getToken();
 
-      print(updatedEvent);
-
       if (token == null) {
         return ResponseRequest(success: false, message: 'Utilisateur non authentifié');
       }

@@ -139,10 +139,17 @@ List<RouteBase> mobileRoutes = [
   GoRoute(
     path: ValidateAccountPage.routeName,
     parentNavigatorKey: _rootNavigatorKey,
-    builder: (context, state) => ValidateAccountPage(
-      isResetPassword: state.pathParameters['isResetPassword'] == 'true',
-      email: state.pathParameters['email']!,
-    ),
+    builder: (context, state) {
+      final extra = state.extra as Map<String, dynamic>?;
+      if (extra == null || !extra.containsKey('email')) {
+        throw Exception('Missing required data: email or isResetPassword');
+      }
+
+      return ValidateAccountPage(
+        isResetPassword: extra['isResetPassword'] as bool,
+        email: extra['email'] as String,
+      );
+    },
   ),
   GoRoute(
     path: ProfilePage.routeName,

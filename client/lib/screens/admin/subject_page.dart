@@ -40,7 +40,6 @@ class _SubjectPageState extends State<SubjectPage> {
         _isLoading = false;
       });
     } catch (error) {
-      print('Error fetching subjects: $error');
       setState(() {
         _isLoading = false;
       });

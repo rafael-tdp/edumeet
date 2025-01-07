@@ -44,7 +44,6 @@ func (cs *ChatService) SubscribeUser(userID string, ch chan string) {
 	defer cs.mu.Unlock()
 	cs.users[userID] = ch
 	logrus.Info("User ", userID, " subscribed")
-	print("User ", userID, " subscribed\n")
 }
 
 func (cs *ChatService) UnsubscribeUser(userID string) {
@@ -52,7 +51,6 @@ func (cs *ChatService) UnsubscribeUser(userID string) {
 	defer cs.mu.Unlock()
 	delete(cs.users, userID)
 	logrus.Info("User ", userID, " unsubscribed")
-	print("User ", userID, " unsubscribed\n")
 }
 
 func (cs *ChatService) GetChat(messageID string) (*dtos.GetChatDTO, error) {
@@ -80,17 +78,14 @@ func (cs *ChatService) SendMessageToUser(userID string, message string) error {
 	ch, exists := cs.users[userID]
 	if !exists {
 		logrus.Warn("User ", userID, " not connected. Skipping message delivery.")
-		fmt.Printf("User %s not connected. Skipping message delivery.\n", userID)
 		return nil
 	}
 
 	select {
 	case ch <- message:
 		logrus.Info("Message sent to user ", userID)
-		fmt.Printf("Message sent to user %s\n", userID)
 	default:
 		logrus.Warn("Failed to send message to user ", userID)
-		fmt.Printf("Failed to send message to user %s\n", userID)
 	}
 
 	return nil
@@ -101,7 +96,6 @@ func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, p
 	messageCreated, err := cs.chatRepo.CreateMessage(ctx, message, eventID, userId)
 	if err != nil {
 		logrus.Error("Error ChatService function SendMessageToEvent: ", err)
-		fmt.Printf("Error creating message: %v\n", err)
 		return err
 	}
 
@@ -130,7 +124,6 @@ func (cs *ChatService) DeleteMessage(eventID, messageID, userID string, particip
 	err := cs.chatRepo.DeleteMessage(messageID)
 	if err != nil {
 		logrus.Error("Error ChatService function DeleteMessage: ", err)
-		fmt.Printf("Error deleting message: %v\n", err)
 		return nil, err
 	}
 
@@ -165,7 +158,6 @@ func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendI
 
 	if err != nil {
 		logrus.Error("Error ChatService function SendMessageToFriend: ", err)
-		fmt.Printf("Error getting friendship: %v\n", err)
 	}
 
 	if friendship.Status != string(enums.FriendAccepted) {
@@ -180,7 +172,6 @@ func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendI
 	messageCreated, err := cs.chatRepo.CreateMessageFriend(ctx, message, friendId, userId)
 	if err != nil {
 		logrus.Error("Error ChatService function SendMessageToFriend: ", err)
-		fmt.Printf("Error creating message: %v\n", err)
 		return err
 	}
 
@@ -221,14 +212,12 @@ func (cs *ChatService) DeleteMessageFriend(messageID, userID string, friendId st
 
 	if err != nil {
 		logrus.Error("Error ChatService function DeleteMessageFriend: ", err)
-		fmt.Printf("Error getting friendship: %v\n", err)
 	}
 
 	// Supprimez le message de la base de données
 	errDelete := cs.chatRepo.DeleteMessage(messageID)
 	if errDelete != nil {
 		logrus.Error("Error ChatService function DeleteMessageFriend: ", err)
-		fmt.Printf("Error deleting message: %v\n", err)
 		return err
 	}
 

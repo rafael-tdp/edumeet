@@ -43,7 +43,6 @@ class _DashboardPageState extends State<DashboardPage> {
         _isLoading = false;
       });
     } catch (error) {
-      print('Error fetching subjects: $error');
       setState(() {
         _isLoading = false;
       });

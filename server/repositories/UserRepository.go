@@ -99,11 +99,11 @@ func (ur *UserRepository) GetByUsername(username string) (*ent.User, error) {
 	return u, nil
 }
 
-func (ur *UserRepository) UpdatePassword(userID string, hashedPassword string) error {
+func (ur *UserRepository) UpdatePassword(ctx context.Context, userID string, hashedPassword string) error {
 	_, err := ur.client.User.Update().
 		Where(user.IDEQ(userID)).
 		SetPassword(hashedPassword).
-		Save(context.Background())
+		Save(ctx)
 	if err != nil {
 		return err
 	}

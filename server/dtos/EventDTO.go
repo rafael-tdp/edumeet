@@ -64,6 +64,7 @@ type EventWithTypeDTO struct {
 	RemoteEventDTO    *RemoteEventDTO   `json:"remote_event,omitempty"`
 	ParticipantsCount int               `json:"participants_count"`
 	CreatedBy         *string           `json:"created_by,omitempty"`
+	ParticipantStatus string            `json:"participant_status"`
 }
 
 type EventWithDetailsDTO struct {

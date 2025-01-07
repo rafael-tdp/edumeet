@@ -14,6 +14,7 @@ import (
 	"edumeet/utils"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/samber/lo"
 )
@@ -196,6 +197,10 @@ func (er *EventRepository) GetEventsWithFilters(filters structures.EventFilters,
 			},
 		)
 
+	// Seulement les events futurs
+
+	query = query.Where(event.StartDateGT(time.Now()))
+
 	// Filtrer par type d'événement
 	if filters.Type == "remote" {
 		query = query.Where(event.HasRemoteEvent())
@@ -229,7 +234,11 @@ func (er *EventRepository) GetEventsByUser(userID string) ([]*ent.Event, error) 
 				event.CreatedBy(userID),
 			),
 		).
-		WithParticipants().
+		WithParticipants(
+			func(pq *ent.ParticipantQuery) {
+				pq.WithUser()
+			},
+		).
 		WithEventDocuments().
 		All(context.Background())
 

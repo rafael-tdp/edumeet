@@ -66,7 +66,6 @@ class AuthServices {
   Future<void> logout() async {
     await CacheService.removeDataFromCache('auth_token');
     _controller.add(AuthenticationStatus.unauthenticated);
-    print('Logged out');
   }
 
   Future<ResponseRequest> register(RegisterRequest signupRequest) async {

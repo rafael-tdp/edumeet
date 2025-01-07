@@ -37,7 +37,6 @@ class _ParticipantsListState extends State<ParticipantsList> {
         });
       }
     } catch (e) {
-      debugPrint("Erreur lors du chargement de l'utilisateur : $e");
     } finally {
       if (mounted) {
         setState(() {

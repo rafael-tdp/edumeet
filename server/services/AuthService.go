@@ -83,7 +83,11 @@ func (as *AuthService) RegisterUser(ctx context.Context, registerDTO dtos.Regist
 		return nil, errors.New("Ce nom d'utilisateur est déjà utilisé")
 	}
 	bcryptUtils := utils.Bcrypt{}
-	hashedPassword := bcryptUtils.HashPassword(registerDTO.Password)
+	hashedPassword, err := bcryptUtils.HashPassword(registerDTO.Password)
+	if err != nil {
+		logrus.Error("Error AuthService function RegisterUser: ", err)
+		return nil, err
+	}
 	user, err := as.userRepo.CreateUser(ctx, registerDTO, hashedPassword)
 	if err != nil {
 		logrus.Error("Error AuthService function RegisterUser: ", err)
@@ -121,14 +125,24 @@ func (as *AuthService) ResetPassword(requestBody dtos.ResetPasswordDTO) error {
 		logrus.Warn("Error AuthService function ResetPassword: ", "user not activated")
 		return errors.New("user not activated")
 	}
-	code := utils.GetValidationCodeFromRedis(user.ID)
+	code, err := utils.GetValidationCodeFromRedis(user.ID)
+	if err != nil {
+		logrus.Error("Error AuthService function ResetPassword: ", err)
+		return err
+	}
+
 	if code != requestBody.Code {
 		logrus.Warn("Error AuthService function ResetPassword: ", "invalid code")
 		return errors.New("invalid code")
 	}
 	bcryptUtils := utils.Bcrypt{}
-	hashedPassword := bcryptUtils.HashPassword(requestBody.Password)
-	err = as.userRepo.UpdatePassword(user.ID, hashedPassword)
+	hashedPassword, err := bcryptUtils.HashPassword(requestBody.Password)
+	if err != nil {
+		logrus.Error("Error AuthService function ResetPassword: ", err)
+		return err
+	}
+	ctx := context.WithValue(context.Background(), "user_id", user.ID)
+	err = as.userRepo.UpdatePassword(ctx, user.ID, hashedPassword)
 	if err != nil {
 		logrus.Error("Error AuthService function ResetPassword: ", err)
 		return err

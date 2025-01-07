@@ -42,7 +42,6 @@ class _EventPageState extends State<EventsPageAdmin> {
         _isLoading = false;
       });
     } catch (error) {
-      print('Error fetching events: $error');
       setState(() {
         _isLoading = false;
       });

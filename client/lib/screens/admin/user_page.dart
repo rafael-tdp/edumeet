@@ -43,7 +43,6 @@ class _UserPageState extends State<UserPageAdmin> {
         _isLoading = false;
       });
     } catch (error) {
-      print('Error fetching users: $error');
       setState(() {
         _isLoading = false;
       });

@@ -12,6 +12,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/oklog/ulid/v2"
+	"github.com/sirupsen/logrus"
 	"github.com/valyala/fasthttp"
 )
 
@@ -60,7 +61,7 @@ func (cc *ChatController) Connect(c *fiber.Ctx) error {
 				fmt.Fprintf(w, msg)
 
 				if err := w.Flush(); err != nil {
-					fmt.Printf("Error flushing for user %s: %v\n", user.ID, err)
+					logrus.Errorf("Error flushing for user %s: %v\n", user.ID, err)
 					return
 				}
 			}

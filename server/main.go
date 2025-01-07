@@ -5,7 +5,6 @@ import (
 	"edumeet/routes"
 	"edumeet/utils"
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -20,7 +19,6 @@ import (
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/gofiber/fiber/v2"
-	"github.com/oklog/ulid/v2"
 )
 
 // @title EduMeet API Documentation
@@ -71,8 +69,6 @@ func main() {
 		app.Use(cors.New())
 
 		app.Get("/", func(c *fiber.Ctx) error {
-			// Générer un ULID et un email aléatoire, et les retourner dans la réponse
-			fmt.Println(ulid.Make())
 			return c.SendString("Hello, World! " + gofakeit.Email())
 		})
 

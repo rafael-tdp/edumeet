@@ -37,7 +37,6 @@ class _SubjectsSelectionState extends State<SubjectsSelection> {
         _isLoading = false;
       });
     } catch (error) {
-      print('Error fetching subjects: $error');
       setState(() {
         _isLoading = false;
       });
