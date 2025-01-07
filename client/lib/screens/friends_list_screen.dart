@@ -28,6 +28,7 @@ class FriendsListPage extends StatefulWidget {
 
 class _FriendsListPageState extends State<FriendsListPage> {
   FriendsServices _friendsServices = FriendsServices();
+  UserServices _userServices = UserServices();
   List<FriendRequest> _friends = [];
   bool _isLoading = true;
 
@@ -48,7 +49,14 @@ class _FriendsListPageState extends State<FriendsListPage> {
   }
 
   Future<void> _loadFriends() async {
-    final response = await UserServices().getUserFriends();
+    var response = null;
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      _isLoading = true;
+      response = await _userServices.getUserFriendsFromCache();
+    } else {
+      response = await _userServices.getUserFriends();
+    }
     if (response.success) {
       setState(() {
         _friends = response.data;
