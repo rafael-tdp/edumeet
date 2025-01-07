@@ -24,132 +24,112 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        InkWell(
-          onTap: () {
-            if (participantStatus == "ACCEPTED") {
-              Navigator.pushNamed(context, '/eventDetails', arguments: {
-                'title': title,
-                'date': date,
-                'imageUrl': imageUrl,
-                'participants': participants,
-              });
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    "Vous ne faites pas partie de cet événement.",
+        Card(
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Stack(
+              children: [
+                // Background image
+                Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    image: DecorationImage(
+                      image: NetworkImage(imageUrl),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              );
-            }
-          },
-          child: Card(
-            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-            elevation: 3,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Stack(
-                children: [
-                  // Background image
-                  Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      image: DecorationImage(
-                        image: NetworkImage(imageUrl),
-                        fit: BoxFit.cover,
-                      ),
+                // Gradient overlay
+                Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.black.withOpacity(0.8),
+                        Colors.black.withOpacity(0.2),
+                      ],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
                     ),
                   ),
-                  // Gradient overlay
-                  Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.black.withOpacity(0.8),
-                          Colors.black.withOpacity(0.2),
-                        ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                      ),
-                    ),
-                  ),
-                  // Event details
-                  Positioned(
-                    bottom: 10,
-                    left: 10,
-                    right: 10,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+                ),
+                // Event details
+                Positioned(
+                  bottom: 10,
+                  left: 10,
+                  right: 10,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
-                        const SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              custom_date_utils.DateUtils.isoToFormattedDate(
-                                  date),
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 14,
-                              ),
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            custom_date_utils.DateUtils.isoToFormattedDate(
+                                date),
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14,
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.people,
-                                    size: 14,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.people,
+                                  size: 14,
+                                  color: Colors.black,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  participants,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    participants,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                // Grey overlay if participantStatus is not "ACCEPTED"
+                if (participantStatus != "ACCEPTED")
+                  Container(
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  // Grey overlay if participantStatus is not "ACCEPTED"
-                  if (participantStatus != "ACCEPTED")
-                    Container(
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                    ),
-                ],
-              ),
+              ],
             ),
           ),
         ),
