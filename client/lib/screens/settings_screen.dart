@@ -129,12 +129,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     LanguagePage.navigateTo(context);
                   },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.notifications, color: Colors.blue),
-                  title: Text(t.settings.notifications),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-                  onTap: () {},
-                ),
                 const SizedBox(height: 50),
                 Center(
                   child: ProfileButton(

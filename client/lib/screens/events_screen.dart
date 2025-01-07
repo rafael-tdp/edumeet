@@ -65,10 +65,16 @@ class _EventsPageState extends State<EventsPage> {
     }
   }
 
-  void _openEventPage(BuildContext context, String eventId) {
+  void _openEventPage(BuildContext context, String eventId, String participantStatus) {
     if (_currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User not loaded")),
+      );
+      return;
+    }
+    if (participantStatus == "PENDING") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Vous devez être accepté pour voir les détails")),
       );
       return;
     }
@@ -228,7 +234,7 @@ class _EventsPageState extends State<EventsPage> {
             itemBuilder: (context, index) {
               final event = filteredEvents[index];
               return GestureDetector(
-                onTap: () => _openEventPage(context, event.id!),
+                onTap: () => _openEventPage(context, event.id!, event.participantStatus),
                 child: EventCard(
                   title: event.title,
                   date: event.startDate,

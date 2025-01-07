@@ -21,33 +21,37 @@ class _SwipeCardsPageState extends State<SwipeCardsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        surfaceTintColor: Colors.transparent,
-        backgroundColor: Colors.transparent,
-        leadingWidth: 150,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(top: 10, right: 12),
-            child: IconButton(
-              icon: Icon(
-                _showFilters ? Icons.filter_list_off : Icons.filter_list,
-              ),
-              color: AppColors.purple,
-              onPressed: () {
-                setState(() {
-                  _showFilters = !_showFilters;
-                });
-              },
-            ),
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            _showFilters = !_showFilters;
+          });
+        },
+        backgroundColor: AppColors.purple,
+        foregroundColor: Colors.white,
+        child: Icon(
+          _showFilters ? Icons.filter_list_off : Icons.filter_list,
+        ),
       ),
-      backgroundColor: Colors.transparent,
+      floatingActionButtonLocation: TopRightFloatingActionButtonLocation(),
+      backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: SwipeCardsComponent(
             showFilters: _showFilters, hideFilters: hideFilters),
       ),
     );
+  }
+}
+
+class TopRightFloatingActionButtonLocation
+    extends FloatingActionButtonLocation {
+  @override
+  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
+    final double fabX = scaffoldGeometry.scaffoldSize.width -
+        scaffoldGeometry.floatingActionButtonSize.width -
+        16;
+    final double fabY = scaffoldGeometry.floatingActionButtonSize.height;
+    return Offset(fabX, fabY);
   }
 }

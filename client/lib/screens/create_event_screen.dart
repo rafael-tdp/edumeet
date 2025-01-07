@@ -2,6 +2,7 @@ import 'package:client/core/models/event.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/create_documents_screen.dart';
 import 'package:client/screens/events_screen.dart';
+import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:client/components/subjects_selection.dart';
@@ -63,8 +64,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       setState(() {
         _addressSuggestions = suggestions;
       });
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   void _createEvent(context) async {
@@ -94,8 +94,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       var createdEvent = await EventServices.createEvent(event);
       final eventId = createdEvent.id;
       CreateDocumentsPage.navigateTo(context, eventId!);
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
@@ -216,16 +215,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   });
                 },
               ),
-              SwitchListTile(
-                title: const Text("Événement privé"),
-                value: _isPrivate,
-                onChanged: (bool value) {
-                  setState(() {
-                    _isPrivate = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 10),
               _isPhysical
                   ? _buildTextFormField(
                       controller: _locationController,
@@ -250,6 +239,16 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         return null;
                       },
                     ),
+              SwitchListTile(
+                title: const Text("Événement privé"),
+                value: _isPrivate,
+                onChanged: (bool value) {
+                  setState(() {
+                    _isPrivate = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 10),
               if (_addressSuggestions.isNotEmpty)
                 Column(
                   children: _addressSuggestions.map((suggestion) {
@@ -304,12 +303,48 @@ class _CreateEventPageState extends State<CreateEventPage> {
         controller: controller,
         keyboardType: keyboardType,
         onChanged: onChanged,
+        style: const TextStyle(
+          fontSize: 16,
+          color: Colors.black87,
+          fontWeight: FontWeight.w500,
+        ),
         decoration: InputDecoration(
           labelText: label,
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
+          labelStyle: const TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.w400,
           ),
-          prefixIcon: Icon(icon),
+          filled: true,
+          fillColor: Colors.grey[100],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.0),
+            borderSide: BorderSide.none, // Pas de bordure initiale
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.0),
+            borderSide: const BorderSide(
+              color: AppColors.purple,
+              width: 2.0,
+            ),
+          ),
+          prefixIcon: Icon(
+            icon,
+            color: AppColors.purple,
+          ),
+          floatingLabelBehavior:
+              FloatingLabelBehavior.auto, // Étiquette flottante
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
+          suffixIcon: controller.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear, color: Colors.grey),
+                  onPressed: () {
+                    controller.clear();
+                  },
+                )
+              : null,
         ),
         validator: validator,
       ),
@@ -340,12 +375,38 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         ? ''
                         : DateFormat('yyyy-MM-dd').format(_endDate!),
                   ),
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
             decoration: InputDecoration(
               labelText: label,
-              border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
+              labelStyle: const TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w400,
               ),
-              prefixIcon: const Icon(Icons.calendar_today),
+              filled: true,
+              fillColor: Colors.grey[100],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+                borderSide: const BorderSide(
+                  color: AppColors.purple,
+                  width: 2.0,
+                ),
+              ),
+              prefixIcon: const Icon(
+                Icons.calendar_today,
+                color: AppColors.purple,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 16,
+              ),
             ),
           ),
         ),
@@ -373,12 +434,38 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 : TextEditingController(
                     text: _endTime == null ? '' : _endTime!.format(context),
                   ),
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
             decoration: InputDecoration(
               labelText: label,
-              border: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
+              labelStyle: const TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.w400,
               ),
-              prefixIcon: const Icon(Icons.access_time),
+              filled: true,
+              fillColor: Colors.grey[100],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.0),
+                borderSide: const BorderSide(
+                  color: AppColors.purple,
+                  width: 2.0,
+                ),
+              ),
+              prefixIcon: const Icon(
+                Icons.access_time,
+                color: AppColors.purple,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 16,
+              ),
             ),
           ),
         ),
