@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:client/core/models/chat/conversation.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/message_services.dart';
@@ -11,6 +14,7 @@ import 'package:go_router/go_router.dart';
 
 import '../i18n/generated/translations.g.dart';
 import '../providers/user_provider.dart';
+import '../utils/connectivty_utils.dart';
 
 
 class ConversationsPage extends StatefulWidget {
@@ -28,7 +32,6 @@ class ConversationsPage extends StatefulWidget {
 class _ConversationsPageState extends State<ConversationsPage> {
   final MessageServices _messageServices = MessageServices();
   Future<ResponseRequest>? _conversationsFuture;
-
   final TextEditingController _searchController = TextEditingController();
   List<Conversation> _filteredConversations = [];
   List<Conversation> _allConversations = [];
@@ -37,6 +40,16 @@ class _ConversationsPageState extends State<ConversationsPage> {
   void initState() {
     super.initState();
     _conversationsFuture = _messageServices.getConversations();
+    ConnectivityUtils.listenConnectivityChanges(() {
+      _conversationsFuture = _messageServices.getConversations();
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    ConnectivityUtils.cancelSubscription();
+    super.dispose();
   }
 
   void _filterConversations(String query) {

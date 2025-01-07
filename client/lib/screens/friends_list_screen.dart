@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:client/core/services/friends_service.dart';
 import 'package:client/screens/chat_page.dart';
 import 'package:client/screens/profile_screen.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:dice_bear/dice_bear.dart';
 import 'package:client/core/models/friendship/friendRequest.dart';
@@ -9,6 +12,7 @@ import 'package:go_router/go_router.dart';
 
 import '../core/services/user_services.dart';
 import '../i18n/generated/translations.g.dart';
+import '../utils/connectivty_utils.dart';
 
 class FriendsListPage extends StatefulWidget {
   static const routeName = '/friends';
@@ -30,7 +34,17 @@ class _FriendsListPageState extends State<FriendsListPage> {
   @override
   void initState() {
     super.initState();
-    _loadFriends();
+      _loadFriends();
+    ConnectivityUtils.listenConnectivityChanges(() {
+      _loadFriends();
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    ConnectivityUtils.cancelSubscription();
+    super.dispose();
   }
 
   Future<void> _loadFriends() async {
