@@ -18,7 +18,7 @@ class _SearchEventPageState extends State<SearchEventPage> {
       child: Scaffold(
         appBar: AppBar(
           surfaceTintColor: Colors.transparent,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
           leadingWidth: 150,
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),

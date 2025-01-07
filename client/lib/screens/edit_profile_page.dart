@@ -16,7 +16,8 @@ import '../providers/user_provider.dart';
 
 class EditProfilePage extends StatefulWidget {
   static const String routeName = '/edit-profile';
-  static navigateTo(BuildContext context, {required Map<String, dynamic> user}) {
+  static navigateTo(BuildContext context,
+      {required Map<String, dynamic> user}) {
     context.go(routeName, extra: user);
   }
 
@@ -57,7 +58,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _avatar = DiceBearBuilder(
       seed: widget.user.username,
       sprite: DiceBearSprite.values.firstWhere(
-            (sprite) => sprite.name == widget.user.picture,
+        (sprite) => sprite.name == widget.user.picture,
       ),
     ).build();
 
@@ -104,7 +105,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ResponseRequest response =
           await UserServices().updateUserInfo(updatedUser);
       if (response.success) {
-        Provider.of<UserProvider>(context, listen: false).setUser(response.data);
+        Provider.of<UserProvider>(context, listen: false)
+            .setUser(response.data);
         Navigator.of(context).pop(true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -156,16 +158,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     });
                   },
                 ),
-                const SizedBox(height: 20),
-                TextFormField(
+                const SizedBox(height: 30),
+                _buildTextFormField(
                   controller: _firstnameController,
-                  decoration: InputDecoration(
-                    labelText: t.profile.firstname,
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    prefixIcon: const Icon(Icons.person),
-                  ),
+                  label: t.profile.firstname,
+                  icon: Icons.person,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return t.profile.enterFirstname;
@@ -173,16 +170,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
-                TextFormField(
+                _buildTextFormField(
                   controller: _lastnameController,
-                  decoration: InputDecoration(
-                    labelText: t.profile.lastname,
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    prefixIcon: const Icon(Icons.person),
-                  ),
+                  label: t.profile.lastname,
+                  icon: Icons.person,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return t.profile.enterLastname;
@@ -190,16 +181,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
-                TextFormField(
+                _buildTextFormField(
                   controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: t.user.username,
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    prefixIcon: const Icon(Icons.person),
-                  ),
+                  label: t.user.username,
+                  icon: Icons.person,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return t.form.emptyUsername;
@@ -207,28 +192,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
-                TextFormField(
+                _buildTextFormField(
                   controller: _bioController,
-                  decoration: InputDecoration(
-                    labelText: t.profile.bio,
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    prefixIcon: const Icon(Icons.info),
-                  ),
-                  maxLines: 5,
+                  label: t.profile.bio,
+                  icon: Icons.info,
                 ),
-                const SizedBox(height: 20),
-                TextFormField(
+                _buildTextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(
-                    labelText: t.profile.email,
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    prefixIcon: const Icon(Icons.email),
-                  ),
+                  label: t.profile.email,
+                  icon: Icons.email,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return t.profile.enterEmail;
@@ -239,32 +211,42 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
                 TextFormField(
                   controller: _birthDateController,
                   decoration: InputDecoration(
                     labelText: t.profile.birthdate,
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    labelStyle: const TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w400,
                     ),
-                    prefixIcon: const Icon(Icons.calendar_today),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                      borderSide: const BorderSide(
+                        color: AppColors.purple,
+                        width: 2.0,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    prefixIcon: const Icon(
+                      Icons.calendar_today,
+                      color: AppColors.purple,
+                    ),
                   ),
                   readOnly: true,
                   onTap: () => custom_date_utils.DateUtils.selectDate(
                       context, _birthDateController),
                 ),
-                const SizedBox(height: 20),
-                TextFormField(
+                const SizedBox(height: 25),
+                _buildTextFormField(
                   controller: _addressController,
-                  decoration: InputDecoration(
-                    labelText: t.profile.address,
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    prefixIcon: const Icon(Icons.location_on),
-                  ),
+                  label: t.profile.address,
+                  icon: Icons.location_on,
                 ),
-                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -285,10 +267,72 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 25),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextFormField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    String? Function(String?)? validator,
+    TextInputType keyboardType = TextInputType.text,
+    ValueChanged<String>? onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 25.0),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        onChanged: onChanged,
+        style: const TextStyle(
+          fontSize: 16,
+          color: Colors.black87,
+          fontWeight: FontWeight.w500,
+        ),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.w400,
+          ),
+          filled: true,
+          fillColor: Colors.grey[100],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.0),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16.0),
+            borderSide: const BorderSide(
+              color: AppColors.purple,
+              width: 2.0,
+            ),
+          ),
+          prefixIcon: Icon(
+            icon,
+            color: AppColors.purple,
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 16,
+          ),
+          // suffixIcon: controller.text.isNotEmpty
+          //     ? IconButton(
+          //         icon: const Icon(Icons.clear, color: Colors.grey),
+          //         onPressed: () {
+          //           controller.clear();
+          //         },
+          //       )
+          //     : null,
+        ),
+        validator: validator,
       ),
     );
   }
