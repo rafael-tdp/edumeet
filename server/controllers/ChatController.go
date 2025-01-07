@@ -36,24 +36,38 @@ func NewChatController(chatService *services.ChatService, eventService *services
 // @Success 200 {string} string "Connection established"
 // @Failure 400 {object} map[string]string "Bad Request: Failed to connect"
 // @Router /chats/connect [get]
+// map pour suivre les connexions SSE actives par utilisateur
+var activeConnections = make(map[string]chan string)
+
 func (cc *ChatController) Connect(c *fiber.Ctx) error {
 	user := c.Locals("user").(*ent.User)
 
-	messageChannel := make(chan string)
-
-	if !cc.chatService.IsUserSubscribed(user.ID) {
-		cc.chatService.SubscribeUser(user.ID, messageChannel)
-	} else {
-		return nil
+	// Vérifier si l'utilisateur a déjà une connexion active
+	if existingChannel, exists := activeConnections[user.ID]; exists {
+		// Si une connexion existe, on ferme l'ancienne connexion
+		close(existingChannel)
+		// Attendez que le flux de messages soit complètement fermé
+		<-existingChannel
 	}
 
+	// Créer un nouveau canal pour la nouvelle connexion
+	messageChannel := make(chan string)
+	cc.chatService.SubscribeUser(user.ID, messageChannel)
+
+	// Ajouter la nouvelle connexion à la map des connexions actives
+	activeConnections[user.ID] = messageChannel
+
+	// Définir les en-têtes HTTP pour SSE
 	c.Set("Content-Type", "text/event-stream")
 	c.Set("Cache-Control", "no-cache")
 	c.Set("Connection", "keep-alive")
 	c.Set("Transfer-Encoding", "chunked")
 
+	// Définir le stream de sortie pour l'utilisateur
 	c.Status(fiber.StatusOK).Context().SetBodyStreamWriter(fasthttp.StreamWriter(func(w *bufio.Writer) {
-		defer cc.chatService.UnsubscribeUser(user.ID) // Nettoyage après déconnexion
+		defer func() {
+			cc.chatService.UnsubscribeUser(user.ID)
+		}()
 		for {
 			select {
 			case message := <-messageChannel:
