@@ -39,9 +39,9 @@ class _ConversationsPageState extends State<ConversationsPage> {
   @override
   void initState() {
     super.initState();
-    _conversationsFuture = _messageServices.getConversations();
+    _fetchConversations();
     ConnectivityUtils.listenConnectivityChanges(() {
-      _conversationsFuture = _messageServices.getConversations();
+      _fetchConversations();
       setState(() {});
     });
   }
@@ -50,6 +50,16 @@ class _ConversationsPageState extends State<ConversationsPage> {
   void dispose() {
     ConnectivityUtils.cancelSubscription();
     super.dispose();
+  }
+
+  void _fetchConversations() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      _conversationsFuture = _messageServices.getConversationFromCache();
+    } else {
+      _conversationsFuture = _messageServices.getConversations();
+    }
+    setState(() {});
   }
 
   void _filterConversations(String query) {
