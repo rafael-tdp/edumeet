@@ -447,3 +447,24 @@ func (us *UserService) UnlikeDocument(ctx context.Context, userID string, docume
 	return nil
 
 }
+
+func (us *UserService) GetLikedDocuments(userID string) ([]dtos.DocumentResponseDTO, error) {
+	user, err := us.userRepo.GetById(userID)
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	documentLiked := make([]dtos.DocumentResponseDTO, 0)
+
+	for _, document := range user.Edges.DocumentsLikes {
+		documentDTO := dtos.DocumentResponseDTO{
+			ID:   document.ID,
+			Path: document.Path,
+			Name: document.Name,
+		}
+		documentLiked = append(documentLiked, documentDTO)
+
+	}
+
+	return documentLiked, nil
+}

@@ -400,5 +400,14 @@ func (uc *UserController) UnlikeDocument(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.SendStatus(fiber.StatusOK)
+}
 
+func (uc *UserController) GetLikedDocuments(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+
+	documents, err := uc.userService.GetLikedDocuments(currentUser.ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(documents)
 }

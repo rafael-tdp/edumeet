@@ -75,7 +75,11 @@ func (ur *UserRepository) ValidateUser(ctx context.Context, userId string) (*ent
 
 func (ur *UserRepository) GetById(userID string) (*ent.User, error) {
 
-	user, err := ur.client.User.Query().Where(user.IDEQ(userID)).WithBadges().Only(context.Background())
+	user, err := ur.client.User.Query().
+		Where(user.IDEQ(userID)).
+		WithBadges().
+		WithDocumentsLikes().
+		Only(context.Background())
 	if err != nil {
 		return nil, errors.New("user not found")
 	}

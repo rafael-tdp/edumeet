@@ -28,6 +28,7 @@ func setupRoutesUser(app *fiber.App, userController *controllers.UserController)
 	app.Patch("/user/admin/:id", middlewares.JWTAuthMiddleware, userController.UpdateUserAdmin)
 	app.Put("/user/like/document/:id", middlewares.JWTAuthMiddleware, userController.LikeDocument)
 	app.Put("/user/unlike/document/:id", middlewares.JWTAuthMiddleware, userController.UnlikeDocument)
+	app.Get("/user/documents/liked", middlewares.JWTAuthMiddleware, userController.GetLikedDocuments)
 }
 
 func initUserController(client *ent.Client) *controllers.UserController {
