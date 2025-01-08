@@ -57,26 +57,34 @@ func (us *UserService) GetUser(userID string) (*dtos.UserDTO, error) {
 	return userDTO, nil
 }
 
-func (us *UserService) GetUserProfile(userID string) (*dtos.UserProfileDTO, error) {
-	user, err := us.userRepo.GetById(userID)
+func (us *UserService) GetUserProfile(userIDProfile, userIdConnected string) (*dtos.UserProfileDTO, error) {
+	user, err := us.userRepo.GetById(userIDProfile)
 	if err != nil {
 		logrus.Error("Error UserService GetUserProfile: ", err)
 		return nil, errors.New("user not found in service")
 	}
-	userProfileDTO, err := dtos.UserProfileEntToDto(user)
+
+	isMyFriend, errExistFriend := us.userRepo.IsFriendshipExist(userIDProfile, userIdConnected)
+
+	if errExistFriend != nil {
+		logrus.Error("Error UserService GetUserProfile: ", errExistFriend)
+		return nil, errExistFriend
+	}
+
+	userProfileDTO, err := dtos.UserProfileEntToDto(user, isMyFriend)
 	if err != nil {
 		logrus.Error("Error UserService GetUserProfile: ", err)
 		return nil, fmt.Errorf("error parsing user profile DTO: %w", err)
 	}
 
-	userFriendship, err := us.userRepo.GetFriendshipsByUserId(userID)
+	userFriendship, err := us.userRepo.GetFriendshipsByUserId(userIDProfile)
 	if err != nil {
 		logrus.Error("Error UserService GetUserProfile: ", err)
 		return nil, err
 	}
 
 	participantRepository := repositories.NewParticipantRepository(us.userRepo.GetClient())
-	participatedEvents, err := participantRepository.GetParticipationsUser(userID)
+	participatedEvents, err := participantRepository.GetParticipationsUser(userIDProfile)
 	if err != nil {
 		logrus.Error("Error UserService GetUserProfile: ", err)
 		return nil, err

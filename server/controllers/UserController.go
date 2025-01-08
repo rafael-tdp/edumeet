@@ -67,7 +67,7 @@ func (uc *UserController) GetUser(c *fiber.Ctx) error {
 		}
 		return c.JSON(user)
 	} else {
-		user, err := uc.userService.GetUserProfile(userID.String())
+		user, err := uc.userService.GetUserProfile(userID.String(), currentUser.ID)
 		if err != nil {
 			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
 		}

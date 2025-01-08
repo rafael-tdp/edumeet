@@ -15,9 +15,10 @@ type UserProfileDTO struct {
 	Badges               []BadgeDTO `json:"badges,omitempty"`
 	NbFriends            int        `json:"nbFriends,omitempty"`
 	NbParticipatedEvents int        `json:"nbParticipatedEvents,omitempty"`
+	IsMyFriend           bool       `json:"isMyFriend"`
 }
 
-func UserProfileEntToDto(user *ent.User) (*UserProfileDTO, error) {
+func UserProfileEntToDto(user *ent.User, isMyFriend bool) (*UserProfileDTO, error) {
 	address, err := utils.GetAddress(*user.Lat, *user.Lng)
 
 	if err != nil {
@@ -25,13 +26,14 @@ func UserProfileEntToDto(user *ent.User) (*UserProfileDTO, error) {
 	}
 
 	userProfileDTO := &UserProfileDTO{
-		Username:  user.Username,
-		Bio:       user.Bio,
-		Picture:   user.Picture,
-		Address:   address,
-		Email:     user.Email,
-		Birthdate: user.BirthDate.Format("2006-01-02"),
-		Badges:    convertBadges(user.Edges.Badges),
+		Username:   user.Username,
+		Bio:        user.Bio,
+		Picture:    user.Picture,
+		Address:    address,
+		Email:      user.Email,
+		Birthdate:  user.BirthDate.Format("2006-01-02"),
+		Badges:     convertBadges(user.Edges.Badges),
+		IsMyFriend: isMyFriend,
 	}
 	return userProfileDTO, nil
 }
