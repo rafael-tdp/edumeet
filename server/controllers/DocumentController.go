@@ -34,11 +34,14 @@ func NewDocumentController(documentService *services.DocumentService) *DocumentC
 // @Failure 404 {object} map[string]string "Not Found: Document not found"
 // @Router /document/{id} [get]
 func (uc *DocumentController) GetDocument(c *fiber.Ctx) error {
+
+	currentUser := c.Locals("user").(*ent.User)
+
 	documentId, err := ulid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
-	document, err := uc.documentService.GetDocumentById(documentId.String())
+	document, err := uc.documentService.GetDocumentById(documentId.String(), currentUser.ID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Document not found"})
 	}
@@ -57,11 +60,14 @@ func (uc *DocumentController) GetDocument(c *fiber.Ctx) error {
 // @Failure 404 {object} map[string]string "Not Found: Document not found"
 // @Router /document/details/{id} [get]
 func (uc *DocumentController) GetDocumentDetails(c *fiber.Ctx) error {
+
+	currentUser := c.Locals("user").(*ent.User)
+
 	documentId, err := ulid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
-	document, err := uc.documentService.GetDocumentById(documentId.String())
+	document, err := uc.documentService.GetDocumentById(documentId.String(), currentUser.ID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Document not found"})
 	}
@@ -80,12 +86,13 @@ func (uc *DocumentController) GetDocumentDetails(c *fiber.Ctx) error {
 // @Failure 404 {object} map[string]string "Not Found: Document not found"
 // @Router /document/{id} [delete]
 func (uc *DocumentController) DeleteDocument(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
 	documentId, err := ulid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
 
-	document, err := uc.documentService.GetDocumentById(documentId.String())
+	document, err := uc.documentService.GetDocumentById(documentId.String(), currentUser.ID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Document not found"})
 	}

@@ -22,7 +22,10 @@ func NewDocumentRepository(client *ent.Client) *DocumentRepository {
 
 func (r *DocumentRepository) GetDocumentById(documentID string) (*ent.Document, error) {
 
-	document, err := r.client.Document.Query().Where(document.IDEQ(documentID)).Only(context.Background())
+	document, err := r.client.Document.Query().
+		Where(document.IDEQ(documentID)).
+		WithUsers().
+		Only(context.Background())
 	if err != nil {
 		return nil, errors.New("document not found")
 	}

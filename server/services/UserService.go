@@ -458,9 +458,10 @@ func (us *UserService) GetLikedDocuments(userID string) ([]dtos.DocumentResponse
 
 	for _, document := range user.Edges.DocumentsLikes {
 		documentDTO := dtos.DocumentResponseDTO{
-			ID:   document.ID,
-			Path: document.Path,
-			Name: document.Name,
+			ID:      document.ID,
+			Path:    document.Path,
+			Name:    document.Name,
+			IsLiked: true,
 		}
 		documentLiked = append(documentLiked, documentDTO)
 

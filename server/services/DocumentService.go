@@ -25,17 +25,27 @@ func NewDocumentService(documentRepo *repositories.DocumentRepository, eventRepo
 	}
 }
 
-func (r *DocumentService) GetDocumentById(documentID string) (dtos.DocumentResponseDTO, error) {
+func (r *DocumentService) GetDocumentById(documentID, userId string) (dtos.DocumentResponseDTO, error) {
 	document, err := r.documentRepo.GetDocumentById(documentID)
 	if err != nil {
 		logrus.Error("Error DocumentService.GetDocumentById: ", err)
 		return dtos.DocumentResponseDTO{}, err
 	}
 
+	isLiked := false
+
+	for _, user := range document.Edges.Users {
+		if user.ID == userId {
+			isLiked = true
+			break
+		}
+	}
+
 	documentDTO := dtos.DocumentResponseDTO{
-		ID:   document.ID,
-		Path: document.Path,
-		Name: document.Name,
+		ID:      document.ID,
+		Path:    document.Path,
+		Name:    document.Name,
+		IsLiked: isLiked,
 	}
 
 	return documentDTO, nil
