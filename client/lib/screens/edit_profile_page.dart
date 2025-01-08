@@ -8,11 +8,8 @@ import 'package:client/utils/colors.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
-import '../widgets/profile_button.dart';
 import '../widgets/avatar_selector.dart';
 import '../components/edumeet_button.dart';
-import '../widgets/avatar_selector.dart';
 import '../core/models/user.dart';
 import '../providers/user_provider.dart';
 import 'package:client/core/services/adresse_services.dart';

@@ -42,7 +42,7 @@ class ResourcesSection extends StatelessWidget {
                     resource['document_id'],
                     resource['name'],
                     resource['type'],
-                    false,
+                    resource['is_liked'],
                   );
                 },
               ),
