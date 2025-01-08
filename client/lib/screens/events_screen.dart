@@ -49,7 +49,8 @@ class _EventsPageState extends State<EventsPage> {
     }
   }
 
-  void _openEventPage(BuildContext context, String eventId, String participantStatus) {
+  void _openEventPage(
+      BuildContext context, String eventId, String participantStatus) {
     if (_currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User not loaded")),
@@ -58,7 +59,8 @@ class _EventsPageState extends State<EventsPage> {
     }
     if (participantStatus == "PENDING") {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Vous devez être accepté pour voir les détails")),
+        const SnackBar(
+            content: Text("Vous devez être accepté pour voir les détails")),
       );
       return;
     }
@@ -213,23 +215,110 @@ class _EventsPageState extends State<EventsPage> {
             return event.title.toLowerCase().contains(_searchQuery);
           }).toList();
 
-          return ListView.builder(
-            itemCount: filteredEvents.length,
-            itemBuilder: (context, index) {
-              final event = filteredEvents[index];
-              return GestureDetector(
-                onTap: () => _openEventPage(context, event.id!, event.participantStatus),
-                child: EventCard(
-                  title: event.title,
-                  date: event.startDate,
-                  imageUrl: event.image ??
-                      'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dHJhdmFpbHxlbnwwfHwwfHx8Mg%3D%3D',
-                  participants: event.participantsCount.toString(),
-                  isCurrentUserEvent: event.createdBy == _currentUser!.id,
-                  participantStatus: event.participantStatus,
+          final now = DateTime.now();
+
+          final pendingEvents = filteredEvents
+              .where((event) => event.participantStatus == "PENDING")
+              .where(
+                  (element) => DateTime.parse(element.startDate).isAfter(now))
+              .toList();
+
+          final upcomingEvents = filteredEvents
+              .where((event) => event.participantStatus == "ACCEPTED")
+              .where((event) => DateTime.parse(event.startDate).isAfter(now))
+              .toList();
+          final pastEvents = filteredEvents
+              .where((event) => event.participantStatus == "ACCEPTED")
+              .where((event) => DateTime.parse(event.startDate).isBefore(now))
+              .toList();
+
+          return ListView(
+            children: [
+              if (pendingEvents.isNotEmpty) ...[
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    "Événements en attente",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
-              );
-            },
+                SizedBox(
+                  height: 200,
+                  width: double.infinity,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: pendingEvents.length,
+                    itemBuilder: (context, index) {
+                      final event = pendingEvents[index];
+                      return GestureDetector(
+                        onTap: () => _openEventPage(
+                            context, event.id!, event.participantStatus),
+                        child: SizedBox(
+                          width: 300,
+                          child: EventCard(
+                            title: event.title,
+                            date: event.startDate,
+                            imageUrl: event.image ?? '',
+                            participants: event.participantsCount.toString(),
+                            isCurrentUserEvent:
+                                event.createdBy == _currentUser!.id,
+                            participantStatus: event.participantStatus,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+              if (upcomingEvents.isNotEmpty) ...[
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    "Événements à venir",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                ...upcomingEvents.map((event) {
+                  return GestureDetector(
+                    onTap: () => _openEventPage(
+                        context, event.id!, event.participantStatus),
+                    child: EventCard(
+                      title: event.title,
+                      date: event.startDate,
+                      imageUrl: event.image ??
+                          'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dHJhdmFpbHxlbnwwfHwwfHx8Mg%3D%3D',
+                      participants: event.participantsCount.toString(),
+                      isCurrentUserEvent: event.createdBy == _currentUser!.id,
+                      participantStatus: event.participantStatus,
+                    ),
+                  );
+                }).toList(),
+              ],
+              if (pastEvents.isNotEmpty) ...[
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    "Événements passés",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                ...pastEvents.map((event) {
+                  return GestureDetector(
+                    onTap: () => _openEventPage(
+                        context, event.id!, event.participantStatus),
+                    child: EventCard(
+                      title: event.title,
+                      date: event.startDate,
+                      imageUrl: event.image ??
+                          'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dHJhdmFpbHxlbnwwfHwwfHx8Mg%3D%3D',
+                      participants: event.participantsCount.toString(),
+                      isCurrentUserEvent: event.createdBy == _currentUser!.id,
+                      participantStatus: event.participantStatus,
+                    ),
+                  );
+                }).toList(),
+              ],
+            ],
           );
         },
       ),

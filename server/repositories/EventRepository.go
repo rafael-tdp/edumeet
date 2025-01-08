@@ -252,7 +252,10 @@ func (er *EventRepository) GetEventsByUser(userID string) ([]*ent.Event, error) 
 func (er *EventRepository) GetEventsCreatedByUser(userID string) ([]*ent.Event, error) {
 	events, err := er.client.Event.Query().
 		Where(event.CreatedBy(userID)).
-		WithParticipants().
+		WithParticipants(
+			func(pq *ent.ParticipantQuery) {
+				pq.WithUser()
+			}).
 		WithEventDocuments().
 		WithRemoteEvent().
 		WithPhysicalEvent().

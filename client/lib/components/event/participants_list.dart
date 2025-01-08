@@ -257,8 +257,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                     child: const Text(
                       "Gérer les utilisateurs",
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
                       ),
                     ),
                   ),
