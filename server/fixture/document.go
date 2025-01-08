@@ -18,13 +18,23 @@ func (d *Document) GenerateDocument(ctx context.Context, client *ent.Client) err
 	}
 
 	ulid := utils.ULID{}
-	for i := 0; i < 3; i++ {
-		client.Document.Create().
-			SetID(ulid.GenerateUlid()()).
-			SetPath(gofakeit.URL()).
-			SetName(gofakeit.Product().Name).
-			SetCreatedBy(users[gofakeit.Number(0, len(users)-1)].ID).
-			SaveX(ctx)
+	for i := 0; i < 2; i++ {
+		if i == 0 {
+			client.Document.Create().
+				SetID(ulid.GenerateUlid()()).
+				SetPath("documentUpload/" + "fixtureCorrection.txt").
+				SetName(gofakeit.Product().Name).
+				SetCreatedBy(users[gofakeit.Number(0, len(users)-1)].ID).
+				SaveX(ctx)
+		} else {
+			client.Document.Create().
+				SetID(ulid.GenerateUlid()()).
+				SetPath("documentUpload/" + "fixtureEXERCISE.txt").
+				SetName(gofakeit.Product().Name).
+				SetCreatedBy(users[gofakeit.Number(0, len(users)-1)].ID).
+				SaveX(ctx)
+		}
+
 	}
 	return nil
 }
@@ -42,16 +52,18 @@ func (ed *EventDocument) GenerateEventDocument(ctx context.Context, client *ent.
 	if err != nil {
 		return err
 	}
-
+	documentType := []string{"EXERCISE", "CORRECTION"}
 	ulid := utils.ULID{}
 	for _, event := range events {
+		i := 0
 		for _, doc := range documents {
 			client.EventDocument.Create().
 				SetID(ulid.GenerateUlid()()).
-				SetType(gofakeit.RandomString([]string{"exercise", "lesson", "test"})).
+				SetType(documentType[i]).
 				SetDocumentID(doc.ID).
 				SetEventID(event.ID).
 				SaveX(ctx)
+			i++
 		}
 	}
 	return nil

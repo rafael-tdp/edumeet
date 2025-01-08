@@ -65,6 +65,9 @@ func migrateFixture() {
 	messageFixture.GenerateMessagesForEvents(ctx, client)
 	messageFixture.GenerateMessagesForFriends(ctx, client)
 
+	eventFixture.AddSubject(ctx, client)
+	userFixture.AddSubject(ctx, client)
+
 	logrus.Info("Fixtures applied successfully.")
 	log.Println("Fixtures applied successfully.")
 }
