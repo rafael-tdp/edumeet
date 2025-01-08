@@ -65,7 +65,7 @@ class AuthServices {
   }
 
   Future<void> logout() async {
-    await CacheService.clearCache();
+    // await CacheService.clearCache();
     _controller.add(AuthenticationStatus.unauthenticated);
   }
 

@@ -163,29 +163,30 @@ class _ProfilePageState extends State<ProfilePage> {
           },
         ),
         actions: _isCurrentUser
-            ? null
-            : [
-          IconButton(
-            icon: const Icon(Icons.person_add),
-            onPressed: () async {
-              final response = await _friendsServices.sendFriendRequest(widget.userId!);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(response.success ? 'Friend request sent' : 'Failed to send friend request'),
-                  backgroundColor: response.success ? Colors.green : Colors.red,
-                ),
-              );
-            },
+    ? null
+    : [
+  if (!_user!.IsMyFriend)
+    IconButton(
+      icon: const Icon(Icons.person_add),
+      onPressed: () async {
+        final response = await _friendsServices.sendFriendRequest(widget.userId!);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.success ? 'Friend request sent' : 'Failed to send friend request'),
+            backgroundColor: response.success ? Colors.green : Colors.red,
           ),
-          const SizedBox(width: 10),
-          IconButton(
-            icon: const Icon(Icons.report_problem, color: Colors.orange),
-            onPressed: () {
-              _showReportDialog(context);
-            },
-          ),
-          const SizedBox(width: 10),
-        ],
+        );
+      },
+    ),
+  const SizedBox(width: 10),
+  IconButton(
+    icon: const Icon(Icons.report_problem, color: Colors.orange),
+    onPressed: () {
+      _showReportDialog(context);
+    },
+  ),
+  const SizedBox(width: 10),
+],
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

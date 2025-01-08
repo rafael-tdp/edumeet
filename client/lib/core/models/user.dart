@@ -17,6 +17,7 @@ class User {
   final List<Badge>? badges;
   final int? nbFriends;
   final int? nbParticpatedEvents;
+  final bool IsMyFriend;
 
   User({
     required this.id,
@@ -34,6 +35,7 @@ class User {
     this.badges,
     this.nbFriends,
     this.nbParticpatedEvents,
+    this.IsMyFriend = false,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -56,7 +58,8 @@ class User {
       activated: json['activated'],
       badges: json['badges'] != null ? (json['badges'] as List).map((badge) => Badge.fromJson(badge)).toList() : null,
       nbFriends: json['nbFriends'] ?? 0,
-      nbParticpatedEvents: json['nbParticipatedEvents'] ?? 0
+      nbParticpatedEvents: json['nbParticipatedEvents'] ?? 0,
+      IsMyFriend: json['isMyFriend'] ?? false,
     );
   }
 
