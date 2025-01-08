@@ -102,6 +102,22 @@ class _SettingsPageState extends State<SettingsPage> {
                     });
                   },
                 ),
+                ListTile(
+                  leading: const Icon(Icons.book, color: Colors.green),
+                  title: Text(t.settings.manageSubjects),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+                  onTap: () {
+                    SubjectsPage.navigateTo(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.favorite, color: Colors.red),
+                  title: const Text("Documents favoris"),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+                  onTap: () {
+                    FavoriteDocumentsPage.navigateTo(context);
+                  },
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Text(
@@ -114,28 +130,12 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.book, color: Colors.green),
-                  title: Text(t.settings.manageSubjects),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-                  onTap: () {
-                    SubjectsPage.navigateTo(context);
-                  },
-                ),
-                ListTile(
                   leading: const Icon(Icons.language, color: Colors.orange),
                   title: Text(t.settings.language),
                   subtitle: Text(languageNames[local] ?? t.app.unknown),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 18),
                   onTap: () {
                     LanguagePage.navigateTo(context);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.favorite, color: Colors.red),
-                  title: const Text("Documents favoris"),
-                  trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-                  onTap: () {
-                    FavoriteDocumentsPage.navigateTo(context);
                   },
                 ),
                 const SizedBox(height: 50),
