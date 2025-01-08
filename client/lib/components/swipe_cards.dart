@@ -45,10 +45,7 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
   }
 
   _getLocation() async {
-    try {
-      location = await LocationService.getLocation();
-    } catch (error) {
-    }
+    location = await LocationService.getLocation();
   }
 
   @override
@@ -77,6 +74,23 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                   }
 
                   final events = snapshot.data!;
+
+                  if (events.isEmpty) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Image.asset('images/no-events.png'),
+                        ),
+                        const Text(
+                          "Aucun événement trouvé",
+                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                      ],
+                    );
+                  }
+
                   final swipeItems = events.map((event) {
                     return SwipeItem(
                       content: event,
@@ -106,8 +120,7 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                         SnackBar(content: Text(t.swipe_cards.end_of_list)),
                       );
                     },
-                    itemChanged: (SwipeItem item, int index) {
-                    },
+                    itemChanged: (SwipeItem item, int index) {},
                     upSwipeAllowed: false,
                     fillSpace: true,
                   );
