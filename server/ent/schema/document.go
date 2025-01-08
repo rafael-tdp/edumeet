@@ -32,5 +32,6 @@ func (Document) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("event_documents", EventDocument.Type),
 		edge.From("message", Message.Type).Ref("documents"),
+		edge.To("users", User.Type),
 	}
 }

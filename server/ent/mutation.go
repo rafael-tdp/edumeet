@@ -948,6 +948,9 @@ type DocumentMutation struct {
 	message                map[string]struct{}
 	removedmessage         map[string]struct{}
 	clearedmessage         bool
+	users                  map[string]struct{}
+	removedusers           map[string]struct{}
+	clearedusers           bool
 	done                   bool
 	oldValue               func(context.Context) (*Document, error)
 	predicates             []predicate.Document
@@ -1407,6 +1410,60 @@ func (m *DocumentMutation) ResetMessage() {
 	m.removedmessage = nil
 }
 
+// AddUserIDs adds the "users" edge to the User entity by ids.
+func (m *DocumentMutation) AddUserIDs(ids ...string) {
+	if m.users == nil {
+		m.users = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.users[ids[i]] = struct{}{}
+	}
+}
+
+// ClearUsers clears the "users" edge to the User entity.
+func (m *DocumentMutation) ClearUsers() {
+	m.clearedusers = true
+}
+
+// UsersCleared reports if the "users" edge to the User entity was cleared.
+func (m *DocumentMutation) UsersCleared() bool {
+	return m.clearedusers
+}
+
+// RemoveUserIDs removes the "users" edge to the User entity by IDs.
+func (m *DocumentMutation) RemoveUserIDs(ids ...string) {
+	if m.removedusers == nil {
+		m.removedusers = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.users, ids[i])
+		m.removedusers[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedUsers returns the removed IDs of the "users" edge to the User entity.
+func (m *DocumentMutation) RemovedUsersIDs() (ids []string) {
+	for id := range m.removedusers {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// UsersIDs returns the "users" edge IDs in the mutation.
+func (m *DocumentMutation) UsersIDs() (ids []string) {
+	for id := range m.users {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetUsers resets all changes to the "users" edge.
+func (m *DocumentMutation) ResetUsers() {
+	m.users = nil
+	m.clearedusers = false
+	m.removedusers = nil
+}
+
 // Where appends a list predicates to the DocumentMutation builder.
 func (m *DocumentMutation) Where(ps ...predicate.Document) {
 	m.predicates = append(m.predicates, ps...)
@@ -1640,12 +1697,15 @@ func (m *DocumentMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *DocumentMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.event_documents != nil {
 		edges = append(edges, document.EdgeEventDocuments)
 	}
 	if m.message != nil {
 		edges = append(edges, document.EdgeMessage)
+	}
+	if m.users != nil {
+		edges = append(edges, document.EdgeUsers)
 	}
 	return edges
 }
@@ -1666,18 +1726,27 @@ func (m *DocumentMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case document.EdgeUsers:
+		ids := make([]ent.Value, 0, len(m.users))
+		for id := range m.users {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *DocumentMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedevent_documents != nil {
 		edges = append(edges, document.EdgeEventDocuments)
 	}
 	if m.removedmessage != nil {
 		edges = append(edges, document.EdgeMessage)
+	}
+	if m.removedusers != nil {
+		edges = append(edges, document.EdgeUsers)
 	}
 	return edges
 }
@@ -1698,18 +1767,27 @@ func (m *DocumentMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case document.EdgeUsers:
+		ids := make([]ent.Value, 0, len(m.removedusers))
+		for id := range m.removedusers {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *DocumentMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedevent_documents {
 		edges = append(edges, document.EdgeEventDocuments)
 	}
 	if m.clearedmessage {
 		edges = append(edges, document.EdgeMessage)
+	}
+	if m.clearedusers {
+		edges = append(edges, document.EdgeUsers)
 	}
 	return edges
 }
@@ -1722,6 +1800,8 @@ func (m *DocumentMutation) EdgeCleared(name string) bool {
 		return m.clearedevent_documents
 	case document.EdgeMessage:
 		return m.clearedmessage
+	case document.EdgeUsers:
+		return m.clearedusers
 	}
 	return false
 }
@@ -1743,6 +1823,9 @@ func (m *DocumentMutation) ResetEdge(name string) error {
 		return nil
 	case document.EdgeMessage:
 		m.ResetMessage()
+		return nil
+	case document.EdgeUsers:
+		m.ResetUsers()
 		return nil
 	}
 	return fmt.Errorf("unknown Document edge %s", name)
@@ -7951,55 +8034,58 @@ func (m *SubjectMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op                  Op
-	typ                 string
-	id                  *string
-	created_at          *time.Time
-	updated_at          *time.Time
-	created_by          *string
-	updated_by          *string
-	email               *string
-	username            *string
-	lastname            *string
-	firstname           *string
-	password            *string
-	birthDate           *time.Time
-	bio                 *string
-	picture             *string
-	activated           *bool
-	reportNumber        *int
-	addreportNumber     *int
-	address             *string
-	lng                 *float64
-	addlng              *float64
-	lat                 *float64
-	addlat              *float64
-	role                *user.Role
-	clearedFields       map[string]struct{}
-	badges              map[string]struct{}
-	removedbadges       map[string]struct{}
-	clearedbadges       bool
-	subjects            map[string]struct{}
-	removedsubjects     map[string]struct{}
-	clearedsubjects     bool
-	events              map[string]struct{}
-	removedevents       map[string]struct{}
-	clearedevents       bool
-	messages            map[string]struct{}
-	removedmessages     map[string]struct{}
-	clearedmessages     bool
-	reports             map[string]struct{}
-	removedreports      map[string]struct{}
-	clearedreports      bool
-	participants        map[string]struct{}
-	removedparticipants map[string]struct{}
-	clearedparticipants bool
-	friendships         map[string]struct{}
-	removedfriendships  map[string]struct{}
-	clearedfriendships  bool
-	done                bool
-	oldValue            func(context.Context) (*User, error)
-	predicates          []predicate.User
+	op                     Op
+	typ                    string
+	id                     *string
+	created_at             *time.Time
+	updated_at             *time.Time
+	created_by             *string
+	updated_by             *string
+	email                  *string
+	username               *string
+	lastname               *string
+	firstname              *string
+	password               *string
+	birthDate              *time.Time
+	bio                    *string
+	picture                *string
+	activated              *bool
+	reportNumber           *int
+	addreportNumber        *int
+	address                *string
+	lng                    *float64
+	addlng                 *float64
+	lat                    *float64
+	addlat                 *float64
+	role                   *user.Role
+	clearedFields          map[string]struct{}
+	badges                 map[string]struct{}
+	removedbadges          map[string]struct{}
+	clearedbadges          bool
+	subjects               map[string]struct{}
+	removedsubjects        map[string]struct{}
+	clearedsubjects        bool
+	events                 map[string]struct{}
+	removedevents          map[string]struct{}
+	clearedevents          bool
+	messages               map[string]struct{}
+	removedmessages        map[string]struct{}
+	clearedmessages        bool
+	reports                map[string]struct{}
+	removedreports         map[string]struct{}
+	clearedreports         bool
+	participants           map[string]struct{}
+	removedparticipants    map[string]struct{}
+	clearedparticipants    bool
+	friendships            map[string]struct{}
+	removedfriendships     map[string]struct{}
+	clearedfriendships     bool
+	documents_likes        map[string]struct{}
+	removeddocuments_likes map[string]struct{}
+	cleareddocuments_likes bool
+	done                   bool
+	oldValue               func(context.Context) (*User, error)
+	predicates             []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -9298,6 +9384,60 @@ func (m *UserMutation) ResetFriendships() {
 	m.removedfriendships = nil
 }
 
+// AddDocumentsLikeIDs adds the "documents_likes" edge to the Document entity by ids.
+func (m *UserMutation) AddDocumentsLikeIDs(ids ...string) {
+	if m.documents_likes == nil {
+		m.documents_likes = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.documents_likes[ids[i]] = struct{}{}
+	}
+}
+
+// ClearDocumentsLikes clears the "documents_likes" edge to the Document entity.
+func (m *UserMutation) ClearDocumentsLikes() {
+	m.cleareddocuments_likes = true
+}
+
+// DocumentsLikesCleared reports if the "documents_likes" edge to the Document entity was cleared.
+func (m *UserMutation) DocumentsLikesCleared() bool {
+	return m.cleareddocuments_likes
+}
+
+// RemoveDocumentsLikeIDs removes the "documents_likes" edge to the Document entity by IDs.
+func (m *UserMutation) RemoveDocumentsLikeIDs(ids ...string) {
+	if m.removeddocuments_likes == nil {
+		m.removeddocuments_likes = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.documents_likes, ids[i])
+		m.removeddocuments_likes[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedDocumentsLikes returns the removed IDs of the "documents_likes" edge to the Document entity.
+func (m *UserMutation) RemovedDocumentsLikesIDs() (ids []string) {
+	for id := range m.removeddocuments_likes {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// DocumentsLikesIDs returns the "documents_likes" edge IDs in the mutation.
+func (m *UserMutation) DocumentsLikesIDs() (ids []string) {
+	for id := range m.documents_likes {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetDocumentsLikes resets all changes to the "documents_likes" edge.
+func (m *UserMutation) ResetDocumentsLikes() {
+	m.documents_likes = nil
+	m.cleareddocuments_likes = false
+	m.removeddocuments_likes = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -9810,7 +9950,7 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.badges != nil {
 		edges = append(edges, user.EdgeBadges)
 	}
@@ -9831,6 +9971,9 @@ func (m *UserMutation) AddedEdges() []string {
 	}
 	if m.friendships != nil {
 		edges = append(edges, user.EdgeFriendships)
+	}
+	if m.documents_likes != nil {
+		edges = append(edges, user.EdgeDocumentsLikes)
 	}
 	return edges
 }
@@ -9881,13 +10024,19 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeDocumentsLikes:
+		ids := make([]ent.Value, 0, len(m.documents_likes))
+		for id := range m.documents_likes {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.removedbadges != nil {
 		edges = append(edges, user.EdgeBadges)
 	}
@@ -9908,6 +10057,9 @@ func (m *UserMutation) RemovedEdges() []string {
 	}
 	if m.removedfriendships != nil {
 		edges = append(edges, user.EdgeFriendships)
+	}
+	if m.removeddocuments_likes != nil {
+		edges = append(edges, user.EdgeDocumentsLikes)
 	}
 	return edges
 }
@@ -9958,13 +10110,19 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeDocumentsLikes:
+		ids := make([]ent.Value, 0, len(m.removeddocuments_likes))
+		for id := range m.removeddocuments_likes {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 8)
 	if m.clearedbadges {
 		edges = append(edges, user.EdgeBadges)
 	}
@@ -9985,6 +10143,9 @@ func (m *UserMutation) ClearedEdges() []string {
 	}
 	if m.clearedfriendships {
 		edges = append(edges, user.EdgeFriendships)
+	}
+	if m.cleareddocuments_likes {
+		edges = append(edges, user.EdgeDocumentsLikes)
 	}
 	return edges
 }
@@ -10007,6 +10168,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 		return m.clearedparticipants
 	case user.EdgeFriendships:
 		return m.clearedfriendships
+	case user.EdgeDocumentsLikes:
+		return m.cleareddocuments_likes
 	}
 	return false
 }
@@ -10043,6 +10206,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 		return nil
 	case user.EdgeFriendships:
 		m.ResetFriendships()
+		return nil
+	case user.EdgeDocumentsLikes:
+		m.ResetDocumentsLikes()
 		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)

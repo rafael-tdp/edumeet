@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"edumeet/ent/badge"
+	"edumeet/ent/document"
 	"edumeet/ent/event"
 	"edumeet/ent/friendship"
 	"edumeet/ent/message"
@@ -453,6 +454,21 @@ func (uu *UserUpdate) AddFriendships(f ...*Friendship) *UserUpdate {
 	return uu.AddFriendshipIDs(ids...)
 }
 
+// AddDocumentsLikeIDs adds the "documents_likes" edge to the Document entity by IDs.
+func (uu *UserUpdate) AddDocumentsLikeIDs(ids ...string) *UserUpdate {
+	uu.mutation.AddDocumentsLikeIDs(ids...)
+	return uu
+}
+
+// AddDocumentsLikes adds the "documents_likes" edges to the Document entity.
+func (uu *UserUpdate) AddDocumentsLikes(d ...*Document) *UserUpdate {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uu.AddDocumentsLikeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -603,6 +619,27 @@ func (uu *UserUpdate) RemoveFriendships(f ...*Friendship) *UserUpdate {
 		ids[i] = f[i].ID
 	}
 	return uu.RemoveFriendshipIDs(ids...)
+}
+
+// ClearDocumentsLikes clears all "documents_likes" edges to the Document entity.
+func (uu *UserUpdate) ClearDocumentsLikes() *UserUpdate {
+	uu.mutation.ClearDocumentsLikes()
+	return uu
+}
+
+// RemoveDocumentsLikeIDs removes the "documents_likes" edge to Document entities by IDs.
+func (uu *UserUpdate) RemoveDocumentsLikeIDs(ids ...string) *UserUpdate {
+	uu.mutation.RemoveDocumentsLikeIDs(ids...)
+	return uu
+}
+
+// RemoveDocumentsLikes removes "documents_likes" edges to Document entities.
+func (uu *UserUpdate) RemoveDocumentsLikes(d ...*Document) *UserUpdate {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uu.RemoveDocumentsLikeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -1071,6 +1108,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.DocumentsLikesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.DocumentsLikesTable,
+			Columns: user.DocumentsLikesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(document.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedDocumentsLikesIDs(); len(nodes) > 0 && !uu.mutation.DocumentsLikesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.DocumentsLikesTable,
+			Columns: user.DocumentsLikesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(document.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.DocumentsLikesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.DocumentsLikesTable,
+			Columns: user.DocumentsLikesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(document.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -1509,6 +1591,21 @@ func (uuo *UserUpdateOne) AddFriendships(f ...*Friendship) *UserUpdateOne {
 	return uuo.AddFriendshipIDs(ids...)
 }
 
+// AddDocumentsLikeIDs adds the "documents_likes" edge to the Document entity by IDs.
+func (uuo *UserUpdateOne) AddDocumentsLikeIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.AddDocumentsLikeIDs(ids...)
+	return uuo
+}
+
+// AddDocumentsLikes adds the "documents_likes" edges to the Document entity.
+func (uuo *UserUpdateOne) AddDocumentsLikes(d ...*Document) *UserUpdateOne {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uuo.AddDocumentsLikeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -1659,6 +1756,27 @@ func (uuo *UserUpdateOne) RemoveFriendships(f ...*Friendship) *UserUpdateOne {
 		ids[i] = f[i].ID
 	}
 	return uuo.RemoveFriendshipIDs(ids...)
+}
+
+// ClearDocumentsLikes clears all "documents_likes" edges to the Document entity.
+func (uuo *UserUpdateOne) ClearDocumentsLikes() *UserUpdateOne {
+	uuo.mutation.ClearDocumentsLikes()
+	return uuo
+}
+
+// RemoveDocumentsLikeIDs removes the "documents_likes" edge to Document entities by IDs.
+func (uuo *UserUpdateOne) RemoveDocumentsLikeIDs(ids ...string) *UserUpdateOne {
+	uuo.mutation.RemoveDocumentsLikeIDs(ids...)
+	return uuo
+}
+
+// RemoveDocumentsLikes removes "documents_likes" edges to Document entities.
+func (uuo *UserUpdateOne) RemoveDocumentsLikes(d ...*Document) *UserUpdateOne {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uuo.RemoveDocumentsLikeIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -2150,6 +2268,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(friendship.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.DocumentsLikesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.DocumentsLikesTable,
+			Columns: user.DocumentsLikesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(document.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedDocumentsLikesIDs(); len(nodes) > 0 && !uuo.mutation.DocumentsLikesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.DocumentsLikesTable,
+			Columns: user.DocumentsLikesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(document.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.DocumentsLikesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.DocumentsLikesTable,
+			Columns: user.DocumentsLikesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(document.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

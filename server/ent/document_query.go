@@ -9,6 +9,7 @@ import (
 	"edumeet/ent/eventdocument"
 	"edumeet/ent/message"
 	"edumeet/ent/predicate"
+	"edumeet/ent/user"
 	"fmt"
 	"math"
 
@@ -27,6 +28,7 @@ type DocumentQuery struct {
 	predicates         []predicate.Document
 	withEventDocuments *EventDocumentQuery
 	withMessage        *MessageQuery
+	withUsers          *UserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -100,6 +102,28 @@ func (dq *DocumentQuery) QueryMessage() *MessageQuery {
 			sqlgraph.From(document.Table, document.FieldID, selector),
 			sqlgraph.To(message.Table, message.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, document.MessageTable, document.MessagePrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(dq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryUsers chains the current query on the "users" edge.
+func (dq *DocumentQuery) QueryUsers() *UserQuery {
+	query := (&UserClient{config: dq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := dq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := dq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(document.Table, document.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, document.UsersTable, document.UsersPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(dq.driver.Dialect(), step)
 		return fromU, nil
@@ -301,6 +325,7 @@ func (dq *DocumentQuery) Clone() *DocumentQuery {
 		predicates:         append([]predicate.Document{}, dq.predicates...),
 		withEventDocuments: dq.withEventDocuments.Clone(),
 		withMessage:        dq.withMessage.Clone(),
+		withUsers:          dq.withUsers.Clone(),
 		// clone intermediate query.
 		sql:  dq.sql.Clone(),
 		path: dq.path,
@@ -326,6 +351,17 @@ func (dq *DocumentQuery) WithMessage(opts ...func(*MessageQuery)) *DocumentQuery
 		opt(query)
 	}
 	dq.withMessage = query
+	return dq
+}
+
+// WithUsers tells the query-builder to eager-load the nodes that are connected to
+// the "users" edge. The optional arguments are used to configure the query builder of the edge.
+func (dq *DocumentQuery) WithUsers(opts ...func(*UserQuery)) *DocumentQuery {
+	query := (&UserClient{config: dq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	dq.withUsers = query
 	return dq
 }
 
@@ -407,9 +443,10 @@ func (dq *DocumentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Doc
 	var (
 		nodes       = []*Document{}
 		_spec       = dq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			dq.withEventDocuments != nil,
 			dq.withMessage != nil,
+			dq.withUsers != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -441,6 +478,13 @@ func (dq *DocumentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Doc
 		if err := dq.loadMessage(ctx, query, nodes,
 			func(n *Document) { n.Edges.Message = []*Message{} },
 			func(n *Document, e *Message) { n.Edges.Message = append(n.Edges.Message, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := dq.withUsers; query != nil {
+		if err := dq.loadUsers(ctx, query, nodes,
+			func(n *Document) { n.Edges.Users = []*User{} },
+			func(n *Document, e *User) { n.Edges.Users = append(n.Edges.Users, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -532,6 +576,67 @@ func (dq *DocumentQuery) loadMessage(ctx context.Context, query *MessageQuery, n
 		nodes, ok := nids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected "message" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (dq *DocumentQuery) loadUsers(ctx context.Context, query *UserQuery, nodes []*Document, init func(*Document), assign func(*Document, *User)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Document)
+	nids := make(map[string]map[*Document]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(document.UsersTable)
+		s.Join(joinT).On(s.C(user.FieldID), joinT.C(document.UsersPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(document.UsersPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(document.UsersPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Document]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*User](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "users" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)

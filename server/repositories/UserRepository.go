@@ -75,7 +75,11 @@ func (ur *UserRepository) ValidateUser(ctx context.Context, userId string) (*ent
 
 func (ur *UserRepository) GetById(userID string) (*ent.User, error) {
 
-	user, err := ur.client.User.Query().Where(user.IDEQ(userID)).WithBadges().Only(context.Background())
+	user, err := ur.client.User.Query().
+		Where(user.IDEQ(userID)).
+		WithBadges().
+		WithDocumentsLikes().
+		Only(context.Background())
 	if err != nil {
 		return nil, errors.New("user not found")
 	}
@@ -356,4 +360,24 @@ func (ur *UserRepository) IsFriendshipExist(userId1 string, userId2 string) (boo
 	}
 
 	return exist, nil
+}
+
+func (ur *UserRepository) LikeDocument(ctx context.Context, userId, documentId string) {
+	_, err := ur.client.User.Update().
+		Where(user.IDEQ(userId)).
+		AddDocumentsLikeIDs(documentId).
+		Save(ctx)
+	if err != nil {
+		return
+	}
+}
+
+func (ur *UserRepository) UnlikeDocument(ctx context.Context, userId, documentId string) {
+	_, err := ur.client.User.Update().
+		Where(user.IDEQ(userId)).
+		RemoveDocumentsLikeIDs(documentId).
+		Save(ctx)
+	if err != nil {
+		return
+	}
 }

@@ -1311,6 +1311,29 @@ func HasFriendshipsWith(preds ...predicate.Friendship) predicate.User {
 	})
 }
 
+// HasDocumentsLikes applies the HasEdge predicate on the "documents_likes" edge.
+func HasDocumentsLikes() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, DocumentsLikesTable, DocumentsLikesPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDocumentsLikesWith applies the HasEdge predicate on the "documents_likes" edge with a given conditions (other predicates).
+func HasDocumentsLikesWith(preds ...predicate.Document) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newDocumentsLikesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(sql.AndPredicates(predicates...))

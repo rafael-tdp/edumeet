@@ -41,9 +41,11 @@ type DocumentEdges struct {
 	EventDocuments []*EventDocument `json:"event_documents,omitempty"`
 	// Message holds the value of the message edge.
 	Message []*Message `json:"message,omitempty"`
+	// Users holds the value of the users edge.
+	Users []*User `json:"users,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // EventDocumentsOrErr returns the EventDocuments value or an error if the edge
@@ -62,6 +64,15 @@ func (e DocumentEdges) MessageOrErr() ([]*Message, error) {
 		return e.Message, nil
 	}
 	return nil, &NotLoadedError{edge: "message"}
+}
+
+// UsersOrErr returns the Users value or an error if the edge
+// was not loaded in eager-loading.
+func (e DocumentEdges) UsersOrErr() ([]*User, error) {
+	if e.loadedTypes[2] {
+		return e.Users, nil
+	}
+	return nil, &NotLoadedError{edge: "users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -153,6 +164,11 @@ func (d *Document) QueryEventDocuments() *EventDocumentQuery {
 // QueryMessage queries the "message" edge of the Document entity.
 func (d *Document) QueryMessage() *MessageQuery {
 	return NewDocumentClient(d.config).QueryMessage(d)
+}
+
+// QueryUsers queries the "users" edge of the Document entity.
+func (d *Document) QueryUsers() *UserQuery {
+	return NewDocumentClient(d.config).QueryUsers(d)
 }
 
 // Update returns a builder for updating this Document.

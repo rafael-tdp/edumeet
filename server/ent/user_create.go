@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"edumeet/ent/badge"
+	"edumeet/ent/document"
 	"edumeet/ent/event"
 	"edumeet/ent/friendship"
 	"edumeet/ent/message"
@@ -358,6 +359,21 @@ func (uc *UserCreate) AddFriendships(f ...*Friendship) *UserCreate {
 	return uc.AddFriendshipIDs(ids...)
 }
 
+// AddDocumentsLikeIDs adds the "documents_likes" edge to the Document entity by IDs.
+func (uc *UserCreate) AddDocumentsLikeIDs(ids ...string) *UserCreate {
+	uc.mutation.AddDocumentsLikeIDs(ids...)
+	return uc
+}
+
+// AddDocumentsLikes adds the "documents_likes" edges to the Document entity.
+func (uc *UserCreate) AddDocumentsLikes(d ...*Document) *UserCreate {
+	ids := make([]string, len(d))
+	for i := range d {
+		ids[i] = d[i].ID
+	}
+	return uc.AddDocumentsLikeIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uc *UserCreate) Mutation() *UserMutation {
 	return uc.mutation
@@ -680,6 +696,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(friendship.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.DocumentsLikesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.DocumentsLikesTable,
+			Columns: user.DocumentsLikesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(document.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

@@ -8,6 +8,7 @@ import (
 	"edumeet/ent/eventdocument"
 	"edumeet/ent/message"
 	"edumeet/ent/predicate"
+	"edumeet/ent/user"
 	"errors"
 	"fmt"
 	"time"
@@ -148,6 +149,21 @@ func (du *DocumentUpdate) AddMessage(m ...*Message) *DocumentUpdate {
 	return du.AddMessageIDs(ids...)
 }
 
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (du *DocumentUpdate) AddUserIDs(ids ...string) *DocumentUpdate {
+	du.mutation.AddUserIDs(ids...)
+	return du
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (du *DocumentUpdate) AddUsers(u ...*User) *DocumentUpdate {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return du.AddUserIDs(ids...)
+}
+
 // Mutation returns the DocumentMutation object of the builder.
 func (du *DocumentUpdate) Mutation() *DocumentMutation {
 	return du.mutation
@@ -193,6 +209,27 @@ func (du *DocumentUpdate) RemoveMessage(m ...*Message) *DocumentUpdate {
 		ids[i] = m[i].ID
 	}
 	return du.RemoveMessageIDs(ids...)
+}
+
+// ClearUsers clears all "users" edges to the User entity.
+func (du *DocumentUpdate) ClearUsers() *DocumentUpdate {
+	du.mutation.ClearUsers()
+	return du
+}
+
+// RemoveUserIDs removes the "users" edge to User entities by IDs.
+func (du *DocumentUpdate) RemoveUserIDs(ids ...string) *DocumentUpdate {
+	du.mutation.RemoveUserIDs(ids...)
+	return du
+}
+
+// RemoveUsers removes "users" edges to User entities.
+func (du *DocumentUpdate) RemoveUsers(u ...*User) *DocumentUpdate {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return du.RemoveUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -360,6 +397,51 @@ func (du *DocumentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if du.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   document.UsersTable,
+			Columns: document.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.RemovedUsersIDs(); len(nodes) > 0 && !du.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   document.UsersTable,
+			Columns: document.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := du.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   document.UsersTable,
+			Columns: document.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, du.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{document.Label}
@@ -498,6 +580,21 @@ func (duo *DocumentUpdateOne) AddMessage(m ...*Message) *DocumentUpdateOne {
 	return duo.AddMessageIDs(ids...)
 }
 
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (duo *DocumentUpdateOne) AddUserIDs(ids ...string) *DocumentUpdateOne {
+	duo.mutation.AddUserIDs(ids...)
+	return duo
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (duo *DocumentUpdateOne) AddUsers(u ...*User) *DocumentUpdateOne {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return duo.AddUserIDs(ids...)
+}
+
 // Mutation returns the DocumentMutation object of the builder.
 func (duo *DocumentUpdateOne) Mutation() *DocumentMutation {
 	return duo.mutation
@@ -543,6 +640,27 @@ func (duo *DocumentUpdateOne) RemoveMessage(m ...*Message) *DocumentUpdateOne {
 		ids[i] = m[i].ID
 	}
 	return duo.RemoveMessageIDs(ids...)
+}
+
+// ClearUsers clears all "users" edges to the User entity.
+func (duo *DocumentUpdateOne) ClearUsers() *DocumentUpdateOne {
+	duo.mutation.ClearUsers()
+	return duo
+}
+
+// RemoveUserIDs removes the "users" edge to User entities by IDs.
+func (duo *DocumentUpdateOne) RemoveUserIDs(ids ...string) *DocumentUpdateOne {
+	duo.mutation.RemoveUserIDs(ids...)
+	return duo
+}
+
+// RemoveUsers removes "users" edges to User entities.
+func (duo *DocumentUpdateOne) RemoveUsers(u ...*User) *DocumentUpdateOne {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return duo.RemoveUserIDs(ids...)
 }
 
 // Where appends a list predicates to the DocumentUpdate builder.
@@ -733,6 +851,51 @@ func (duo *DocumentUpdateOne) sqlSave(ctx context.Context) (_node *Document, err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if duo.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   document.UsersTable,
+			Columns: document.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.RemovedUsersIDs(); len(nodes) > 0 && !duo.mutation.UsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   document.UsersTable,
+			Columns: document.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := duo.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   document.UsersTable,
+			Columns: document.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

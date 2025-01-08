@@ -586,6 +586,22 @@ func (c *DocumentClient) QueryMessage(d *Document) *MessageQuery {
 	return query
 }
 
+// QueryUsers queries the users edge of a Document.
+func (c *DocumentClient) QueryUsers(d *Document) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := d.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(document.Table, document.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, document.UsersTable, document.UsersPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(d.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *DocumentClient) Hooks() []Hook {
 	hooks := c.hooks.Document
@@ -2392,6 +2408,22 @@ func (c *UserClient) QueryFriendships(u *User) *FriendshipQuery {
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(friendship.Table, friendship.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.FriendshipsTable, user.FriendshipsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryDocumentsLikes queries the documents_likes edge of a User.
+func (c *UserClient) QueryDocumentsLikes(u *User) *DocumentQuery {
+	query := (&DocumentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(document.Table, document.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, user.DocumentsLikesTable, user.DocumentsLikesPrimaryKey...),
 		)
 		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
 		return fromV, nil

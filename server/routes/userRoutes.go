@@ -26,12 +26,15 @@ func setupRoutesUser(app *fiber.App, userController *controllers.UserController)
 	app.Get("/user/friendship", middlewares.JWTAuthMiddleware, userController.GetFriendships)
 	app.Delete("/user/friendship/:id", middlewares.JWTAuthMiddleware, userController.DeleteFriendship)
 	app.Patch("/user/admin/:id", middlewares.JWTAuthMiddleware, userController.UpdateUserAdmin)
-
+	app.Put("/user/like/document/:id", middlewares.JWTAuthMiddleware, userController.LikeDocument)
+	app.Put("/user/unlike/document/:id", middlewares.JWTAuthMiddleware, userController.UnlikeDocument)
+	app.Get("/user/documents/liked", middlewares.JWTAuthMiddleware, userController.GetLikedDocuments)
 }
 
 func initUserController(client *ent.Client) *controllers.UserController {
 	userRepo := repositories.NewUserRepository(client)
-	userService := services.NewUserService(userRepo)
+	documentRepository := repositories.NewDocumentRepository(client)
+	userService := services.NewUserService(userRepo, documentRepository)
 	emailService := services.NewEmailService()
 	return controllers.NewUserController(userService, emailService)
 }
