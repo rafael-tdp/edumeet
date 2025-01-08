@@ -41,6 +41,7 @@ class AuthServices {
     );
 
     if (response.statusCode == 200) {
+      await CacheService.clearCache();
       final responseData = HttpUtils.decodeResponse(response);
 
       final token = responseData['token'];
@@ -64,7 +65,7 @@ class AuthServices {
   }
 
   Future<void> logout() async {
-    await CacheService.removeDataFromCache('auth_token');
+    await CacheService.clearCache();
     _controller.add(AuthenticationStatus.unauthenticated);
   }
 

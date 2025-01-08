@@ -40,4 +40,9 @@ class CacheService {
     final userJson = jsonEncode(user);
     await saveDataToCache('user_data', userJson);
   }
+
+  static Future<void> clearCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
 }
