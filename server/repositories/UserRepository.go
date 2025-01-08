@@ -78,7 +78,11 @@ func (ur *UserRepository) GetById(userID string) (*ent.User, error) {
 	user, err := ur.client.User.Query().
 		Where(user.IDEQ(userID)).
 		WithBadges().
-		WithDocumentsLikes().
+		WithDocumentsLikes(
+			func(q *ent.DocumentQuery) {
+				q.WithEventDocuments()
+			},
+		).
 		Only(context.Background())
 	if err != nil {
 		return nil, errors.New("user not found")

@@ -15,7 +15,6 @@ func setupRoutesDocument(app *fiber.App, documentController *controllers.Documen
 	app.Get("/document/details/:id", middlewares.JWTAuthMiddleware, documentController.GetDocumentDetails)
 	app.Post("/document", middlewares.JWTAuthMiddleware, documentController.CreateDocument)
 	app.Delete("/document/:id", middlewares.JWTAuthMiddleware, documentController.DeleteDocument)
-	app.Get("/event/:id/documents", documentController.GetEventDocuments)
 }
 
 func initDocumentController(client *ent.Client) *controllers.DocumentController {
