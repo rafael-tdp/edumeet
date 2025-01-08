@@ -1,4 +1,4 @@
-import 'package:client/components/profile_button.dart';
+import 'package:client/components/edumeet_button.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:flutter/foundation.dart';
@@ -13,6 +13,7 @@ import '../core/services/cache_service.dart';
 import 'package:go_router/go_router.dart';
 import '../main.dart';
 import '../utils/colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -54,13 +55,14 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      ResponseRequest response = await _authServices.login(loginRequest, context);
+      ResponseRequest response =
+          await _authServices.login(loginRequest, context);
       if (response.success) {
-        // if(kIsWeb){
-        //   context.push(AdminPage.routeName);
-        // }
+        if(kIsWeb){
+          context.push(AdminPage.routeName);
+        }
         bool isFirstLogin = await _isFirstLogin();
-        if (isFirstLogin ) {
+        if (isFirstLogin) {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const SubjectsPage()),
@@ -207,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  ProfileButton(
+                  EdumeetButton(
                     text: t.app.login,
                     backgroundColor: AppColors.purple,
                     onPressed: () async {
@@ -216,6 +218,7 @@ class _LoginPageState extends State<LoginPage> {
                       }
                     },
                     isLoader: _isLoading,
+                    width: 250,
                   ),
                   if (_errorMessage != null)
                     Padding(
@@ -226,33 +229,41 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   const SizedBox(height: 10.0),
-                  if (!kIsWeb) Hero(
+                  if (!kIsWeb)
+                  Hero(
                     tag: 'edumeet-google-login',
-                    child: ProfileButton(
+                    child: EdumeetButton(
                       text: "Se connecter avec Google",
                       backgroundColor: Colors.red,
+                      icon: SvgPicture.asset(
+                        'icons/google-white.svg',
+                        width: 20,
+                        height: 20,
+                      ),
+                      width: 250,
                       onPressed: () async {
                         await _loginWithGoogle();
                       },
                     ),
                   ),
                   const SizedBox(height: 10.0),
-                  if (!kIsWeb) Wrap(
-                    alignment: WrapAlignment.center,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Text(t.login.noAccount),
-                      TextButton(
-                        onPressed: () {
-                          context.go(RegisterPage.routeName);
-                        },
-                        child: Text(
-                          t.login.createAccount,
-                          style: const TextStyle(color: AppColors.purple),
+                  if (!kIsWeb)
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(t.login.noAccount),
+                        TextButton(
+                          onPressed: () {
+                            context.go(RegisterPage.routeName);
+                          },
+                          child: Text(
+                            t.login.createAccount,
+                            style: const TextStyle(color: AppColors.purple),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                 ],
               ),
             ),

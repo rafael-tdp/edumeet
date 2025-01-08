@@ -8,7 +8,7 @@ import 'package:client/utils/colors.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../components/profile_button.dart';
+import '../components/edumeet_button.dart';
 import '../components/avatar_selector.dart';
 import '../core/models/user.dart';
 import '../providers/user_provider.dart';
@@ -282,7 +282,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ProfileButton(
+                    EdumeetButton(
                       text: t.profile.save,
                       backgroundColor: AppColors.purple,
                       onPressed: () async {
@@ -290,7 +290,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       },
                     ),
                     const SizedBox(width: 10),
-                    ProfileButton(
+                    EdumeetButton(
                       text: t.profile.cancel,
                       backgroundColor: Colors.redAccent,
                       onPressed: () {

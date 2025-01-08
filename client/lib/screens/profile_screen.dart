@@ -7,7 +7,7 @@ import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:client/utils/colors.dart';
-import 'package:client/components/profile_button.dart';
+import 'package:client/components/edumeet_button.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import 'package:client/i18n/generated/translations.g.dart';
@@ -252,7 +252,7 @@ class _ProfilePageState extends State<ProfilePage> {
       runSpacing: 10,
       alignment: WrapAlignment.center,
       children: [
-        ProfileButton(
+        EdumeetButton(
           text: t.profile.editProfile,
           backgroundColor: AppColors.purple,
           onPressed: () async {
