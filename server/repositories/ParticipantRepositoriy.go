@@ -125,3 +125,12 @@ func (pr *ParticipantRepository) DeleteParticipant(participantId string) error {
 
 	return nil
 }
+
+func (pr *ParticipantRepository) GetEventByID(eventId string) (*ent.Event, error) {
+	event, err := pr.client.Event.Get(context.Background(), eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
+}

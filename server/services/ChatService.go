@@ -4,6 +4,7 @@ import (
 	"context"
 	"edumeet/dtos"
 	"edumeet/enums"
+	"edumeet/firebase"
 	"edumeet/repositories"
 	"edumeet/utils"
 	"errors"
@@ -114,6 +115,22 @@ func (cs *ChatService) SendMessageToEvent(ctx context.Context, eventID string, p
 		if strings.ToUpper(participant.Status) == string(enums.ParticipantAccepted) && participant.UserID != userId {
 			userID := participant.UserID
 			_ = cs.SendMessageToUser(userID, utils.JSONStringify(messageResponse))
+
+			fcm_token, err := utils.GetTokenFromRedis(userID + "_FCM")
+			if err != nil {
+				logrus.Error("Error ChatService sendMessageToEvent: ", err)
+				return err
+			}
+
+			event, err := cs.participantRepository.GetEventByID(eventID)
+			if err != nil {
+				logrus.Error("Error ChatService function SendMessageToEvent: ", err)
+				return err
+			}
+
+			if fcm_token != "null" {
+				firebase.SendNotification(fcm_token, "New message from Event ", event.Title)
+			}
 		}
 	}
 	return nil
@@ -201,6 +218,16 @@ func (cs *ChatService) SendMessageToFriend(ctx context.Context, message, friendI
 
 	// Send message to friend
 	_ = cs.SendMessageToUser(receiverId, utils.JSONStringify(messageResponse))
+
+	fcm_token, err := utils.GetTokenFromRedis(receiverId + "_FCM")
+	if err != nil {
+		logrus.Error("Error ChatService sendMessageToFriend: ", err)
+		return err
+	}
+
+	if fcm_token != "null" {
+		firebase.SendNotification(fcm_token, "New message from ", username)
+	}
 
 	return nil
 }
