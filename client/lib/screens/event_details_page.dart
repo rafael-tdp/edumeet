@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:client/core/models/event.dart';
 import 'package:client/core/models/user.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/edit_event_screen.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/event_services.dart';
 import 'package:client/components/event/event_header.dart';
@@ -13,6 +16,7 @@ import 'package:client/components/event/event_details_section.dart';
 import 'package:go_router/go_router.dart';
 import 'package:client/components/confirmation_dialog.dart';
 
+import '../utils/connectivty_utils.dart';
 import 'events_screen.dart';
 
 class EventDetailsPage extends StatefulWidget {
@@ -60,11 +64,19 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       isCurrentUserEvent = event.createdBy == widget.currentUser.id;
       return event;
     });
+    ConnectivityUtils.listenConnectivityChanges(() {
+      _eventFuture = EventServices.getEventDetails(widget.eventId).then((event) {
+        isCurrentUserEvent = event.createdBy == widget.currentUser.id;
+        return event;
+      });
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    ConnectivityUtils.cancelSubscription();
     super.dispose();
   }
 

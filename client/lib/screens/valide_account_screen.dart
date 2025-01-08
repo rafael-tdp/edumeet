@@ -140,7 +140,7 @@ class _ValidateAccountPageState extends State<ValidateAccountPage> {
           const SizedBox(height: 32),
           TextFormField(
             controller: _codeController,
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.text,
             decoration: InputDecoration(
               labelText: t.verify.inputLabel,
               border: OutlineInputBorder(

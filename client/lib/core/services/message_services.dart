@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:client/core/models/chat/conversation.dart';
 import 'package:client/core/models/response.dart';
+import 'package:client/core/services/cache_service.dart';
 import 'package:client/env/env.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -172,12 +173,29 @@ class MessageServices {
         final List<dynamic> data = jsonDecode(response.body);
         final result = data.map((e) => Conversation.fromJson(e)).toList();
         result.sort((a, b) => b.lastMessageDate.compareTo(a.lastMessageDate));
+        await CacheService.saveDataToCache('conversations', jsonEncode(result.map((e) => e.toJson()).toList()));
         return ResponseRequest(success: true, data: result);
       } else {
         return ResponseRequest(success: false, message: 'Erreur lors de la récupération des conversations');
       }
     } catch (e) {
       log("Erreur lors de la récupération des conversations : $e");
+      return ResponseRequest(success: false, message: 'Erreur lors de la récupération des conversations');
+    }
+  }
+
+  Future<ResponseRequest> getConversationFromCache() async {
+    try {
+      final conversations = await CacheService.getDataFromCache('conversations');
+      if (conversations != null) {
+        final List<dynamic> data = jsonDecode(conversations);
+        final result = data.map((e) => Conversation.fromJson(e)).toList();
+        return ResponseRequest(success: true, data: result);
+      } else {
+        return ResponseRequest(success: false);
+      }
+    } catch (e) {
+      log("Erreur lors de la récupération des conversations en cache : $e");
       return ResponseRequest(success: false, message: 'Erreur lors de la récupération des conversations');
     }
   }

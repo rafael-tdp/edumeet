@@ -89,6 +89,7 @@ class _HomePageState extends State<HomePage> {
   final SseServices _sseServices = SseServices();
   StreamSubscription? internetConnection;
   bool isOffline = false;
+  bool showReconnectBanner = false;
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
@@ -126,49 +127,112 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     PushNotificationService.initialize();
-    _sseServices.connectToSse();
+    MessageServices messageServices = MessageServices();
+    internetConnection = Connectivity().onConnectivityChanged.listen((connectivityResult) {
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        setState(() {
+          isOffline = true;
+          showReconnectBanner = false;
+        });
+        print("Connexion inactive");
+      } else if (connectivityResult.contains(ConnectivityResult.mobile) || connectivityResult.contains(ConnectivityResult.wifi)) {
+        setState(() {
+          isOffline = false;
+          showReconnectBanner = true;
+        });
+        Future.delayed(const Duration(seconds: 5), () {
+          setState(() {
+            showReconnectBanner = false;
+          });
+        });
+        print("Connexion active");
+        messageServices.sendPendingMessages();
+      }
+    });
   }
 
   @override
-  Widget build(BuildContext context) {
-    if(kIsWeb) {
-     return const AdminPage();
-    }
-    return Scaffold(
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.transparent,
-        type: BottomNavigationBarType.fixed,
-        landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-        elevation: 0,
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        iconSize: 30,
-        selectedItemColor: AppColors.purple,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.messenger),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.groups),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: '',
-          ),
-        ],
-      ),
-      backgroundColor: Colors.white,
-    );
+Widget build(BuildContext context) {
+  if (kIsWeb) {
+    return const AdminPage();
   }
+  return Scaffold(
+    body: Stack(
+      children: [
+        Column(
+          children: [
+            Expanded(
+              child: _pages[_currentIndex],
+            ),
+          ],
+        ),
+        if (isOffline)
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              color: Colors.red,
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: const Text(
+                'Hors ligne. Veuillez vérifier votre connexion internet',
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        if (showReconnectBanner)
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              color: Colors.green,
+              width: double.infinity,
+              padding: const EdgeInsets.all(8.0),
+              child: const Text(
+                'Connexion retrouvée',
+                style: TextStyle(color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
+    ),
+    bottomNavigationBar: BottomNavigationBar(
+      backgroundColor: Colors.transparent,
+      type: BottomNavigationBarType.fixed,
+      landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
+      elevation: 0,
+      currentIndex: _currentIndex,
+      onTap: _onTabTapped,
+      iconSize: 30,
+      selectedItemColor: AppColors.purple,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.favorite),
+          label: '',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.event),
+          label: '',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.messenger),
+          label: '',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.groups),
+          label: '',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings),
+          label: '',
+        ),
+      ],
+    ),
+    backgroundColor: Colors.white,
+  );
+}
 }

@@ -1,14 +1,19 @@
+import 'dart:async';
+
 import 'package:client/core/models/user.dart';
 import 'package:client/core/services/event_services.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/event_details_page.dart';
 import 'package:client/utils/colors.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:client/components/event_card.dart';
 import 'package:client/screens/create_event_screen.dart';
 import 'package:client/core/models/event.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:go_router/go_router.dart';
+
+import '../utils/connectivty_utils.dart';
 
 class EventsPage extends StatefulWidget {
   static const String routeName = '/events';
@@ -25,13 +30,24 @@ class EventsPage extends StatefulWidget {
 class _EventsPageState extends State<EventsPage> {
   bool _showOnlyMyEvents = false;
   User? _currentUser;
-  String _searchQuery = ''; // Variable pour la recherche
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     _fetchCurrentUser();
     _fetchEvents();
+    ConnectivityUtils.listenConnectivityChanges(() {
+      _fetchCurrentUser();
+      _fetchEvents();
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    ConnectivityUtils.cancelSubscription();
+    super.dispose();
   }
 
   void _fetchCurrentUser() async {
