@@ -1,3 +1,4 @@
+import 'package:client/screens/favorite_documents_screen.dart';
 import 'package:client/screens/language_screen.dart';
 import 'package:client/screens/profile_screen.dart';
 import 'package:client/screens/subjects_screen.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/profile_button.dart';
 import '../components/edumeet_button.dart';
 import '../core/models/user.dart';
 import '../core/services/auth_services.dart';
@@ -128,6 +128,14 @@ class _SettingsPageState extends State<SettingsPage> {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 18),
                   onTap: () {
                     LanguagePage.navigateTo(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.favorite, color: Colors.red),
+                  title: const Text("Documents favoris"),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+                  onTap: () {
+                    FavoriteDocumentsPage.navigateTo(context);
                   },
                 ),
                 const SizedBox(height: 50),

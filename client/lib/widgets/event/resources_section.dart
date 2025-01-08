@@ -40,6 +40,9 @@ class ResourcesSection extends StatelessWidget {
                     context,
                     eventId,
                     resource['document_id'],
+                    resource['name'],
+                    resource['type'],
+                    false,
                   );
                 },
               ),

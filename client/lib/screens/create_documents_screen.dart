@@ -1,10 +1,10 @@
 import 'package:client/core/models/user.dart';
+import 'package:client/core/services/document_services.dart';
 import 'package:client/providers/user_provider.dart';
 import 'package:client/screens/create_event_screen.dart';
 import 'package:client/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:client/core/services/event_services.dart';
 import 'package:provider/provider.dart';
 
 class CreateDocumentsPage extends StatefulWidget {
@@ -57,7 +57,7 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
       _isLoading = true;
     });
     try {
-      final response = await EventServices.generateExo(widget.eventId);
+      final response = await DocumentServices.generateExo(widget.eventId);
       setState(() {
         _exercise = response;
         _exerciseController.text = _exercise!;
@@ -88,7 +88,7 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
       _isLoading = true;
     });
     try {
-      final response = await EventServices.generateCorrection(
+      final response = await DocumentServices.generateCorrection(
           widget.eventId, _exerciseController.text);
       setState(() {
         _correction = response;
@@ -127,9 +127,10 @@ class _CreateDocumentsPageState extends State<CreateDocumentsPage> {
 
     try {
       await Future.wait([
-        EventServices.saveDocument(
+        DocumentServices.saveDocument(
             widget.eventId, _exerciseController.text, 'EXERCISE'),
-        EventServices.saveDocument(widget.eventId, _correction!, 'CORRECTION'),
+        DocumentServices.saveDocument(
+            widget.eventId, _correction!, 'CORRECTION'),
       ]);
       onSuccess.call();
     } catch (error) {

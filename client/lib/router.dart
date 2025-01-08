@@ -14,6 +14,7 @@ import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/screens/event_chat_page.dart';
 import 'package:client/screens/event_details_page.dart';
 import 'package:client/screens/events_screen.dart';
+import 'package:client/screens/favorite_documents_screen.dart';
 import 'package:client/screens/friends_list_screen.dart';
 import 'package:client/screens/language_screen.dart';
 import 'package:client/screens/profile_screen.dart';
@@ -67,30 +68,17 @@ List<RouteBase> mobileRoutes = [
             ],
           ),
           GoRoute(
-              path: '/:eventId/details',
-              parentNavigatorKey: _rootNavigatorKey,
-              builder: (context, state) {
-                final eventId = state.pathParameters['eventId']!;
-                final currentUser = state.extra as User;
-                return EventDetailsPage(
-                  eventId: eventId,
-                  currentUser: currentUser,
-                );
-              },
-              routes: [
-                GoRoute(
-                  path: DocumentViewerPage.routeName,
-                  parentNavigatorKey: _rootNavigatorKey,
-                  builder: (context, state) {
-                    final documentId = state.pathParameters['documentId']!;
-                    const documentName = 'Document';
-                    return DocumentViewerPage(
-                      documentId: documentId,
-                      documentName: documentName,
-                    );
-                  },
-                ),
-              ]),
+            path: '/:eventId/details',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) {
+              final eventId = state.pathParameters['eventId']!;
+              final currentUser = state.extra as User;
+              return EventDetailsPage(
+                eventId: eventId,
+                currentUser: currentUser,
+              );
+            },
+          ),
           GoRoute(
             path: '/:eventId/edit',
             parentNavigatorKey: _rootNavigatorKey,
@@ -194,6 +182,21 @@ List<RouteBase> mobileRoutes = [
       return EventChatPage(eventId: eventId);
     },
   ),
+  GoRoute(
+    path: FavoriteDocumentsPage.routeName,
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) => const FavoriteDocumentsPage(),
+  ),
+  GoRoute(
+    path: DocumentViewerPage.routeName,
+    parentNavigatorKey: _rootNavigatorKey,
+    builder: (context, state) {
+      final documentId = state.pathParameters['documentId']!;
+      return DocumentViewerPage(
+        documentId: documentId,
+      );
+    },
+  ),
 ];
 
 List<RouteBase> commonRoutes = [
@@ -221,10 +224,9 @@ List<RouteBase> _webRoutes() {
   return [
     GoRoute(
         path: '/',
-        redirect: (context,state) {
+        redirect: (context, state) {
           return AdminPage.routeName;
-        }
-    ),
+        }),
     GoRoute(
       path: AdminPage.routeName,
       builder: (context, state) {
