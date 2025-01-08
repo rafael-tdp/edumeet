@@ -75,9 +75,11 @@ type UserEdges struct {
 	Participants []*Participant `json:"participants,omitempty"`
 	// Friendships holds the value of the friendships edge.
 	Friendships []*Friendship `json:"friendships,omitempty"`
+	// DocumentsLikes holds the value of the documents_likes edge.
+	DocumentsLikes []*Document `json:"documents_likes,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [8]bool
 }
 
 // BadgesOrErr returns the Badges value or an error if the edge
@@ -141,6 +143,15 @@ func (e UserEdges) FriendshipsOrErr() ([]*Friendship, error) {
 		return e.Friendships, nil
 	}
 	return nil, &NotLoadedError{edge: "friendships"}
+}
+
+// DocumentsLikesOrErr returns the DocumentsLikes value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) DocumentsLikesOrErr() ([]*Document, error) {
+	if e.loadedTypes[7] {
+		return e.DocumentsLikes, nil
+	}
+	return nil, &NotLoadedError{edge: "documents_likes"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -341,6 +352,11 @@ func (u *User) QueryParticipants() *ParticipantQuery {
 // QueryFriendships queries the "friendships" edge of the User entity.
 func (u *User) QueryFriendships() *FriendshipQuery {
 	return NewUserClient(u.config).QueryFriendships(u)
+}
+
+// QueryDocumentsLikes queries the "documents_likes" edge of the User entity.
+func (u *User) QueryDocumentsLikes() *DocumentQuery {
+	return NewUserClient(u.config).QueryDocumentsLikes(u)
 }
 
 // Update returns a builder for updating this User.

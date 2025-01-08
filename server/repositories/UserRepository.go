@@ -357,3 +357,23 @@ func (ur *UserRepository) IsFriendshipExist(userId1 string, userId2 string) (boo
 
 	return exist, nil
 }
+
+func (ur *UserRepository) LikeDocument(ctx context.Context, userId, documentId string) {
+	_, err := ur.client.User.Update().
+		Where(user.IDEQ(userId)).
+		AddDocumentsLikeIDs(documentId).
+		Save(ctx)
+	if err != nil {
+		return
+	}
+}
+
+func (ur *UserRepository) UnlikeDocument(ctx context.Context, userId, documentId string) {
+	_, err := ur.client.User.Update().
+		Where(user.IDEQ(userId)).
+		RemoveDocumentsLikeIDs(documentId).
+		Save(ctx)
+	if err != nil {
+		return
+	}
+}

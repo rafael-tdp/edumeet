@@ -66,6 +66,8 @@ const (
 	EdgeParticipants = "participants"
 	// EdgeFriendships holds the string denoting the friendships edge name in mutations.
 	EdgeFriendships = "friendships"
+	// EdgeDocumentsLikes holds the string denoting the documents_likes edge name in mutations.
+	EdgeDocumentsLikes = "documents_likes"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// BadgesTable is the table that holds the badges relation/edge. The primary key declared below.
@@ -113,6 +115,11 @@ const (
 	FriendshipsInverseTable = "friendships"
 	// FriendshipsColumn is the table column denoting the friendships relation/edge.
 	FriendshipsColumn = "user_friendships"
+	// DocumentsLikesTable is the table that holds the documents_likes relation/edge. The primary key declared below.
+	DocumentsLikesTable = "document_users"
+	// DocumentsLikesInverseTable is the table name for the Document entity.
+	// It exists in this package in order to avoid circular dependency with the "document" package.
+	DocumentsLikesInverseTable = "documents"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -145,6 +152,9 @@ var (
 	// SubjectsPrimaryKey and SubjectsColumn2 are the table columns denoting the
 	// primary key for the subjects relation (M2M).
 	SubjectsPrimaryKey = []string{"user_id", "subject_id"}
+	// DocumentsLikesPrimaryKey and DocumentsLikesColumn2 are the table columns denoting the
+	// primary key for the documents_likes relation (M2M).
+	DocumentsLikesPrimaryKey = []string{"document_id", "user_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -400,6 +410,20 @@ func ByFriendships(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newFriendshipsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByDocumentsLikesCount orders the results by documents_likes count.
+func ByDocumentsLikesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newDocumentsLikesStep(), opts...)
+	}
+}
+
+// ByDocumentsLikes orders the results by documents_likes terms.
+func ByDocumentsLikes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDocumentsLikesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newBadgesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -447,5 +471,12 @@ func newFriendshipsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(FriendshipsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, FriendshipsTable, FriendshipsColumn),
+	)
+}
+func newDocumentsLikesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DocumentsLikesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, DocumentsLikesTable, DocumentsLikesPrimaryKey...),
 	)
 }

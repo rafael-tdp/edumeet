@@ -7,6 +7,7 @@ import (
 	"edumeet/ent/document"
 	"edumeet/ent/eventdocument"
 	"edumeet/ent/message"
+	"edumeet/ent/user"
 	"errors"
 	"fmt"
 	"time"
@@ -132,6 +133,21 @@ func (dc *DocumentCreate) AddMessage(m ...*Message) *DocumentCreate {
 		ids[i] = m[i].ID
 	}
 	return dc.AddMessageIDs(ids...)
+}
+
+// AddUserIDs adds the "users" edge to the User entity by IDs.
+func (dc *DocumentCreate) AddUserIDs(ids ...string) *DocumentCreate {
+	dc.mutation.AddUserIDs(ids...)
+	return dc
+}
+
+// AddUsers adds the "users" edges to the User entity.
+func (dc *DocumentCreate) AddUsers(u ...*User) *DocumentCreate {
+	ids := make([]string, len(u))
+	for i := range u {
+		ids[i] = u[i].ID
+	}
+	return dc.AddUserIDs(ids...)
 }
 
 // Mutation returns the DocumentMutation object of the builder.
@@ -293,6 +309,22 @@ func (dc *DocumentCreate) createSpec() (*Document, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(message.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := dc.mutation.UsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   document.UsersTable,
+			Columns: document.UsersPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

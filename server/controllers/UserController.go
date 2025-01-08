@@ -377,3 +377,28 @@ func (uc *UserController) DeleteUser(c *fiber.Ctx) error {
 	}
 	return c.SendStatus(fiber.StatusNoContent)
 }
+
+func (uc *UserController) LikeDocument(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+	documentID := c.Params("id")
+
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	err := uc.userService.LikeDocument(ctx, currentUser.ID, documentID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.SendStatus(fiber.StatusOK)
+}
+
+func (uc *UserController) UnlikeDocument(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
+	documentID := c.Params("id")
+
+	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+	err := uc.userService.UnlikeDocument(ctx, currentUser.ID, documentID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.SendStatus(fiber.StatusOK)
+
+}

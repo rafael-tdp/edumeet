@@ -300,6 +300,31 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
+	// DocumentUsersColumns holds the columns for the "document_users" table.
+	DocumentUsersColumns = []*schema.Column{
+		{Name: "document_id", Type: field.TypeString},
+		{Name: "user_id", Type: field.TypeString},
+	}
+	// DocumentUsersTable holds the schema information for the "document_users" table.
+	DocumentUsersTable = &schema.Table{
+		Name:       "document_users",
+		Columns:    DocumentUsersColumns,
+		PrimaryKey: []*schema.Column{DocumentUsersColumns[0], DocumentUsersColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "document_users_document_id",
+				Columns:    []*schema.Column{DocumentUsersColumns[0]},
+				RefColumns: []*schema.Column{DocumentsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "document_users_user_id",
+				Columns:    []*schema.Column{DocumentUsersColumns[1]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// EventSubjectsColumns holds the columns for the "event_subjects" table.
 	EventSubjectsColumns = []*schema.Column{
 		{Name: "event_id", Type: field.TypeString},
@@ -414,6 +439,7 @@ var (
 		ReportingsTable,
 		SubjectsTable,
 		UsersTable,
+		DocumentUsersTable,
 		EventSubjectsTable,
 		MessageDocumentsTable,
 		UserBadgesTable,
@@ -435,6 +461,8 @@ func init() {
 	PhysicalEventsTable.ForeignKeys[0].RefTable = EventsTable
 	RemoteEventsTable.ForeignKeys[0].RefTable = EventsTable
 	ReportingsTable.ForeignKeys[0].RefTable = UsersTable
+	DocumentUsersTable.ForeignKeys[0].RefTable = DocumentsTable
+	DocumentUsersTable.ForeignKeys[1].RefTable = UsersTable
 	EventSubjectsTable.ForeignKeys[0].RefTable = EventsTable
 	EventSubjectsTable.ForeignKeys[1].RefTable = SubjectsTable
 	MessageDocumentsTable.ForeignKeys[0].RefTable = MessagesTable

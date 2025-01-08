@@ -15,12 +15,14 @@ import (
 )
 
 type UserService struct {
-	userRepo *repositories.UserRepository
+	userRepo           *repositories.UserRepository
+	documentRepository *repositories.DocumentRepository
 }
 
-func NewUserService(userRepo *repositories.UserRepository) *UserService {
+func NewUserService(userRepo *repositories.UserRepository, documentRepository *repositories.DocumentRepository) *UserService {
 	return &UserService{
-		userRepo: userRepo,
+		userRepo:           userRepo,
+		documentRepository: documentRepository,
 	}
 }
 
@@ -411,4 +413,37 @@ func (us *UserService) DeleteUser(ctx context.Context, userID string) error {
 	}
 
 	return nil
+}
+
+func (us *UserService) LikeDocument(ctx context.Context, userID string, documentID string) error {
+	_, err := us.userRepo.GetById(userID)
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	_, err = us.documentRepository.GetDocumentById(documentID)
+	if err != nil {
+		return errors.New("document not found")
+	}
+
+	us.userRepo.LikeDocument(ctx, userID, documentID)
+
+	return nil
+}
+
+func (us *UserService) UnlikeDocument(ctx context.Context, userID string, documentID string) error {
+	_, err := us.userRepo.GetById(userID)
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	_, err = us.documentRepository.GetDocumentById(documentID)
+	if err != nil {
+		return errors.New("document not found")
+	}
+
+	us.userRepo.UnlikeDocument(ctx, userID, documentID)
+
+	return nil
+
 }
