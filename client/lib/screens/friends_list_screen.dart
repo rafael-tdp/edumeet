@@ -247,14 +247,14 @@ class _FriendsListPageState extends State<FriendsListPage> {
                               onPressed: () {
                                 _acceptFriendRequest(friend.id);
                               },
-                              child: const Text("Accepter"),
+                              child: Icon(Icons.check),
                             ),
                             const SizedBox(width: 8),
                             ElevatedButton(
                               onPressed: () {
                                 _declineFriendRequest(friend.id);
                               },
-                              child: const Text("Refuser"),
+                              child: Icon(Icons.close),
                             ),
                         ],
                       )
