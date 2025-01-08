@@ -130,7 +130,11 @@ func (er *EventRepository) GetEvent(eventID string) (*ent.Event, error) {
 		WithRemoteEvent().
 		WithPhysicalEvent().
 		WithEventDocuments(func(edq *ent.EventDocumentQuery) {
-			edq.WithDocument()
+			edq.WithDocument(
+				func(dq *ent.DocumentQuery) {
+					dq.WithUsers()
+				},
+			)
 		}).
 		WithSubjects().
 		First(context.Background())

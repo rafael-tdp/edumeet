@@ -156,27 +156,3 @@ func (uc *DocumentController) CreateDocument(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(document)
 }
-
-// @Summary Get Event Documents
-// @Description Retrieve all documents related to an event
-// @Tags Document
-// @Accept json
-// @Produce json
-// @Param id path string true "Event ID"
-// @Success 200 {array} map[string]interface{} "Success: Event documents"
-// @Failure 400 {object} map[string]string "Bad Request: Invalid ID"
-// @Failure 404 {object} map[string]string "Not Found: Documents not found"
-// @Router /event/{id}/documents [get]
-func (uc *DocumentController) GetEventDocuments(c *fiber.Ctx) error {
-	eventId, err := ulid.Parse(c.Params("id"))
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
-	}
-
-	documents, err := uc.documentService.GetEventDocuments(eventId.String())
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "Documents not found"})
-	}
-
-	return c.JSON(documents)
-}

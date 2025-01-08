@@ -321,7 +321,7 @@ func (es *EventService) GetEventsCreatedByUser(userID string) ([]dtos.EventWithT
 	return eventsWithType, nil
 }
 
-func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetailsDTO, error) {
+func (es *EventService) GetEventWithDetails(eventID, userId string) (dtos.EventWithDetailsDTO, error) {
 	event, err := es.eventRepository.GetEvent(eventID)
 	if err != nil {
 		logrus.Error("Error EventService.GetEventWithDetails: ", err)
@@ -350,7 +350,7 @@ func (es *EventService) GetEventWithDetails(eventID string) (dtos.EventWithDetai
 		Image:             event.Image,
 		Participants:      dtos.ConvertParticipantsWithUser(participants),
 		ParticipantsCount: len(participants),
-		EventDocuments:    dtos.EntToEventDocumentDTO(event.Edges.EventDocuments),
+		EventDocuments:    dtos.EntToEventDocumentDTO(event.Edges.EventDocuments, userId),
 		CreatedBy:         event.CreatedBy,
 		LastMessages:      lastMessages,
 		Code:              event.Code,

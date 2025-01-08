@@ -25,6 +25,7 @@ func (r *DocumentRepository) GetDocumentById(documentID string) (*ent.Document, 
 	document, err := r.client.Document.Query().
 		Where(document.IDEQ(documentID)).
 		WithUsers().
+		WithEventDocuments().
 		Only(context.Background())
 	if err != nil {
 		return nil, errors.New("document not found")

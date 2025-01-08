@@ -318,12 +318,13 @@ func (ec *EventController) GetEventsCreatedByCurrentUser(c *fiber.Ctx) error {
 // @Failure 404 {object} map[string]string "Event Not Found"
 // @Router /events/{id}/details [get]
 func (ec *EventController) GetEventWithDetails(c *fiber.Ctx) error {
+	currentUser := c.Locals("user").(*ent.User)
 	eventID, err := ulid.Parse(c.Params("id"))
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid ID"})
 	}
 
-	event, err := ec.eventservice.GetEventWithDetails(eventID.String())
+	event, err := ec.eventservice.GetEventWithDetails(eventID.String(), currentUser.ID)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
