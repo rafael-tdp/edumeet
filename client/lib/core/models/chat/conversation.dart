@@ -30,4 +30,16 @@ class Conversation {
       pictureConversation: json['pictureConversation'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'conversationId': id,
+      'conversationName': name,
+      'type': type.name,
+      'lastMessage': lastMessage,
+      'lastMessageUsername': lastMessageUsername,
+      'lastMessageDate': lastMessageDate.toIso8601String(),
+      'pictureConversation': pictureConversation,
+    };
+  }
 }

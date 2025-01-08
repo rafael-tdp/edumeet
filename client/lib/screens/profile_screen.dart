@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:client/core/models/reporting.dart';
 import 'package:client/core/models/response.dart';
 import 'package:client/core/models/user.dart';
 import 'package:client/core/services/badges_service.dart';
 import 'package:client/core/services/reporting_services.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/user_services.dart';
@@ -18,6 +21,8 @@ import 'package:provider/provider.dart';
 import '../core/services/friends_service.dart';
 import '../providers/user_provider.dart';
 import 'package:client/core/models/badge.dart' as custom_badge;
+
+import '../utils/connectivty_utils.dart';
 
 class ProfilePage extends StatefulWidget {
   static const String routeName = '/profile';
@@ -47,7 +52,27 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _loadUser();
+    _fetchUser();
+    ConnectivityUtils.listenConnectivityChanges(() {
+      _fetchUser();
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    ConnectivityUtils.cancelSubscription();
+    super.dispose();
+  }
+
+  void _fetchUser() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      _loadUserFromCache();
+    } else {
+      _loadUser();
+    }
+    setState(() {});
   }
 
   Future<void> _loadUser() async {
@@ -88,6 +113,30 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> _loadUserFromCache () async {
+    try {
+      ResponseRequest response = await _userServices.getUserInfoFromCache();
+      if (response.success) {
+        setState(() {
+          _isCurrentUser = true;
+          _user = response.data as User;
+        });
+      } else {
+        setState(() {
+          _errorMessage = response.message ?? t.error.general;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -110,13 +159,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       );
     }
-
-    final Avatar avatar = DiceBearBuilder(
-      seed: _user!.username,
-      sprite: DiceBearSprite.values.firstWhere(
-            (sprite) => sprite.name == _user!.picture,
-      ),
-    ).build();
 
     return Scaffold(
       appBar: AppBar(
@@ -164,8 +206,11 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Hero(
                 tag: 'avatar_${_user!.id}',
-                child: avatar.toImage(height: 100),
-              ),
+                child: DiceBearBuilder(
+                  seed: _user!.username,
+                  sprite: DiceBearSprite.values.firstWhere((sprite) => sprite.name == _user?.picture,
+                      orElse: () => DiceBearSprite.bottts),
+                ).build().toImage(height: 100)),
               const SizedBox(height: 5),
               _buildUserBadges(),
               const SizedBox(height: 20),
