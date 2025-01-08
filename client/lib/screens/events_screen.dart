@@ -37,16 +37,13 @@ class _EventsPageState extends State<EventsPage> {
   @override
   void initState() {
     super.initState();
-    ConnectivityUtils.listenConnectivityChanges(
-        onConnected: () {
-          _fetchCurrentUser();
-          _fetchEvents();
-          },
-        onDisconnected: () {
-          _fetchCurrentUserOffline();
-          _fetchEventsOffline();
-        }
-    );
+    ConnectivityUtils.listenConnectivityChanges(onConnected: () {
+      _fetchCurrentUser();
+      _fetchEvents();
+    }, onDisconnected: () {
+      _fetchCurrentUserOffline();
+      _fetchEventsOffline();
+    });
   }
 
   @override
@@ -86,22 +83,23 @@ class _EventsPageState extends State<EventsPage> {
   }
 
   Future<void> _fetchEvents() async {
-     if ( _showOnlyMyEvents) {
+    if (_showOnlyMyEvents) {
       _eventsFuture = EventServices.getEventsCreatedByCurrentUser();
     } else {
-       _eventsFuture = EventServices.getCurrentUserEvents();
+      _eventsFuture = EventServices.getCurrentUserEvents();
     }
   }
 
   Future<void> _fetchEventsOffline() async {
-    if ( _showOnlyMyEvents) {
-      _eventsFuture =  EventServices.getEventsCreatedByCurrentUserFromCache();
+    if (_showOnlyMyEvents) {
+      _eventsFuture = EventServices.getEventsCreatedByCurrentUserFromCache();
     } else {
       _eventsFuture = EventServices.getCurrentUserEventsFromCache();
     }
   }
 
-  void _openEventPage(BuildContext context, String eventId, String participantStatus) {
+  void _openEventPage(
+      BuildContext context, String eventId, String participantStatus) {
     if (_currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User not loaded")),
@@ -110,7 +108,8 @@ class _EventsPageState extends State<EventsPage> {
     }
     if (participantStatus == "PENDING") {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Vous devez être accepté pour voir les détails")),
+        const SnackBar(
+            content: Text("Vous devez être accepté pour voir les détails")),
       );
       return;
     }
@@ -225,6 +224,11 @@ class _EventsPageState extends State<EventsPage> {
             onPressed: () {
               setState(() {
                 _showOnlyMyEvents = !_showOnlyMyEvents;
+                ConnectivityUtils.listenConnectivityChanges(onConnected: () {
+                  _fetchEvents();
+                }, onDisconnected: () {
+                  _fetchEventsOffline();
+                });
               });
             },
           ),
