@@ -167,6 +167,7 @@ func (as *AuthService) HandleOAuthUser(email string, userInfo map[string]interfa
 		Firstname: userInfo["given_name"].(string),
 		Lastname:  userInfo["family_name"].(string),
 		Username:  strings.ToLower(userInfo["given_name"].(string)[:1] + userInfo["family_name"].(string)),
+		Address:   "242 Rue du Faubourg Saint-Antoine, 75012 Paris",
 	}
 	ctx := context.WithValue(context.Background(), "user_id", "register")
 	newUser, err := as.RegisterUser(ctx, userDTO)
