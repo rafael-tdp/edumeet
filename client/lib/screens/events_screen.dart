@@ -7,12 +7,13 @@ import 'package:client/screens/event_details_page.dart';
 import 'package:client/utils/colors.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:client/components/event_card.dart';
+import 'package:client/widgets/event_card.dart';
 import 'package:client/screens/create_event_screen.dart';
 import 'package:client/core/models/event.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/models/response.dart';
 import '../utils/connectivty_utils.dart';
 
 class EventsPage extends StatefulWidget {
@@ -28,6 +29,7 @@ class EventsPage extends StatefulWidget {
 }
 
 class _EventsPageState extends State<EventsPage> {
+  Future<List<Event>>? _eventsFuture;
   bool _showOnlyMyEvents = false;
   User? _currentUser;
   String _searchQuery = '';
@@ -35,13 +37,16 @@ class _EventsPageState extends State<EventsPage> {
   @override
   void initState() {
     super.initState();
-    _fetchCurrentUser();
-    _fetchEvents();
-    ConnectivityUtils.listenConnectivityChanges(() {
-      _fetchCurrentUser();
-      _fetchEvents();
-      setState(() {});
-    });
+    ConnectivityUtils.listenConnectivityChanges(
+        onConnected: () {
+          _fetchCurrentUser();
+          _fetchEvents();
+          },
+        onDisconnected: () {
+          _fetchCurrentUserOffline();
+          _fetchEventsOffline();
+        }
+    );
   }
 
   @override
@@ -65,8 +70,38 @@ class _EventsPageState extends State<EventsPage> {
     }
   }
 
-  void _openEventPage(
-      BuildContext context, String eventId, String participantStatus) {
+  void _fetchCurrentUserOffline() async {
+    try {
+      final response = await UserServices().getUserInfoFromCache();
+      if (!mounted) return;
+      setState(() {
+        _currentUser = response.data;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("User not loaded")),
+      );
+    }
+  }
+
+  Future<void> _fetchEvents() async {
+     if ( _showOnlyMyEvents) {
+      _eventsFuture = EventServices.getEventsCreatedByCurrentUser();
+    } else {
+       _eventsFuture = EventServices.getCurrentUserEvents();
+    }
+  }
+
+  Future<void> _fetchEventsOffline() async {
+    if ( _showOnlyMyEvents) {
+      _eventsFuture =  EventServices.getEventsCreatedByCurrentUserFromCache();
+    } else {
+      _eventsFuture = EventServices.getCurrentUserEventsFromCache();
+    }
+  }
+
+  void _openEventPage(BuildContext context, String eventId, String participantStatus) {
     if (_currentUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User not loaded")),
@@ -75,8 +110,7 @@ class _EventsPageState extends State<EventsPage> {
     }
     if (participantStatus == "PENDING") {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text("Vous devez être accepté pour voir les détails")),
+        const SnackBar(content: Text("Vous devez être accepté pour voir les détails")),
       );
       return;
     }
@@ -88,12 +122,6 @@ class _EventsPageState extends State<EventsPage> {
 
   void _createEvent(context) {
     CreateEventPage.navigateTo(context);
-  }
-
-  Future<List<Event>> _fetchEvents() {
-    return _showOnlyMyEvents
-        ? EventServices.getEventsCreatedByCurrentUser()
-        : EventServices.getCurrentUserEvents();
   }
 
   void _showJoinEventDialog() {
@@ -214,7 +242,7 @@ class _EventsPageState extends State<EventsPage> {
         ],
       ),
       body: FutureBuilder<List<Event>>(
-        future: _fetchEvents(),
+        future: _eventsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -225,6 +253,10 @@ class _EventsPageState extends State<EventsPage> {
           }
 
           final events = snapshot.data!;
+
+          if (events.isEmpty) {
+            return const Center(child: Text("Aucun événement trouvé."));
+          }
 
           // Filtrer les événements selon la recherche
           final filteredEvents = events.where((event) {

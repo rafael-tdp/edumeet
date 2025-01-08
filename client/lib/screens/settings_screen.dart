@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/profile_button.dart';
 import '../components/edumeet_button.dart';
 import '../core/models/user.dart';
 import '../core/services/auth_services.dart';
@@ -83,7 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: DiceBearBuilder(
                         seed: user.username,
                         sprite: DiceBearSprite.values.firstWhere(
-                          (sprite) => sprite.name == (user.picture),
+                              (sprite) => sprite.name == (user.picture),
                           orElse: () => DiceBearSprite.bottts,
                         ),
                       ).build().toImage(height: 40)),

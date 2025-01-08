@@ -1,3 +1,4 @@
+import 'package:client/widgets/profile_button.dart';
 import 'package:client/components/edumeet_button.dart';
 import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/admin/admin_page.dart';
@@ -55,8 +56,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      ResponseRequest response =
-          await _authServices.login(loginRequest, context);
+      ResponseRequest response = await _authServices.login(loginRequest, context);
       if (response.success) {
         if(kIsWeb){
           context.push(AdminPage.routeName);

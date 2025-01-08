@@ -13,6 +13,8 @@ import 'package:client/screens/friends_list_screen.dart';
 import 'package:client/screens/search_event_screen.dart';
 import 'package:client/screens/settings_screen.dart';
 import 'package:client/utils/colors.dart';
+import 'package:client/utils/connectivty_utils.dart';
+import 'package:client/widgets/banner_message.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -128,6 +130,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     PushNotificationService.initialize();
     MessageServices messageServices = MessageServices();
+    _checkConnectivity();
     internetConnection = Connectivity().onConnectivityChanged.listen((connectivityResult) {
       if (connectivityResult.contains(ConnectivityResult.none)) {
         setState(() {
@@ -151,6 +154,17 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _checkConnectivity() async {
+    isOffline = !await ConnectivityUtils.isConnected();
+    showReconnectBanner = !await ConnectivityUtils.isConnected();
+  }
+
+  @override
+  void dispose() {
+    _sseServices.dispose();
+    super.dispose();
+  }
+
   @override
 Widget build(BuildContext context) {
   if (kIsWeb) {
@@ -166,38 +180,16 @@ Widget build(BuildContext context) {
             ),
           ],
         ),
-        if (isOffline)
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              color: Colors.red,
-              width: double.infinity,
-              padding: const EdgeInsets.all(8.0),
-              child: const Text(
-                'Hors ligne. Veuillez vérifier votre connexion internet',
-                style: TextStyle(color: Colors.white),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
-        if (showReconnectBanner)
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              color: Colors.green,
-              width: double.infinity,
-              padding: const EdgeInsets.all(8.0),
-              child: const Text(
-                'Connexion retrouvée',
-                style: TextStyle(color: Colors.white),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
+        BannerMessage(
+          isVisible: isOffline,
+          message: 'Hors ligne. Veuillez vérifier votre connexion internet',
+          backgroundColor: Colors.red,
+        ),
+        BannerMessage(
+          isVisible: showReconnectBanner,
+          message: 'Connexion retrouvée',
+          backgroundColor: Colors.green,
+        ),
       ],
     ),
     bottomNavigationBar: BottomNavigationBar(

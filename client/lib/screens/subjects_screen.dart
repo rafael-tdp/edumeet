@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:client/core/models/subject.dart';
 import 'package:client/utils/colors.dart';
 import 'package:client/core/services/subjects_services.dart';
+import 'package:client/widgets/profile_button.dart';
 import 'package:client/components/edumeet_button.dart';
 import 'package:go_router/go_router.dart';
 

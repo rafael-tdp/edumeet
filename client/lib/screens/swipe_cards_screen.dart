@@ -1,6 +1,6 @@
 import 'package:client/utils/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:client/components/swipe_cards.dart';
+import 'package:client/widgets/swipe_cards.dart';
 
 class SwipeCardsPage extends StatefulWidget {
   const SwipeCardsPage({super.key});

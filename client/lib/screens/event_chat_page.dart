@@ -5,8 +5,8 @@ import 'package:client/core/enums/MessageAction.dart';
 import 'package:client/core/models/chat/chatManager.dart';
 import 'package:client/core/services/message_services.dart';
 import 'package:client/core/services/sse_services.dart';
-import 'package:client/components/messages/message_input_field.dart';
-import 'package:client/components/messages/chat_message.dart';
+import 'package:client/widgets/messages/message_input_field.dart';
+import 'package:client/widgets/messages/chat_message.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../core/models/chat/chatMessage.dart';
@@ -15,6 +15,8 @@ import '../providers/user_provider.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import '../core/enums/MessageType.dart';
 import '../core/models/chat/sendMessageRequest.dart';
+import '../utils/connectivty_utils.dart';
+import '../widgets/banner_message.dart';
 
 class EventChatPage extends StatefulWidget {
   static const String routeName = '/event-chat';
@@ -37,14 +39,13 @@ class _EventChatPageState extends State<EventChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   Event? _event;
+  bool _isConnected = false;
+  bool _showReconnectBanner = false;
 
   @override
   void initState() {
     super.initState();
-    _chatManager = ChatManager(Future.value(
-        Provider.of<UserProvider>(context, listen: false)
-            .currentUser
-            ?.username));
+    _chatManager = ChatManager(Future.value(Provider.of<UserProvider>(context, listen: false).currentUser?.username));
     _sseServices.connectToSse();
     _sseServices.messageStream.listen((messageEvent) async {
       if (messageEvent.type == MessageAction.DELETE.name) {
@@ -58,17 +59,45 @@ class _EventChatPageState extends State<EventChatPage> {
         _scrollToBottom();
       }
     });
-    _loadEvent();
+    _checkConnectivity();
+    ConnectivityUtils.listenConnectivityChanges(
+      onConnected: () {
+        if (!_isConnected) {
+          setState(() {
+            _isConnected = true;
+            _showReconnectBanner = true;
+          });
+          Future.delayed(const Duration(seconds: 5), () {
+            setState(() {
+              _showReconnectBanner = false;
+            });
+          });
+        }
+        _fetchEvent();
+      },
+      onDisconnected: () {
+        _fetchEventOffline();
+        setState(() {
+          _isConnected = false;
+          _showReconnectBanner = true;
+        });
+      },
+    );
   }
 
-  Future<void> _loadEvent() async {
+  void _checkConnectivity() async {
+    _isConnected = await ConnectivityUtils.isConnected();
+    _showReconnectBanner = !_isConnected;
+  }
+
+  Future<void> _fetchEvent() async {
     try {
       final event = await EventServices.getEventDetails(widget.eventId);
       if (!mounted) return;
       setState(() {
         _event = event;
       });
-      _loadMessages();
+      _fetchMessages();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -79,9 +108,44 @@ class _EventChatPageState extends State<EventChatPage> {
     }
   }
 
-  Future<void> _loadMessages() async {
+  Future<void> _fetchEventOffline() async {
+    try {
+      final event = await EventServices.getEventDetailsFromCache(widget.eventId);
+      if (!mounted) return;
+      setState(() {
+        _event = event;
+      });
+      _fetchMessagesOffline();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Erreur lors du chargement de l\'événement.')),
+        );
+      }
+    }
+  }
+
+  Future<void> _fetchMessages() async {
     try {
       final response = await _messageServices.getEventMessages(widget.eventId);
+      final eventMessages = response.data;
+      for (var message in eventMessages) {
+        await _chatManager.addMessageRequest(message);
+      }
+      setState(() {});
+      _scrollToBottom();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Erreur lors du chargement des messages.')),
+      );
+    }
+  }
+
+  Future<void> _fetchMessagesOffline() async {
+    try {
+      final response = await _messageServices.getEventMessagesFromCache(widget.eventId);
       final eventMessages = response.data;
       for (var message in eventMessages) {
         await _chatManager.addMessageRequest(message);
@@ -217,6 +281,11 @@ class _EventChatPageState extends State<EventChatPage> {
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
+            BannerMessage(
+              isVisible: _showReconnectBanner,
+              message: _isConnected ? 'Connexion retrouvée' : 'Hors ligne. Veuillez vérifier votre connexion internet',
+              backgroundColor: _isConnected ? Colors.green : Colors.red,
+            ),
             Expanded(
               child: ListView.builder(
                 controller: _scrollController,

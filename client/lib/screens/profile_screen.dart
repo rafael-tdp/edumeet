@@ -10,6 +10,7 @@ import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/user_services.dart';
 import 'package:client/utils/colors.dart';
+import 'package:client/widgets/profile_button.dart';
 import 'package:client/components/edumeet_button.dart';
 import 'package:client/screens/edit_profile_page.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
@@ -52,11 +53,10 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _fetchUser();
-    ConnectivityUtils.listenConnectivityChanges(() {
-      _fetchUser();
-      setState(() {});
-    });
+    ConnectivityUtils.listenConnectivityChanges(
+        onConnected: () { _fetchUser(); },
+        onDisconnected: () { _fetchUserOffline(); }
+    );
   }
 
   @override
@@ -65,17 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  void _fetchUser() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult.contains(ConnectivityResult.none)) {
-      _loadUserFromCache();
-    } else {
-      _loadUser();
-    }
-    setState(() {});
-  }
-
-  Future<void> _loadUser() async {
+  Future<void> _fetchUser() async {
     try {
       if(widget.userId == null) {
         ResponseRequest response = await _userServices.getUserInfo();
@@ -113,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _loadUserFromCache () async {
+  Future<void> _fetchUserOffline () async {
     try {
       ResponseRequest response = await _userServices.getUserInfoFromCache();
       if (response.success) {
@@ -306,7 +296,7 @@ class _ProfilePageState extends State<ProfilePage> {
               extra: _user,
             );
             if (needsToRefresh == true) {
-              _loadUser();
+              _fetchUser();
             }
           },
         ),

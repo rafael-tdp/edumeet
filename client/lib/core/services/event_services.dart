@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import '../../env/env.dart';
 import 'package:client/core/models/event.dart';
 
+import 'cache_service.dart';
+
 class EventServices {
   static Future<List<Event>> getEvents(
     List<String> subjects,
@@ -64,7 +66,24 @@ class EventServices {
         },
       );
       final events = HttpUtils.decodeResponse(response) as List<dynamic>;
+      await CacheService.saveDataToCache('events', jsonEncode(events.map((event) => event).toList()));
       return events.map((event) => Event.fromJson(event)).toList();
+    } catch (error) {
+      log('An error occurred while retrieving events', error: error);
+      return [];
+    }
+  }
+
+  static Future<List<Event>> getCurrentUserEventsFromCache() async {
+    try {
+      final events = await CacheService.getDataFromCache('events');
+      if (events != null) {
+        var savedEvents = (jsonDecode(events) as List)
+            .map((event) => Event.fromJson(event))
+            .toList();
+        return savedEvents;
+      }
+      return [];
     } catch (error) {
       log('An error occurred while retrieving events', error: error);
       return [];
@@ -87,7 +106,24 @@ class EventServices {
         },
       );
       final events = HttpUtils.decodeResponse(response) as List<dynamic>;
+      await CacheService.saveDataToCache('events', jsonEncode(events.map((event) => event).toList()));
       return events.map((event) => Event.fromJson(event)).toList();
+    } catch (error) {
+      log('An error occurred while retrieving events', error: error);
+      return [];
+    }
+  }
+
+  static Future<List<Event>> getEventsCreatedByCurrentUserFromCache() async {
+    try {
+      final events = await CacheService.getDataFromCache('events');
+      if (events != null) {
+        var savedEvents =  (jsonDecode(events) as List)
+            .map((event) => Event.fromJson(event))
+            .toList();
+        return savedEvents;
+      }
+      return [];
     } catch (error) {
       log('An error occurred while retrieving events', error: error);
       return [];
@@ -110,12 +146,33 @@ class EventServices {
         },
       );
       final event = HttpUtils.decodeResponse(response);
+      await CacheService.saveDataToCache('event_details_$eventId', jsonEncode(event));
       return Event.fromJson(event);
     } catch (error) {
       log('An error occurred while retrieving event details', error: error);
       rethrow;
     }
   }
+
+  static Future<Event> getEventDetailsFromCache(String eventId) async {
+  try {
+    final event = await CacheService.getDataFromCache('event_details_$eventId');
+    if (event != null) {
+      return Event.fromJson(jsonDecode(event));
+    }
+    return Event(
+      id: '',
+      title: '',
+      description: '',
+      startDate: DateTime.now().toIso8601String(),
+      endDate: DateTime.now().toIso8601String(),
+      isPrivate: false,
+    );
+  } catch (error) {
+    log('An error occurred while retrieving event details', error: error);
+    rethrow;
+  }
+}
 
   static Future<Event> getEvent(String eventId) async {
     try {

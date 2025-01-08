@@ -128,6 +128,7 @@ class MessageServices {
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
+
         return ResponseRequest(success: true, data: data.map((e) => MessageRequest.fromJson(e)).toList());
       } else {
         return ResponseRequest(success: false, message: 'Erreur lors de la récupération des messages de l\'événement');
@@ -135,6 +136,21 @@ class MessageServices {
     } catch (e) {
       log("Erreur lors de la récupération des messages de l'événement : $e");
       return ResponseRequest(success: false, message: 'Erreur lors de la récupération des messages de l\'événement');
+    }
+  }
+
+  Future<ResponseRequest> getEventMessagesFromCache(String eventId) async {
+    try {
+      final messages = await CacheService.getDataFromCache('messages-$eventId');
+      if (messages != null) {
+        final List<dynamic> data = jsonDecode(messages);
+        return ResponseRequest(success: true, data: data.map((e) => MessageRequest.fromJson(e)).toList());
+      } else {
+        return ResponseRequest(success: false);
+      }
+    } catch (e) {
+      log("Erreur lors de la récupération des messages hors ligne : $e");
+      return ResponseRequest(success: false, message: 'Erreur lors de la récupération des messages hors ligne');
     }
   }
 
@@ -212,6 +228,7 @@ class MessageServices {
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
+        await CacheService.saveDataToCache('messages-$friendId', jsonEncode(data));
         return ResponseRequest(success: true, data: data.map((e) => MessageRequest.fromJson(e)).toList());
       } else {
         return ResponseRequest(success: false, message: 'Erreur lors de la récupération des messages de l\'événement');
@@ -219,6 +236,21 @@ class MessageServices {
     } catch (e) {
       log("Erreur lors de la récupération des messages de l'événement : $e");
       return ResponseRequest(success: false, message: 'Erreur lors de la récupération des messages de l\'événement');
+    }
+  }
+
+  Future<ResponseRequest> getPrivateMessagesFromCache(String friendId) async {
+    try {
+      final messages = await CacheService.getDataFromCache('messages-$friendId');
+      if (messages != null) {
+        final List<dynamic> data = jsonDecode(messages);
+        return ResponseRequest(success: true, data: data.map((e) => MessageRequest.fromJson(e)).toList());
+      } else {
+        return ResponseRequest(success: false);
+      }
+    } catch (e) {
+      log("Erreur lors de la récupération des messages hors ligne : $e");
+      return ResponseRequest(success: false, message: 'Erreur lors de la récupération des messages hors ligne');
     }
   }
 }

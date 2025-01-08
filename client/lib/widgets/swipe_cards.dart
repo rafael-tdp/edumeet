@@ -11,7 +11,7 @@ import 'package:client/core/services/event_services.dart';
 import 'package:client/core/models/event.dart';
 import 'package:client/core/models/subject.dart';
 import 'package:client/core/services/location_services.dart';
-import 'package:client/components/event/event_filters_dialog.dart';
+import 'package:client/widgets/event/event_filters_dialog.dart';
 
 import '../utils/connectivty_utils.dart';
 
@@ -39,11 +39,17 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
     super.initState();
     _loadSubjects();
     _getLocation();
-    ConnectivityUtils.listenConnectivityChanges(() {
-      _loadSubjects();
-      _getLocation();
-      setState(() {});
-    });
+    ConnectivityUtils.listenConnectivityChanges(
+        onConnected: () {
+          _loadSubjects();
+          _getLocation();
+          setState(() {});
+        },
+        onDisconnected: () {
+          _loadSubjects();
+          _getLocation();
+          setState(() {});
+        });
   }
 
   @override

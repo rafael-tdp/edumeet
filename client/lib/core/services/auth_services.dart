@@ -101,7 +101,6 @@ class AuthServices {
       return ResponseRequest(
           success: true, message: jsonDecode(response.body)['message']);
     } else {
-      // throw Exception('Failed to reset password: ${jsonDecode(response.body)['error']}');
       throw AppException(message: jsonDecode(response.body)['error']);
     }
   }

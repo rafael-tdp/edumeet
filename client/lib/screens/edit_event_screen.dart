@@ -4,7 +4,7 @@ import 'package:client/providers/user_provider.dart';
 import 'package:client/screens/events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:client/components/subjects_selection.dart';
+import 'package:client/widgets/subjects_selection.dart';
 import 'package:client/core/services/event_services.dart';
 import 'package:intl/intl.dart';
 import 'package:client/core/services/adresse_services.dart';

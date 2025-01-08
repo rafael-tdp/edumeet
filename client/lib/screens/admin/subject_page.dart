@@ -3,7 +3,7 @@ import 'package:client/core/models/subject.dart';
 import 'package:client/core/services/subjects_services.dart';
 import 'package:client/screens/admin/admin_page.dart';
 import 'package:flutter/material.dart';
-import 'package:client/components/datatable.dart';
+import 'package:client/widgets/datatable.dart';
 import 'package:client/utils/colors.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/confirmation_dialog.dart';

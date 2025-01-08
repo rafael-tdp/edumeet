@@ -6,6 +6,7 @@ import 'package:flutter_client_sse/flutter_client_sse.dart';
 import '../../env/env.dart';
 import '../models/chat/messageEvent.dart';
 import '../models/chat/messagePrivate.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 
 class SseServices {
@@ -17,6 +18,12 @@ class SseServices {
   Stream<dynamic> get messageStream => _messageStreamController.stream;
 
   Future<void> connectToSse() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult.contains(ConnectivityResult.none)) {
+      print("No internet connection. SSE connection not attempted.");
+      return;
+    }
+
     final token = await _authServices.getToken();
     _sseSubscription = SSEClient.subscribeToSSE(
       method: SSERequestType.GET,

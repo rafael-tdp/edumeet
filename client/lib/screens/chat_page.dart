@@ -1,7 +1,7 @@
 import 'package:dice_bear/dice_bear.dart';
 import 'package:flutter/material.dart';
-import 'package:client/components/messages/chat_message.dart';
-import 'package:client/components/messages/message_input_field.dart';
+import 'package:client/widgets/messages/chat_message.dart';
+import 'package:client/widgets/messages/message_input_field.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
@@ -13,6 +13,8 @@ import '../core/models/chat/sendMessageRequest.dart';
 import '../core/services/message_services.dart';
 import '../core/services/sse_services.dart';
 import '../providers/user_provider.dart';
+import '../utils/connectivty_utils.dart';
+import '../widgets/banner_message.dart';
 
 class ChatPage extends StatefulWidget {
   static const String routeName = '/private-chat';
@@ -35,6 +37,8 @@ class _ChatPageState extends State<ChatPage> {
   late final ChatManager _chatManager;
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  bool _isConnected = false;
+  bool _showReconnectBanner = false;
 
   @override
   void initState() {
@@ -52,12 +56,56 @@ class _ChatPageState extends State<ChatPage> {
         _scrollToBottom();
       }
     });
-    _loadMessages();
+    _checkConnectivity();
+    ConnectivityUtils.listenConnectivityChanges(
+      onConnected: () {
+        if (!_isConnected) {
+          setState(() {
+            _isConnected = true;
+            _showReconnectBanner = true;
+          });
+          Future.delayed(const Duration(seconds: 5), () {
+            setState(() {
+              _showReconnectBanner = false;
+            });
+          });
+        }
+        _fetchMessages();
+      },
+      onDisconnected: () {
+        _fetchMessagesOffline();
+        setState(() {
+          _isConnected = false;
+          _showReconnectBanner = true;
+        });
+      },
+    );
   }
 
-  Future<void> _loadMessages() async {
+  void _checkConnectivity() async {
+    _isConnected = await ConnectivityUtils.isConnected();
+    _showReconnectBanner = !_isConnected;
+  }
+
+  Future<void> _fetchMessages() async {
     try {
       final response = await _messageServices.getPrivateMessages(widget.friendId);
+      final eventMessages = response.data;
+      for (var message in eventMessages) {
+        await _chatManager.addMessageRequest(message);
+      }
+      setState(() {});
+      _scrollToBottom();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erreur lors du chargement des messages.')),
+      );
+    }
+  }
+
+  Future<void> _fetchMessagesOffline() async {
+    try {
+      final response = await _messageServices.getPrivateMessagesFromCache(widget.friendId);
       final eventMessages = response.data;
       for (var message in eventMessages) {
         await _chatManager.addMessageRequest(message);
@@ -168,6 +216,11 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: Column(
         children: [
+          BannerMessage(
+            isVisible: _showReconnectBanner,
+            message: _isConnected ? 'Connexion retrouvée' : 'Hors ligne. Veuillez vérifier votre connexion internet',
+            backgroundColor: _isConnected ? Colors.green : Colors.red,
+          ),
           Expanded(
             child: ListView.builder(
               controller: _scrollController,

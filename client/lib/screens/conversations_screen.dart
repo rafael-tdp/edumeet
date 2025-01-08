@@ -39,11 +39,15 @@ class _ConversationsPageState extends State<ConversationsPage> {
   @override
   void initState() {
     super.initState();
-    _fetchConversations();
-    ConnectivityUtils.listenConnectivityChanges(() {
-      _fetchConversations();
-      setState(() {});
-    });
+    // _fetchConversations();
+    // ConnectivityUtils.listenConnectivityChanges(() {
+    //   _fetchConversations();
+    //   setState(() {});
+    // });
+    ConnectivityUtils.listenConnectivityChanges(
+        onConnected: () { _fetchConversations(); },
+        onDisconnected: () { _fetchConversationsOffline(); }
+    );
   }
 
   @override
@@ -52,15 +56,25 @@ class _ConversationsPageState extends State<ConversationsPage> {
     super.dispose();
   }
 
-  void _fetchConversations() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult.contains(ConnectivityResult.none)) {
-      _conversationsFuture = _messageServices.getConversationFromCache();
-    } else {
-      _conversationsFuture = _messageServices.getConversations();
-    }
+  Future<void> _fetchConversations() async {
+    _conversationsFuture = _messageServices.getConversations();
     setState(() {});
   }
+
+  Future<void> _fetchConversationsOffline() async {
+    _conversationsFuture = _messageServices.getConversationFromCache();
+    setState(() {});
+  }
+
+  // void _fetchConversations() async {
+  //   var connectivityResult = await Connectivity().checkConnectivity();
+  //   if (connectivityResult.contains(ConnectivityResult.none)) {
+  //     _conversationsFuture = _messageServices.getConversationFromCache();
+  //   } else {
+  //     _conversationsFuture = _messageServices.getConversations();
+  //   }
+  //   setState(() {});
+  // }
 
   void _filterConversations(String query) {
     if (query.isEmpty) {

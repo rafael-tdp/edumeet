@@ -35,11 +35,18 @@ class _FriendsListPageState extends State<FriendsListPage> {
   @override
   void initState() {
     super.initState();
-      _loadFriends();
-    ConnectivityUtils.listenConnectivityChanges(() {
-      _loadFriends();
-      setState(() {});
+      _fetchFriends();
+    ConnectivityUtils.isConnected().then((isConnected) {
+      if (isConnected) {
+        _fetchFriends();
+      } else {
+        _fetchFriendsOffline();
+      }
     });
+    ConnectivityUtils.listenConnectivityChanges(
+        onConnected: () { _fetchFriends(); },
+        onDisconnected: () { _fetchFriendsOffline(); }
+    );
   }
 
   @override
@@ -48,15 +55,28 @@ class _FriendsListPageState extends State<FriendsListPage> {
     super.dispose();
   }
 
-  Future<void> _loadFriends() async {
-    var response = null;
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult.contains(ConnectivityResult.none)) {
-      _isLoading = true;
-      response = await _userServices.getUserFriendsFromCache();
+  Future<void> _fetchFriends() async {
+    final response = await _userServices.getUserFriends();
+    if (response.success) {
+      setState(() {
+        _friends = response.data;
+        _isLoading = false;
+      });
     } else {
-      response = await _userServices.getUserFriends();
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(t.error.general),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
+  }
+
+  Future<void> _fetchFriendsOffline() async {
+    final response = await _userServices.getUserFriendsFromCache();
     if (response.success) {
       setState(() {
         _friends = response.data;
@@ -78,7 +98,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   Future<void> _acceptFriendRequest(String friendId) async {
     final response = await _friendsServices.acceptFriendRequest(friendId);
     if (response.success) {
-      _loadFriends();
+      _fetchFriends();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -92,7 +112,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   Future<void> _declineFriendRequest(String friendId) async {
     final response = await _friendsServices.declineFriendRequest(friendId);
     if (response.success) {
-      _loadFriends();
+      _fetchFriends();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -106,7 +126,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
   Future<void> _deleteFriendRequest(String friendId) async {
     final response = await _friendsServices.declineFriendRequest(friendId);
     if (response.success) {
-      _loadFriends();
+      _fetchFriends();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

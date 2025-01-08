@@ -7,16 +7,17 @@ import 'package:client/screens/edit_event_screen.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:client/core/services/event_services.dart';
-import 'package:client/components/event/event_header.dart';
-import 'package:client/components/event/participants_list.dart';
-import 'package:client/components/event/messages_preview.dart';
+import 'package:client/widgets/event/event_header.dart';
+import 'package:client/widgets/event/participants_list.dart';
+import 'package:client/widgets/event/messages_preview.dart';
 import 'package:client/screens/event_chat_page.dart';
-import 'package:client/components/event/resources_section.dart';
-import 'package:client/components/event/event_details_section.dart';
+import 'package:client/widgets/event/resources_section.dart';
+import 'package:client/widgets/event/event_details_section.dart';
 import 'package:go_router/go_router.dart';
 import 'package:client/components/confirmation_dialog.dart';
 
 import '../utils/connectivty_utils.dart';
+import '../widgets/banner_message.dart';
 import 'events_screen.dart';
 
 class EventDetailsPage extends StatefulWidget {
@@ -44,9 +45,11 @@ class EventDetailsPage extends StatefulWidget {
 class _EventDetailsPageState extends State<EventDetailsPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isAppBarExpanded = false;
-  late Future<Event> _eventFuture;
+  Future<Event>? _eventFuture;
   late bool isCurrentUserEvent;
   bool shouldRefresh = false;
+  bool _isConnected = false;
+  bool _showReconnectBanner = false;
 
   @override
   void initState() {
@@ -60,17 +63,51 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         });
       }
     });
+    _checkConnectivity();
+    ConnectivityUtils.listenConnectivityChanges(
+      onConnected: () {
+        if (!_isConnected) {
+          setState(() {
+            _isConnected = true;
+            _showReconnectBanner = true;
+          });
+          Future.delayed(const Duration(seconds: 5), () {
+            setState(() {
+              _showReconnectBanner = false;
+            });
+          });
+        }
+        _fetchEvent();
+      },
+      onDisconnected: () {
+        _fetchEventOffline();
+        setState(() {
+          _isConnected = false;
+          _showReconnectBanner = true;
+        });
+      },
+    );
+  }
+
+  void _checkConnectivity() async {
+    _isConnected = await ConnectivityUtils.isConnected();
+    _showReconnectBanner = !_isConnected;
+  }
+
+  void _fetchEvent() {
     _eventFuture = EventServices.getEventDetails(widget.eventId).then((event) {
       isCurrentUserEvent = event.createdBy == widget.currentUser.id;
       return event;
     });
-    ConnectivityUtils.listenConnectivityChanges(() {
-      _eventFuture = EventServices.getEventDetails(widget.eventId).then((event) {
-        isCurrentUserEvent = event.createdBy == widget.currentUser.id;
-        return event;
-      });
-      setState(() {});
+    setState(() {});
+  }
+
+  void _fetchEventOffline() {
+    _eventFuture = EventServices.getEventDetailsFromCache(widget.eventId).then((event) {
+      isCurrentUserEvent = event.createdBy == widget.currentUser.id;
+      return event;
     });
+    setState(() {});
   }
 
   @override
@@ -81,24 +118,150 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   }
 
   void _navigateToChat(BuildContext context, Event event) {
-    // Navigator.of(context).push(
-    //   PageRouteBuilder(
-    //     transitionDuration: const Duration(milliseconds: 150),
-    //     reverseTransitionDuration: const Duration(milliseconds: 150),
-    //     pageBuilder: (context, animation, secondaryAnimation) {
-    //       EventChatPage.navigateTo(context, event.id!);
-    //       return SlideTransition(
-    //         position: Tween<Offset>(
-    //           begin: const Offset(1.0, 0.0),
-    //           end: Offset.zero,
-    //         ).animate(animation),
-    //         child:
-    //         EventChatPage(eventId: event.id!),
-    //       );
-    //     },
-    //   ),
-    // );
     EventChatPage.navigateTo(context, event.id!);
+  }
+
+  Widget _buildNoEventFound() {
+    return const Center(
+        child: Text('Aucun évenement trouvée'));
+  }
+
+  Widget _buildEvent(Event event, String? currentParticipantId) {
+    return Column(
+      children: [
+        EventDetailsSection(
+          eventDate: event.startDate,
+          address: event.physicalEvent?['location'],
+          link: event.remoteEvent?['url'],
+          code: isCurrentUserEvent ? event.code : null,
+        ),
+        const SizedBox(height: 20),
+        AnimatedOpacity(
+          opacity: 1.0,
+          duration: const Duration(milliseconds: 500),
+          child: ParticipantsList(
+            participants: event.participants ?? const [],
+            isCurrentUserEvent: isCurrentUserEvent,
+          ),
+        ),
+        const SizedBox(height: 20),
+        AnimatedOpacity(
+          opacity: 1.0,
+          duration: const Duration(milliseconds: 500),
+          child: MessagesPreview(
+            messages: event.lastMessages ?? const [],
+            onSeeAllMessages: () => _navigateToChat(context, event),
+          ),
+        ),
+        const SizedBox(height: 20),
+        ResourcesSection(
+          resources: event.documents ?? const [],
+          eventId: event.id!,
+        ),
+        const SizedBox(height: 20),
+        // Leave button
+        if (!isCurrentUserEvent)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: GestureDetector(
+                onTap: () async {
+
+                  final bool? confirmed =
+                  await ConfirmationDialog.show(
+                    context,
+                    title: "Quitter l'événement",
+                    message:
+                    "Êtes-vous sûr de vouloir quitter cet événement ? Cette action est irréversible.",
+                    confirmText: "Quitter",
+                    cancelText: "Annuler",
+                    confirmColor: Colors.red,
+                    icon: Icons.warning,
+                  );
+
+                  if (confirmed != true) return;
+
+                  if (currentParticipantId == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Participant introuvable.'),
+                      ),
+                    );
+                    return;
+                  }
+
+                  EventServices.leaveEvent(currentParticipantId)
+                      .then((_) {
+                    if (!mounted) return;
+                    EventsPage.navigateTo(context);
+                  }).catchError((e) {
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Erreur: ${e.toString()}'),
+                      ),
+                    );
+                  });
+                },
+                child: const Text(
+                  "Quitter l'événement",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+        // Delete button
+        if (isCurrentUserEvent)
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: GestureDetector(
+                onTap: () async {
+                  final bool? confirmed =
+                  await ConfirmationDialog.show(
+                    context,
+                    title: "Supprimer l'événement",
+                    message:
+                    "Êtes-vous sûr de vouloir supprimer cet événement ? Cette action est irréversible.",
+                    confirmText: "Supprimer",
+                    cancelText: "Annuler",
+                    confirmColor: Colors.red,
+                    icon: Icons.warning,
+                  );
+
+                  if (confirmed != true) return;
+
+                  EventServices.deleteEvent(event.id!).then((_) {
+                    if (!mounted) return;
+                    EventsPage.navigateTo(context);
+                  }).catchError((e) {
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Erreur: ${e.toString()}'),
+                      ),
+                    );
+                  });
+                },
+                child: const Text(
+                  "Supprimer l'événement",
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        const SizedBox(height: 20),
+      ],
+    );
   }
 
   @override
@@ -119,27 +282,32 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
           }
 
           final event = snapshot.data!;
+          String? currentParticipantId;
 
-          final currentParticipantId = event.participants!.firstWhere(
-              (participant) =>
-                  participant['user']['id'] == widget.currentUser.id,
-              orElse: () => null)?['id'];
+          if (!event.id!.isEmpty) {
+            currentParticipantId = event.participants!.firstWhere(
+                (participant) =>
+                    participant['user']['id'] == widget.currentUser.id,
+                orElse: () => null)?['id'];
+          }
 
           return CustomScrollView(
             controller: _scrollController,
             slivers: [
               SliverAppBar(
                 expandedHeight: 350,
-                flexibleSpace: FlexibleSpaceBar(
+                flexibleSpace:
+                    event.id!.isNotEmpty ?
+                FlexibleSpaceBar(
                   background: EventHeader(
                     date: event.startDate,
                     image: event.image ??
                         'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dHJhdmFpbHxlbnwwfHwwfHx8Mg%3D%3D',
-                    title: event.title,
-                    description: event.description,
-                    participantsCount: event.participantsCount!,
+                    title: event.title ?? '',
+                    description: event.description ?? '',
+                    participantsCount: event.participantsCount ?? 0,
                   ),
-                ),
+                ) : null,
                 pinned: true,
                 backgroundColor: Colors.white,
                 leading: IconButton(
@@ -178,138 +346,16 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 20),
-                    EventDetailsSection(
-                      eventDate: event.startDate,
-                      address: event.physicalEvent?['location'],
-                      link: event.remoteEvent?['url'],
-                      code: isCurrentUserEvent ? event.code : null,
+                    BannerMessage(
+                      isVisible: _showReconnectBanner,
+                      message: _isConnected ? 'Connexion retrouvée' : 'Hors ligne. Veuillez vérifier votre connexion internet',
+                      backgroundColor: _isConnected ? Colors.green : Colors.red,
                     ),
-                    const SizedBox(height: 20),
-                    AnimatedOpacity(
-                      opacity: 1.0,
-                      duration: const Duration(milliseconds: 500),
-                      child: ParticipantsList(
-                        participants: event.participants ?? const [],
-                        isCurrentUserEvent: isCurrentUserEvent,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    AnimatedOpacity(
-                      opacity: 1.0,
-                      duration: const Duration(milliseconds: 500),
-                      child: MessagesPreview(
-                        messages: event.lastMessages ?? const [],
-                        onSeeAllMessages: () => _navigateToChat(context, event),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    ResourcesSection(
-                      resources: event.documents ?? const [],
-                      eventId: event.id!,
-                    ),
-                    const SizedBox(height: 20),
-                    // Leave button
-                    if (!isCurrentUserEvent)
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: GestureDetector(
-                            onTap: () async {
-
-                              final bool? confirmed =
-                                  await ConfirmationDialog.show(
-                                context,
-                                title: "Quitter l'événement",
-                                message:
-                                    "Êtes-vous sûr de vouloir quitter cet événement ? Cette action est irréversible.",
-                                confirmText: "Quitter",
-                                cancelText: "Annuler",
-                                confirmColor: Colors.red,
-                                icon: Icons.warning,
-                              );
-
-                              if (confirmed != true) return;
-
-                              if (currentParticipantId == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Participant introuvable.'),
-                                  ),
-                                );
-                                return;
-                              }
-
-                              EventServices.leaveEvent(currentParticipantId)
-                                  .then((_) {
-                                if (!mounted) return;
-                                EventsPage.navigateTo(context);
-                              }).catchError((e) {
-                                if (!mounted) return;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Erreur: ${e.toString()}'),
-                                  ),
-                                );
-                              });
-                            },
-                            child: const Text(
-                              "Quitter l'événement",
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                    // Delete button
-                    if (isCurrentUserEvent)
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: GestureDetector(
-                            onTap: () async {
-                              final bool? confirmed =
-                                  await ConfirmationDialog.show(
-                                context,
-                                title: "Supprimer l'événement",
-                                message:
-                                    "Êtes-vous sûr de vouloir supprimer cet événement ? Cette action est irréversible.",
-                                confirmText: "Supprimer",
-                                cancelText: "Annuler",
-                                confirmColor: Colors.red,
-                                icon: Icons.warning,
-                              );
-
-                              if (confirmed != true) return;
-
-                              EventServices.deleteEvent(event.id!).then((_) {
-                                if (!mounted) return;
-                                EventsPage.navigateTo(context);
-                              }).catchError((e) {
-                                if (!mounted) return;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Erreur: ${e.toString()}'),
-                                  ),
-                                );
-                              });
-                            },
-                            child: const Text(
-                              "Supprimer l'événement",
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 20),
+                    //si event.id est vide, on affiche un message d'erreur
+                    if (event.id!.isEmpty)
+                      _buildNoEventFound(),
+                    if (event.id!.isNotEmpty)
+                      _buildEvent(event, currentParticipantId),
                   ],
                 ),
               ),

@@ -24,7 +24,6 @@ class _EventsMapsScreenState extends State<EventsMapsScreen> {
   Set<Marker> markers = {};
   late LocationData _userLocation;
   bool _isLoading = true;
-  bool _isConnected = true;
   bool _hasError = false;
 
   Future<LatLng> _getUserLocation() async {
@@ -70,21 +69,9 @@ class _EventsMapsScreenState extends State<EventsMapsScreen> {
   @override
   void initState() {
     super.initState();
-    _checkConnectivityAndLoadData();
-  }
-
-  Future<void> _checkConnectivityAndLoadData() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult.contains(ConnectivityResult.none)) {
-      setState(() {
-        _isConnected = false;
-        _isLoading = false;
-      });
-    } else {
-      _getUserLocation().then((_) => {
-        _loadEvents()
-      });
-    }
+    _getUserLocation().then((_) => {
+      _loadEvents()
+    });
   }
 
   @override
@@ -97,8 +84,6 @@ class _EventsMapsScreenState extends State<EventsMapsScreen> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
-    } else if (!_isConnected) {
-      return Container(padding: const EdgeInsets.symmetric(horizontal: 50), child: const Center(child: Text('Une connexion internet est nécessaire pour afficher les événements sur la carte', textAlign: TextAlign.center)));
     } else if (_hasError) {
       return Center(child: Text(t.error.general));
     } else {
