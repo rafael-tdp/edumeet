@@ -31,7 +31,18 @@
     "loadingIndicator": "Ładowanie...",
     "errorOccurred": "Wystąpił błąd",
     "backTo": "Powrót do ",
-    "unknown": "Nieznane"
+    "unknown": "Nieznane",
+    "favoriteDocuments": "Ulubione dokumenty",
+    "offlineVerifyConnection": "Sprawdź swoje połączenie internetowe",
+    "reconnect": "Połączenie odzyskane",
+    "friendlist": "Lista znajomych",
+    "friends": "Znajomi",
+    "conversations": "Rozmowy",
+    "eventspending": "Oczekujące wydarzenia",
+    "eventsincoming": "Nadchodzące wydarzenia",
+    "eventspast": "Minione wydarzenia",
+    "list": "Lista",
+    "map": "Mapa"
   },
   "user": {
     "email": "Email",

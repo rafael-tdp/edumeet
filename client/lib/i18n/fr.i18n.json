@@ -31,7 +31,18 @@
     "loadingIndicator": "Chargement...",
     "errorOccurred": "Une erreur est survenue",
     "backTo": "Retour à ",
-    "unknown": "Inconnu"
+    "unknown": "Inconnu",
+    "favoriteDocuments": "Documents Favoris",
+    "offlineVerifyConnection": "Hors ligne. Veuillez vérifier votre connexion internet",
+    "reconnect": "Connexion retrouvée",
+    "friendlist": "Liste d'amis",
+    "friends": "Amis",
+    "conversations": "Conversations",
+    "eventspending": "Événements en attente",
+    "eventsincoming": "Événements à venir",
+    "eventspast": "Événements passés",
+    "list": "Liste",
+    "map": "Carte"
   },
   "user": {
     "email": "Email",

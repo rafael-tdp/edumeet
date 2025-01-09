@@ -287,10 +287,10 @@ class _EventsPageState extends State<EventsPage> {
           return ListView(
             children: [
               if (pendingEvents.isNotEmpty) ...[
-                const Padding(
+                Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(
-                    "Événements en attente",
+                    t.app.eventspending,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -323,10 +323,10 @@ class _EventsPageState extends State<EventsPage> {
                 ),
               ],
               if (upcomingEvents.isNotEmpty) ...[
-                const Padding(
+                Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(
-                    "Événements à venir",
+                    t.app.eventsincoming,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -347,10 +347,10 @@ class _EventsPageState extends State<EventsPage> {
                 }).toList(),
               ],
               if (pastEvents.isNotEmpty) ...[
-                const Padding(
+                Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(
-                    "Événements passés",
+                    t.app.eventspast,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),

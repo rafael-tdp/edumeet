@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:client/core/models/document.dart';
 import 'package:client/core/services/document_services.dart';
 
+import '../i18n/generated/translations.g.dart';
+
 class FavoriteDocumentsPage extends StatefulWidget {
   const FavoriteDocumentsPage({Key? key}) : super(key: key);
   static const String routeName = '/favorite-documents';
@@ -69,7 +71,7 @@ class _FavoriteDocumentsPageState extends State<FavoriteDocumentsPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: const Text('Documents favoris'),
+        title: Text(t.app.favoriteDocuments),
       ),
       body: isLoading
           ? const Center(

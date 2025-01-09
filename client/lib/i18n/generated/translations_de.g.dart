@@ -91,6 +91,17 @@ class _TranslationsAppDe implements TranslationsAppFr {
 	@override String get errorOccurred => 'Ein Fehler ist aufgetreten';
 	@override String get backTo => 'Zurück zu ';
 	@override String get unknown => 'Unbekannt';
+	@override String get favoriteDocuments => 'Favorisierte Dokumente';
+	@override String get offlineVerifyConnection => 'Überprüfen Sie Ihre Internetverbindung';
+	@override String get reconnect => 'Verbindung wiederhergestellt';
+	@override String get friendlist => 'Freundesliste';
+	@override String get friends => 'Freunde';
+	@override String get conversations => 'Unterhaltungen';
+	@override String get eventspending => 'Ausstehende Ereignisse';
+	@override String get eventsincoming => 'Kommende Ereignisse';
+	@override String get eventspast => 'Vergangene Ereignisse';
+	@override String get list => 'Liste';
+	@override String get map => 'Karte';
 }
 
 // Path: user
@@ -461,6 +472,17 @@ extension on TranslationsDe {
 			case 'app.errorOccurred': return 'Ein Fehler ist aufgetreten';
 			case 'app.backTo': return 'Zurück zu ';
 			case 'app.unknown': return 'Unbekannt';
+			case 'app.favoriteDocuments': return 'Favorisierte Dokumente';
+			case 'app.offlineVerifyConnection': return 'Überprüfen Sie Ihre Internetverbindung';
+			case 'app.reconnect': return 'Verbindung wiederhergestellt';
+			case 'app.friendlist': return 'Freundesliste';
+			case 'app.friends': return 'Freunde';
+			case 'app.conversations': return 'Unterhaltungen';
+			case 'app.eventspending': return 'Ausstehende Ereignisse';
+			case 'app.eventsincoming': return 'Kommende Ereignisse';
+			case 'app.eventspast': return 'Vergangene Ereignisse';
+			case 'app.list': return 'Liste';
+			case 'app.map': return 'Karte';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Benutzername';
 			case 'user.name': return 'Name';

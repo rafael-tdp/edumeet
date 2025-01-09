@@ -62,12 +62,14 @@ class EventHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              Text(
-                description,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70,
-                ),
+              Wrap(
+                children: [Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white70,
+                  ),
+                )]
               ),
               const SizedBox(height: 10),
               Row(

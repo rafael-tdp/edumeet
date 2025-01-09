@@ -91,6 +91,17 @@ class _TranslationsAppNl implements TranslationsAppFr {
 	@override String get errorOccurred => 'Er is een fout opgetreden';
 	@override String get backTo => 'Terug naar ';
 	@override String get unknown => 'Onbekend';
+	@override String get favoriteDocuments => 'Favoriete documenten';
+	@override String get offlineVerifyConnection => 'Controleer uw internetverbinding';
+	@override String get reconnect => 'Verbinding hersteld';
+	@override String get friendlist => 'Vriendenlijst';
+	@override String get friends => 'Vrienden';
+	@override String get conversations => 'Gesprekken';
+	@override String get eventspending => 'In afwachting van evenementen';
+	@override String get eventsincoming => 'Komende evenementen';
+	@override String get eventspast => 'Verlopen evenementen';
+	@override String get list => 'Lijst';
+	@override String get map => 'Kaart';
 }
 
 // Path: user
@@ -461,6 +472,17 @@ extension on TranslationsNl {
 			case 'app.errorOccurred': return 'Er is een fout opgetreden';
 			case 'app.backTo': return 'Terug naar ';
 			case 'app.unknown': return 'Onbekend';
+			case 'app.favoriteDocuments': return 'Favoriete documenten';
+			case 'app.offlineVerifyConnection': return 'Controleer uw internetverbinding';
+			case 'app.reconnect': return 'Verbinding hersteld';
+			case 'app.friendlist': return 'Vriendenlijst';
+			case 'app.friends': return 'Vrienden';
+			case 'app.conversations': return 'Gesprekken';
+			case 'app.eventspending': return 'In afwachting van evenementen';
+			case 'app.eventsincoming': return 'Komende evenementen';
+			case 'app.eventspast': return 'Verlopen evenementen';
+			case 'app.list': return 'Lijst';
+			case 'app.map': return 'Kaart';
 			case 'user.email': return 'E-mail';
 			case 'user.username': return 'Gebruikersnaam';
 			case 'user.name': return 'Naam';

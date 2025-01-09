@@ -31,7 +31,18 @@
     "loadingIndicator": "Laden...",
     "errorOccurred": "Er is een fout opgetreden",
     "backTo": "Terug naar ",
-    "unknown": "Onbekend"
+    "unknown": "Onbekend",
+    "favoriteDocuments": "Favoriete documenten",
+    "offlineVerifyConnection": "Controleer uw internetverbinding",
+    "reconnect": "Verbinding hersteld",
+    "friendlist": "Vriendenlijst",
+    "friends": "Vrienden",
+    "conversations": "Gesprekken",
+    "eventspending": "In afwachting van evenementen",
+    "eventsincoming": "Komende evenementen",
+    "eventspast": "Verlopen evenementen",
+    "list": "Lijst",
+    "map": "Kaart"
   },
   "user": {
     "email": "E-mail",

@@ -31,7 +31,18 @@
     "loadingIndicator": "Loading...",
     "errorOccurred": "An error occurred",
     "backTo": "Back to ",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "favoriteDocuments": "Favorite Documents",
+    "offlineVerifyConnection": "Check your Internet connection",
+    "reconnect": "Connection restored",
+    "friendlist": "Friends List",
+    "friends": "Friends",
+    "conversations": "Conversations",
+    "eventspending": "Pending Events",
+    "eventsincoming": "Upcoming Events",
+    "eventspast": "Past Events",
+    "list": "List",
+    "map": "Map"
   },
   "user": {
     "email": "Email",

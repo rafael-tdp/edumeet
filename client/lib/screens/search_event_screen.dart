@@ -1,3 +1,4 @@
+import 'package:client/i18n/generated/translations.g.dart';
 import 'package:client/screens/events_maps_screen.dart';
 import 'package:client/widgets/no_internet_connection.dart';
 import 'package:flutter/material.dart';
@@ -71,10 +72,10 @@ class _SearchEventPageState extends State<SearchEventPage> {
                 ),
               ),
             ),
-            bottom: const TabBar(
+            bottom: TabBar(
               tabs: [
-                Tab(text: 'Liste'),
-                Tab(text: 'Carte'),
+                Tab(text: t.app.list),
+                Tab(text: t.app.map),
               ],
             ),
           ),

@@ -65,6 +65,7 @@ class EventServices {
         },
       );
       final events = HttpUtils.decodeResponse(response) as List<dynamic>;
+      await CacheService.saveDataToCache('events', jsonEncode(events));
       return events.map((event) => Event.fromJson(event)).toList();
     } catch (error) {
       log('An error occurred while retrieving events', error: error);
@@ -104,6 +105,7 @@ class EventServices {
         },
       );
       final events = HttpUtils.decodeResponse(response) as List<dynamic>;
+      await CacheService.saveDataToCache('events', jsonEncode(events));
       return events.map((event) => Event.fromJson(event)).toList();
     } catch (error) {
       log('An error occurred while retrieving events', error: error);
@@ -143,6 +145,7 @@ class EventServices {
         },
       );
       final event = HttpUtils.decodeResponse(response);
+      await CacheService.saveDataToCache('event_details_$eventId', jsonEncode(event));
       return Event.fromJson(event);
     } catch (error) {
       log('An error occurred while retrieving event details', error: error);

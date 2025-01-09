@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../core/models/chat/chatMessage.dart';
 import '../core/services/event_services.dart';
+import '../i18n/generated/translations.g.dart';
 import '../providers/user_provider.dart';
 import 'package:client/utils/date_utils.dart' as custom_date_utils;
 import '../core/enums/MessageType.dart';
@@ -283,7 +284,7 @@ class _EventChatPageState extends State<EventChatPage> {
           children: [
             BannerMessage(
               isVisible: _showReconnectBanner,
-              message: _isConnected ? 'Connexion retrouvée' : 'Hors ligne. Veuillez vérifier votre connexion internet',
+              message: _isConnected ? t.app.offlineVerifyConnection : t.app.offlineVerifyConnection,
               backgroundColor: _isConnected ? Colors.green : Colors.red,
             ),
             Expanded(

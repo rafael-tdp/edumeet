@@ -146,7 +146,7 @@ class _FriendsListPageState extends State<FriendsListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Liste d'amis"),
+        title: Text(t.app.friendlist),
         backgroundColor: Colors.transparent,
       ),
       backgroundColor: Colors.white,

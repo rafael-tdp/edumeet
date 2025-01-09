@@ -31,7 +31,18 @@
     "loadingIndicator": "Laddar...",
     "errorOccurred": "Ett fel har inträffat",
     "backTo": "Tillbaka till ",
-    "unknown": "Okänd"
+    "unknown": "Okänd",
+    "favoriteDocuments": "Favoritdokument",
+    "offlineVerifyConnection": "Kontrollera din internetanslutning",
+    "reconnect": "Anslutning återfunnen",
+    "friendlist": "Vänlista",
+    "friends": "Vänner",
+    "conversations": "Konversationer",
+    "eventspending": "Väntande evenemang",
+    "eventsincoming": "Kommande evenemang",
+    "eventspast": "Tidigare evenemang",
+    "list": "Lista",
+    "map": "Karta"
   },
   "user": {
     "email": "E-post",

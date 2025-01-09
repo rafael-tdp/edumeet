@@ -348,7 +348,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                   children: [
                     BannerMessage(
                       isVisible: _showReconnectBanner,
-                      message: _isConnected ? 'Connexion retrouvée' : 'Hors ligne. Veuillez vérifier votre connexion internet',
+                      message: _isConnected ? t.app.offlineVerifyConnection : t.app.offlineVerifyConnection,
                       backgroundColor: _isConnected ? Colors.green : Colors.red,
                     ),
                     //si event.id est vide, on affiche un message d'erreur

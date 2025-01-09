@@ -91,6 +91,17 @@ class _TranslationsAppPl implements TranslationsAppFr {
 	@override String get errorOccurred => 'Wystąpił błąd';
 	@override String get backTo => 'Powrót do ';
 	@override String get unknown => 'Nieznane';
+	@override String get favoriteDocuments => 'Ulubione dokumenty';
+	@override String get offlineVerifyConnection => 'Sprawdź swoje połączenie internetowe';
+	@override String get reconnect => 'Połączenie odzyskane';
+	@override String get friendlist => 'Lista znajomych';
+	@override String get friends => 'Znajomi';
+	@override String get conversations => 'Rozmowy';
+	@override String get eventspending => 'Oczekujące wydarzenia';
+	@override String get eventsincoming => 'Nadchodzące wydarzenia';
+	@override String get eventspast => 'Minione wydarzenia';
+	@override String get list => 'Lista';
+	@override String get map => 'Mapa';
 }
 
 // Path: user
@@ -461,6 +472,17 @@ extension on TranslationsPl {
 			case 'app.errorOccurred': return 'Wystąpił błąd';
 			case 'app.backTo': return 'Powrót do ';
 			case 'app.unknown': return 'Nieznane';
+			case 'app.favoriteDocuments': return 'Ulubione dokumenty';
+			case 'app.offlineVerifyConnection': return 'Sprawdź swoje połączenie internetowe';
+			case 'app.reconnect': return 'Połączenie odzyskane';
+			case 'app.friendlist': return 'Lista znajomych';
+			case 'app.friends': return 'Znajomi';
+			case 'app.conversations': return 'Rozmowy';
+			case 'app.eventspending': return 'Oczekujące wydarzenia';
+			case 'app.eventsincoming': return 'Nadchodzące wydarzenia';
+			case 'app.eventspast': return 'Minione wydarzenia';
+			case 'app.list': return 'Lista';
+			case 'app.map': return 'Mapa';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Nazwa użytkownika';
 			case 'user.name': return 'Nazwisko';

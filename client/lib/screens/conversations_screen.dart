@@ -107,7 +107,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: const Text('Conversations'),
+        title: Text(t.app.conversations),
       ),
       body: Column(
         children: [

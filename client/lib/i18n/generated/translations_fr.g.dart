@@ -95,6 +95,17 @@ class TranslationsAppFr {
 	String get errorOccurred => 'Une erreur est survenue';
 	String get backTo => 'Retour à ';
 	String get unknown => 'Inconnu';
+	String get favoriteDocuments => 'Documents Favoris';
+	String get offlineVerifyConnection => 'Vérifiez votre connexion Internet';
+	String get reconnect => 'Connexion retrouvée';
+	String get friendlist => 'Liste d\'amis';
+	String get friends => 'Amis';
+	String get conversations => 'Conversations';
+	String get eventspending => 'Événements en attente';
+	String get eventsincoming => 'Événements à venir';
+	String get eventspast => 'Événements passés';
+	String get list => 'Liste';
+	String get map => 'Carte';
 }
 
 // Path: user
@@ -464,6 +475,17 @@ extension on Translations {
 			case 'app.errorOccurred': return 'Une erreur est survenue';
 			case 'app.backTo': return 'Retour à ';
 			case 'app.unknown': return 'Inconnu';
+			case 'app.favoriteDocuments': return 'Documents Favoris';
+			case 'app.offlineVerifyConnection': return 'Vérifiez votre connexion Internet';
+			case 'app.reconnect': return 'Connexion retrouvée';
+			case 'app.friendlist': return 'Liste d\'amis';
+			case 'app.friends': return 'Amis';
+			case 'app.conversations': return 'Conversations';
+			case 'app.eventspending': return 'Événements en attente';
+			case 'app.eventsincoming': return 'Événements à venir';
+			case 'app.eventspast': return 'Événements passés';
+			case 'app.list': return 'Liste';
+			case 'app.map': return 'Carte';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Nom d\'utilisateur';
 			case 'user.name': return 'Nom';

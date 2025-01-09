@@ -91,6 +91,17 @@ class _TranslationsAppRo implements TranslationsAppFr {
 	@override String get errorOccurred => 'A apărut o eroare';
 	@override String get backTo => 'Înapoi la ';
 	@override String get unknown => 'Necunoscut';
+	@override String get favoriteDocuments => 'Documente Preferate';
+	@override String get offlineVerifyConnection => 'Verificați conexiunea dvs. la Internet';
+	@override String get reconnect => 'Conexiune restabilită';
+	@override String get friendlist => 'Lista de prieteni';
+	@override String get friends => 'Prieteni';
+	@override String get conversations => 'Conversații';
+	@override String get eventspending => 'Evenimente în așteptare';
+	@override String get eventsincoming => 'Evenimente viitoare';
+	@override String get eventspast => 'Evenimente trecute';
+	@override String get list => 'Listă';
+	@override String get map => 'Hartă';
 }
 
 // Path: user
@@ -461,6 +472,17 @@ extension on TranslationsRo {
 			case 'app.errorOccurred': return 'A apărut o eroare';
 			case 'app.backTo': return 'Înapoi la ';
 			case 'app.unknown': return 'Necunoscut';
+			case 'app.favoriteDocuments': return 'Documente Preferate';
+			case 'app.offlineVerifyConnection': return 'Verificați conexiunea dvs. la Internet';
+			case 'app.reconnect': return 'Conexiune restabilită';
+			case 'app.friendlist': return 'Lista de prieteni';
+			case 'app.friends': return 'Prieteni';
+			case 'app.conversations': return 'Conversații';
+			case 'app.eventspending': return 'Evenimente în așteptare';
+			case 'app.eventsincoming': return 'Evenimente viitoare';
+			case 'app.eventspast': return 'Evenimente trecute';
+			case 'app.list': return 'Listă';
+			case 'app.map': return 'Hartă';
 			case 'user.email': return 'Email';
 			case 'user.username': return 'Nume de utilizator';
 			case 'user.name': return 'Nume';

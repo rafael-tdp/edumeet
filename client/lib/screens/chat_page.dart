@@ -12,6 +12,7 @@ import '../core/models/chat/chatMessage.dart';
 import '../core/models/chat/sendMessageRequest.dart';
 import '../core/services/message_services.dart';
 import '../core/services/sse_services.dart';
+import '../i18n/generated/translations.g.dart';
 import '../providers/user_provider.dart';
 import '../utils/connectivty_utils.dart';
 import '../widgets/banner_message.dart';
@@ -218,7 +219,7 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           BannerMessage(
             isVisible: _showReconnectBanner,
-            message: _isConnected ? 'Connexion retrouvée' : 'Hors ligne. Veuillez vérifier votre connexion internet',
+            message: _isConnected ? t.app.offlineVerifyConnection : t.app.offlineVerifyConnection,
             backgroundColor: _isConnected ? Colors.green : Colors.red,
           ),
           Expanded(

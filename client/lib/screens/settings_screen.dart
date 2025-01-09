@@ -112,7 +112,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.favorite, color: Colors.red),
-                  title: const Text("Documents favoris"),
+                  title:  Text(t.app.favoriteDocuments),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 18),
                   onTap: () {
                     FavoriteDocumentsPage.navigateTo(context);

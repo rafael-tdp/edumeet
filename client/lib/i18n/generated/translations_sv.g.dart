@@ -91,6 +91,17 @@ class _TranslationsAppSv implements TranslationsAppFr {
 	@override String get errorOccurred => 'Ett fel har inträffat';
 	@override String get backTo => 'Tillbaka till ';
 	@override String get unknown => 'Okänd';
+	@override String get favoriteDocuments => 'Favoritdokument';
+	@override String get offlineVerifyConnection => 'Kontrollera din internetanslutning';
+	@override String get reconnect => 'Anslutning återfunnen';
+	@override String get friendlist => 'Vänlista';
+	@override String get friends => 'Vänner';
+	@override String get conversations => 'Konversationer';
+	@override String get eventspending => 'Väntande evenemang';
+	@override String get eventsincoming => 'Kommande evenemang';
+	@override String get eventspast => 'Tidigare evenemang';
+	@override String get list => 'Lista';
+	@override String get map => 'Karta';
 }
 
 // Path: user
@@ -461,6 +472,17 @@ extension on TranslationsSv {
 			case 'app.errorOccurred': return 'Ett fel har inträffat';
 			case 'app.backTo': return 'Tillbaka till ';
 			case 'app.unknown': return 'Okänd';
+			case 'app.favoriteDocuments': return 'Favoritdokument';
+			case 'app.offlineVerifyConnection': return 'Kontrollera din internetanslutning';
+			case 'app.reconnect': return 'Anslutning återfunnen';
+			case 'app.friendlist': return 'Vänlista';
+			case 'app.friends': return 'Vänner';
+			case 'app.conversations': return 'Konversationer';
+			case 'app.eventspending': return 'Väntande evenemang';
+			case 'app.eventsincoming': return 'Kommande evenemang';
+			case 'app.eventspast': return 'Tidigare evenemang';
+			case 'app.list': return 'Lista';
+			case 'app.map': return 'Karta';
 			case 'user.email': return 'E-post';
 			case 'user.username': return 'Användarnamn';
 			case 'user.name': return 'Namn';

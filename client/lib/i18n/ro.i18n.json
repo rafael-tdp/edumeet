@@ -31,7 +31,18 @@
     "loadingIndicator": "Încărcare...",
     "errorOccurred": "A apărut o eroare",
     "backTo": "Înapoi la ",
-    "unknown": "Necunoscut"
+    "unknown": "Necunoscut",
+    "favoriteDocuments": "Documente Preferate",
+    "offlineVerifyConnection": "Verificați conexiunea dvs. la Internet",
+    "reconnect": "Conexiune restabilită",
+    "friendlist": "Lista de prieteni",
+    "friends": "Prieteni",
+    "conversations": "Conversații",
+    "eventspending": "Evenimente în așteptare",
+    "eventsincoming": "Evenimente viitoare",
+    "eventspast": "Evenimente trecute",
+    "list": "Listă",
+    "map": "Hartă"
   },
   "user": {
     "email": "Email",
