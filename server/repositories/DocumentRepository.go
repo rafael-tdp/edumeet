@@ -8,6 +8,7 @@ import (
 	"edumeet/ent/event"
 	"edumeet/ent/eventdocument"
 	"errors"
+	"fmt"
 )
 
 type DocumentRepository struct {
@@ -49,8 +50,8 @@ func (r *DocumentRepository) DeleteDocument(documentID string) error {
 	return nil
 }
 
-func (r *DocumentRepository) CreateDocument(ctx context.Context, documentDTO dtos.DocumentDTO) (*ent.Document, error) {
-	documentCreated, err := r.client.Document.Create().SetName(documentDTO.Name).SetPath(documentDTO.Path).Save(ctx)
+func (r *DocumentRepository) CreateDocument(ctx context.Context, documentDTO dtos.DocumentDTO, eventTitle string) (*ent.Document, error) {
+	documentCreated, err := r.client.Document.Create().SetName(fmt.Sprintf("%s %s", documentDTO.Type, eventTitle)).SetPath(documentDTO.Path).Save(ctx)
 	if err != nil {
 		return nil, errors.New("error creating document")
 	}

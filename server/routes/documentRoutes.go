@@ -13,7 +13,7 @@ import (
 func setupRoutesDocument(app *fiber.App, documentController *controllers.DocumentController) {
 	app.Get("/document/:id", middlewares.JWTAuthMiddleware, documentController.GetDocument)
 	app.Get("/document/details/:id", middlewares.JWTAuthMiddleware, documentController.GetDocumentDetails)
-	app.Post("/document", middlewares.JWTAuthMiddleware, documentController.CreateDocument)
+	// app.Post("/document", middlewares.JWTAuthMiddleware, documentController.CreateDocument)
 	app.Delete("/document/:id", middlewares.JWTAuthMiddleware, documentController.DeleteDocument)
 }
 
