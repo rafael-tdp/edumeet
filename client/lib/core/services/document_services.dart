@@ -223,7 +223,8 @@ class DocumentServices {
         throw Exception('Failed to get liked documents');
       }
 
-      final documents = jsonDecode(response.body) as List<dynamic>;
+      final responseBody = utf8.decode(response.bodyBytes);
+      final documents = jsonDecode(responseBody) as List<dynamic>;
       return documents.map((document) => Document.fromJson(document)).toList();
     } catch (error) {
       log('An error occurred while getting liked documents', error: error);
