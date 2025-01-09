@@ -28,10 +28,12 @@ class SwipeCardsComponent extends StatefulWidget {
 
 class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
   late MatchEngine _matchEngine;
+  List<Event> _events = [];
   String? _eventType;
   double? _maxDistance;
   String? _selectedSubject;
   List<Subject> _subjects = [];
+  bool _isLoading = true;
   dynamic location;
 
   @override
@@ -39,29 +41,32 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
     super.initState();
     _loadSubjects();
     _getLocation();
-    ConnectivityUtils.listenConnectivityChanges(
-        onConnected: () {
-          _loadSubjects();
-          _getLocation();
-          setState(() {});
-        },
-        onDisconnected: () {
-          _loadSubjects();
-          _getLocation();
-          setState(() {});
-        });
-  }
-
-  @override
-  void dispose() {
-    ConnectivityUtils.cancelSubscription();
-    super.dispose();
+    _loadEvents(); // Charge les événements à l'initialisation
   }
 
   Future<void> _loadSubjects() async {
     final subjects = await SubjectServices.getSubjects();
     setState(() {
       _subjects = subjects;
+    });
+  }
+
+  Future<void> _loadEvents() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final events = await EventServices.getEvents(
+      [_selectedSubject ?? ''],
+      location?['latitude'],
+      location?['longitude'],
+      _eventType ?? '',
+      _maxDistance,
+    );
+
+    setState(() {
+      _events = events;
+      _isLoading = false;
     });
   }
 
@@ -76,77 +81,11 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
         Column(
           children: [
             Expanded(
-              child: FutureBuilder<List<Event>>(
-                future: EventServices.getEvents(
-                  [_selectedSubject ?? ''],
-                  location?['latitude'],
-                  location?['longitude'],
-                  _eventType ?? '',
-                  _maxDistance,
-                ),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (snapshot.hasError || !snapshot.hasData) {
-                    return Center(child: Text(t.error.loadingEvents));
-                  }
-
-                  final events = snapshot.data!;
-
-                  if (events.isEmpty) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Image.asset('images/no-events.png'),
-                        ),
-                        const Text(
-                          "Aucun événement trouvé",
-                          style: TextStyle(fontSize: 18, color: Colors.grey),
-                        ),
-                      ],
-                    );
-                  }
-
-                  final swipeItems = events.map((event) {
-                    return SwipeItem(
-                      content: event,
-                      likeAction: () async {
-                        await ParticipantServices.joinEvent(event.id!);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(t.event.hasJoinEvent(
-                              event_title: event.title,
-                            )),
-                          ),
-                        );
-                      },
-                    );
-                  }).toList();
-
-                  _matchEngine = MatchEngine(swipeItems: swipeItems);
-
-                  return SwipeCards(
-                    matchEngine: _matchEngine,
-                    itemBuilder: (context, index) {
-                      final event = swipeItems[index].content as Event;
-                      return _buildEventCard(event);
-                    },
-                    onStackFinished: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(t.swipe_cards.end_of_list)),
-                      );
-                    },
-                    itemChanged: (SwipeItem item, int index) {},
-                    upSwipeAllowed: false,
-                    fillSpace: true,
-                  );
-                },
-              ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _events.isEmpty
+                      ? _buildNoEventsView()
+                      : _buildSwipeCards(),
             ),
           ],
         ),
@@ -163,8 +102,61 @@ class _SwipeCardsComponentState extends State<SwipeCardsComponent> {
                 _selectedSubject = selectedSubject;
               });
               widget.hideFilters();
+              _loadEvents(); // Recharge uniquement lors de l'application des filtres
             },
           ),
+      ],
+    );
+  }
+
+  Widget _buildSwipeCards() {
+    final swipeItems = _events.map((event) {
+      return SwipeItem(
+        content: event,
+        likeAction: () async {
+          await ParticipantServices.joinEvent(event.id!);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(t.event.hasJoinEvent(
+                event_title: event.title,
+              )),
+            ),
+          );
+        },
+      );
+    }).toList();
+
+    _matchEngine = MatchEngine(swipeItems: swipeItems);
+
+    return SwipeCards(
+      matchEngine: _matchEngine,
+      itemBuilder: (context, index) {
+        final event = swipeItems[index].content as Event;
+        return _buildEventCard(event);
+      },
+      onStackFinished: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(t.swipe_cards.end_of_list)),
+        );
+      },
+      itemChanged: (SwipeItem item, int index) {},
+      upSwipeAllowed: false,
+      fillSpace: true,
+    );
+  }
+
+  Widget _buildNoEventsView() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Image.asset('images/no-events.png'),
+        ),
+        const Text(
+          "Aucun événement trouvé",
+          style: TextStyle(fontSize: 18, color: Colors.grey),
+        ),
       ],
     );
   }
