@@ -62,7 +62,7 @@ func (ai *AIService) SaveGenerateDocument(ctx context.Context, aiDocumentDTO dto
 		return err
 	}
 
-	_, err = ai.eventRepo.GetEvent(aiDocumentDTO.EventID)
+	event, err := ai.eventRepo.GetEvent(aiDocumentDTO.EventID)
 	if err != nil {
 		logrus.Error("Error AIService function SaveGenerateDocument: ", err)
 		return err
@@ -75,7 +75,7 @@ func (ai *AIService) SaveGenerateDocument(ctx context.Context, aiDocumentDTO dto
 		EventID: aiDocumentDTO.EventID,
 	}
 
-	_, err = ai.documentRepo.CreateDocument(ctx, documentDTO)
+	_, err = ai.documentRepo.CreateDocument(ctx, documentDTO, event.Title)
 	if err != nil {
 		logrus.Error("Error AIService function SaveGenerateDocument: ", err)
 		return err
