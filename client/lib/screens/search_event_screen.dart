@@ -65,7 +65,7 @@ class _SearchEventPageState extends State<SearchEventPage> {
               child: Container(
                 alignment: Alignment.bottomLeft,
                 child: Image.asset(
-                  'assets/images/logo-bold.png',
+                  'assets/images/logo.png',
                   fit: BoxFit.cover,
                   width: 100,
                 ),

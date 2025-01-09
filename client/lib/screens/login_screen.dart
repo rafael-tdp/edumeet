@@ -236,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
                       text: "Se connecter avec Google",
                       backgroundColor: Colors.red,
                       icon: SvgPicture.asset(
-                        'icons/google-white.svg',
+                        'assets/icons/google-white.svg',
                         width: 20,
                         height: 20,
                       ),

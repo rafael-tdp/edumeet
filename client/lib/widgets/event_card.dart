@@ -149,16 +149,10 @@ class EventCard extends StatelessWidget {
                   bottomLeft: Radius.circular(25),
                 ),
               ),
-              // child: SvgPicture.asset(
-              //   'icons/crown.svg',
-              //   width: 30,
-              //   height: 30,
-              // ),
-              // owner icon
-              child: const Icon(
-                Icons.star,
-                size: 30,
-                color: Colors.yellow,
+              child: SvgPicture.asset(
+                'assets/icons/crown.svg',
+                width: 30,
+                height: 30,
               ),
             ),
           ),
