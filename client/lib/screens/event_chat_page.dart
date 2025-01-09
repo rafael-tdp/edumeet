@@ -325,17 +325,17 @@ class _EventChatPageState extends State<EventChatPage> {
                                     .currentUser
                                     ?.username ||
                             "Moi" == message.username;
-                        final Avatar _avatar = DiceBearBuilder(
-                          seed: message.username,
-                          sprite: DiceBearSprite.bottts,
-                        ).build();
 
                         return Row(
                           mainAxisAlignment: isCurrentUser
                               ? MainAxisAlignment.end
                               : MainAxisAlignment.start,
                           children: [
-                            if (!isCurrentUser) _avatar.toImage(height: 25),
+                            if (!isCurrentUser) DiceBearBuilder(
+                          seed: message!.username,
+                          sprite: DiceBearSprite.values.firstWhere((sprite) => sprite.name == message?.picture,
+                              orElse: () => DiceBearSprite.bottts),
+                        ).build().toImage(height: 25),
                             Expanded(
                               child: ChatMessage(
                                 sender: message.username,

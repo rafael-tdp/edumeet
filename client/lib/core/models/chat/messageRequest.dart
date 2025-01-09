@@ -6,6 +6,7 @@ class MessageRequest {
   final String username;
   final String createdBy;
   final DateTime createdAt;
+  final String? picture;
 
   MessageRequest({
     required this.id,
@@ -13,6 +14,7 @@ class MessageRequest {
     required this.username,
     required this.createdBy,
     required this.createdAt,
+    this.picture = "botts",
   });
 
   factory MessageRequest.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class MessageRequest {
       username: json['username'],
       createdBy: json['createdBy'],
       createdAt: DateTime.parse(json['createdAt'].replaceAll(" UTC", "")),
+      picture: json['pictureUser'],
     );
   }
 }
@@ -34,6 +37,7 @@ extension MessageRequestAdapter on MessageRequest {
       username: this.username,
       createdAt: this.createdAt,
       isSentByCurrentUser: this.username == currentUsername,
+      picture: this.picture,
     );
   }
 }
