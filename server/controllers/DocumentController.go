@@ -1,14 +1,9 @@
 package controllers
 
 import (
-	"context"
-	"edumeet/dtos"
 	"edumeet/ent"
 	"edumeet/services"
 
-	customValidators "edumeet/validator"
-
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/oklog/ulid/v2"
 )
@@ -115,44 +110,44 @@ func (uc *DocumentController) DeleteDocument(c *fiber.Ctx) error {
 // @Failure 400 {object} map[string]string "Bad Request: Missing or invalid data"
 // @Failure 422 {object} map[string]interface{} "Unprocessable Entity: Validation errors"
 // @Router /document [post]
-func (uc *DocumentController) CreateDocument(c *fiber.Ctx) error {
-	var documentDTO dtos.DocumentDTO
-	file, err := c.FormFile("file")
-	if err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": "File is required"})
-	}
-	documentDTO.File = file
-	documentDTO.EventID = c.FormValue("event_id")
-	documentDTO.MessageID = c.FormValue("message_id")
-	documentDTO.Type = c.FormValue("type")
-	if err := c.BodyParser(&documentDTO); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
-	currentUser := c.Locals("user").(*ent.User)
-	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
+// func (uc *DocumentController) CreateDocument(c *fiber.Ctx) error {
+// 	var documentDTO dtos.DocumentDTO
+// 	file, err := c.FormFile("file")
+// 	if err != nil {
+// 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{"error": "File is required"})
+// 	}
+// 	documentDTO.File = file
+// 	documentDTO.EventID = c.FormValue("event_id")
+// 	documentDTO.MessageID = c.FormValue("message_id")
+// 	documentDTO.Type = c.FormValue("type")
+// 	if err := c.BodyParser(&documentDTO); err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+// 	}
+// 	currentUser := c.Locals("user").(*ent.User)
+// 	ctx := context.WithValue(c.Context(), "user_id", currentUser.ID)
 
-	validations := validator.New()
-	validations.RegisterValidation("maxFileSizeInMB", customValidators.MaxFileSizeInMB(file))
-	validations.RegisterValidation("checkEventMessageEmpty", customValidators.CheckEventMessageEmpty)
-	validations.RegisterValidation("checkEventMessageFilled", customValidators.CheckEventMessageFilled)
+// 	validations := validator.New()
+// 	validations.RegisterValidation("maxFileSizeInMB", customValidators.MaxFileSizeInMB(file))
+// 	validations.RegisterValidation("checkEventMessageEmpty", customValidators.CheckEventMessageEmpty)
+// 	validations.RegisterValidation("checkEventMessageFilled", customValidators.CheckEventMessageFilled)
 
-	errors, err := customValidators.ValidateDTO(validations, &documentDTO)
+// 	errors, err := customValidators.ValidateDTO(validations, &documentDTO)
 
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Erreur de validation interne",
-		})
-	}
-	if len(errors) > 0 {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"errors": errors,
-		})
-	}
+// 	if err != nil {
+// 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// 			"error": "Erreur de validation interne",
+// 		})
+// 	}
+// 	if len(errors) > 0 {
+// 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+// 			"errors": errors,
+// 		})
+// 	}
 
-	document, err := uc.documentService.CreateDocument(ctx, documentDTO)
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-	}
+// 	document, err := uc.documentService.CreateDocument(ctx, documentDTO)
+// 	if err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+// 	}
 
-	return c.Status(fiber.StatusCreated).JSON(document)
-}
+// 	return c.Status(fiber.StatusCreated).JSON(document)
+// }

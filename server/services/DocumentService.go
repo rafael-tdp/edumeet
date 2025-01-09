@@ -71,12 +71,15 @@ func (r *DocumentService) DeleteDocument(documentID string) error {
 }
 
 func (r *DocumentService) CreateDocument(ctx context.Context, documentDTO dtos.DocumentDTO) (dtos.DocumentDTO, error) {
+
+	eventTitle := ""
 	if documentDTO.EventID != "" {
-		_, err := r.eventRepo.GetEvent(documentDTO.EventID)
+		event, err := r.eventRepo.GetEvent(documentDTO.EventID)
 		if err != nil {
 			logrus.Error("Error DocumentService.CreateDocument: ", err)
 			return dtos.DocumentDTO{}, err
 		}
+		eventTitle = event.Title
 	} //else if documentDTO.MessageID != "" {
 	// 	_, err = r.messageRepo.GetMessageById(documentDTO.MessageID)
 	// 	if err != nil {
@@ -111,7 +114,7 @@ func (r *DocumentService) CreateDocument(ctx context.Context, documentDTO dtos.D
 
 	documentDTO.Path = filePath
 
-	documentCreated, err := r.documentRepo.CreateDocument(ctx, documentDTO)
+	documentCreated, err := r.documentRepo.CreateDocument(ctx, documentDTO, eventTitle)
 
 	if err != nil {
 		return dtos.DocumentDTO{}, err
