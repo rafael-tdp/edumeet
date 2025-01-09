@@ -124,6 +124,20 @@ func (u *User) AddSubject(ctx context.Context, client *ent.Client) {
 
 }
 
+func (u *User) AddBadge(ctx context.Context, client *ent.Client) {
+	badges := client.Badge.Query().AllX(ctx)
+
+	users := client.User.Query().AllX(ctx)
+
+	for _, user := range users {
+		for i := 0; i < gofakeit.Number(1, 6); i++ {
+			_, err := user.Update().AddBadges(badges[gofakeit.Number(0, len(badges)-1)]).Save(ctx)
+			if err != nil {
+			}
+		}
+	}
+}
+
 func GetRandomAddress() string {
 	rand.Seed(time.Now().UnixNano())
 	streetType := []string{"Rue", "Avenue", "Boulevard", "Chemin"}

@@ -62,6 +62,7 @@ func (e *Event) GenerateEvent(ctx context.Context, client *ent.Client) {
 			SetImage(images[gofakeit.Number(0, len(images)-1)]).
 			SetCode(lo.RandomString(6, lo.LettersCharset)).
 			SetCreatedBy(createdBy).
+			SetCreatedAt(start).
 			Save(ctx)
 
 		if err != nil {

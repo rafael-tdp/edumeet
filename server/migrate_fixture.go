@@ -67,6 +67,7 @@ func migrateFixture() {
 
 	eventFixture.AddSubject(ctx, client)
 	userFixture.AddSubject(ctx, client)
+	userFixture.AddBadge(ctx, client)
 
 	logrus.Info("Fixtures applied successfully.")
 	log.Println("Fixtures applied successfully.")
